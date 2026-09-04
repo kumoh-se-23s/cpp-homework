@@ -53,6 +53,7 @@ private:
     }
 
 public:
+    // UB 방지용 explicit 키워드
     explicit ReferenceCountedPointer(T *target)
         : target(target), refCount(new int(1)) {
     }
