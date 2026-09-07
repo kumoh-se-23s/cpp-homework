@@ -29,9 +29,13 @@ int* refCountTest() {
 int dynamicArrayTest() {
     DynamicArray<int> da = DynamicArray<int>();
     da.add(10);
-
+    da.add(20);
+    da.add(30);
+    da.add(40);
+    da.add(50);
+    da.add(60);
     for (int i = 0; i < da.getCurrentSize(); i++) {
-        printf("%d", da.get(i));
+        printf("%d\n", da.get(i));
     }
 
     return 0;

@@ -12,7 +12,7 @@ namespace dynamic_array {
     template<typename E>
     class DynamicArray {
         private:
-            E **container;
+            E *container;
             int capacity;
             int size;
 
@@ -21,7 +21,7 @@ namespace dynamic_array {
             }
 
             void resize(int newCapacity) {
-                E **newContainer = new E*[newCapacity];
+                E *newContainer = new E[newCapacity];
 
                 for (int containerIndex = 0; containerIndex < this->size; containerIndex++) {
                     newContainer[containerIndex] = this->container[containerIndex];
@@ -34,21 +34,18 @@ namespace dynamic_array {
 
         public:
             DynamicArray() {
-                this->container = new E*[DEFAULT_CAPACITY];
+                this->container = new E[DEFAULT_CAPACITY];
                 this->capacity = DEFAULT_CAPACITY;
                 this->size = 0;
             }
 
-            DynamicArray(int manual_size) {
-                this->container = new E*[manual_size];
-                this->capacity = manual_size;
+            DynamicArray(int manualSize) {
+                this->container = new E[manualSize];
+                this->capacity = manualSize;
                 this->size = 0;
             }
 
             ~DynamicArray() {
-                for (int containerIndex = 0; containerIndex < this->size; containerIndex++) {
-                    delete this->container[containerIndex];
-                }
                 delete[] this->container;
             }
 
@@ -65,7 +62,7 @@ namespace dynamic_array {
                     return 1;
                 }
 
-                E *temp = this->container[index1];
+                E temp = this->container[index1];
                 this->container[index1] = this->container[index2];
                 this->container[index2] = temp;
 
@@ -77,22 +74,22 @@ namespace dynamic_array {
                     this->resize(this->capacity == 0 ? DEFAULT_CAPACITY : this->capacity * 2);
                 }
 
-                this->container[this->size] = new E(value);
+                this->container[this->size] = value;
                 ++this->size;
 
                 return 0;
             }
 
-            E& get(int index) {
-                return *this->container[index];
+            E get(int index) {
+                return this->container[index];
             }
 
-            int set(int index, const E &value) {
+            int set(int index, const E value) {
                 if (!this->isValidIndex(index)) {
                     return 1;
                 }
 
-                *this->container[index] = value;
+                this->container[index] = value;
 
                 return 0;
             }
@@ -101,8 +98,6 @@ namespace dynamic_array {
                 if (!this->isValidIndex(index)) {
                     return 1;
                 }
-
-                delete this->container[index];
 
                 for (int containerIndex = index; containerIndex < this->size - 1; containerIndex++) {
                     this->container[containerIndex] = this->container[containerIndex + 1];
