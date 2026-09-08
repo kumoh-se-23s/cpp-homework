@@ -89,7 +89,7 @@ namespace lists {
                 return 0;
             }
 
-            int append(constE &value) override {
+            int append(const E &value) override {
                 return this->container->add(value);
             }
 
