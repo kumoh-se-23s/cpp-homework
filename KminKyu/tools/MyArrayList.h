@@ -20,55 +20,55 @@ namespace dynamic_array {
             this->capacity = DEFAULT_ARRAY_SIZE;
             this->size = 0;
         };
+
         ~MyArrayList() {
             delete[] this->items;
         }
+
         int getSize() const {
             return this->size;
         }
+
         int getCapacity() const {
             return this->capacity;
         }
 
-        int resize(int resize_capacity) {
+        void resize(int resize_capacity) {
             T* temp = new T[resize_capacity];
             for (int i = 0; i < this->capacity; i++) {
                 temp[i] = this->items[i];
             }
             this->capacity = resize_capacity;
             this->items = temp;
-            return 0;
         }
-        int append(const T &item) {
+        void append(const T &item) {
             if (this->size == this->capacity) {
                 this->resize(this->capacity * 2);
             }
             this->items[this->size] = item;
             ++this->size;
-            return 0;
         }
-        int clear() {
+        void clear() {
             this->size = 0;
             delete[] this->items;
-            return 0;
         }
 
-        int get(int index) {
+        T get(int index) const {
             if (index < this->size) {
                 return this->items[index];
             } else {
-                return -1;
+                return nullptr;
             }
         }
 
         bool isEmpty() {
             return this->size == 0;
         }
-        int pop() {
+        T pop() const {
             if (!this->isEmpty()) {
                 return this->items[this->size--];
             } else {
-                return -1;
+                return nullptr;
             }
         }
 
