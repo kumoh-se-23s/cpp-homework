@@ -5,7 +5,7 @@
 #ifndef CPP_HOMEWORK_DYNAMIC_ARRAY_H
 #define CPP_HOMEWORK_DYNAMIC_ARRAY_H
 
-#include <collections.h>
+#include "collections.h"
 
 namespace arrays {
     constexpr int DEFAULT_CAPACITY = 16;
@@ -23,10 +23,6 @@ namespace arrays {
             int capacity;
             int size;
 
-            bool isValidIndex(int index) {
-                return 0 <= index && index < this->size;
-            }
-
             bool needExpansion(int addAmount = 1) {
                 return addAmount + this->size >= this->capacity;
             }
@@ -40,7 +36,17 @@ namespace arrays {
             }
 
             int compressContainer() {
-                return this->resize(this->capacity * DEFAULT_COMPRESS_RATIO);
+                int newCapacity = this->capacity * DEFAULT_COMPRESS_RATIO;
+
+                if (newCapacity < DEFAULT_CAPACITY) {
+                    newCapacity = DEFAULT_CAPACITY;
+                }
+
+                if (newCapacity == this->capacity) {
+                    return 0;
+                }
+
+                return this->resize(newCapacity);
             }
 
             int resize(int newCapacity) {
@@ -102,6 +108,10 @@ namespace arrays {
                 return this->size == 0;
             }
 
+            bool isValidIndex(int index) {
+                return 0 <= index && index < this->size;
+            }
+
             bool isContains(const E &value) override {
                 for (int containerIndex = 0; containerIndex < this->size; ++containerIndex) {
                     if (this->container[containerIndex] == value) {
@@ -137,11 +147,11 @@ namespace arrays {
 
             int insert(int index, const E &value) override {
                 if (!this->isValidIndex(index)) {
-                    return 1;
-                }
+                    if (index == this->size) {
+                        return this->add(value);
+                    }
 
-                if (index == this->size) {
-                    return this->append(value);
+                    return 1;
                 }
 
                 if (this->needExpansion()) {
@@ -162,6 +172,10 @@ namespace arrays {
                     return 1;
                 }
 
+                if (this->needCompression()) {
+                    this->compressContainer();
+                }
+
                 for (int containerIndex = index; containerIndex < this->size - 1; containerIndex++) {
                     this->container[containerIndex] = this->container[containerIndex + 1];
                 }
@@ -169,6 +183,10 @@ namespace arrays {
                 --this->size;
 
                 return 0;
+            }
+
+            E& operator[](int index) {
+                return this->container[index];
             }
     };
 }

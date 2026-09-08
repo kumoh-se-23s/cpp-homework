@@ -5,7 +5,7 @@
 #ifndef CPP_HOMEWORK_COLLECTION_H
 #define CPP_HOMEWORK_COLLECTION_H\
 
-#include "arrays.h"
+
 #include "iters.h"
 
 
@@ -29,7 +29,7 @@ namespace collections {
     };
 
     template <typename E>
-    class List : Collection<E> {
+    class List : public Collection<E> {
         public:
             virtual E get(int index) = 0;
 
