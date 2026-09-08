@@ -64,9 +64,9 @@ namespace arrays {
                 this->size = 0;
             }
 
-            DynamicArray(int manualSize) {
-                this->container = new E[manualSize];
-                this->capacity = manualSize;
+            DynamicArray(int manualCapacity) {
+                this->container = new E[manualCapacity];
+                this->capacity = manualCapacity;
                 this->size = 0;
             }
 
