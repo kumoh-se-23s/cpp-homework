@@ -31,7 +31,7 @@ namespace collections {
     template <typename E>
     class List : public Collection<E> {
         public:
-            virtual E get(int index) = 0;
+            virtual const E& get(int index) = 0;
 
             virtual int set(int index, const E &value) = 0;
 
