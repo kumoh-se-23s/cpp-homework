@@ -3,10 +3,12 @@
 //
 
 #include <iostream>
-#include <ptrutil.h>
-#include <dynamic_array.h>
+#include "ptrutil.h"
+#include "arrays.h"
+#include "lists.h"
 
-using namespace dynamic_array;
+using namespace arrays;
+using namespace lists;
 
 int* dangerousTest() {
     auto testInteger = ptr_util::make_scoped_pointer<int>(10);
@@ -34,8 +36,18 @@ int dynamicArrayTest() {
     da.add(40);
     da.add(50);
     da.add(60);
-    for (int i = 0; i < da.getCurrentSize(); i++) {
-        printf("%d\n", da.get(i));
+    for (int i = 0; i < da.getSize(); i++) {
+        printf("%d\n", da[i]);
+    }
+
+    return 0;
+}
+
+int arrayListTest() {
+    ArrayList<int> integerList = ArrayList<int>();
+
+    for (int i = 0; i < 10; ++i) {
+        integerList.append(10 * i);
     }
 
     return 0;
@@ -49,7 +61,9 @@ int main() {
     // ReferenceCountedPointer test
     // refCountTest();
 
-    dynamicArrayTest();
+    // dynamicArrayTest();
+
+    arrayListTest();
 
     return 0;
 }
