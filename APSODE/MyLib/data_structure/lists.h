@@ -73,13 +73,13 @@ namespace lists {
 
             E get(int index) override {
                 if (!this->container->isValidIndex(index)) {
-                    return nullptr;
+                    return E();
                 }
 
                 return (*this->container)[index];
             }
 
-            int set(int index, E &value) override {
+            int set(int index, const E &value) override {
                 if (!this->container->isValidIndex(index)) {
                     return 1;
                 }
@@ -89,15 +89,15 @@ namespace lists {
                 return 0;
             }
 
-            int append(E &value) override {
+            int append(constE &value) override {
                 return this->container->add(value);
             }
 
-            int addFirst(E &value) override {
+            int addFirst(const E &value) override {
                 return this->container->insert(0, value);
             }
 
-            int addLast(E &value) override {
+            int addLast(const E &value) override {
                 return this->append(value);
             }
     };

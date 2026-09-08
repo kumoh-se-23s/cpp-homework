@@ -33,13 +33,13 @@ namespace collections {
         public:
             virtual E get(int index) = 0;
 
-            virtual int set(int index, E &value) = 0;
+            virtual int set(int index, const E &value) = 0;
 
-            virtual int append(E &value) = 0;
+            virtual int append(const E &value) = 0;
 
-            virtual int addFirst(E &value) = 0;
+            virtual int addFirst(const E &value) = 0;
 
-            virtual int addLast(E &value) = 0;
+            virtual int addLast(const E &value) = 0;
     };
 }
 
