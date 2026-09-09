@@ -53,7 +53,7 @@ namespace dynamic_array {
             delete[] this->items;
         }
 
-        T get(int index) const {
+        T &get(int index) const {
             if (index < this->size) {
                 return this->items[index];
             } else {
@@ -64,9 +64,10 @@ namespace dynamic_array {
         bool isEmpty() {
             return this->size == 0;
         }
-        T pop() const {
+        T &pop() {
             if (!this->isEmpty()) {
-                return this->items[this->size--];
+                const T result = this->items[this->size--];
+                return &result;
             } else {
                 return nullptr;
             }
