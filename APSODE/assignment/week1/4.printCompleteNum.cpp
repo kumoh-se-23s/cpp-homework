@@ -1,4 +1,13 @@
 #include <iostream>
+int get_digit_length(int target) {
+    int count = 0;
+    while (target > 0) {
+        target /= 10;
+        ++count;
+    }
+
+    return count;
+}
 
 
 int main() {
@@ -11,7 +20,8 @@ int main() {
         int gugudan_block_width;
 
         scanf_s("%d %d %d", &dan_amount, &times_amount, &gugudan_block_width);
-        
+
+        int max_length = get_digit_length(dan_amount * times_amount);
         for (int block_layer_lev = 0; block_layer_lev < gugudan_block_width; ++block_layer_lev) {
             int current_dan_start = (block_layer_lev * gugudan_block_width) + 1;
             int current_dan_end = current_dan_start + gugudan_block_width;
@@ -19,7 +29,13 @@ int main() {
             for(int current_times = 1; current_times <= times_amount; ++current_times) {
                 for(int current_dan = current_dan_start; current_dan < current_dan_end && current_dan <= dan_amount; ++current_dan) {
                     int current_result = current_dan * current_times;
-                    printf("%3d * %3d = %3d    ", current_dan, current_times, current_result);
+
+                    printf(
+                        "%*d * %*d = %*d    ",
+                        max_length, current_dan,
+                        max_length, current_times,
+                        max_length, current_result
+                    );
                 }
                 printf("\n\n");
             }
