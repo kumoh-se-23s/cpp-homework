@@ -1,41 +1,46 @@
 #include <iostream>
 
-bool is_complete_number(int target) {
-    int divisor = 0;
-    for (int div_num = 2; div_num <= target; ++div_num) {
-        if (target % div_num == 0) {
-            divisor += div_num;
-        }
-    }
-
-    return divisor == target;
-}
-
-bool is_prime_number(int target) {
-    int divisor_count = 0;
-    bool divisor_is_one = false;
-    bool divisor_is_self = false;
-
-    for ()
-}
-
+enum NumType {
+    DEFAULT,
+    PRIME,
+    COMPLETE
+};
 
 int main() {
     int loop_amount;
     std::cin >> loop_amount;
 
-    for(int loop = 0; loop < loop_amount; ++loop) {
+    for (int loop = 0; loop < loop_amount; ++loop) {
         int input_number;
-        scanf_s("%d", &input_number);
+        std::cin >> input_number;
+        NumType before_num_type = DEFAULT;
+        NumType current_num_type = DEFAULT;
 
-        int temp = 0;
-        for(int num = 2; num <= input_number; ++num) {
-            if (input_number % num == 0) {
-                temp += num;
+        for (int current_number = 1; current_number <= input_number; ++current_number) {
+            int total_divisor = 1;
+            for (int divisor = 2; divisor < current_number; ++divisor) {
+                if (current_number % divisor == 0) {
+                    total_divisor += divisor;
+                }
             }
+
+            if (current_number >= 10 && total_divisor == 1) {
+                current_num_type = PRIME;
+                if (before_num_type != current_num_type) printf(before_num_type == DEFAULT ? "[P]" : "\n[P]");
+
+                printf(" %d", current_number);
+            } else if (current_number > 1 && total_divisor == current_number) {
+                current_num_type = COMPLETE;
+                if (before_num_type != current_num_type) printf(before_num_type == DEFAULT ? "[C] %d = 1" : "\n[C] %d = 1", current_number);
+
+                for (int divisor = 2; divisor < current_number; ++divisor) {
+                    if (current_number % divisor == 0) printf(" + %d", divisor);
+                }
+            }
+
+            before_num_type = current_num_type;
         }
-
-
+        std::cout << std::endl;
     }
 
     return 0;
