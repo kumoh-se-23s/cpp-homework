@@ -3,7 +3,6 @@
 
 using namespace std;
 
-const int MAX_FACTORIAL = 20;
 uint64_t iterationFactorial(int val) {
     uint64_t factorialValue = 1;
     for (int number = 1; number <=val; ++number) {
@@ -23,14 +22,9 @@ int main() {
     int factorialNumber;
     for (int nowCase = 0; nowCase < testCase; ++nowCase) {
         cin >> factorialNumber;
-        if (factorialNumber > MAX_FACTORIAL) {
-            cout << "iteration = -1" << endl;
-            cout << "recursive = -1" << endl;
-        } else {
-            cout << "iteration = " << iterationFactorial(factorialNumber) << endl;
-            cout << "recursive = " << recursiveFactorial(factorialNumber) << endl;
-        }
-        
+        cout << "iteration = " << iterationFactorial(factorialNumber) << endl;
+        cout << "recursive = " << recursiveFactorial(factorialNumber) << endl;
+
         
     }
     
@@ -40,6 +34,6 @@ int main() {
         
         해결방안
         1. 메모리가 더 큰 자료형으로 변환하여 계산하면 틀린 값이 나오지 않게 된다 ex) uint64_t
-        
+        2. 숫자와 자릿수를 저장하는 클래스를 배열로 저장해 처리한다
      */
 }

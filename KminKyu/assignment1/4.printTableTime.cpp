@@ -6,13 +6,13 @@ int main() {
     int testCase;
     cin >> testCase;
 
-    int maxNum, maxDan, maxLine;
+    int maxMultiNum, maxDan, maxLine;
     for (int caseNum = 0; caseNum < testCase; ++caseNum) {
-        cin >> maxNum >> maxDan >> maxLine;
-        for (int nowNum = 0; nowNum < maxNum; nowNum += maxLine) {
-            for (int nowDan = 1; nowDan <= maxDan; ++nowDan) {
-                for (int nowLine = 1; nowLine + nowNum <= maxNum && nowLine <= maxLine; ++nowLine) {
-                    cout << nowLine + nowNum << " * " << nowDan << " = " << ((nowNum + nowLine) * nowDan);
+        cin >> maxDan >> maxMultiNum >> maxLine;
+        for (int nowDan = 0; nowDan < maxDan; nowDan += maxLine) {
+            for (int nowMultiNum = 1; nowMultiNum <= maxMultiNum; ++nowMultiNum) {
+                for (int nowLine = 1; nowLine + nowDan <= maxDan && nowLine <= maxLine; ++nowLine) {
+                    cout << nowLine + nowDan << " * " << nowMultiNum << " = " << ((nowDan + nowLine) * nowMultiNum);
                     cout << "   ";
                 }
                 cout << endl;    

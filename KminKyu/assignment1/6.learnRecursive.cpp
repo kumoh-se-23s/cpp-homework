@@ -13,11 +13,11 @@ void printReverseDigit(int val) {
 
 void printDigit(int val) {
     if (val < 10) {
-        cout << val << " ";
+        cout << val;
         return;
     }
     printDigit(val / 10);     
-    cout << val % 10 << " ";
+    cout << " " << val % 10;
     
     
 }
