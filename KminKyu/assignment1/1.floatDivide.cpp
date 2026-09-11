@@ -6,14 +6,13 @@ int main() {
     int testCase;
 
     cin >> testCase;
-    double value;
-    int integerValue;
-    double floatingPointValue;
-    
+
     for (int caseNum  = 0; caseNum < testCase; ++caseNum) {
+        double value;
         cin >> value;
-        integerValue = int(value);
-        floatingPointValue = value - integerValue;
+
+        int integerValue = static_cast<int>(value);
+        double floatingPointValue = value - integerValue;
 
         cout << integerValue << " + " << floatingPointValue << endl;
     

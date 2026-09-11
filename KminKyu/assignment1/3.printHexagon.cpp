@@ -5,9 +5,9 @@ using namespace std;
 int main() {
     int testCase;
     cin >> testCase;
-
-    int maxHeight;
+    
     for (int caseNum = 0; caseNum < testCase; ++caseNum) {
+        int maxHeight;
         cin >> maxHeight;
 
         for (int nowHeight = 0; nowHeight < maxHeight - 1; ++nowHeight) {

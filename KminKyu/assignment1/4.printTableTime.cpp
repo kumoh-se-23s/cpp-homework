@@ -6,8 +6,8 @@ int main() {
     int testCase;
     cin >> testCase;
 
-    int maxMultiNum, maxDan, maxLine;
     for (int caseNum = 0; caseNum < testCase; ++caseNum) {
+        int maxMultiNum, maxDan, maxLine;
         cin >> maxDan >> maxMultiNum >> maxLine;
         for (int nowDan = 0; nowDan < maxDan; nowDan += maxLine) {
             for (int nowMultiNum = 1; nowMultiNum <= maxMultiNum; ++nowMultiNum) {

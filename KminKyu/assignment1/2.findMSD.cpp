@@ -5,11 +5,13 @@ int main() {
     int testCase;
     cin >> testCase;
 
-    long long value;
-    int numberCnt;
+
     for (int caseNum = 0; caseNum < testCase; ++caseNum) {
+        long long value;
         cin >> value;
-        numberCnt = 1;
+
+        int numberCnt = 1;
+
         while (value / 10 != 0) {
             value /= 10;
             ++numberCnt;

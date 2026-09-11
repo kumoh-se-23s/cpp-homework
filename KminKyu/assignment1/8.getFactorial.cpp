@@ -18,9 +18,11 @@ int recursiveFactorial(int val) {
 int main() {
     int testCase;
     cin >> testCase;
-    int factorialNumber;
+
     for (int nowCase = 0; nowCase < testCase; ++nowCase) {
+        int factorialNumber;
         cin >> factorialNumber;
+
         cout << "iteration = " << iterationFactorial(factorialNumber) << endl;
         cout << "recursive = " << recursiveFactorial(factorialNumber) << endl;
 
