@@ -23,7 +23,7 @@ int main() {
 
         int max_length = get_digit_length(dan_amount * times_amount);
         for (int block_layer_lev = 0; block_layer_lev < gugudan_block_width; ++block_layer_lev) {
-            int current_dan_start = (block_layer_lev * gugudan_block_width) + 1;
+            int current_dan_start = block_layer_lev * gugudan_block_width + 1;
             int current_dan_end = current_dan_start + gugudan_block_width;
 
             for(int current_times = 1; current_times <= times_amount; ++current_times) {

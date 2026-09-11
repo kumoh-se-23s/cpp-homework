@@ -9,9 +9,9 @@ int print_reverse_digit(int value, int digit_base = 10) {
 
 int print_digit(int value, int digit_base = 10) {
     if (value == 0) return 0;
-    int v = print_digit(value / digit_base, digit_base);
+    int digit = print_digit(value / digit_base, digit_base);
     printf(" %d", value % digit_base);
-    return v;
+    return digit;
 }
 
 
