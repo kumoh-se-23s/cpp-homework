@@ -3,23 +3,17 @@
 using namespace std;
 
 void printReverseDigit(int val) {
-    if (val < 10) {
-        cout << val;
-        return;
+    if (val / 10 != 0) {
+        cout << val % 10 << " ";
+        printReverseDigit(val / 10);
     }
-    cout << val % 10 << " ";
-    printReverseDigit(val / 10);  
 }
 
 void printDigit(int val) {
-    if (val < 10) {
-        cout << val;
-        return;
+    if (val / 10 == 0) {
+        printDigit(val / 10);
+        cout << " " << val % 10;
     }
-    printDigit(val / 10);     
-    cout << " " << val % 10;
-    
-    
 }
 
 int main() {
