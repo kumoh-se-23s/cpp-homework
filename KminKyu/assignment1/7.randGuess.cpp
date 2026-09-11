@@ -1,15 +1,22 @@
 #include<iostream>
 using namespace std;
 
+int getSrand() {
+    srand((unsigned int)time(NULL));
+    return rand() % 100 + 1;
+}
+
+int getRand() {
+    return rand() % 100 + 1;
+}
+//srand 사용하지 않을 시 랜덤값이 고정됨
 
 int main() {
-    srand((unsigned int)time(NULL)); 
-    //srand 사용하지 않을 시 랜덤값이 42로 고정됨
 
     cout << "I have specified one natural number less than or equal to 100." << endl;
 
     int userGuess = -1;
-    int goalNumber = rand() % 100 + 1;
+    int goalNumber = getSrand();
     int tryCount;
 
     for (tryCount = 0; userGuess != goalNumber; ++tryCount) { 
