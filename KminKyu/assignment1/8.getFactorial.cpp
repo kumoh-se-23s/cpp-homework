@@ -1,10 +1,9 @@
 #include<iostream>
-#include<cstdint>
 
 using namespace std;
 
-uint64_t iterationFactorial(int val) {
-    uint64_t factorialValue = 1;
+int iterationFactorial(int val) {
+    int factorialValue = 1;
     for (int number = 1; number <=val; ++number) {
         factorialValue *= number;
 
@@ -12,7 +11,7 @@ uint64_t iterationFactorial(int val) {
     return factorialValue;
 }
 
-uint64_t recursiveFactorial(uint64_t val) {
+int recursiveFactorial(int val) {
     if (val == 1) return 1;
     return val * recursiveFactorial(val - 1);
 }

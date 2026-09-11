@@ -12,7 +12,8 @@ int main() {
         for (int nowDan = 0; nowDan < maxDan; nowDan += maxLine) {
             for (int nowMultiNum = 1; nowMultiNum <= maxMultiNum; ++nowMultiNum) {
                 for (int nowLine = 1; nowLine + nowDan <= maxDan && nowLine <= maxLine; ++nowLine) {
-                    cout << nowLine + nowDan << " * " << nowMultiNum << " = " << ((nowDan + nowLine) * nowMultiNum);
+                    printf("%2d * %2d = %4d", nowLine + nowDan, nowMultiNum, (nowDan + nowLine) * nowMultiNum);
+                    // cout << nowLine + nowDan << " * " << nowMultiNum << " = " << ((nowDan + nowLine) * nowMultiNum);
                     cout << "   ";
                 }
                 cout << endl;    
