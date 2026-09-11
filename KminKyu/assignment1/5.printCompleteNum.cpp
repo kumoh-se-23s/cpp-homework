@@ -53,9 +53,7 @@ int main() {
                 }
 
                 cout << endl;
-            }
-
-            if (divValue == 1 && nowNum >= 10) {
+            } else if (divValue == 1 && nowNum >= 10) {
 
                 if (isFirstPrime) {
 
