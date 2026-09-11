@@ -57,7 +57,7 @@ int main() {
 
                 if (isFirstPrime) {
 
-                    cout << "[P]";
+                    cout << "[P] ";
                     isFirstPrime = false;
                 }
 
