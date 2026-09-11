@@ -14,7 +14,8 @@ int main() {
     for(int loop = 0; loop < loop_amount; ++loop) {
         // 값입력
         int side_length;
-        scanf_s("%d", &side_length);
+        std::cin >> side_length;
+
         // 상단
         for (int top_layer_lev = 1; top_layer_lev < side_length; ++top_layer_lev) {
             int blank_amount = side_length - top_layer_lev;

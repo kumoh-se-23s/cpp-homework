@@ -3,7 +3,7 @@
 int challenge_random_number(int challenge_answer, int *try_count) {
     int challenge_target;
     printf("\nGuess the number and enter it : ");
-    scanf_s("%d", &challenge_target);
+    std::cin >> challenge_target;
     (*try_count)++;
     int challenge_result = challenge_answer - challenge_target;
 
@@ -13,10 +13,10 @@ int challenge_random_number(int challenge_answer, int *try_count) {
         printf("%d.", challenge_target);
 
         return challenge_random_number(challenge_answer, try_count);
-    } else {
-        printf("Got it!!! You've succeeded in the %d-th times!", *try_count);
-        return 0;
     }
+
+    printf("Got it!!! You've succeeded in the %d-th times!", *try_count);
+    return 0;
 }
 
 

@@ -33,7 +33,7 @@ int main() {
 
     for(int loop = 0; loop < loop_amount; ++loop) {
         int input_number;
-        scanf_s("%d", &input_number);
+        std::cin >> input_number;
 
         printf("iteration = %d\n", iterative_factorial(input_number));
         printf("recursive = %d\n", recursive_factorial(input_number));

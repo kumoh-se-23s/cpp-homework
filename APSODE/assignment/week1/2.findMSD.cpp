@@ -8,20 +8,9 @@ int main() {
         int input_number;
         int pos = 1;
 
-        scanf_s("%d", &input_number);
-
-        while(true) {
-            int temp = input_number / 10;
-            
-            if (temp == 0) {
-                break;
-            }
-            
-            input_number = temp;
-            ++pos;
-        }
-        
-        printf("%d @ [%d]", input_number, pos);
+        std::cin >> input_number;
+        for (; input_number / 10 != 0; input_number /= 10) ++pos;
+        printf("%d @ [%d]\n", input_number, pos);
     }
 
     return 0;
