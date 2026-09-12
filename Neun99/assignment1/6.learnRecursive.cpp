@@ -2,10 +2,10 @@
 
 using namespace std;
 
-int main() {
-    void printReverseDigit(int val);
-    void printDigit(int val);
+void printReverseDigit(int val);
+void printDigit(int val);
 
+int main() {
     int cnt, val ;
     cin >> cnt ;
     for (int i = 0 ; i < cnt ; ++i) {
@@ -21,10 +21,8 @@ int main() {
 
 void printReverseDigit(int val) {
     cout << val % 10 << " ";
-    if(val / 10 >= 10)
+    if(val >= 10)
         printReverseDigit(val / 10);
-    else
-        cout << val / 10;
 }
 
 void printDigit(int val) {

@@ -11,10 +11,9 @@ int main() {
         int userInput;
         cin >> userInput;
 
-        char isPrintedP = false;
-        bool isFirstPrint = true; //출력정리
-        //2부터 input-1까지의 모든 정수에 대해
-        for (int idx = 2; idx < userInput; ++idx) {
+        bool isPrintedP = false;
+        //2부터 input까지의 모든 정수에 대해
+        for (int idx = 2; idx <= userInput; ++idx) {
             int idxDivSum = 1;
             bool isDivFound = false;
 
@@ -28,10 +27,11 @@ int main() {
 
             //완전수 찾으면 출력
             if (idxDivSum == idx && idxDivSum != 1) {
-                if(isFirstPrint)
-                    isFirstPrint = false;
-                else
+                if (isPrintedP) {
                     cout << endl;
+                    isPrintedP = false;
+                }
+
                 printf("[C] %d = 1",idx);
                 isPrintedP = false;
                 for (int idxDiv = 2; idxDiv < idx; ++idxDiv) {
@@ -42,15 +42,17 @@ int main() {
             }
 
             //10 이상의 소수 찾으면 출력
-            if (!isDivFound && idx >= 9) {
+            if (!isDivFound && idx >= 10) {
                 if(!isPrintedP) {
                     cout << "[P]";
                     isPrintedP = true;
                 }
                 printf(" %d", idx);
-                isFirstPrint = false;
             }
         }
+        //동작 끝날 때 P줄이 열려있으면 닫아주기
+        if (isPrintedP)
+            cout << endl;
     }
 
     return 0;

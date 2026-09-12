@@ -11,12 +11,12 @@ int main() {
         cin >> userInput;
 
         //가장 큰 자릿수 구하기
-        int digit = 1;
-        while(userInput > 10) {
+        int digitPlace = 1;
+        while(userInput >= 10 || userInput <= -10) {
             userInput /= 10;
-            digit++;
+            digitPlace++;
         }
 
-        printf("%d @ [%d]\n", userInput, digit);
+        printf("%d @ [%d]\n", userInput, digitPlace);
     }
 }

@@ -2,6 +2,8 @@
 
 using namespace std;
 
+const int RANGE = 100;
+
 int main() {
     /*
     아래 srand를 사용하지 않는 경우, rand 함수에서 매 실행 같은 결과가 리턴되어 정답이 고정되는 현상이 일어났습니다.
@@ -10,13 +12,14 @@ int main() {
     */
     srand(time(NULL));
 
-    int answer = rand() % 100 + 1;
+    int answer = rand() % RANGE + 1;
     cout << "I have specified one natural number less than or equal to 100." << endl;
     cout << "Guess the number and enter it : ";
     
-    bool isCorrected = false;
-    int tryTime = 0;
-    while(!isCorrected) {
+    bool isCorrect = false;
+    int tryCnt = 0;
+    //답 맞추면 탈출, 못 맞추면 힌트 주고 Cnt + 1
+    while(!isCorrect) {
         int userInput;
         cin >> userInput;
 
@@ -25,10 +28,10 @@ int main() {
         else if (userInput < answer)
             printf("The number I specified is a number greater than %d.\n", userInput);
         else
-            isCorrected = true;
-        tryTime++;
+            isCorrect = true;
+        tryCnt++;
     }
-    printf("Got it!!! You've succeeded in the %d-th times!", tryTime);
+    printf("Got it!!! You've succeeded in the %d-th times!", tryCnt);
 
     return 0;
 }
