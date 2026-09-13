@@ -1,11 +1,7 @@
 #include <iostream>
 int get_digit_length(int target) {
     int count = 0;
-    while (target > 0) {
-        target /= 10;
-        ++count;
-    }
-
+    for (; target > 0; target /= 10) ++count;
     return count;
 }
 
@@ -18,11 +14,10 @@ int main() {
         int dan_amount;
         int times_amount;
         int gugudan_block_width;
-
-        scanf_s("%d %d %d", &dan_amount, &times_amount, &gugudan_block_width);
+        std::cin >> dan_amount >> times_amount >> gugudan_block_width;
 
         int max_length = get_digit_length(dan_amount * times_amount);
-        for (int block_layer_lev = 0; block_layer_lev < gugudan_block_width; ++block_layer_lev) {
+        for (int block_layer_lev = 0; block_layer_lev < dan_amount / gugudan_block_width + 1; ++block_layer_lev) {
             int current_dan_start = block_layer_lev * gugudan_block_width + 1;
             int current_dan_end = current_dan_start + gugudan_block_width;
 
@@ -37,8 +32,9 @@ int main() {
                         max_length, current_result
                     );
                 }
-                printf("\n\n");
+                printf("\n");
             }
+            printf("\n\n");
         }
 
     }
