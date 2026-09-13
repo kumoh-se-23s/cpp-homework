@@ -31,7 +31,7 @@ int main() {
      * 변화를 주어 rand로 생성되는 난수가 매번 바뀌도록 설정하는 것으로 rand()에서 발생한
      * 반복되는 난수 문제를 해결할 수 있다.
      */
-    srand(1000);
+    srand(1000); // 실제 사용시에는 매번 바뀌는 값(예: 시간)등을 입력하는 것으로 무작위화가 가능
     int random_number = rand() % 100 + 1;
     printf("%d", random_number);
     int try_count = 1;
