@@ -18,7 +18,7 @@ int main() {
     
     bool isCorrect = false;
     int tryCnt = 0;
-    //답 맞추면 탈출, 못 맞추면 힌트 주고 Cnt + 1
+    //답 맞추면 탈출, 못 맞추면 힌트
     while(!isCorrect) {
         int userInput;
         cin >> userInput;
