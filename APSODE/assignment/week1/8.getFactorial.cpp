@@ -38,8 +38,6 @@ int main() {
 
         printf("iteration = %d\n", iterative_factorial(input_number));
         printf("recursive = %d\n", recursive_factorial(input_number));
-
-        malloc(10);
     }
 
     return 0;
