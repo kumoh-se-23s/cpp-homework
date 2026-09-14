@@ -6,7 +6,7 @@ int main() {
     int runCntGoal; //목표 동작 횟수
     cin >> runCntGoal;
 
-    for(int runCnt = 0; runCnt < runCntGoal; ++runCnt) {
+    for(int runCnt = 0; runCnt < runCntGoal; runCnt++) {
         double userInput; //유저 입력
         cin >> userInput;
 

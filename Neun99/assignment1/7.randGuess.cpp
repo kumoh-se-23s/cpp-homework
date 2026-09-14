@@ -13,7 +13,7 @@ int main() {
     srand(time(NULL));
 
     int answer = rand() % RANGE + 1;
-    cout << "I have specified one natural number less than or equal to "<< RANGE <<"." << endl;
+    printf("I have specified one natural number less than or equal to %d.\n", RANGE);
     cout << "Guess the number and enter it : ";
     
     bool isCorrect = false;

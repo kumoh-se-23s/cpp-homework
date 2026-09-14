@@ -8,7 +8,7 @@ void printDigit(int val);
 int main() {
     int cnt, val ;
     cin >> cnt ;
-    for (int i = 0 ; i < cnt ; ++i) {
+    for (int i = 0 ; i < cnt ; i++) {
         cin >> val ;
         cout << "Backward : ";
         printReverseDigit(val);

@@ -15,9 +15,9 @@ int main() {
         cin >> width;
 
         //층 구분
-        for(int heightIdx = 0, startBase = 1; startBase <= base; startBase = width * ++heightIdx + 1) {
+        for(int heightIdx = 0, startBase = 1; startBase <= base; heightIdx++, startBase = width * heightIdx + 1) {
             //각 층별로 times만큼 출력
-            for(int timesIdx = 1; timesIdx <= times; ++timesIdx) {
+            for(int timesIdx = 1; timesIdx <= times; timesIdx++) {
                 printf("%2d * %2d = %4d",startBase, timesIdx, startBase * timesIdx);
                 //층 너비가 2 이상이면 사이에 공백 추가하면서 출력
                 for(int baseIdx = 1; baseIdx < width && (startBase + baseIdx) <= base; ++baseIdx) { //startBase + baseIdx가 세 번 나오는데 별도 변수로 빼는게 나을까요?

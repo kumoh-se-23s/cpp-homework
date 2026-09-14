@@ -7,17 +7,17 @@ int main() {
 
     cin >> runCntGoal;
 
-    for(int runCnt = 0; runCnt < runCntGoal; ++runCnt) {
+    for(int runCnt = 0; runCnt < runCntGoal; runCnt++) {
         int userInput;
         cin >> userInput;
 
         bool isPLineOpen= false;
         //2부터 input까지의 모든 정수에 대해
-        for (int idx = 2; idx <= userInput; ++idx) {
+        for (int idx = 2; idx <= userInput; idx++) {
             int idxDivSum = 1;
 
             //약수 구해서 완전수 및 소수 찾기
-            for (int idxDiv = 2; idxDiv < idx; ++idxDiv) {
+            for (int idxDiv = 2; idxDiv < idx; idxDiv++) {
                 if (idx % idxDiv == 0)
                     idxDivSum += idxDiv;
             }
@@ -29,7 +29,7 @@ int main() {
                     isPLineOpen = false;
                 }
                 printf("[C] %d = 1",idx);
-                for (int idxDiv = 2; idxDiv < idx; ++idxDiv) {
+                for (int idxDiv = 2; idxDiv < idx; idxDiv++) {
                     if (idx % idxDiv == 0)
                         printf(" + %d", idxDiv);
                 }
@@ -37,7 +37,7 @@ int main() {
             }
 
             //10 이상의 소수 찾으면 출력
-            if (idxDivSum > 1 && idx >= 10) {
+            if (idxDivSum == 1 && idx >= 10) {
                 if(!isPLineOpen) { //P줄 닫혀있으면 열고 출력
                     cout << "[P]";
                     isPLineOpen = true;

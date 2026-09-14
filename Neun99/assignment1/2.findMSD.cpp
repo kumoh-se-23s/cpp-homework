@@ -6,7 +6,7 @@ int main() {
     int runCntGoal;
     cin >> runCntGoal;
 
-    for(int runCnt = 0; runCnt < runCntGoal; ++runCnt) {
+    for(int runCnt = 0; runCnt < runCntGoal; runCnt++) {
         int userInput;
         cin >> userInput;
 
