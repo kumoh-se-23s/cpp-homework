@@ -55,15 +55,15 @@ int arrayListTest() {
 
 int main() {
     // ScopedPointer test
-    // int* danglingPtr = dangerousTest();
-    // std::cout << *danglingPtr << std::endl;
+    int* danglingPtr = dangerousTest();
+    std::cout << *danglingPtr << std::endl;
 
     // ReferenceCountedPointer test
-    // refCountTest();
+    refCountTest();
 
     // dynamicArrayTest();
 
-    arrayListTest();
+    // arrayListTest();
 
     return 0;
 }
