@@ -27,7 +27,7 @@ int main() {
     for (int arrayIndex = 0; arrayIndex < maxLength; ++arrayIndex) {
         cout << resultNumberArray[arrayIndex] << endl;
     }
-    cout << result << endl;;
+    cout << result << endl;
 
     return 0;
 }
