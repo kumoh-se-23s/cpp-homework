@@ -4,11 +4,11 @@
 
 #include <iostream>
 
-const int MAX_INPUT_STRING_LENGTH = 100;
+const int MAX_INPUT_STRING_LENGTH = 101;
 const int ALPHABET_START_POS_CONTAINER_SIZE = 26;
 
 void print_integer_array(int integer_array[], int max_length = 0) {
-    for (int index = 0; index < max_length; index) {
+    for (int index = 0; index < max_length; ++index) {
         std::cout << integer_array[index] << " ";
     }
     std::cout << std::endl;
