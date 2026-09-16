@@ -18,26 +18,20 @@ int main() {
             mergeArray(arr1, arr2, resultArr, SIZE) ;
             printArray(resultArr, SIZE*2) ;
         }
+        else cout << "[Error] Unsorted input\n";
     }
     return 0 ;
 }
 
 bool readAscSortedArray(int arr[], int size) {
-    bool isSorted;
-    do {
-        isSorted = true;
-        for (int arrSize = 0; arrSize < size; ++arrSize) {
-            cin >> arr[arrSize];
+    for (int arrSize = 0; arrSize < size; ++arrSize) {
+        cin >> arr[arrSize];
+    }
+    for (int arrSize = 0; arrSize < size - 1; ++arrSize) {
+        if (arr[arrSize] > arr[arrSize + 1]) {
+            return false;
         }
-        for (int arrSize = 0; arrSize < size - 1; ++arrSize) {
-            if (arr[arrSize] > arr[arrSize + 1]) {
-                cout << "[Error] Unsorted input" << endl;
-                isSorted = false;
-                break;
-                // return false;
-            }
-        }
-    } while (!isSorted);
+    }
     return true;
 }
 

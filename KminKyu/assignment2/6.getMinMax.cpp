@@ -11,36 +11,27 @@ int main() {
                 cout << "Min : " << min << ", Max : " << max << "\n" ;
             else
                 cout << "두 배열의 모든 값이 동일함" << min << "\n" ;
-            }
+        else cout << "[Error] Unsorted input\n";
+    }
     return 0 ;
 }
 
 bool readArray(int arr[], int size, int sortType) {
-    bool isSorted;
-    do {
-        isSorted = true;
-        for (int arrSize = 0; arrSize < size; ++arrSize) {
-            cin >> arr[arrSize];
-        }
-        for (int arrSize = 0; arrSize < size - 1; ++arrSize) {
-            if (sortType == 1) {
-                if (arr[arrSize] > arr[arrSize + 1]) {
-                    isSorted = false;
-                    break;
-                    // return false;
-                }
-            } else if (sortType == 2) {
-                if (arr[arrSize] < arr[arrSize + 1]) {
-                    isSorted = false;
-                    break;
-                    // return false;
-                }
+
+    for (int arrSize = 0; arrSize < size; ++arrSize) {
+        cin >> arr[arrSize];
+    }
+    for (int arrSize = 0; arrSize < size - 1; ++arrSize) {
+        if (sortType == 1) {
+            if (arr[arrSize] > arr[arrSize + 1]) {
+                return false;
+            }
+        } else if (sortType == 2) {
+            if (arr[arrSize] < arr[arrSize + 1]) {
+                return false;
             }
         }
-        if (!isSorted) {
-            cout << "[Error] Unsorted input" << endl;
-        }
-    } while (!isSorted);
+    }
     return true;
 }
 
