@@ -17,3 +17,8 @@ add_executable(assignment1_6 assignment1/6.learnRecursive.cpp)
 add_executable(assignment1_7 assignment1/7.randGuess.cpp)
 add_executable(assignment1_8 assignment1/8.getFactorial.cpp)
 
+add_executable(assignment2_1 assignment2/1.printBinary.cpp)
+add_executable(assignment2_2 assignment2/2.3digitMultiplication.cpp)
+add_executable(assignment2_3 assignment2/3.findCharPosition.cpp)
+add_executable(assignment2_4 assignment2/4.mainddddddddddddddd.cpp)
+add_executable(assignment2_5 assignment2/5.maindddddddddddd.cpp)
