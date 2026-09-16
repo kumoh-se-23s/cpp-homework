@@ -1,4 +1,5 @@
 #pragma once
+
 class Account {
 private:
     long accNumber;
