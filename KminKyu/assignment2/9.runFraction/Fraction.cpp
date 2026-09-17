@@ -4,10 +4,16 @@
 using namespace std;
 
 int getGCD(int n, int d) {
-    if (n == 0) {
-        return d;
+    if (d > n) {
+        swap(d, n);
     }
-    getGCD(n, d % n);
+    int temp;
+    while (n > 0) {
+        temp = n;
+        n = d % n;
+        d = temp;
+    }
+    return d;
 }
 
 void swap(int* a, int* b) {
