@@ -25,7 +25,9 @@ void add(int left_operand[][SIZE], int right_operand[][SIZE], int result_matrix[
 void multiply(int left_operand[][SIZE], int right_operand[][SIZE], int result_matrix[][SIZE], int row_size) {
     for (int target_row = 0; target_row < row_size; ++target_row) {
         for (int target_col = 0; target_col < SIZE; ++target_col) {
-
+            for (int temp = 0; temp < row_size; ++temp) {
+                result_matrix[target_row][target_col] += left_operand[target_row][temp] * right_operand[temp][target_col];
+            }
         }
     }
 }

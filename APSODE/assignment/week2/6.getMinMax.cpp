@@ -11,10 +11,7 @@ bool is_asc_sorted(const int array[], int max_size) {
     }
 
     for (int index = 1; index < max_size; ++index) {
-        int before_element = array[index - 1];
-        int current_element = array[index];
-
-        if (before_element > current_element) {
+        if (array[index - 1] > array[index]) {
             return false;
         }
     }
@@ -28,10 +25,7 @@ bool is_dsc_sorted(const int array[], int max_size) {
     }
 
     for (int index = 1; index < max_size; ++index) {
-        int before_element = array[index - 1];
-        int current_element = array[index];
-
-        if (before_element < current_element) {
+        if (array[index - 1] < array[index]) {
             return false;
         }
     }

@@ -21,8 +21,15 @@ void print_char_array(char char_array[]) {
     std::cout << std::endl;
 }
 
+int get_digit_length(int target) {
+    int count = target < 0 ? 1 : 0;
+    for (; target != 0; target /= 10) ++count;
+    return count;
+}
+
 int main() {
-    std::cout << get_dec_num_length(0);
+    std::cout << get_digit_length(2);
+
 
     return 0;
 }
