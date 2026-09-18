@@ -1,15 +1,12 @@
 #include<iostream>
 #include "Matrix.h"
 
-using namespace std;
 
 int getLength(int number) {
-    int cnt = 1;
-    while (number / 10 != 0) {
-        number /= 10;
+    int cnt = 0;
+    for (; number != 0; number /= 10) {
         ++cnt;
     }
-    cout << cnt;
     return cnt;
 }
 
@@ -19,7 +16,7 @@ Matrix::Matrix() {
 void Matrix::read() {
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
-            cin >> matrixArray[column][row];
+            std::cin >> matrixArray[column][row];
         }
     }
 }
@@ -36,8 +33,11 @@ int Matrix::getMaxLengthValue() const {
     int maxLengthNumber = 0;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
-            if (abs(maxLengthNumber) < abs(matrixArray[column][row])) {
-                maxLengthNumber = matrixArray[column][row];
+
+            int tempNumber = matrixArray[column][row] < 0 ? matrixArray[column][row] * -10 : matrixArray[column][row];
+
+            if (maxLengthNumber < tempNumber) {
+                maxLengthNumber = tempNumber;
             }
         }
     }
@@ -83,15 +83,15 @@ void Matrix::print() const {
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
             if (row == 0) {
-                cout << "| ";
+                std::cout << "| ";
             }
             printf("%*d", maxLength, this->getValue(column, row));
 
-            cout << " ";
+            std::cout << " ";
             if (row == MAX_MATRIX_SIZE - 1) {
-                cout << "|";
+                std::cout << "|";
             }
         }
-        cout << endl;
+        std::cout << "\n";
     }
 }

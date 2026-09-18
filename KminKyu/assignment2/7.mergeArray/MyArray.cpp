@@ -1,7 +1,6 @@
 #include<iostream>
 #include"MyArray.h"
 
-using namespace std;
 
 MyArray1::MyArray1() {
     nowSize = 0;
@@ -12,7 +11,7 @@ bool MyArray1::readAscSorted() {
     bool flag = true;
     for (int arrSize = 0; arrSize < MAX_ARRAY_SIZE; ++arrSize) {
         int item;
-        cin >> item;
+        std::cin >> item;
         array[arrSize] = item;
         ++nowSize;
         if (arrSize != 0 && array[arrSize - 1] > array[arrSize]) {
@@ -70,11 +69,11 @@ void MyArray2::append(int item) {
 void MyArray2::print() const {
     for (int index = 0; index < nowSize; ++index) {
         if (index != 0) {
-            cout << " ";
+            std::cout << " ";
         }
-        cout << array[index];
+        std::cout << array[index];
     }
-    cout << endl;
+    std::cout << "\n";
 }
 
 int MyArray2::getNowSize() const {
