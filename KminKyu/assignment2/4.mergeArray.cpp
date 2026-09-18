@@ -29,7 +29,7 @@ bool readAscSortedArray(int arr[], int size) {
     return flag;
 }
 
-void mergeArray(int firstArray[], int secondArray[], int mergedArray[], int size) {
+void mergeArray(const int firstArray[], const int secondArray[], int mergedArray[], int size) {
     int firstArrayIndex = 0, secondArrayIndex = 0, arrayIndex = 0;
 
     for (arrayIndex = 0; arrayIndex < size * 2 && firstArrayIndex < size && secondArrayIndex < size; ++arrayIndex) {
@@ -47,7 +47,7 @@ void mergeArray(int firstArray[], int secondArray[], int mergedArray[], int size
     }
 }
 
-void printArray(int array[], int size) {
+void printArray(const int array[], int size) {
     for (int index = 0; index < size; ++index) {
         if (index != 0) {
             cout << " ";

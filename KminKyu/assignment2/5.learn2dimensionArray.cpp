@@ -17,7 +17,7 @@ int main() {
     return 0 ;
 }
 
-void transpose(int baseMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
+void transpose(const int baseMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
     for (int column = 0; column < size; ++column) {
         for (int row = 0; row < size; ++row) {
             resultMatrix[row][column] = baseMatrix[column][row];
@@ -25,7 +25,7 @@ void transpose(int baseMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
     }
 }
 
-void add(int firstMatrix[][SIZE], int secondMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
+void add(const int firstMatrix[][SIZE], const int secondMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
     for (int column = 0; column < size; ++column) {
         for (int row = 0; row < size; ++row) {
             resultMatrix[column][row] = firstMatrix[column][row] + secondMatrix[column][row];
@@ -33,7 +33,7 @@ void add(int firstMatrix[][SIZE], int secondMatrix[][SIZE], int resultMatrix[][S
     }
 }
 
-void multiply(int firstMatrix[][SIZE], int secondMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
+void multiply(const int firstMatrix[][SIZE], const int secondMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
     for (int column = 0; column < size; ++column) {
         for (int row = 0; row < size; ++row) {
             resultMatrix[column][row] = 0;
@@ -44,7 +44,7 @@ void multiply(int firstMatrix[][SIZE], int secondMatrix[][SIZE], int resultMatri
     }
 }
 
-void printMatrix(int matrix[][SIZE], int size) {
+void printMatrix(const int matrix[][SIZE], int size) {
     for (int column = 0; column < size; ++column) {
         for (int row = 0; row < size; ++row) {
             if (row == 0) {

@@ -11,8 +11,10 @@ public:
     Matrix multi(const Matrix& otherMatrix) const;
     int getValue(int column, int row) const;
     void setValue(int column, int row, int value);
-    int getMaxLengthValue() const;
+
 private:
     static const int MAX_MATRIX_SIZE = 3;
+    static int getLength(int);
+    int getMaxLengthValue() const;
     int matrixArray[3][3] = {0,};
 };

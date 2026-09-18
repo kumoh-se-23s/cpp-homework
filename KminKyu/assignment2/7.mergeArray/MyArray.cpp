@@ -27,12 +27,12 @@ int MyArray1::getNowSize() const {
 int MyArray1::get(int index) const {
     return array[index];
 }
-MyArray2 MyArray1::merge(const MyArray1& mergeableArray) const {
+MyArray2 MyArray1::merge(const MyArray1& otherArray) const {
     int baseArrayIndex = 0, mergeableArrayIndex = 0;
     MyArray2 mergedArray;
-    while (baseArrayIndex < this->getNowSize() && mergeableArrayIndex < mergeableArray.getNowSize()) {
+    while (baseArrayIndex < this->getNowSize() && mergeableArrayIndex < otherArray.getNowSize()) {
 
-        int baseArrayValue = this->get(baseArrayIndex), mergeArrayValue = mergeableArray.get(mergeableArrayIndex);
+        int baseArrayValue = this->get(baseArrayIndex), mergeArrayValue = otherArray.get(mergeableArrayIndex);
         
         if (baseArrayValue < mergeArrayValue) {
             mergedArray.append(baseArrayValue);
@@ -47,9 +47,9 @@ MyArray2 MyArray1::merge(const MyArray1& mergeableArray) const {
         this->get(baseArrayIndex++)
         );
     }
-    while (mergeableArrayIndex < mergeableArray.getNowSize()) {
+    while (mergeableArrayIndex < otherArray.getNowSize()) {
         mergedArray.append(
-            mergeableArray.get(mergeableArrayIndex++)
+            otherArray.get(mergeableArrayIndex++)
         );
     }
     return mergedArray;

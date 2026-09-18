@@ -30,7 +30,7 @@ bool readArray(int arr[], int size, int sortType) {
     return flag;
 }
 
-bool getMinMax(int firstArray[], int secondArray[], int size, int& min, int& max) {
+bool getMinMax(const int firstArray[], const int secondArray[], int size, int& min, int& max) {
     if (firstArray[0] < secondArray[size - 1]) {
         min = firstArray[0];
     } else {

@@ -2,16 +2,7 @@
 #include "Matrix.h"
 
 
-int getLength(int number) {
-    int cnt = 0;
-    for (; number != 0; number /= 10) {
-        ++cnt;
-    }
-    return cnt;
-}
-
-Matrix::Matrix() {
-}
+Matrix::Matrix() = default;
 
 void Matrix::read() {
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
@@ -19,6 +10,14 @@ void Matrix::read() {
             std::cin >> matrixArray[column][row];
         }
     }
+}
+
+int Matrix::getLength(int number) {
+    int cnt = 0;
+    for (; number != 0; number /= 10) {
+        ++cnt;
+    }
+    return cnt;
 }
 
 int Matrix::getValue(int column, int row) const {

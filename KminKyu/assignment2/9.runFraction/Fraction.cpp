@@ -2,13 +2,13 @@
 #include "Fraction.h"
 
 
-void swap(int& a, int& b) {
+void Fraction::swap(int& a, int& b) {
     int temp = a;
     a = b;
     b = temp;
 }
 
-int getGCD(int n, int d) { //유클리드 호제법 알고리즘
+int Fraction::getGCD(int n, int d) { //유클리드 호제법 알고리즘
     if (d < n) {
         swap(d, n);
     }
@@ -37,7 +37,6 @@ void Fraction::organizeFraction() {
     if (denominator < 0) {
         denominator *= -1;
         numerator *= -1;
-        return;
     }
 
 }
@@ -57,7 +56,7 @@ void Fraction::print() const {
     std::cout << "\n";
 }
 
-Fraction Fraction::add(Fraction fraction) {
+Fraction Fraction::add(const Fraction& fraction) const{
     int firstNumerator = this->getNumerator() * fraction.getDenominator();
     int secondNumerator = fraction.getNumerator() * this->getDenominator();
 
