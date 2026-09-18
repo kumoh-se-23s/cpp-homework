@@ -27,9 +27,32 @@ int get_digit_length(int target) {
     return count;
 }
 
-int main() {
-    std::cout << get_digit_length(2);
+int get_max(const int num1, const int num2) {
+    return num1 >= num2 ? num1 : num2;
+}
 
+int get_min(const int num1, const int num2) {
+    return num1 <= num2 ? num1 : num2;
+}
+
+int calc_gcd(const int num1, const int num2) {
+    const int larger = get_max(num1, num2);
+    const int smaller = get_min(num1, num2);
+
+    if (smaller == 0) {
+        return larger;
+    }
+
+    const int temp = larger % smaller;
+    if (temp == 0) {
+        return smaller;
+    }
+
+    return calc_gcd(smaller, temp);
+}
+
+int main() {
+    std::cout << calc_gcd(1, 0);
 
     return 0;
 }

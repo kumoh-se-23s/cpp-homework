@@ -62,7 +62,7 @@ int main() {
             if ( getMinMax(arr1, arr2, SIZE, min, max) )
                 cout << "Min : " << min << ", Max : " << max << "\n";
             else
-                cout << "두 배열의 모든 값이 동일함" << min << "\n";
+                cout << "ALL SAME" << min << "\n";
             
         else cout << "[Error] Unsorted input\n";
     }
