@@ -15,6 +15,7 @@ int main() {
 
     int sum = 0;
 
+    //억지 스케일 야미 ㅋㅋ
     for (int i = 0, scale = 1; i < SIZE; i++, scale *= 10) {
         cout << partialProducts[i] << endl;
         sum += partialProducts[i]*scale;
