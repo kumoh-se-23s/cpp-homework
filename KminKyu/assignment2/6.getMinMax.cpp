@@ -17,22 +17,17 @@ int main() {
 }
 
 bool readArray(int arr[], int size, int sortType) {
-
+    bool flag = true;
     for (int arrSize = 0; arrSize < size; ++arrSize) {
         cin >> arr[arrSize];
-    }
-    for (int arrSize = 0; arrSize < size - 1; ++arrSize) {
-        if (sortType == 1) {
-            if (arr[arrSize] > arr[arrSize + 1]) {
-                return false;
-            }
-        } else if (sortType == 2) {
-            if (arr[arrSize] < arr[arrSize + 1]) {
-                return false;
-            }
+        if (arrSize != 0 && sortType == 1 && arr[arrSize - 1]  > arr[arrSize]) {
+            flag = false;
+        }
+        if (arrSize != 0 && sortType == 2 && arr[arrSize - 1] < arr[arrSize]) {
+            flag = false;
         }
     }
-    return true;
+    return flag;
 }
 
 bool getMinMax(int firstArray[], int secondArray[], int size, int& min, int& max) {

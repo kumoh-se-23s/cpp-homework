@@ -21,6 +21,7 @@ int main() {
             }
             number /= 2;
         }
+
         for (int nowIndex = arraySize - 1; nowIndex > -1; --nowIndex) {
             cout << binaryArray[nowIndex];
             if (nowIndex % 4 == 0) {

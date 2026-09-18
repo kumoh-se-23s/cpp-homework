@@ -3,13 +3,12 @@
 
 using namespace std;
 
-int getGCD(int n, int d) {
+int getGCD(int n, int d) { //유클리드 호제법 알고리즘
     if (d < n) {
         swap(d, n);
     }
-    int temp;
     while (n != 0) {
-        temp = n;
+        int temp = n;
         n = d % n;
         d = temp;
     }
