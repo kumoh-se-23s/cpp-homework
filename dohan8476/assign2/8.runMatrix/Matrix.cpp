@@ -3,11 +3,11 @@
 
 using namespace std;
 
-Matrix :: Matrix() {
+Matrix::Matrix() {
     int Matrix[SIZE][SIZE] = {};
 }
 
-void Matrix :: print() {
+void Matrix::print() {
     for (int i = 0; i < SIZE; i++) {
         cout << "|";
         for (int j = 0; j < SIZE; j++) {
@@ -26,11 +26,11 @@ void Matrix::read() {
     }
 }
 
-int Matrix :: getMaxWidth() {
+int Matrix::getMaxWidth() {
     int maxWidth;
 }
 
-void Matrix :: setMaxWidth(int maxWidth) {
+void Matrix::setMaxWidth(int maxWidth) {
     maxWidth = maxWidth;
 }
 
@@ -38,7 +38,7 @@ int Matrix::getMatrix(int row, int col) {
     return matrix[row][col];
 }
 
-void Matrix :: setMatrix(int row, int col, int val) {
+void Matrix::setMatrix(int row, int col, int val) {
     matrix[row][col] = val;
 }
 
@@ -47,7 +47,7 @@ Matrix Matrix::transpose() {
 
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
-            resultMatrix.setMatrix(j,i,this->getMatrix(i,j));
+            resultMatrix.setMatrix(j, i, this->getMatrix(i, j));
         }
     }
 
@@ -59,7 +59,7 @@ Matrix Matrix::add(Matrix m) {
 
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
-            resultMatrix.setMatrix(i,j, this->getMatrix(i,j) + m.getMatrix(i,j));
+            resultMatrix.setMatrix(i, j, this->getMatrix(i, j) + m.getMatrix(i, j));
         }
     }
 
@@ -71,10 +71,10 @@ Matrix Matrix::multi(Matrix m) {
 
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
-            resultMatrix.setMatrix(i,j,0);
+            resultMatrix.setMatrix(i, j, 0);
             for (int k = 0; k < SIZE; k++) {
-                resultMatrix.setMatrix(i,j,
-                    resultMatrix.getMatrix(i,j)+ this->getMatrix(i,k)*m.getMatrix(k,j));
+                resultMatrix.setMatrix(i, j,
+                                       resultMatrix.getMatrix(i, j) + this->getMatrix(i, k) * m.getMatrix(k, j));
             }
         }
     }
