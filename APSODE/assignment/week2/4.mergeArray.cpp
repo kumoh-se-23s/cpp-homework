@@ -23,7 +23,7 @@ void printArray(int integer_array[], int max_length = 0) {
         std::cout << integer_array[index] << " ";
     }
     std::cout << std::endl;
-} // 기본 built-in 함수들이 snake-case를 사용하고 있기에 snake-case로 작성하였습니다.
+}
 
 
 bool readAscSortedArray(int array[], int array_size) {
