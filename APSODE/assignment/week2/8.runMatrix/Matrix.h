@@ -14,8 +14,8 @@ class Matrix {
         void print() const;
 
         Matrix transpose() const;
-        Matrix add(Matrix other_matrix) const;
-        Matrix multi(Matrix other_matrix) const;
+        Matrix add(const Matrix &other_matrix) const;
+        Matrix multi(const Matrix &other_matrix) const;
 
         int get(int row, int col) const;
         void set(int row, int col, int value);

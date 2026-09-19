@@ -58,7 +58,7 @@ Matrix Matrix::transpose() const {
     return result_matrix;
 }
 
-Matrix Matrix::add(Matrix other_matrix) const {
+Matrix Matrix::add(const Matrix &other_matrix) const {
     Matrix result_matrix = Matrix();
     for (int row = 0; row < DEFAULT_ROW_SIZE; ++row) {
         for (int col = 0; col < DEFAULT_COL_SIZE; ++col) {
@@ -72,7 +72,7 @@ Matrix Matrix::add(Matrix other_matrix) const {
     return result_matrix;
 }
 
-Matrix Matrix::multi(Matrix other_matrix) const {
+Matrix Matrix::multi(const Matrix &other_matrix) const {
     Matrix result_matrix = Matrix();
     for (int row = 0; row < DEFAULT_ROW_SIZE; ++row) {
         for (int col = 0; col < DEFAULT_COL_SIZE; ++col) {
