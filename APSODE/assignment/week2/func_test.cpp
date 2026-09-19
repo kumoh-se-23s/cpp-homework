@@ -7,7 +7,7 @@ int get_dec_num_length(int dec_num) {
     return length;
 }
 
-void print_integer_array(int integer_array[], int max_length = 0) {
+void printArray(int integer_array[], int max_length = 0) {
     for (int index = max_length - 1; index >= 0; --index) {
         std::cout << integer_array[index];
     }

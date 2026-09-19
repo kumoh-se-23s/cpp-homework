@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "8.runMatrix.hpp"
+#include "Matrix.h"
 using namespace std;
 
 int get_digit_length(int target) {
@@ -95,29 +95,3 @@ int Matrix::get(const int row, const int col) const {
 void Matrix::set(const int row, const int col, const int value) {
     this->matrix[row][col] = value;
 }
-
-int main() {
-    Matrix m1, m2;
-
-    m1.read();
-    m1.print();
-
-    m2.read();
-    m2.print();
-
-    Matrix m3 = m1.transpose();
-    std::cout << "Transpose" << std::endl;
-    m3.print();
-
-    m3 = m1.add(m2);
-    std::cout << "Add" << std::endl;
-    m3.print();
-
-    m3 = m1.multi(m2);
-    std::cout << "Multiplication " << std::endl;
-    m3.print();
-
-    return 0;
-}
-// 1 2 3 4 5 6 7 8 9
-// 1 -1 0 0 -1 1 -1 1 0

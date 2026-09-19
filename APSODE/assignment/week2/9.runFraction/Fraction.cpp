@@ -2,7 +2,7 @@
 // Created by leegu on 26. 9. 18..
 //
 
-#include "9.runFraction.h"
+#include "Fraction.h"
 
 #include <iostream>
 
@@ -117,19 +117,4 @@ void Fraction::make_denominator_to_same(Fraction& fraction1, Fraction& fraction2
 
 bool Fraction::is_same_denominator(const Fraction fraction1, const Fraction fraction2) {
     return fraction1.get_denominator() == fraction2.get_denominator();
-}
-
-int main() {
-    // Fraction f1, f2(1, 4), f3; // f2 = 2/5
-    // f1.set(1, -2); // f1 = 2/3
-    // f3 = f1.add(f2); // f1 = 2/3
-    // f3.print();
-
-
-    Fraction f1 = Fraction(1, 2);
-    Fraction f2 = Fraction(10, 0);
-    Fraction f3 = f1.add(f2);
-    f3.print();
-    // f1.print();
-    return 0;
 }

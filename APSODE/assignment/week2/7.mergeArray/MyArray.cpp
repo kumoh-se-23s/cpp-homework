@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "7.mergeArray.hpp"
+#include "MyArray.h"
 
 
 bool MyArray1::is_asc_sorted() const {
@@ -63,20 +63,5 @@ int & MyArray2::operator[](const int index) {
 
 const int & MyArray2::operator[](const int index) const {
     return this->array[index];
-}
-
-
-int main() {
-    MyArray1 arr1, arr2 ;
-    int cnt ;
-    std::cin >> cnt ;
-    for (int i = 0 ; i < cnt ; ++i) {
-        if ( arr1.readAscSorted() && arr2.readAscSorted() ){
-            MyArray2 resultArray = arr1.merge(arr2) ;
-            resultArray.print();
-        }
-        else std::cout << "[Error] Unsorted input\n" ;
-    }
-    return 0 ;
 }
 

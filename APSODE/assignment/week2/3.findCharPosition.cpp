@@ -7,7 +7,7 @@
 const int MAX_INPUT_STRING_LENGTH = 101;
 const int ALPHABET_START_POS_CONTAINER_SIZE = 26;
 
-void print_integer_array(int integer_array[], int max_length = 0) {
+void printArray(int integer_array[], int max_length = 0) {
     for (int index = 0; index < max_length; ++index) {
         std::cout << integer_array[index] << " ";
     }
@@ -29,6 +29,6 @@ int main() {
          }
     }
 
-    print_integer_array(alphabet_start_pos_container, ALPHABET_START_POS_CONTAINER_SIZE);
+    printArray(alphabet_start_pos_container, ALPHABET_START_POS_CONTAINER_SIZE);
     return 0;
 }

@@ -41,27 +41,3 @@ void printMatrix(int matrix[][SIZE], int row_size) {
         std::cout << " |\n";
     }
 }
-
-int main() {
-    int matrix1[SIZE][SIZE] = {{1,2,3},{4,5,6},{7,8,9}};
-    int matrix2[SIZE][SIZE] = {{1,-1,0},{0,-1,1},{-1,1,0}} ;
-
-    int transMatrix[SIZE][SIZE], sumMatrix[SIZE][SIZE], multiMatrix[SIZE][SIZE] = {0};
-
-    // 전치
-    transpose(matrix1, transMatrix, SIZE);
-    cout << "Transpose\n";
-    printMatrix(transMatrix, SIZE);
-
-    // 행렬 덧셈
-    add(matrix1, matrix2, sumMatrix, SIZE);
-    cout << "Sum\n";
-    printMatrix(sumMatrix, SIZE);
-
-    // 행렬곱
-    multiply(matrix1, matrix2, multiMatrix, SIZE);
-    cout << "Mutiplication\n";
-    printMatrix(multiMatrix, SIZE);
-
-    return 0 ;
-}

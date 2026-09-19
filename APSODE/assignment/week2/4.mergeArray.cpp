@@ -18,7 +18,7 @@ bool is_asc_sorted(int array[], int max_size) {
     return true;
 } // 기본 built-in 함수들이 snake-case를 사용하고 있기에 snake-case로 작성하였습니다.
 
-void print_integer_array(int integer_array[], int max_length = 0) {
+void printArray(int integer_array[], int max_length = 0) {
     for (int index = 0; index < max_length; ++index) {
         std::cout << integer_array[index] << " ";
     }
@@ -50,19 +50,4 @@ void mergeArray(int array1[], int array2[], int result_array[], int array_size) 
 
     for (; arr1_index < array_size; ++arr1_index) result_array[result_array_index++] = array1[arr1_index++];
     for (; arr2_index < array_size; ++arr2_index) result_array[result_array_index++] = array2[arr2_index++];
-}
-void printArray(int [], int) ;
-
-
-int main() {
-    const int SIZE = 5 ;
-    int cnt, arr1[SIZE], arr2[SIZE], resultArr[SIZE*2];
-    cin >> cnt ;
-    for (int i = 0 ; i < cnt ; ++i) {
-        if (readAscSortedArray(arr1, SIZE) && readAscSortedArray(arr2, SIZE)) {
-            mergeArray(arr1, arr2, resultArr, SIZE) ;
-            printArray(resultArr, SIZE*2) ;
-        }
-    }
-    return 0 ;
 }
