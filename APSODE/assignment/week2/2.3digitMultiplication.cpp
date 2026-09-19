@@ -1,17 +1,15 @@
 #include <iostream>
 
-const int DEFAULT_OPERAND_MAX_LENGTH = 3;
-const int CALC_TEMP_MAX_LENGTH = 4;
-const int CALC_RESULT_MAX_LENGTH = 6;
 
-void print_operand_array(int integer_array[], int max_length = DEFAULT_OPERAND_MAX_LENGTH) {
+
+void print_operand_array(const int integer_array[], const int max_length) {
     for (int index = max_length - 1; index >= 0; --index) {
         std::cout << integer_array[index];
     }
     std::cout << std::endl;
 }
 
-void save_dec_num_in_array(int dec_num, int array[]) {
+void save_dec_num_in_array(const int dec_num, int array[]) {
     for (
         int number = dec_num, index = 0; 
         number > 0; 
@@ -29,6 +27,8 @@ int get_dec_num_length(int dec_num) {
 }
 
 int main() {
+    static constexpr int DEFAULT_OPERAND_MAX_LENGTH = 3;
+
     int right_operand[DEFAULT_OPERAND_MAX_LENGTH] = {};
 
     int left_operand;

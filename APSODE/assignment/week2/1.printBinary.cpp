@@ -1,9 +1,6 @@
 #include <iostream>
 
-const int DEFAULT_RESULT_ARRAY_SIZE = 32;
-
-
-int convert_dec_to_bin(int dec_num, bool result_array[]) {
+int convert_dec_to_bin(const int dec_num, bool result_array[]) {
     int index = 0;
     for (
         int number = dec_num; 
@@ -16,10 +13,10 @@ int convert_dec_to_bin(int dec_num, bool result_array[]) {
     return index;
 }
 
-void print_bin_array(bool target_array[], int last_index = -1) {
+void print_bin_array(bool target_array[], const int array_size, const int last_index = -1) {
     for (
         int index = 0; 
-        index < DEFAULT_RESULT_ARRAY_SIZE && last_index != -1 && index < last_index; 
+        index < array_size && last_index != -1 && index < last_index;
         ++index
     ) {
         if (index != 0 && index % 4 == 0) {
@@ -32,6 +29,8 @@ void print_bin_array(bool target_array[], int last_index = -1) {
 
 
 int main() {
+    static constexpr int DEFAULT_RESULT_ARRAY_SIZE = 32;
+
     int loop_amount;
     std::cin >> loop_amount;
 
@@ -41,8 +40,8 @@ int main() {
 
         bool result_array[DEFAULT_RESULT_ARRAY_SIZE] = {};
 
-        int last_index = convert_dec_to_bin(input_dec_num, result_array);
-        print_bin_array(result_array, last_index);
+        const int last_index = convert_dec_to_bin(input_dec_num, result_array);
+        print_bin_array(result_array, DEFAULT_RESULT_ARRAY_SIZE, last_index);
     }
 
     return 0;

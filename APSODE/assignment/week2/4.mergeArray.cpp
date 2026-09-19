@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std ;
 
-bool is_asc_sorted(int array[], int max_size) {
+bool is_asc_sorted(const int array[], const int max_size) {
     if (max_size == 1) {
         return true;
     }
@@ -18,7 +18,7 @@ bool is_asc_sorted(int array[], int max_size) {
     return true;
 } // 기본 built-in 함수들이 snake-case를 사용하고 있기에 snake-case로 작성하였습니다.
 
-void printArray(int integer_array[], int max_length = 0) {
+void printArray(const int integer_array[], const int max_length = 0) {
     for (int index = 0; index < max_length; ++index) {
         std::cout << integer_array[index] << " ";
     }
@@ -26,7 +26,7 @@ void printArray(int integer_array[], int max_length = 0) {
 }
 
 
-bool readAscSortedArray(int array[], int array_size) {
+bool readAscSortedArray(int array[], const int array_size) {
     for (int index = 0; index < array_size; ++index) {
         std::cin >> array[index];
     }
@@ -34,7 +34,7 @@ bool readAscSortedArray(int array[], int array_size) {
     return is_asc_sorted(array, array_size);
 }
 
-void mergeArray(int array1[], int array2[], int result_array[], int array_size) {
+void mergeArray(const int array1[], const int array2[], int result_array[], const int array_size) {
     int arr1_index = 0;
     int arr2_index = 0;
     int result_array_index = 0;
