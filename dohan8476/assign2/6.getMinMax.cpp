@@ -20,23 +20,18 @@ int main() {
 }
 
 bool getMinMax(int ascend[], int descend[], int size, int& min, int& max) {
-    if (ascend[0] > descend[0]) {
-        min = descend[size-1];
-        max = ascend[size-1];
-    }
-    else {
+    if (ascend[0] < descend[size-1]) {
         min = ascend[0];
-        max = descend[0];
-
-        for (int i = 1; i < size; i++) {
-            if (min > descend[i]) {
-                min = descend[i];
-            }
-            if (max < ascend[i]) {
-                max = ascend[i];
-            }
-        }
+    }else {
+        min = descend[size-1];
     }
+
+    if (ascend[size-1] > descend[0]) {
+        max = ascend[size-1];
+    }else {
+        max = descend[0];
+    }
+
     if (min == max) {
         return false;
     }
