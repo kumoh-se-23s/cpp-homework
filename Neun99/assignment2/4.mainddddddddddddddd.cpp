@@ -13,9 +13,9 @@ int main() {
     cin >> cnt ;
     for (int i = 0 ; i < cnt ; ++i) {
         if ( readAscSortedArray(arr1, SIZE) && readAscSortedArray(arr2, SIZE) ) {
-            mergeArray(arr1, arr2, resultArr, SIZE) ;
-            printArray(resultArr, SIZE*2) ;
-        }
+        mergeArray(arr1, arr2, resultArr, SIZE) ;
+        printArray(resultArr, SIZE*2) ;
+        } else cout << "[Error] Unsorted input\n" ;
     }
     return 0 ;
 }
@@ -27,10 +27,8 @@ bool readAscSortedArray(int arr[], int size) {
     }
 
     for (int idx = 0; idx < size - 1; idx++) {
-        if (arr[idx] > arr[idx+1]) {
-            cout << "[Error] Unsorted input" << endl;
+        if (arr[idx] > arr[idx+1])
             return false;
-        }
     }
     return true;
 }
@@ -40,23 +38,22 @@ void mergeArray(int arr1[], int arr2[], int resultArr[], int size) {
     int arr1Idx = 0;
     int arr2Idx = 0;
 
-    for (int idx = 0; idx < size * 2; idx++) {
-        //이거 개선하기
-        if (arr1Idx < size && arr2Idx < size) {
-            if (arr1[arr1Idx] >= arr2[arr2Idx]) {
-                resultArr[idx] = arr2[arr2Idx];
-                arr2Idx++;
-            } else {
-                resultArr[idx] = arr1[arr1Idx];
-                arr1Idx++;
-            }
-        } else if (arr2Idx < size) { //한쪽 배열 먼저 끝나면 남은 쪽 밀어넣기
-            resultArr[idx] = arr2[arr2Idx];
+    while (arr1Idx < size && arr2Idx < size) {
+        if (arr1[arr1Idx] >= arr2[arr2Idx]) {
+            resultArr[arr1Idx + arr2Idx] = arr2[arr2Idx];
             arr2Idx++;
         } else {
-            resultArr[idx] = arr1[arr1Idx];
+            resultArr[arr1Idx + arr2Idx] = arr1[arr1Idx];
             arr1Idx++;
         }
+    }
+    while (arr1Idx < size) {
+        resultArr[arr1Idx + arr2Idx] = arr1[arr1Idx];
+        arr1Idx++;
+    }
+    while (arr2Idx < size) {
+        resultArr[arr1Idx + arr2Idx] = arr2[arr2Idx];
+        arr2Idx++;
     }
 }
 
