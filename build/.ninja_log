@@ -1,7 +1,0 @@
-# ninja log v5
-505	575	1788872082802048778	/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/bin/AssignmentTemp	5f332dc64f0bb165
-50	505	1788872082730489570	CMakeFiles/AssignmentTemp.dir/src/main.cpp.o	3c6f90de65c657e
-42	50	1788872082272490578	CMakeFiles/AssignmentTemp.dir/src/main.cpp.o.modmap	f857426df2e6b930
-42	50	1788872082272490578	/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build/CMakeFiles/AssignmentTemp.dir/CXXModules.json	f857426df2e6b930
-42	50	1788872082272490578	CMakeFiles/AssignmentTemp.dir/CXX.dd	f857426df2e6b930
-1	42	1788872082272490578	CMakeFiles/AssignmentTemp.dir/src/main.cpp.o.ddi	5eede5f3e4d05d70

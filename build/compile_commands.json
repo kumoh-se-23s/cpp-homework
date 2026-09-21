@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build",
-  "command": "/usr/bin/clang++ -g -std=gnu++20 @CMakeFiles/AssignmentTemp.dir/src/main.cpp.o.modmap -o CMakeFiles/AssignmentTemp.dir/src/main.cpp.o -c /home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/src/main.cpp",
-  "file": "/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/src/main.cpp",
-  "output": "CMakeFiles/AssignmentTemp.dir/src/main.cpp.o"
-}
-]
