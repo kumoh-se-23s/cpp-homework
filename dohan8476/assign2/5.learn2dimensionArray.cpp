@@ -29,38 +29,38 @@ int main() {
 }
 
 void printMatrix(int inputMatrix[][SIZE], int size) {
-    for (int i = 0; i < size; i++) {
+    for (int row = 0; row < size; row++) {
         cout << "|";
-        for (int j = 0; j < size; j++) {
-            printf("%2d ", inputMatrix[i][j]);
+        for (int col = 0; col < size; col++) {
+            printf("%2d ", inputMatrix[row][col]);
         }
         cout << "|" << endl;
     }
 }
 
 void transpose(int inputMatrix[][SIZE], int resultMatrix[][SIZE], int size) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            resultMatrix[i][j] = inputMatrix[j][i];
+    for (int row = 0; row < size; row++) {
+        for (int col = 0; col < size; col++) {
+            resultMatrix[row][col] = inputMatrix[col][row];
         }
     }
 }
 
 void add(int inputMatrix1[][SIZE], int inputMatrix2[][SIZE], int resultMatrix[][SIZE], int size) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            resultMatrix[i][j] = inputMatrix1[i][j] + inputMatrix2[i][j];
+    for (int row = 0; row < size; row++) {
+        for (int col = 0; col < size; col++) {
+            resultMatrix[row][col] = inputMatrix1[row][col] + inputMatrix2[row][col];
         }
     }
 }
 
 void multiply(int inputMatrix1[][SIZE], int inputMatrix2[][SIZE], int resultMatrix[][SIZE], int size) {
 
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            resultMatrix[i][j] = 0;
-            for (int k = 0; k < size; k++) {
-                resultMatrix[i][j] += inputMatrix1[i][k] * inputMatrix2[k][j];
+    for (int row = 0; row < size; row++) {
+        for (int col = 0; col < size; col++) {
+            resultMatrix[row][col] = 0; // += 연산자를 사용하니 사요전 0으로 초기화
+            for (int cur = 0; cur < size; cur++) {
+                resultMatrix[row][col] += inputMatrix1[row][cur] * inputMatrix2[cur][col];
             }
         }
     }
