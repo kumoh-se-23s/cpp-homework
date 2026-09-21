@@ -11,9 +11,11 @@ int main() {
 
     int cnt = 1;
     for (int i = 0; i < STR_MAX_LEN; i++, cnt++) {
+
         if (input[i] == '\0') {
             break;
         }
+
         if (arr[input[i] - 'a'] == 0) {
             arr[input[i] - 'a'] = cnt;
         }

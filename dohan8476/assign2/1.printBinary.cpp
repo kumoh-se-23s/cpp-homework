@@ -16,7 +16,7 @@ int main() {
         for (;num / 2 > 0 ; num /= 2) {
             arr[idx++] = num % 2;
         }
-        arr[idx] = num; // 이거 반복문 안에 못담으려나
+        arr[idx] = num;
 
         for (int index = idx; index >= 0 ; index--) {
             if ((index+1) % 4 == 0) { // 4자리 끊어주기

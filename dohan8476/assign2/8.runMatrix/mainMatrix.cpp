@@ -4,7 +4,6 @@ using namespace std;
 
 int main() {
     Matrix m1, m2;
-
     m1.read();
     m1.print();
 

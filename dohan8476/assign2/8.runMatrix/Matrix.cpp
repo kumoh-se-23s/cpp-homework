@@ -3,51 +3,72 @@
 
 using namespace std;
 
-Matrix::Matrix() {
+Matrix :: Matrix() {
     int Matrix[SIZE][SIZE] = {};
 }
 
 void Matrix::print() {
-    for (int i = 0; i < SIZE; i++) {
+    maxWidth = calcMaxWidth(max);
+
+    for (int row = 0; row < SIZE; row++) {
         cout << "|";
-        for (int j = 0; j < SIZE; j++) {
-            printf("%2d", matrix[i][j]);
-            // printf("%0*d", maxWidth, matrix[i][j]);
+        for (int col = 0; col < SIZE; col++) {
+            printf(" %*d ", maxWidth, matrix[row][col]);
         }
         cout << "|" << endl;
     }
 }
 
 void Matrix::read() {
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            cin >> matrix[i][j];
+    int num;
+
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            cin >> num;
+            matrix[row][col] = num;
+            updateMax(num);
         }
     }
 }
 
-int Matrix::getMaxWidth() {
-    int maxWidth;
+void Matrix::updateMax(int num) {
+    if (num < 0) {
+        // -1 은 width가 2가 되어야함, 양수로 바꾸며 자릿수 +1)
+        num *= -10;
+    }
+
+    if (num > max) {
+        max = num;
+    }
 }
 
-void Matrix::setMaxWidth(int maxWidth) {
-    maxWidth = maxWidth;
+
+int Matrix::calcMaxWidth(int num) {
+    int cnt = 0;
+
+    while (num != 0) {
+        cnt++;
+        num /= 10;
+    }
+
+    return cnt;
 }
 
 int Matrix::getMatrix(int row, int col) {
     return matrix[row][col];
 }
 
-void Matrix::setMatrix(int row, int col, int val) {
+void Matrix :: setMatrix(int row, int col, int val) {
     matrix[row][col] = val;
 }
 
 Matrix Matrix::transpose() {
     Matrix resultMatrix;
 
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            resultMatrix.setMatrix(j, i, this->getMatrix(i, j));
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            resultMatrix.setMatrix(col,row,this->getMatrix(row,col));
+            resultMatrix.updateMax(resultMatrix.getMatrix(col,row));
         }
     }
 
@@ -57,9 +78,10 @@ Matrix Matrix::transpose() {
 Matrix Matrix::add(Matrix m) {
     Matrix resultMatrix;
 
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            resultMatrix.setMatrix(i, j, this->getMatrix(i, j) + m.getMatrix(i, j));
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            resultMatrix.setMatrix(row,col, this->getMatrix(row,col) + m.getMatrix(row,col));
+            resultMatrix.updateMax(resultMatrix.getMatrix(row,col));
         }
     }
 
@@ -69,12 +91,13 @@ Matrix Matrix::add(Matrix m) {
 Matrix Matrix::multi(Matrix m) {
     Matrix resultMatrix;
 
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            resultMatrix.setMatrix(i, j, 0);
-            for (int k = 0; k < SIZE; k++) {
-                resultMatrix.setMatrix(i, j,
-                                       resultMatrix.getMatrix(i, j) + this->getMatrix(i, k) * m.getMatrix(k, j));
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            resultMatrix.setMatrix(row,col,0);
+            for (int cur = 0; cur < SIZE; cur++) {
+                resultMatrix.setMatrix(row,col,
+                    resultMatrix.getMatrix(row,col)+ this->getMatrix(row,cur)*m.getMatrix(cur,col));
+                resultMatrix.updateMax(resultMatrix.getMatrix(row,col));
             }
         }
     }

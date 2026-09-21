@@ -15,10 +15,13 @@ int main() {
 
     int sum = 0;
 
-    //억지 스케일 야미 ㅋㅋ
-    for (int i = 0, scale = 1; i < SIZE; i++, scale *= 10) {
+    for (int i = 0; i < SIZE; i++) {
+        int scale = 1;
+
         cout << partialProducts[i] << endl;
         sum += partialProducts[i]*scale;
+
+        scale *= 10; // 1, 10, 100의 자릿수 맞게 곱해서 출력
     }
     cout << sum << endl;
     return 0;

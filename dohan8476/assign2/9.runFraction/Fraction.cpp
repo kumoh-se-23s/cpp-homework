@@ -22,12 +22,11 @@ Fraction Fraction::add(Fraction a) {
 void Fraction::set(int num, int den) {
     if (den == 0 ) {
         cout << "ERR ";
-        numerator = num;
         den = 1;
     }
     if (den < 0) {
-        num = -1 * num;
-        den = -1 * den;
+        num = -num;
+        den = -den;
     }
 
     numerator = num;
@@ -44,27 +43,40 @@ void Fraction::print() {
 }
 
 void Fraction::simplify() {
-    int g = gcd(numerator, denominator);
-    numerator = numerator / g;
-    denominator = denominator / g;
+    int g = calcGcd(numerator, denominator);
+    numerator /=  g;
+    denominator /= g;
 }
 
-int Fraction::gcd(int num, int den) {
-    if (num < 0) num = -num;
-    if (den < 0) den = -den;
+int Fraction::calcGcd(int num, int den) {
+    num = abs(num);
+    den = abs(den);
 
-    int max, min;
-    if (num < den) {
-        max = den;
-        min = num;
-    }else {
-        max = num;
-        min = den;
+    int larger = max(num, den);
+    int smaller = min(num, den);
+
+    while (smaller != 0) {
+        int res = larger % smaller;
+        larger = smaller;
+        smaller = res;
     }
-    while (min != 0) {
-        int res = max % min;
-        max = min;
-        min = res;
-    }
-    return max;
+
+    return larger;
+}
+
+int Fraction::abs(int num) {
+    if (num < 0) num = -num;
+
+    return num;
+}
+
+int Fraction::max(int a, int b) {
+    if (a >= b) return a;
+
+    return b;
+}
+int Fraction::min(int a, int b) {
+    if (a <= b) return a;
+
+    return b;
 }
