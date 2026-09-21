@@ -1,0 +1,18 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "Clang",
+	"compiler-simulate-id" : "",
+	"config" : "Debug",
+	"cxx-modules" : {},
+	"dir-cur-bld" : "/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build",
+	"dir-cur-src" : "/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp",
+	"dir-top-bld" : "/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build",
+	"dir-top-src" : "/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : [],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build/CMakeFiles/AssignmentTemp.dir"
+}

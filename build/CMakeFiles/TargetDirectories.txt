@@ -1,0 +1,3 @@
+/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build/CMakeFiles/AssignmentTemp.dir
+/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build/CMakeFiles/edit_cache.dir
+/home/user/Desktop/Main/merutilm/Developments/cpp/Projects/AssignmentTemp/build/CMakeFiles/rebuild_cache.dir
