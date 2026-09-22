@@ -13,14 +13,14 @@ int main() {
         bool binaryArray[32];
         cin >> number;
 
-        while (number != 0) {
+        do {
             if (number % 2 == 1) {
                 binaryArray[arraySize++] = 1;
             } else {
                 binaryArray[arraySize++] = 0;
             }
             number /= 2;
-        }
+        } while (number != 0);
 
         for (int nowIndex = arraySize - 1; nowIndex > -1; --nowIndex) {
             cout << binaryArray[nowIndex];
