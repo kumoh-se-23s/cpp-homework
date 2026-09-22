@@ -9,7 +9,9 @@ public:
     int getDenominator();
     int getNumerator();
     Fraction add(Fraction fraction);
-    void print();
+    void print() const;
+    int getGcd(int a, int b);
+    void simplify();
 
 private:
     int numerator;
