@@ -48,6 +48,6 @@ void mergeArray(const int array1[], const int array2[], int result_array[], cons
                                         : array2[arr2_index++];
     }
 
-    for (; arr1_index < array_size; ++arr1_index) result_array[result_array_index++] = array1[arr1_index++];
-    for (; arr2_index < array_size; ++arr2_index) result_array[result_array_index++] = array2[arr2_index++];
+    for (; arr1_index < array_size; ++arr1_index) result_array[result_array_index++] = array1[arr1_index];
+    for (; arr2_index < array_size; ++arr2_index) result_array[result_array_index++] = array2[arr2_index];
 }
