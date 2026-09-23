@@ -19,10 +19,10 @@ int main() {
         arr[idx] = num;
 
         for (int index = idx; index >= 0 ; index--) {
-            if ((index+1) % 4 == 0) { // 4자리 끊어주기
+            cout << arr[index];
+            if (index % 4 == 0) { // 4자리 끊어주기
                 cout << " ";
             }
-            cout << arr[index];
         }
     }
     return 0;
