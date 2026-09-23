@@ -13,16 +13,16 @@ private:
 };
 
 class MyArray1 {
-    public:
-        int length();
-        int size();
-        void append(int);
-        int get(int);
-        bool readAscSorted();
-        MyArray2 merge(MyArray1);
-    private:
-        const int LENGTH = 5;
-        int arr[5] = {};
-        int usingSize = 0;
+public:
+    int length();
+    int size();
+    void append(int);
+    int get(int);
+    bool readAscSorted();
+    MyArray2 merge(MyArray1);
+private:
+    const int LENGTH = 5;
+    int arr[5] = {};
+    int usingSize = 0;
 };
 

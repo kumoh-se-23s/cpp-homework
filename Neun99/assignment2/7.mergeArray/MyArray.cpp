@@ -22,6 +22,8 @@ int MyArray1::get(int idx) {
 }
 
 bool MyArray1::readAscSorted() {
+    usingSize = 0;
+
     for (int idx = 0; idx < LENGTH; idx++) {
         int input;
         cin >> input;
