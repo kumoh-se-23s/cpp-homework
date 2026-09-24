@@ -3,12 +3,10 @@
 
 using namespace std;
 
-Matrix :: Matrix() {
-    int Matrix[SIZE][SIZE] = {};
-}
+Matrix :: Matrix() = default;
 
 void Matrix::print() {
-    maxWidth = calcMaxWidth(max);
+    int maxWidth = getMaxWidth();
 
     for (int row = 0; row < SIZE; row++) {
         cout << "|";
@@ -26,39 +24,43 @@ void Matrix::read() {
         for (int col = 0; col < SIZE; col++) {
             cin >> num;
             matrix[row][col] = num;
-            updateMax(num);
         }
     }
 }
 
-void Matrix::updateMax(int num) {
-    if (num < 0) {
-        // -1 은 width가 2가 되어야함, 양수로 바꾸며 자릿수 +1)
-        num *= -10;
-    }
+int Matrix::getMaxWidth() {
+    int maxWidth = 0;
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            int currentWidth = getDigitWidth(getMatrix(row, col));
 
-    if (num > max) {
-        max = num;
+            maxWidth = currentWidth > maxWidth ? currentWidth : maxWidth;
+        }
     }
+    return maxWidth;
 }
 
+int Matrix::getDigitWidth(int num) {
+    // 0 입력 -> width 1 반환 해야함 ++ 안해도 알아서 자리 확보는 함
+    if (num == 0) {return 1;}
 
-int Matrix::calcMaxWidth(int num) {
-    int cnt = 0;
+    int width = 0;
 
-    while (num != 0) {
-        cnt++;
-        num /= 10;
+    if (num < 0) {
+        width = 1; // 음수(-) 자리 확보
+        num *= -1;
     }
 
-    return cnt;
+    for (; num != 0; num /= 10, width++) {}
+
+    return width;
 }
 
 int Matrix::getMatrix(int row, int col) {
     return matrix[row][col];
 }
 
-void Matrix :: setMatrix(int row, int col, int val) {
+void Matrix::setMatrix(int row, int col, int val) {
     matrix[row][col] = val;
 }
 
@@ -68,7 +70,6 @@ Matrix Matrix::transpose() {
     for (int row = 0; row < SIZE; row++) {
         for (int col = 0; col < SIZE; col++) {
             resultMatrix.setMatrix(col,row,this->getMatrix(row,col));
-            resultMatrix.updateMax(resultMatrix.getMatrix(col,row));
         }
     }
 
@@ -81,7 +82,6 @@ Matrix Matrix::add(Matrix m) {
     for (int row = 0; row < SIZE; row++) {
         for (int col = 0; col < SIZE; col++) {
             resultMatrix.setMatrix(row,col, this->getMatrix(row,col) + m.getMatrix(row,col));
-            resultMatrix.updateMax(resultMatrix.getMatrix(row,col));
         }
     }
 
@@ -97,10 +97,8 @@ Matrix Matrix::multi(Matrix m) {
             for (int cur = 0; cur < SIZE; cur++) {
                 resultMatrix.setMatrix(row,col,
                     resultMatrix.getMatrix(row,col)+ this->getMatrix(row,cur)*m.getMatrix(cur,col));
-                resultMatrix.updateMax(resultMatrix.getMatrix(row,col));
             }
         }
     }
-
     return resultMatrix;
 }

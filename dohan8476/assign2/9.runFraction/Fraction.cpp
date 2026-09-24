@@ -43,12 +43,12 @@ void Fraction::print() {
 }
 
 void Fraction::simplify() {
-    int g = calcGcd(numerator, denominator);
+    int g = calcGCD(numerator, denominator);
     numerator /=  g;
     denominator /= g;
 }
 
-int Fraction::calcGcd(int num, int den) {
+int Fraction::calcGCD(int num, int den) {
     num = abs(num);
     den = abs(den);
 

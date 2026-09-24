@@ -6,20 +6,20 @@ int main() {
     cin >> num1 >> num2;
 
     const int SIZE = 3;
-    int partialProducts[SIZE];
+    int midResArr[SIZE];
 
     for (int i = 0; i < SIZE; i++) {
-        partialProducts[i] = num1 * (num2 % 10);
+        midResArr[i] = num1 * (num2 % 10);
         num2 /= 10;
     }
 
     int sum = 0;
+    int scale = 1;
 
     for (int i = 0; i < SIZE; i++) {
-        int scale = 1;
 
-        cout << partialProducts[i] << endl;
-        sum += partialProducts[i]*scale;
+        cout << midResArr[i] << endl;
+        sum += midResArr[i]*scale;
 
         scale *= 10; // 1, 10, 100의 자릿수 맞게 곱해서 출력
     }

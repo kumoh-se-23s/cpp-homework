@@ -13,12 +13,13 @@ int main() {
         cin >> num;
 
         int idx = 0;
-        for (;num / 2 > 0 ; num /= 2) {
+        //do-while로 0 입력 문제 해결
+        do {
             arr[idx++] = num % 2;
-        }
-        arr[idx] = num;
+            num /= 2;
+        } while (num > 0);
 
-        for (int index = idx; index >= 0 ; index--) {
+        for (int index = idx - 1; index >= 0 ; index--) {
             cout << arr[index];
             if (index % 4 == 0) { // 4자리 끊어주기
                 cout << " ";

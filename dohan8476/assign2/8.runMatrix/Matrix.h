@@ -12,10 +12,8 @@ public:
 private:
     int getMatrix(int row, int col);
     void setMatrix(int row, int col, int val);
-    int calcMaxWidth(int num);
-    void updateMax(int num);
+    int getMaxWidth();
+    int getDigitWidth(int num);
     const static int SIZE = 3;
     int matrix[SIZE][SIZE] = {};
-    int maxWidth = 0;
-    int max = 0;
 };

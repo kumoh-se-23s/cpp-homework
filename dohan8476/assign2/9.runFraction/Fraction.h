@@ -10,7 +10,7 @@ public:
 
 
 private:
-    int calcGcd(int num, int den);
+    int calcGCD(int num, int den);
     void simplify();
     int abs(int num);
     int max(int num1, int num2);

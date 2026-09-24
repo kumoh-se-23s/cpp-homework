@@ -4,11 +4,12 @@ class MyArray2 {
 public:
     MyArray2();
     void print();
-    void setArray(int val, int index);
+    void append(int val);
 
 private:
-    const static int SIZE = 10;
-    int arr[SIZE] = {};
+    const static int CAPACITY = 10;
+    int arr[CAPACITY] = {};
+    int size = 0;
 };
 
 class MyArray1 {
@@ -18,6 +19,7 @@ public:
     int getArray(int index);
 
 private:
-    const static int SIZE = 5;
-    int arr[SIZE] = {};
+    const static int CAPACITY = 5;
+    int arr[CAPACITY] = {};
+    int size = 0;
 };
