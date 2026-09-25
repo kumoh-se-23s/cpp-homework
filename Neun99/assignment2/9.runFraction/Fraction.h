@@ -4,7 +4,7 @@ public:
     Fraction();
     Fraction(int, int);
     void set(int, int);
-    Fraction add(Fraction);
+    Fraction add(Fraction&);
     void print();
     int getNum();
     int getDen();

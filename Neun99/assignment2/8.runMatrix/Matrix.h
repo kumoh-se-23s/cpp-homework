@@ -11,5 +11,5 @@ public:
 private:
     static const int SIZE = 3;
     int matrix[SIZE][SIZE] = {};
-    int maxWidth();
+    int getMaxWidth();
 };

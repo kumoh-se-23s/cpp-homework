@@ -17,7 +17,7 @@ void Fraction::set(int num, int den) {
 }
 
 //덧셈
-Fraction Fraction::add(Fraction fra2) {
+Fraction Fraction::add(Fraction& fra2) {
     int result_numerator = getNum() * fra2.getDen() + fra2.getNum() * getDen();
     int result_denominator = getDen() * fra2.getDen();
 

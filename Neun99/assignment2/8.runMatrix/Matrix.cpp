@@ -22,7 +22,7 @@ void Matrix::read() {
 }
 
 void Matrix::print() {
-    int width = maxWidth();
+    int width = getMaxWidth();
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         cout << "| ";
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {
@@ -73,7 +73,7 @@ Matrix Matrix::multi(Matrix& matrix2) {
     return resultMatrix;
 }
 
-int Matrix::maxWidth() {
+int Matrix::getMaxWidth() {
     int maxWidth = 0;
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {
