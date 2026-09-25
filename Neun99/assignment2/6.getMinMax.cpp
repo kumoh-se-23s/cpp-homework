@@ -1,3 +1,7 @@
+#include <iostream>
+
+using namespace std;
+
 //입력받기
 bool readArray(int arr[], int size, int type) {
     for(int idx = 0; idx < size; idx++) {
