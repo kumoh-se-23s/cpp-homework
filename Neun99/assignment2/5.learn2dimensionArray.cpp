@@ -40,7 +40,7 @@ void printMatrix(int matrix[][SIZE],int size) {
     for (int rowIdx = 0; rowIdx < size; rowIdx++) {
         cout << "|";
         for (int colIdx = 0; colIdx < size; colIdx++) {
-            printf("%3d",matrix[rowIdx][colIdx]);
+            printf("%6d",matrix[rowIdx][colIdx]);
         }
         cout << "|" << endl;
     }
