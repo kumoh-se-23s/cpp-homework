@@ -28,7 +28,8 @@ Fraction Fraction::add(Fraction fra2) {
 void Fraction::print() {
     cout << numerator;
     if (denominator != 1)
-        cout << "/" << denominator << endl;
+        cout << "/" << denominator;
+    cout << endl;
 }
 
 //분자 반환
@@ -63,7 +64,8 @@ void Fraction::normalize(int& num, int& den) {
 
 //최대공약수 반환
 int Fraction::getGCD(int num1, int num2) {
-    euclidNormalize(num1, num2);
+    if (num1 < 0)
+        num1 *= -1;
 
     int remainder = num1 % num2;
     while (remainder != 0 ) {
@@ -73,18 +75,4 @@ int Fraction::getGCD(int num1, int num2) {
     }
 
     return num2;
-}
-
-//유클리드 사용 전 전처리
-void Fraction::euclidNormalize(int& num1, int& num2) {
-    //분모 음수는 이미 처리되었으므로 분자만
-    if (num1 < 0)
-        num1 *= -1;
-
-    //num1 >= num2가 되도록
-    if (num1 < num2) {
-        int temp = num1;
-        num1 = num2;
-        num2 = temp;
-    }
 }

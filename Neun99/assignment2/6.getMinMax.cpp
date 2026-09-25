@@ -1,9 +1,5 @@
-#include <iostream>
-
-using namespace std;
-
+//입력받기
 bool readArray(int arr[], int size, int type) {
-    //입력받기
     for(int idx = 0; idx < size; idx++) {
         cin >> arr[idx];
     }
@@ -23,30 +19,22 @@ bool readArray(int arr[], int size, int type) {
     return true;
 }
 
-//모두 동일하면 false 리턴
-bool getMinMax(int arr1[], int arr2[], int size, int& min, int& max) {  
-    //arr1 최소최대 찾기
-    if(arr1[0] < arr1[size - 1]) { //오름차순배열이면
+//arr1은 오름, arr2는 내림차순으로 고정
+bool getMinMax(int arr1[], int arr2[], int size, int& min, int& max) {
+    //최솟값 찾기
+    if (arr1[0] < arr2[size - 1])
         min = arr1[0];
-        max = arr1[size - 1];
-    } else { //내림차순배열이면
-        min = arr1[size - 1];
-        max = arr1[0];
-    }
+    else
+        min = arr2[size - 1];
 
-    //전체 최소최대 찾기
-    if(arr2[0] < arr2[size - 1]) { //오름차순배열이면
-        if(arr2[0] < min) 
-            min = arr2[0];
-        if(arr2[size - 1] > max)
-            max = arr2[size-1];
-    } else { //내림차순배열이면
-        if(arr2[size - 1] < min)
-            min = arr2[size - 1];
-        if(arr2[0] > max)
-            max = arr2[0];
-    }
-    if(min == max)
+    //최댓값 찾기
+    if (arr1[size - 1] < arr2[0])
+        max = arr2[0];
+    else
+        max = arr1[size - 1];
+
+    //최대최소 동일하면 false 리턴
+    if (min == max)
         return false;
     return true;
 }

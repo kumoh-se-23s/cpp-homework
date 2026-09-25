@@ -11,7 +11,7 @@ int main() {
         cin >> userInput;
 
         const int ARR_MAX_SIZE = 32;
-        int bin[ARR_MAX_SIZE] = {};
+        int bin[ARR_MAX_SIZE];
         int usingArrSize = 0;
 
         //이진법 계산

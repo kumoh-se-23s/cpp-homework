@@ -13,5 +13,4 @@ private:
     int denominator = 1;
     void normalize(int&, int&);
     int getGCD(int, int);
-    void euclidNormalize(int&, int&);
 };

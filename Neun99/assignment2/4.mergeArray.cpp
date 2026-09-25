@@ -9,9 +9,8 @@ bool readAscSortedArray(int arr[], int size) {
     }
 
     for (int idx = 0; idx < size - 1; idx++) {
-        if (arr[idx] > arr[idx+1]) {
+        if (arr[idx] > arr[idx+1])
             return false;
-        }
     }
     return true;
 }
