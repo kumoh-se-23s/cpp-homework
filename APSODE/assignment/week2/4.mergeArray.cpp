@@ -43,11 +43,28 @@ void mergeArray(const int array1[], const int array2[], int result_array[], cons
         arr1_index < array_size && arr2_index < array_size;
         ++result_array_index
     ) {
-        result_array[result_array_index] = array1[arr1_index] > array2[arr2_index]
+        result_array[result_array_index] = array1[arr1_index] < array2[arr2_index]
                                         ? array1[arr1_index++]
                                         : array2[arr2_index++];
     }
 
-    for (; arr1_index < array_size; ++arr1_index) result_array[result_array_index++] = array1[arr1_index++];
-    for (; arr2_index < array_size; ++arr2_index) result_array[result_array_index++] = array2[arr2_index++];
+    for (; arr1_index < array_size; arr1_index++) result_array[result_array_index++] = array1[arr1_index];
+    for (; arr2_index < array_size; arr2_index++) result_array[result_array_index++] = array2[arr2_index];
 }
+
+int main() {
+    const int SIZE = 5 ;
+    int cnt, arr1[SIZE], arr2[SIZE], resultArr[SIZE*2];
+    cin >> cnt ;
+    for (int i = 0 ; i < cnt ; ++i) {
+        if ( readAscSortedArray(arr1, SIZE) && readAscSortedArray(arr2, SIZE) ) {
+            mergeArray(arr1, arr2, resultArr, SIZE) ;
+            printArray(resultArr, SIZE*2) ;
+        }
+        else cout << "[Error] Unsorted input\n" ;
+    }
+    return 0;
+}
+
+//
+
