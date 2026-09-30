@@ -26,3 +26,7 @@ add_executable(assignment2_6 assignment2/6.mainddddddddddddddddd.cpp)
 add_executable(assignment2_7 assignment2/7.mergeArray/main.cpp assignment2/7.mergeArray/MyArray.cpp)
 add_executable(assignment2_8 assignment2/8.runMatrix/main.cpp assignment2/8.runMatrix/Matrix.cpp)
 add_executable(assignment2_9 assignment2/9.runFraction/main.cpp assignment2/9.runFraction/Fraction.cpp)
+
+add_executable(assignment3_1 assignment3/1.Fraction/main.cpp assignment3/1.Fraction/Fraction.cpp)
+add_executable(assignment3_2 assignment3/2.Matrix/main.cpp assignment3/2.Matrix/Matrix.cpp)
+add_executable(assignment3_3 assignment3/3.Money/main.cpp assignment3/3.Money/Money.cpp)

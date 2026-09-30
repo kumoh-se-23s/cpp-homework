@@ -6,15 +6,15 @@ using namespace std;
 class Matrix {
 public:
     void setValue(int, int, int);
-    int getValue(int, int);
-    Matrix operator!();
-    Matrix operator+(Matrix&);
-    Matrix operator*(Matrix&);
+    int getValue(int, int) const;
+    const Matrix operator!() const;
+    const Matrix operator+(const Matrix&) const;
+    const Matrix operator*(const Matrix&) const;
     static const int SIZE = 3;
-    int getMaxWidth();
+    const int getMaxWidth() const;
 private:
     int matrix[SIZE][SIZE] = {};
 };
 
-ostream& operator<<(ostream&, Matrix&);
+ostream& operator<<(ostream&, const Matrix&);
 istream& operator>>(istream&, Matrix&);

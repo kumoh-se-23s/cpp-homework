@@ -17,32 +17,28 @@ void Fraction::set(int num, int den) {
 }
 
 //덧셈
-const Fraction Fraction::operator+(Fraction& fra) const{
+const Fraction Fraction::operator+(const Fraction& fra) const{
     int result_numerator = numerator * fra.getDen() + fra.getNum() * denominator;
     int result_denominator = denominator * fra.getDen();
 
     return Fraction(result_numerator, result_denominator);
 }
 
-// //대입
-// void Fraction::operator=(Fraction& fra){
-//     set(fra.getNum(), fra.getDen());
-// }
-
 //out
-ostream& operator<<(ostream& out, Fraction& fra) {
+ostream& operator<<(ostream& out, const Fraction& fra) {
     out << fra.getNum();
     if (fra.getDen() != 1)
         out << "/" << fra.getDen();
+    return out;
 }
 
 //분자 반환
-int Fraction::getNum() {
+int Fraction::getNum() const{
     return numerator;
 }
 
 //분모 반환
-int Fraction::getDen() {
+int Fraction::getDen() const{
     return denominator;
 }
 

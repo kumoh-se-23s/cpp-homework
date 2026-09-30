@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Matrix.h"
+#include <iomanip>
 
 using namespace std;
 
@@ -7,32 +8,34 @@ void Matrix::setValue(int rowIdx, int colIdx, int value) {
     matrix[rowIdx][colIdx] = value;
 }
 
-int Matrix::getValue(int rowIdx, int colIdx) {
+int Matrix::getValue(int rowIdx, int colIdx) const{
     return matrix[rowIdx][colIdx];
 }
 
 istream& operator>>(istream& in, Matrix& mat) {
-    for (int rowIdx = 0; rowIdx < mat.SIZE; rowIdx++) {
-        for (int colIdx = 0; colIdx < mat.SIZE; colIdx++) {
+    for (int rowIdx = 0; rowIdx < Matrix::SIZE; rowIdx++) {
+        for (int colIdx = 0; colIdx < Matrix::SIZE; colIdx++) {
             int userInput;
             in >> userInput;
             mat.setValue(rowIdx, colIdx, userInput);
         }
     }
+    return in;
 }
 
-ostream& operator<<(ostream& out, Matrix& mat) {
+ostream& operator<<(ostream& out, const Matrix& mat) {
     int width = mat.getMaxWidth();
-    for (int rowIdx = 0; rowIdx < mat.SIZE; rowIdx++) {
-        cout << "| ";
-        for (int colIdx = 0; colIdx < mat.SIZE; colIdx++) {
-            printf("%*d ",width, mat.getValue(rowIdx, colIdx));
+    for (int rowIdx = 0; rowIdx < Matrix::SIZE; rowIdx++) {
+        out << "| ";
+        for (int colIdx = 0; colIdx < Matrix::SIZE; colIdx++) {
+            out << setw(width) << mat.getValue(rowIdx, colIdx);
         }
-        cout << "|" << endl;
+        out << "|" << endl;
     }
+    return out;
 }
 
-Matrix Matrix::operator!(){
+const Matrix Matrix::operator!() const{
     Matrix resultMatrix;
 
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
@@ -44,7 +47,7 @@ Matrix Matrix::operator!(){
     return resultMatrix;
 }
 
-Matrix Matrix::operator+(Matrix& matrix2) {
+const Matrix Matrix::operator+(const Matrix& matrix2) const{
     Matrix resultMatrix;
 
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
@@ -57,7 +60,7 @@ Matrix Matrix::operator+(Matrix& matrix2) {
     return resultMatrix;
 }
 
-Matrix Matrix::operator*(Matrix& matrix2) {
+const Matrix Matrix::operator*(const Matrix& matrix2) const{
     Matrix resultMatrix;
 
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
@@ -73,7 +76,7 @@ Matrix Matrix::operator*(Matrix& matrix2) {
     return resultMatrix;
 }
 
-int Matrix::getMaxWidth() {
+const int Matrix::getMaxWidth() const{
     int maxWidth = 0;
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {

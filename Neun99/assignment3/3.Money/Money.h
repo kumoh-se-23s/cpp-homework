@@ -1,29 +1,34 @@
+#pragma once
 #include <iostream>
+#include <string>
 
 using namespace std;
 
-#pragma once
 class Money {
 public:
-    Money operator+(Money&);
-    Money operator-();
-    Money operator-(Money&);
-    bool operator==(Money&);
-    bool operator!=(Money&);
-    bool operator>=(Money&);
-    bool operator<=(Money&);
-    bool operator>(Money&);
-    bool operator<(Money&);
-    string toString();
+    Money();
+    Money(int, int);
 
-    int getDollar();
-    int getCent();
+    int getDollar() const;
+    int getCent() const;
     void setDollar(int);
     void setCent(int);
+
+    const Money operator+(const Money&) const;
+    const Money operator-() const;
+    const Money operator-(const Money&) const;
+    bool operator==(const Money&) const;
+    bool operator!=(const Money&) const;
+    bool operator>=(const Money&) const;
+    bool operator<=(const Money&) const;
+    bool operator>(const Money&) const;
+    bool operator<(const Money&) const;
+    string toString() const;
 private:
     int dollar;
     int cent;
+    void normalize(int& dollar, int& cent);
 };
 
-ostream& operator<<(ostream&, Money&);
+ostream& operator<<(ostream&, const Money&);
 istream& operator>>(istream&, Money&);

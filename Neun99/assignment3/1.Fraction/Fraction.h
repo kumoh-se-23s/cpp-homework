@@ -7,11 +7,11 @@ class Fraction {
 public:
     Fraction();
     Fraction(int, int);
+
     void set(int, int);
-    const Fraction operator+(Fraction&) const;
-    // void operator=(Fraction&);
-    int getNum();
-    int getDen();
+    const Fraction operator+(const Fraction&) const;
+    int getNum() const;
+    int getDen() const;
 private:
     int numerator = 1;
     int denominator = 1;
