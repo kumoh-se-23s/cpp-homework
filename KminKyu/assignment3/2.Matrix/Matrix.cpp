@@ -1,14 +1,13 @@
 #include<iostream>
-#include "Matrix.h"
-
 #include <iomanip>
+#include "Matrix.h"
 
 using namespace std;
 
 Matrix::Matrix() = default;
 
 int Matrix::getLength(int number) {
-    int cnt = 0;
+    int cnt = (number < 0) ? 1 : 0;
     for (; number != 0; number /= 10) {
         ++cnt;
     }
@@ -23,17 +22,17 @@ void Matrix::setValue(int column, int row, int value) {
     matrixArray[column][row] = value;
 }
 
-int Matrix::getMaxLengthValue(int row) const {
-    int maxLengthNumber = 0;
+int Matrix::getMaxLength(int row) const {
+    int maxLength = 0;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
 
-        int tempNumber = matrixArray[column][row] < 0 ? matrixArray[column][row] * -10 : matrixArray[column][row];
+        int numberLength = getLength(matrixArray[column][row]);
 
-        if (maxLengthNumber < tempNumber) {
-            maxLengthNumber = tempNumber;
+        if (maxLength < numberLength) {
+            maxLength = numberLength;
         }
     }
-    return maxLengthNumber;
+    return maxLength;
 }
 
 Matrix Matrix::transpose() const {
@@ -70,10 +69,10 @@ Matrix Matrix::multi(const Matrix& otherMatrix) const {
     return resultMatrix;
 }
 
-ostream& operator<<(ostream& out, const Matrix& matrix) {
+ostream& operator <<(ostream& out, const Matrix& matrix) {
     int maxLengthArray[Matrix::MAX_MATRIX_SIZE];
     for (int row = 0; row < Matrix::MAX_MATRIX_SIZE; ++row) {
-        maxLengthArray[row] = Matrix::getLength(matrix.getMaxLengthValue(row));
+        maxLengthArray[row] = matrix.getMaxLength(row);
         cout<<maxLengthArray[row]<<"\n";
     }
     for (int column = 0; column < Matrix::MAX_MATRIX_SIZE; ++column) {
@@ -93,7 +92,7 @@ ostream& operator<<(ostream& out, const Matrix& matrix) {
     return out;
 }
 
-istream& operator>>(istream& in, Matrix& matrix){
+istream& operator >>(istream& in, Matrix& matrix){
     int inputValue;
     for (int column = 0; column < Matrix::MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < Matrix::MAX_MATRIX_SIZE; ++row) {
@@ -103,7 +102,7 @@ istream& operator>>(istream& in, Matrix& matrix){
     }
     return in;
 }
-Matrix& Matrix::operator=(const Matrix& matrix) {
+Matrix& Matrix::operator =(const Matrix& matrix) {
 
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
@@ -112,15 +111,14 @@ Matrix& Matrix::operator=(const Matrix& matrix) {
     }
     return *this;
 }
-const Matrix Matrix::operator+(const Matrix& otherMatrix) const {
-    return this->add(otherMatrix);
+const Matrix Matrix::operator +(const Matrix& matrix) const {
+    return this->add(matrix);
 }
-const Matrix Matrix::operator!() const {
+const Matrix Matrix::operator !() const {
     return this->transpose();
 }
 
-const Matrix Matrix::operator*(const Matrix& matrix) const
-{
+const Matrix Matrix::operator *(const Matrix& matrix) const {
     return this->multi(matrix);
 }
 
