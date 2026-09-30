@@ -13,8 +13,6 @@ class Fraction {
         // Fraction operator=(const Fraction& a);
 
 
-
-
     private:
         int calcGCD(int num, int den);
         void simplify();

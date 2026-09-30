@@ -2,15 +2,13 @@
 
 class Matrix {
     public:
+    const static int SIZE = 3;
+
     Matrix();
-    void read();
-    void print();
 
     const Matrix operator +(const Matrix& m) const;
     const Matrix operator !() const;
     const Matrix operator *(const Matrix& m) const;
-
-    const static int SIZE = 3;
 
     int getMatrix(int row, int col) const;
     void setMatrix(int row, int col, int val);

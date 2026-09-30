@@ -1,6 +1,4 @@
-#include <iostream>
 #include "Matrix.h"
-
 #include <iomanip>
 
 using namespace std;
@@ -47,29 +45,6 @@ istream& operator>>(istream& in, Matrix& m) {
 }
 
 //
-
-void Matrix::print() {
-    int maxWidth = getMaxWidth();
-
-    for (int row = 0; row < SIZE; row++) {
-        cout << "|";
-        for (int col = 0; col < SIZE; col++) {
-            printf(" %*d ", maxWidth, matrix[row][col]);
-        }
-        cout << "|" << endl;
-    }
-}
-
-void Matrix::read() {
-    int num;
-
-    for (int row = 0; row < SIZE; row++) {
-        for (int col = 0; col < SIZE; col++) {
-            cin >> num;
-            matrix[row][col] = num;
-        }
-    }
-}
 
 int Matrix::getMaxWidth() const{
     int maxWidth = 0;
