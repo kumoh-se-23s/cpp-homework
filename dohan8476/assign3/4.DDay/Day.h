@@ -11,9 +11,13 @@ class Day {
         void setMonth(int month);
         void setDay(int day);
 
+        Day& operator+(int day) const;
+        Day& operator-(int day) const;
+        
 
     private:
         int year;
         int month;
         int day;
+        int serial;
 };
