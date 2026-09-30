@@ -1,0 +1,82 @@
+#include <iostream>
+#include "Fraction.h"
+
+using namespace std;
+
+//생성자
+Fraction::Fraction() {}
+Fraction::Fraction(int num, int den) {
+    set(num, den);
+}
+
+//값 변경
+void Fraction::set(int num, int den) {
+    normalize(num, den);
+    numerator = num;
+    denominator = den;
+}
+
+//덧셈
+const Fraction Fraction::operator+(Fraction& fra) const{
+    int result_numerator = numerator * fra.getDen() + fra.getNum() * denominator;
+    int result_denominator = denominator * fra.getDen();
+
+    return Fraction(result_numerator, result_denominator);
+}
+
+// //대입
+// void Fraction::operator=(Fraction& fra){
+//     set(fra.getNum(), fra.getDen());
+// }
+
+//out
+ostream& operator<<(ostream& out, Fraction& fra) {
+    out << fra.getNum();
+    if (fra.getDen() != 1)
+        out << "/" << fra.getDen();
+}
+
+//분자 반환
+int Fraction::getNum() {
+    return numerator;
+}
+
+//분모 반환
+int Fraction::getDen() {
+    return denominator;
+}
+
+//입력값 정리
+void Fraction::normalize(int& num, int& den) {
+    //--음수 정리--
+    if (den < 0) {
+        num *= -1;
+        den *= -1;
+    }
+
+    //분모 0 처리
+    if (den == 0) {
+        cout << "ERR ";
+        den = 1;
+    }
+
+    //약분
+    int gcd = getGCD(num, den);
+    num /= gcd;
+    den /= gcd;
+}
+
+//최대공약수 반환
+int Fraction::getGCD(int num1, int num2) {
+    if (num1 < 0)
+        num1 *= -1;
+
+    int remainder = num1 % num2;
+    while (remainder != 0 ) {
+        num1 = num2;
+        num2 = remainder;
+        remainder = num1 % num2;
+    }
+
+    return num2;
+}
