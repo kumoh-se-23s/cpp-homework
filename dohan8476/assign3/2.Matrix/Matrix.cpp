@@ -1,9 +1,52 @@
 #include <iostream>
 #include "Matrix.h"
 
+#include <iomanip>
+
 using namespace std;
 
 Matrix :: Matrix() = default;
+
+//연산자 오버로딩--------------
+
+const Matrix Matrix::operator +(const Matrix& m) const {
+    return this->add(m);
+}
+
+const Matrix Matrix::operator *(const Matrix& m) const {
+    return this->multi(m);
+}
+
+const Matrix Matrix::operator!() const {
+    return this->transpose();
+}
+
+ostream& operator<<(ostream& out, const Matrix& m) {
+    int maxWidth = m.getMaxWidth();
+
+    for (int row = 0; row < Matrix::SIZE; row++) {
+        out << "|";
+        for (int col = 0; col < Matrix::SIZE; col++) {
+            out << " " << setw(maxWidth) << m.getMatrix(row,col) << " ";
+        }
+        out << "|" << endl;
+    }
+    return out;
+}
+
+istream& operator>>(istream& in, Matrix& m) {
+    int inputVal;
+    for (int row = 0; row < Matrix::SIZE; row++) {
+        for (int col = 0; col < Matrix::SIZE; col++) {
+            in >> inputVal;
+            m.setMatrix(row,col,inputVal);
+        }
+    }
+
+    return in;
+}
+
+//
 
 void Matrix::print() {
     int maxWidth = getMaxWidth();
@@ -28,7 +71,7 @@ void Matrix::read() {
     }
 }
 
-int Matrix::getMaxWidth() {
+int Matrix::getMaxWidth() const{
     int maxWidth = 0;
     for (int row = 0; row < SIZE; row++) {
         for (int col = 0; col < SIZE; col++) {
@@ -40,23 +83,15 @@ int Matrix::getMaxWidth() {
     return maxWidth;
 }
 
-int Matrix::getDigitWidth(int num) {
-    // 0 입력 -> width 1 반환 해야함 ++ 안해도 알아서 자리 확보는 함
-    if (num == 0) {return 1;}
-
-    int width = 0;
-
-    if (num < 0) {
-        width = 1; // 음수(-) 자리 만들기
-        num *= -1;
-    }
+int Matrix::getDigitWidth(int num) const{
+    int width = (num <= 0) ? 1 : 0;
 
     for (; num != 0; num /= 10, width++) {}
 
     return width;
 }
 
-int Matrix::getMatrix(int row, int col) {
+int Matrix::getMatrix(int row, int col) const{
     return matrix[row][col];
 }
 
@@ -64,7 +99,7 @@ void Matrix::setMatrix(int row, int col, int val) {
     matrix[row][col] = val;
 }
 
-Matrix Matrix::transpose() {
+Matrix Matrix::transpose() const{
     Matrix resultMatrix;
 
     for (int row = 0; row < SIZE; row++) {
@@ -76,7 +111,7 @@ Matrix Matrix::transpose() {
     return resultMatrix;
 }
 
-Matrix Matrix::add(Matrix m) {
+Matrix Matrix::add(Matrix m) const{
     Matrix resultMatrix;
 
     for (int row = 0; row < SIZE; row++) {
@@ -88,7 +123,7 @@ Matrix Matrix::add(Matrix m) {
     return resultMatrix;
 }
 
-Matrix Matrix::multi(Matrix m) {
+Matrix Matrix::multi(Matrix m) const{
     Matrix resultMatrix;
 
     for (int row = 0; row < SIZE; row++) {
@@ -102,3 +137,4 @@ Matrix Matrix::multi(Matrix m) {
     }
     return resultMatrix;
 }
+
