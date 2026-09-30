@@ -1,0 +1,97 @@
+#include <iostream>
+#include "Fraction.h"
+
+using namespace std;
+
+Fraction::Fraction() {
+    numerator = 1;
+    denominator = 1;
+}
+
+Fraction::Fraction(int num, int den) {
+    set(num, den);
+}
+
+void Fraction::set(int num, int den) {
+    if (den == 0 ) {
+        cout << "ERR ";
+        den = 1;
+    }
+    if (den < 0) {
+        num = -num;
+        den = -den;
+    }
+
+    numerator = num;
+    denominator = den;
+
+    simplify();
+}
+
+void Fraction::simplify() {
+    int g = calcGCD(numerator, denominator);
+    numerator /=  g;
+    denominator /= g;
+}
+
+int Fraction::calcGCD(int num, int den) {
+    num = abs(num);
+    den = abs(den);
+
+    int larger = max(num, den);
+    int smaller = min(num, den);
+
+    while (smaller != 0) {
+        int res = larger % smaller;
+        larger = smaller;
+        smaller = res;
+    }
+
+    return larger;
+}
+
+int Fraction::abs(int num) {
+    if (num < 0) num = -num;
+
+    return num;
+}
+
+int Fraction::max(int a, int b) {
+    if (a >= b) return a;
+
+    return b;
+}
+int Fraction::min(int a, int b) {
+    if (a <= b) return a;
+
+    return b;
+}
+
+int Fraction::getNumerator() const {
+    return numerator;
+}
+
+int Fraction::getDenominator() const {
+    return denominator;
+}
+
+// 연산자 오버로딩---------------
+
+const Fraction Fraction::operator +(const Fraction& a) const{
+    int num = (this->numerator * a.denominator) + (a.numerator * this->denominator);
+    int den = this->denominator * a.denominator;
+
+    return Fraction(num, den);
+}
+
+// Fraction Fraction::operator=(const Fraction &a) {
+//
+// }
+
+ostream& operator<<(ostream& output, const Fraction& a) {
+    output << a.getNumerator() ;
+    if (a.getDenominator() != 1) {
+        output << "/" << a.getDenominator() ;
+    }
+    return output;
+}
