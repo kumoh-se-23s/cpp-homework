@@ -22,7 +22,7 @@ void Matrix::read() {
 }
 
 void Matrix::print() {
-    int width = maxWidth();
+    int width = getMaxWidth();
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         cout << "| ";
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {
@@ -44,7 +44,7 @@ Matrix Matrix::transpose() {
     return resultMatrix;
 }
 
-Matrix Matrix::add(Matrix matrix2) {
+Matrix Matrix::add(Matrix& matrix2) {
     Matrix resultMatrix;
 
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
@@ -57,7 +57,7 @@ Matrix Matrix::add(Matrix matrix2) {
     return resultMatrix;
 }
 
-Matrix Matrix::multi(Matrix matrix2) {
+Matrix Matrix::multi(Matrix& matrix2) {
     Matrix resultMatrix;
 
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
@@ -73,15 +73,20 @@ Matrix Matrix::multi(Matrix matrix2) {
     return resultMatrix;
 }
 
-int Matrix::maxWidth() {
+int Matrix::getMaxWidth() {
     int maxWidth = 0;
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {
             int value = getValue(rowIdx, colIdx);
             int width = 1;
-            for (; value >= 10 || value <= -10; value /= 10) {
+
+            if (value < 0) //value가 음수면 마이너스 출력할 한 자리 추가
+                width++;
+
+            for (; value >= 10 || value <= -10; value /= 10) { //자릿수 구하기
                 width++;
             }
+
             if (width > maxWidth) {
                 maxWidth = width;
             }

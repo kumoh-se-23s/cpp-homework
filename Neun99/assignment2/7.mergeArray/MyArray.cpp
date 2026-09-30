@@ -36,14 +36,14 @@ bool MyArray1::readAscSorted() {
     return true;
 }
 
-MyArray2 MyArray1::merge(MyArray1 arr2) {
+MyArray2 MyArray1::merge(MyArray1& arr2) {
     MyArray2 resultArr;
 
     int arr1Idx = 0;
     int arr2Idx = 0;
 
     while (arr1Idx < size() && arr2Idx < arr2.size()) {
-        if (arr[arr1Idx] >= arr2.get(arr2Idx)) {
+        if (get(arr1Idx) >= arr2.get(arr2Idx)) {
             resultArr.append(arr2.get(arr2Idx));
             arr2Idx++;
         } else {

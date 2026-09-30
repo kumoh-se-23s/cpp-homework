@@ -7,8 +7,8 @@ public:
     int get(int);
     void print();
 private:
-    const int LENGTH = 10;
-    int arr[10] = {};
+    static const int LENGTH = 10;
+    int arr[LENGTH] = {};
     int usingSize = 0;
 };
 
@@ -19,10 +19,10 @@ public:
     void append(int);
     int get(int);
     bool readAscSorted();
-    MyArray2 merge(MyArray1);
+    MyArray2 merge(MyArray1&);
 private:
-    const int LENGTH = 5;
-    int arr[5] = {};
+    static const int LENGTH = 5;
+    int arr[LENGTH] = {};
     int usingSize = 0;
 };
 

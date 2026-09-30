@@ -2,10 +2,10 @@
 
 using namespace std;
 
-int main() {
-    int getNthDigit(int value, int digitPlace);
-    int getTenTimesN(int n);
+int getNthDigit(int value, int digitPlace);
+int getTenToN(int n);
 
+int main() {
     int userInput1;
     cin >> userInput1;
     int userInput2;
@@ -20,12 +20,12 @@ int main() {
         midResultArr[idx] = userInput1 * getNthDigit(userInput2, idx);
         cout << midResultArr[idx] << endl;
     }
-    //최종결과 계산
+    //최종결과 계산 (위 for문에서 중간결과 구하면서 바로 더하는 편이 더 효율적이지만 배열 써보는 김에..)
     for(int idx = 0; idx < ARR_MAX_SIZE; idx++) {
-        result += midResultArr[idx] * getTenTimesN(idx);
+        result += midResultArr[idx] * getTenToN(idx);
     }
     //최종결과 출력
-    cout << result;
+    cout << result << endl;
     return 0;
 }
 
@@ -39,7 +39,7 @@ int getNthDigit(int value, int digitPlace) {
 }
 
 //10의 n승 반환
-int getTenTimesN(int n) {
+int getTenToN(int n) {
     int result = 1;
     for(int idx = 0; idx < n; idx++) {
         result *= 10;

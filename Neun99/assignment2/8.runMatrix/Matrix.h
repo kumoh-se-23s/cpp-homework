@@ -6,10 +6,10 @@ public:
     void read();
     void print();
     Matrix transpose();
-    Matrix add(Matrix);
-    Matrix multi(Matrix);
+    Matrix add(Matrix&);
+    Matrix multi(Matrix&);
 private:
     static const int SIZE = 3;
     int matrix[SIZE][SIZE] = {};
-    int maxWidth();
+    int getMaxWidth();
 };

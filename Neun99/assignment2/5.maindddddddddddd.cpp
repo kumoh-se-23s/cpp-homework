@@ -19,7 +19,7 @@ int main() {
     cout << "Sum\n" ; printMatrix(sumMatrix, SIZE) ;
     multiply(matrix1, matrix2, multiMatrix, SIZE) ;
     cout << "Mutiplication\n" ; printMatrix(multiMatrix, SIZE) ;
-return 0 ;
+    return 0 ;
 }
 
 //전치
@@ -58,7 +58,7 @@ void printMatrix(int matrix[][SIZE],int size) {
     for (int rowIdx = 0; rowIdx < size; rowIdx++) {
         cout << "|";
         for (int colIdx = 0; colIdx < size; colIdx++) {
-            printf("%3d",matrix[rowIdx][colIdx]);
+            printf("%6d",matrix[rowIdx][colIdx]);
         }
         cout << "|" << endl;
     }
