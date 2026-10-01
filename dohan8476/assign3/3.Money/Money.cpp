@@ -38,11 +38,11 @@ void Money::normalize() {
 
 //-----------연산자 오버로딩----------
 
-Money Money::operator+(const Money& m) const {
+const Money Money::operator+(const Money& m) const {
     return Money(dollar + m.dollar, cent + m.cent);
 }
 
-Money Money::operator-(const Money& m) const {
+const Money Money::operator-(const Money& m) const {
     return Money(dollar - m.dollar, cent - m.cent);
 }
 

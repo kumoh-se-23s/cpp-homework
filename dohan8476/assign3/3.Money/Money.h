@@ -12,8 +12,8 @@ class Money {
 
         void set(int dollar, int cent);
 
-        Money operator+(const Money& m) const;
-        Money operator-(const Money& m) const;
+        const Money operator+(const Money& m) const;
+        const Money operator-(const Money& m) const;
 
         bool operator!=(const Money& m) ;
         bool operator==(const Money& m) const;

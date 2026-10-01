@@ -1,3 +1,10 @@
-//
-// Created by dohan on 26. 9. 30..
-//
+#include <iostream>
+#include "DateCalculator.h"
+
+using namespace std;
+
+int main() {
+    DateCalculator dateCalculator;
+    int num = dateCalculator.dateToTotalDays(1999, 12, 31);
+    cout << num;
+}

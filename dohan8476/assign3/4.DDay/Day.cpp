@@ -1,4 +1,5 @@
 #include "Day.h"
+#include "DateCalculator.h"
 
 using namespace std;
 
@@ -36,3 +37,20 @@ void Day::setMonth(int month) {
 void Day::setDay(int day) {
     this->day = day;
 }
+
+//연산자 오버로딩----
+Day Day::operator++() {
+
+}
+Day Day::operator--() {
+
+}
+
+Day Day::operator+(int day) const{
+
+}
+
+Day Day::operator-(int day) const {
+
+}
+
