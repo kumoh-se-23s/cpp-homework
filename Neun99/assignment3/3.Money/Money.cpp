@@ -24,12 +24,10 @@ int Money::getCent() const {
 }
 
 //setter-----------------
-int Money::setDollar(int newDollar) {
+void Money::setValue(int newDollar, int newCent) {
     dollar = newDollar;
-}
-
-void Money::setCent(int newCent) {
-    cent = newCent
+    cent = newCent;
+    normalize(dollar, cent);
 }
 
 //연산자 오버로딩-----------------
@@ -91,7 +89,7 @@ string Money::toString() const{
     ostringstream result;
     if (dollar < 0)
         result << "-";
-    result << "$" << abs(dollar) << cent;
+    result << "$" << abs(dollar) << "." << cent;
 
     return result.str();
 }
@@ -102,8 +100,7 @@ istream& operator>>(istream& in, Money& money) {
     in >> dollar;
     in >> cent;
 
-    money.setDollar(dollar);
-    money.setCent(cent);
+    money.setValue(dollar, cent);
 
     return in;
 }
@@ -111,15 +108,19 @@ istream& operator>>(istream& in, Money& money) {
 //out
 ostream& operator<<(ostream& out, const Money& money) {
     out << money.toString();
+    return out;
 }
 
 void Money::normalize(int& dollar, int& cent) {
     dollar += cent / 100;
     cent %= 100;
 
-    //cent 음수면 양수화
-    if (cent < 0) {
+    //음수처리
+    if (cent < 0) { // 센트 음수
         --dollar;
         cent += 100;
+    } else if (dollar < 0) { //달러 음수, 센트 양수
+        ++dollar;
+        cent = 100 - cent;
     }
 }

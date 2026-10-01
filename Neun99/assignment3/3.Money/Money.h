@@ -11,8 +11,7 @@ public:
 
     int getDollar() const;
     int getCent() const;
-    void setDollar(int);
-    void setCent(int);
+    void setValue(int, int);
 
     const Money operator+(const Money&) const;
     const Money operator-() const;
