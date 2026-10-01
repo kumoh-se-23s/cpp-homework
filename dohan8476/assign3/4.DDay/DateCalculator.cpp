@@ -40,12 +40,18 @@ Day DateCalculator::totalDaysToDate(int days) {
     year += days / 146097 * 400;
     days %= 146097;
 
-    for (;days - 36524 > 0; days -= 36524, year += 100)
+    for (int i = 0 ; i < 3 && days - 36524 > 0; i++) {
+        days -= 36524;
+        year += 100;
+    }
 
     year += days / 1461 * 4;
     days %= 1461;
 
-    for (;days - 365 > 0; days -= 365, ++year)
+    for (int i = 0 ; i < 3 && days - 365 > 0; i++) {
+        days -= 365;
+        ++year;
+    }
 
     for (int i = 0; i < 12; i++) {
         month = i + 1;

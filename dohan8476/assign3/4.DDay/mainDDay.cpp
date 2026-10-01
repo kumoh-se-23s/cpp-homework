@@ -5,6 +5,6 @@ using namespace std;
 
 int main() {
     DateCalculator dateCalculator;
-    int num = dateCalculator.dateToTotalDays(1999, 12, 31);
+    int num = dateCalculator.dateToTotalDays(999999, 1, 1);
     cout << num;
 }
