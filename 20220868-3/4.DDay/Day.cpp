@@ -46,7 +46,7 @@ Day Day::operator-(const int d) const {
 }
 
 int Day::getDays(const int year, const int month) {
-    return (isLeap(year) && month == 2) + (MONTH_DAYS_SUM[month] - MONTH_DAYS_SUM[month - 1]);
+    return (isLeap(year) & (month == 2)) + (MONTH_DAYS_SUM[month] - MONTH_DAYS_SUM[month - 1]);
 }
 
 bool Day::isLeap(const int year) {
@@ -62,7 +62,7 @@ void Day::normalize() {
     // O(1) normalization
     year += (month - 12) / 12;
     month = ((month - 1) % 12 + 12) % 12 + 1;
-    day += (isLeap(year) && month >= 3) + MONTH_DAYS_SUM[month - 1];
+    day += (isLeap(year) & (month >= 3)) + MONTH_DAYS_SUM[month - 1];
 
     // minimum date : 0001/01/01
     // year days = year * 365 + (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400
@@ -88,18 +88,17 @@ void Day::normalize() {
 
     const int year2 = leapYearCalcDays / 365 + 1;
     year = yearCalcDays / 365 + 1;
-    year = (yearCalcDays - (isLeap(year2) && year != year2)) / 365 + 1; //solve 366
+    year = (yearCalcDays - (isLeap(year2) & (year != year2))) / 365 + 1; //solve 366
 
     // (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400
     const int totalDaysForYear = year * 365 + (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400;
     const int remainDays = totalDays - totalDaysForYear + 1;
     const bool leap = isLeap(year);
-    assert(remainDays >= 1 && remainDays <= 365 + leap);
 
     // approximate month
     const int monthApprox = (remainDays >> 5) + 1;
-    month = monthApprox + 1 - (remainDays <= (leap && monthApprox >= 2) + MONTH_DAYS_SUM[monthApprox]);
-    day = remainDays - (leap && month >= 3) - MONTH_DAYS_SUM[month - 1];
+    month = monthApprox + 1 - (remainDays <= (leap & (monthApprox >= 2)) + MONTH_DAYS_SUM[monthApprox]);
+    day = remainDays - (leap & (month >= 3)) - MONTH_DAYS_SUM[month - 1];
 }
 
 bool Day::isValid(const int y, const int m, const int d) {
