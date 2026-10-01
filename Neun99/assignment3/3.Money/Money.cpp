@@ -89,7 +89,7 @@ string Money::toString() const{
     ostringstream result;
     if (dollar < 0)
         result << "-";
-    result << "$" << abs(dollar) << "." << cent;
+    result << "$" << abs(dollar) << "." << abs(cent);
 
     return result.str();
 }
@@ -115,12 +115,12 @@ void Money::normalize(int& dollar, int& cent) {
     dollar += cent / 100;
     cent %= 100;
 
-    //음수처리
-    if (cent < 0) { // 센트 음수
+    //한쪽만 음수면 달러에 맞춰 통일
+    if (dollar > 0 && cent < 0) { //달러 양수, 센트 음수
         --dollar;
         cent += 100;
-    } else if (dollar < 0) { //달러 음수, 센트 양수
+    } else if (dollar < 0 && cent > 0) { //달러 음수, 센트 양수
         ++dollar;
-        cent = 100 - cent;
+        cent = -(100 - cent);
     }
 }
