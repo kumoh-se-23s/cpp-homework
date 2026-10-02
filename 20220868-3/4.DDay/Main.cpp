@@ -22,17 +22,17 @@ void printErr() {
 
 
 int main() {
-    Day d(2026, 10, 1);
+    Day d(43095, 5, 10);
     auto current = std::chrono::system_clock::now();
     for (int i = 0; i < 30000000; ++i) {
-        d = d + (d.getYear() * d.getMonth() + d.getDay() ) * (!(i & 1) - (i & 1));
+        d = d + i * (!(i & 1) - (i & 1));
 
-        if ((i & 0x000fffff) == 0) {
+        if ((i & 0x000fffff) == 1) {
             std::cout << i << "-th iteration | " << d << std::endl;
         }
     }
     auto elapsed = std::chrono::system_clock::now() - current;
-    // expected 2001/10/07
+    // expected 2026/10/01
     std::cout << d << " | " << std::chrono::duration_cast<std::chrono::duration<float> >(elapsed).count() << "sec" <<
             std::endl;
 
