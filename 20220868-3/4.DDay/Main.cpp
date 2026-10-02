@@ -20,22 +20,28 @@ void printErr() {
     //?
 }
 
+void benchmark(const int times) {
+
+    for (int r = 0; r < times; ++r) {
+        Day d(43095, 5, 10);
+        auto current = std::chrono::system_clock::now();
+        for (int i = 0; i < 30000000; ++i) {
+            d = d + i * (!(i & 1) - (i & 1));
+
+            if (!Day::isValid(d.getYear(), d.getMonth(), d.getDay())) {
+                std::cout << i << "-th iteration | " << d << std::endl;
+            }
+        }
+        auto elapsed = std::chrono::system_clock::now() - current;
+        // expected 2026/10/01
+        std::cout << d << " | " << std::chrono::duration_cast<std::chrono::duration<float> >(elapsed).count() << "sec" <<
+                std::endl;
+    }
+}
 
 int main() {
-    Day d(43095, 5, 10);
-    auto current = std::chrono::system_clock::now();
-    for (int i = 0; i < 30000000; ++i) {
-        d = d + i * (!(i & 1) - (i & 1));
 
-        if (!Day::isValid(d.getYear(), d.getMonth(), d.getDay())) {
-            std::cout << i << "-th iteration | " << d << std::endl;
-        }
-    }
-    auto elapsed = std::chrono::system_clock::now() - current;
-    // expected 2026/10/01
-    std::cout << d << " | " << std::chrono::duration_cast<std::chrono::duration<float> >(elapsed).count() << "sec" <<
-            std::endl;
-
+    benchmark(10);
 
     using namespace std;
     Day day;

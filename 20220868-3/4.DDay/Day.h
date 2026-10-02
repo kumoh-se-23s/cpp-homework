@@ -23,7 +23,7 @@ class Day{
     
     Day operator-(int d) const;
 
-    [[nodiscard]] static int getDays(int year, int month);
+    [[nodiscard]] static int getMonthDays(int year, int month);
 
     [[nodiscard]] static bool isLeap(int year);
 
@@ -34,7 +34,15 @@ class Day{
     static bool isValid(int y, int m, int d);
 
 private:
+
+    static int getTotalDaysFromThisYear(int y, int m);
+
+    static int getTotalDaysFromThisYear(bool leap, int m);
+
     void normalizeIfNeeded();
+
+    static int calcTotalDaysFromYear(int year);
+
     void normalize();
 };
 
