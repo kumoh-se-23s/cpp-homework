@@ -2,7 +2,6 @@
 
 #include <iomanip>
 
-using namespace Calendar;
 //default : 2026/10/01
 Day::Day() {
     year = 2026;
