@@ -1,8 +1,8 @@
 #include "Day.h"
-#include "DateCalculator.h"
 
-using namespace std;
+#include <iomanip>
 
+using namespace Calendar;
 //default : 2026/10/01
 Day::Day() {
     year = 2026;
@@ -38,19 +38,12 @@ void Day::setDay(int day) {
     this->day = day;
 }
 
-//연산자 오버로딩----
-Day Day::operator++() {
+//일단 00nn년/0n월/0n일만 출력
+std::ostream& operator<<(std:: ostream& out, const Day& day) {
 
+    out << std::setfill('0') << std::setw(4) << day.getYear() << "/";
+    out << std::setfill('0') << std::setw(2) << day.getMonth() << "/";
+    out << std::setfill('0') << std::setw(2) << day.getDay();
+
+    return out;
 }
-Day Day::operator--() {
-
-}
-
-Day Day::operator+(int day) const{
-
-}
-
-Day Day::operator-(int day) const {
-
-}
-
