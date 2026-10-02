@@ -76,7 +76,7 @@ int DateCalculator::dateToTotalDays(int year, int month, int day) {
 }
 
 bool DateCalculator::isValidDate(int year, int month, int day) {
-    return year > 0 && month > 0 && month < 13 && day < getDaysInMonth(year, month);
+    return year > 0 && month > 0 && month < 13 && day <= getDaysInMonth(year, month) && day > 0;
 }
 
 int DateCalculator::getDaysInMonth(int year, int month) {
