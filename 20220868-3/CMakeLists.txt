@@ -25,3 +25,5 @@ add_executable(test4
         4.DDay/Day.cpp
         4.DDay/Main.cpp
 )
+
+#target_compile_options(test4 PRIVATE -O3)

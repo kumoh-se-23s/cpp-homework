@@ -27,7 +27,7 @@ int main() {
     for (int i = 0; i < 30000000; ++i) {
         d = d + i * (!(i & 1) - (i & 1));
 
-        if ((i & 0x000fffff) == 1) {
+        if (!Day::isValid(d.getYear(), d.getMonth(), d.getDay())) {
             std::cout << i << "-th iteration | " << d << std::endl;
         }
     }

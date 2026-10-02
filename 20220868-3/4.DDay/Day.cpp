@@ -50,7 +50,7 @@ int Day::getDays(const int year, const int month) {
 }
 
 bool Day::isLeap(const int year) {
-    return year % 400 == 0 || (year % 4 == 0 && year % 100 != 0);
+    return (year % 400 == 0) | (year % 4 == 0) & (year % 100 != 0);
 }
 
 void Day::normalizeIfNeeded() {
