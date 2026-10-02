@@ -12,6 +12,12 @@ public:
     void setMonth(int month);
     void setDay(int day);
 
+    Day operator+(int addDays);
+    Day operator-(int subDays);
+    Day& operator++();
+    Day& operator--();
+
+
 private:
     int year;
     int month;

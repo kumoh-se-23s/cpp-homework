@@ -1,5 +1,5 @@
 #include "Day.h"
-
+#include <DateCalculator.h>
 #include <iomanip>
 
 //default : 2026/10/01
@@ -45,4 +45,68 @@ std::ostream& operator<<(std:: ostream& out, const Day& day) {
     out << std::setfill('0') << std::setw(2) << day.getDay();
 
     return out;
+}
+
+//연산자 오버로딩
+Day& Day::operator++() {
+    DateCalculator calc;
+
+    int year = this->getYear();
+    int month = this->getMonth();
+    int day = this->getDay() + 1;
+
+    if (day > calc.getDaysInMonth(year, month)) {
+        day = 1;
+        ++month;
+
+        if (month > 12) {
+            month = 1;
+            ++year;
+        }
+    }
+
+    this->setYear(year);
+    this->setMonth(month);
+    this->setDay(day);
+
+    return *this;
+}
+
+Day& Day::operator--() {
+    DateCalculator calc;
+
+    int year = this->getYear();
+    int month = this->getMonth();
+    int day = this->getDay() - 1;
+
+    if (day == 0) {
+        --month;
+
+        if (month == 0) {
+            month = 12;
+            --year;
+        }
+        //마지막 날로 세팅
+        day = calc.getDaysInMonth(year, month);
+    }
+
+    this->setYear(year);
+    this->setMonth(month);
+    this->setDay(day);
+
+    return *this;
+}
+
+Day Day::operator+(int addDays){
+    DateCalculator calc;
+    int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
+
+    return calc.totalDaysToDate(totalDays + addDays);
+}
+
+Day Day::operator-(int subDays){
+    DateCalculator calc;
+    int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
+
+    return calc.totalDaysToDate(totalDays - subDays);
 }

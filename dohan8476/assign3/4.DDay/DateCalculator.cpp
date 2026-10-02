@@ -1,24 +1,22 @@
 #include "DateCalculator.h"
 
 Day DateCalculator::totalDaysToDate(int days) {
-    int year = 1, month = 0;
-
-    --days;
+    int year = 1, month = 1;
 
     year += days / 146097 * 400;
     days %= 146097;
 
-    for (int i = 0 ; i < 3 && days - 36524 > 0; i++) {
-        days -= 36524;
-        year += 100;
-    }
+    for (;days - 36524 > 0; days -= 36524, year += 100) { }
 
     year += days / 1461 * 4;
     days %= 1461;
 
-    for (int i = 0 ; i < 3 && days - 365 > 0; i++) {
-        days -= 365;
-        ++year;
+    for (;days - 365 > 0 ; days -= 365, ++year) {}
+
+    //윤년 계산(모듈러 연산이 딱 0으로 나누어 떨어지면 버그 방지 로직)
+    if (days == 0 && isLeapYear(year - 1)) {
+        year -= 1;
+        days = 366;
     }
 
     for (int i = 0; i < 12; i++) {
@@ -86,66 +84,4 @@ int DateCalculator::getDaysInMonth(int year, int month) {
         return leapYearDay[month - 1];
     }
     return commonYearDay[month - 1];
-}
-Day& DateCalculator::operator++() {
-    DateCalculator calc;
-
-    int year = this->day.getYear();
-    int month = this->day.getMonth();
-    int day = this->day.getDay() + 1;
-
-    if (day > calc.getDaysInMonth(year, month)) {
-        day = 1;
-        ++month;
-
-        if (month > 12) {
-            month = 1;
-            ++year;
-        }
-    }
-
-    this->day.setYear(year);
-    this->day.setMonth(month);
-    this->day.setDay(day);
-
-    return this->day;
-}
-
-Day& DateCalculator::operator--() {
-    DateCalculator calc;
-
-    int year = this->day.getYear();
-    int month = this->day.getMonth();
-    int day = this->day.getDay() - 1;
-
-    if (day == 0) {
-        --month;
-
-        if (month == 0) {
-            month = 12;
-            --year;
-        }
-        //마지막 날로 세팅
-        day = calc.getDaysInMonth(year, month);
-    }
-
-    this->day.setYear(year);
-    this->day.setMonth(month);
-    this->day.setDay(day);
-
-    return this->day;
-}
-
-Day DateCalculator::operator+(int addDays){
-    DateCalculator calc;
-    int totalDays = calc.dateToTotalDays(day.getYear(), day.getMonth(), day.getDay());
-
-    return calc.totalDaysToDate(totalDays + addDays);
-}
-
-Day DateCalculator::operator-(int subDays){
-    DateCalculator calc;
-    int totalDays = calc.dateToTotalDays(day.getYear(), day.getMonth(), day.getDay());
-
-    return calc.totalDaysToDate(totalDays - subDays);
 }

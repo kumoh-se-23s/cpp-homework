@@ -9,11 +9,6 @@ class DateCalculator {
         int dateToTotalDays(int year, int month, int day);
         int getDaysInMonth(int year, int month);
 
-        Day operator+(int addDays);
-        Day operator-(int subDays);
-        Day& operator++();
-        Day& operator--();
-
     private:
         Day day;
         int commonYearDay[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
