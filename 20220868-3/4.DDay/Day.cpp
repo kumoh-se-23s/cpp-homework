@@ -55,6 +55,7 @@ int Day::getTotalDaysFromThisYear(const int y, const int m) {
 }
 
 int Day::getTotalDaysFromThisYear(const bool leap, const int m) {
+    // applying +1 to MONTH_DAYS_SUM
     return (leap & (m >= 3)) + MONTH_DAYS_SUM[m - 1];
 }
 
@@ -103,7 +104,6 @@ void Day::normalize() {
         month = ((month - 1) % 12 + 12) % 12 + 1;
     }
 
-    // applying +1 to MONTH_DAYS_SUM
     day += getTotalDaysFromThisYear(year, month);
 
     // minimum date : 0001/01/01
