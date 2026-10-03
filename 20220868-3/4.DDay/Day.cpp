@@ -74,43 +74,41 @@ int Day::calcTotalDaysFromYear(const int year) {
     return year * 365 + ym1 / 4 - ym1 / 100 + ym1 / 400;
 }
 
+int Day::calcYearFromTotalDays(const int totalDays) {
+    //146000 + 97 (24 * 4 = 96, 400 is leap year. 96 + 1 = 97)
+    //36500 + 24 (100 / 4 = 25, 100 is not leap year. 25 - 1 = 24)
+    //1460 + 1(leaps)
+    int yearCalcDays = totalDays;
+    yearCalcDays -= yearCalcDays / 146097;
+    yearCalcDays += yearCalcDays / 36524;
+    yearCalcDays -= yearCalcDays / 1461;
+    return yearCalcDays / 365;
+}
+
 void Day::normalize() {
     // O(1) normalization
-    if (month < 1 || month > 12) [[unlikely]] { //depending branch predictor
+    if (month < 1 || month > 12) [[unlikely]] { //depending branch predictor. unnormalized month should not be happened
         year += (month - 12) / 12;
         month = ((month - 1) % 12 + 12) % 12 + 1;
     }
 
-    // applying +1 to MONTH_DAYS_SUM :
-    // (leap && (monthApprox >= 3)) + MONTH_DAYS_SUM[monthApprox]
+    // applying +1 to MONTH_DAYS_SUM
     day += getTotalDaysFromThisYear(year, month);
 
     // minimum date : 0001/01/01
     // additional days : day - 1 (1~365 => 0~364 mapping, applying day-1)
     const int totalDays = std::max(365, calcTotalDaysFromYear(year) + day - 1);
 
-    //146000 + 97 (24 * 4 = 96, 400 is leap year. 96 + 1 = 97)
-    //36500 + 24 (100 / 4 = 25, 100 is not leap year. 25 - 1 = 24)
-    //1460 + 1(leaps)
-    int yearCalcDays = totalDays - 365;
-    yearCalcDays -= yearCalcDays / 146097;
-    yearCalcDays += yearCalcDays / 36524;
-    yearCalcDays -= yearCalcDays / 1461;
-
     // get year
-    year = yearCalcDays / 365 + 1;
+    year = calcYearFromTotalDays(totalDays);
     const int totalDaysForYear = calcTotalDaysFromYear(year);
-    int currYearDays = totalDays - totalDaysForYear + 1;
-
-    // if day is zero, it must be like LEAP/12/31. solve 366
-    year -= currYearDays == 0;
-    currYearDays += 366 * (currYearDays == 0);
+    const int currYearDays = totalDays - totalDaysForYear + 1;
     const bool leap = isLeap(year);
 
     // approximate month
-    const int monthApprox = (currYearDays >> 5) + 2;
+    const int monthApprox = (currYearDays >> 5) + 1;
     // get month
-    month = monthApprox - (currYearDays <= getTotalDaysFromThisYear(leap, monthApprox));
+    month = monthApprox + (currYearDays > getTotalDaysFromThisYear(leap, monthApprox + 1));
     // get day
     day = currYearDays - getTotalDaysFromThisYear(leap, month);
 }

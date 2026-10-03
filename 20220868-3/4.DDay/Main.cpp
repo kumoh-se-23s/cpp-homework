@@ -41,7 +41,7 @@ void benchmark(const int times) {
 
 int main() {
 
-    benchmark(10);
+    // benchmark(10);
 
     using namespace std;
     Day day;

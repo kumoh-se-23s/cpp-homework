@@ -43,6 +43,8 @@ private:
 
     static int calcTotalDaysFromYear(int year);
 
+    static int calcYearFromTotalDays(int totalDays);
+
     void normalize();
 };
 
