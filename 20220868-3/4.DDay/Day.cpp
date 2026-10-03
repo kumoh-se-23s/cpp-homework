@@ -85,6 +85,17 @@ int Day::calcYearFromTotalDays(const int totalDays) {
     return yearCalcDays / 365;
 }
 
+int Day::getMonthFromCurrYearDays(const int year, const int currYearDays) {
+    return getMonthFromCurrYearDays(isLeap(year), currYearDays);
+}
+
+
+int Day::getMonthFromCurrYearDays(const bool leap, const int currYearDays) {
+    // approximate month
+    const int monthApprox = (currYearDays >> 5) + 1;
+    return monthApprox + (currYearDays > getTotalDaysFromThisYear(leap, monthApprox + 1));
+}
+
 void Day::normalize() {
     // O(1) normalization
     if (month < 1 || month > 12) [[unlikely]] { //depending branch predictor. unnormalized month should not be happened
@@ -101,15 +112,13 @@ void Day::normalize() {
 
     // get year
     year = calcYearFromTotalDays(totalDays);
+
     const int totalDaysForYear = calcTotalDaysFromYear(year);
     const int currYearDays = totalDays - totalDaysForYear + 1;
     const bool leap = isLeap(year);
 
-    // approximate month
-    const int monthApprox = (currYearDays >> 5) + 1;
-    // get month
-    month = monthApprox + (currYearDays > getTotalDaysFromThisYear(leap, monthApprox + 1));
-    // get day
+    // get month and day
+    month = getMonthFromCurrYearDays(leap, currYearDays);
     day = currYearDays - getTotalDaysFromThisYear(leap, month);
 }
 

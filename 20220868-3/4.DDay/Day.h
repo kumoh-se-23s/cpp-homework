@@ -45,6 +45,10 @@ private:
 
     static int calcYearFromTotalDays(int totalDays);
 
+    static int getMonthFromCurrYearDays(int year, int currYearDays);
+
+    static int getMonthFromCurrYearDays(bool leap, int currYearDays);
+
     void normalize();
 };
 
