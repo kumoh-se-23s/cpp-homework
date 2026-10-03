@@ -55,10 +55,6 @@ int main() {
         cin >> input;
 
         switch (input[0]) {
-            case '0':
-                targetDay = day;
-                delta = 0;
-                break;
             case 'y':
             case 'Y':
                 --day;
