@@ -17,9 +17,10 @@ public:
     Matrix& operator =(const Matrix& matrix);
     static const int MAX_MATRIX_SIZE = 3;
     static int getLength(int);
-    int getMaxLength(int) const;
+    int getRowLength(int row) const;
 private:
     int matrixArray[MAX_MATRIX_SIZE][MAX_MATRIX_SIZE] = {0,};
+    int maxValues[MAX_MATRIX_SIZE] = {0,};
 };
 
 ostream& operator <<(ostream&, const Matrix&);

@@ -25,7 +25,9 @@ int Matrix::getValue(int column, int row) const {
 }
 
 void Matrix::setValue(int column, int row, int value) {
-    matrixArray[column][row] = value;
+    if (column < MAX_MATRIX_SIZE && row < MAX_MATRIX_SIZE) {
+        matrixArray[column][row] = value;
+    }
 }
 
 int Matrix::getMaxLengthValue() const {

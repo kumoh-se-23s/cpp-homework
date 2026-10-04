@@ -14,25 +14,33 @@ int Matrix::getLength(int number) {
     return cnt;
 }
 
+int Matrix::getRowLength(int row) const {
+    if (0 <= row && row < MAX_MATRIX_SIZE) {
+        return getLength(maxValues[row]);
+    } else {
+        return 0;
+    }
+}
+
 int Matrix::getValue(int column, int row) const {
-    return matrixArray[column][row];
+    if (0 <= column && column < MAX_MATRIX_SIZE &&
+        0 <= row && row < MAX_MATRIX_SIZE) {
+        return matrixArray[column][row];
+    } else {
+        return 0;
+    }
+
 }
 
 void Matrix::setValue(int column, int row, int value) {
-    matrixArray[column][row] = value;
-}
+    if (0 <= column && column < MAX_MATRIX_SIZE &&
+        0 <= row && row < MAX_MATRIX_SIZE) {
 
-int Matrix::getMaxLength(int row) const {
-    int maxLength = 0;
-    for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
+        matrixArray[column][row] = value;
 
-        int numberLength = getLength(matrixArray[column][row]);
-
-        if (maxLength < numberLength) {
-            maxLength = numberLength;
-        }
+        value = value < 0 ? abs(value * -10) : value;
+        maxValues[row] = maxValues[row] > value ? maxValues[row] : value;
     }
-    return maxLength;
 }
 
 Matrix Matrix::transpose() const {
@@ -69,39 +77,6 @@ Matrix Matrix::multi(const Matrix& otherMatrix) const {
     return resultMatrix;
 }
 
-ostream& operator <<(ostream& out, const Matrix& matrix) {
-    int maxLengthArray[Matrix::MAX_MATRIX_SIZE];
-    for (int row = 0; row < Matrix::MAX_MATRIX_SIZE; ++row) {
-        maxLengthArray[row] = matrix.getMaxLength(row);
-        cout<<maxLengthArray[row]<<"\n";
-    }
-    for (int column = 0; column < Matrix::MAX_MATRIX_SIZE; ++column) {
-        for (int row = 0; row < Matrix::MAX_MATRIX_SIZE; ++row) {
-
-            if (row == 0) {
-                out << "| ";
-            }
-            out << setw(maxLengthArray[row]) << matrix.getValue(column, row);
-            out << " ";
-            if (row == Matrix::MAX_MATRIX_SIZE - 1) {
-                out << "|";
-            }
-        }
-        out << "\n";
-    }
-    return out;
-}
-
-istream& operator >>(istream& in, Matrix& matrix){
-    int inputValue;
-    for (int column = 0; column < Matrix::MAX_MATRIX_SIZE; ++column) {
-        for (int row = 0; row < Matrix::MAX_MATRIX_SIZE; ++row) {
-            in >> inputValue;
-            matrix.setValue(column, row, inputValue);
-        }
-    }
-    return in;
-}
 Matrix& Matrix::operator =(const Matrix& matrix) {
 
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
@@ -122,3 +97,31 @@ const Matrix Matrix::operator *(const Matrix& matrix) const {
     return this->multi(matrix);
 }
 
+ostream& operator <<(ostream& out, const Matrix& matrix) {
+    for (int column = 0; column < Matrix::MAX_MATRIX_SIZE; ++column) {
+        for (int row = 0; row < Matrix::MAX_MATRIX_SIZE; ++row) {
+
+            if (row == 0) {
+                out << "| ";
+            }
+            out << setw(matrix.getRowLength(row)) << matrix.getValue(column, row);
+            out << " ";
+            if (row == Matrix::MAX_MATRIX_SIZE - 1) {
+                out << "|";
+            }
+        }
+        out << "\n";
+    }
+    return out;
+}
+
+istream& operator >>(istream& in, Matrix& matrix){
+    int inputValue;
+    for (int column = 0; column < Matrix::MAX_MATRIX_SIZE; ++column) {
+        for (int row = 0; row < Matrix::MAX_MATRIX_SIZE; ++row) {
+            in >> inputValue;
+            matrix.setValue(column, row, inputValue);
+        }
+    }
+    return in;
+}
