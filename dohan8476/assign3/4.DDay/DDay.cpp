@@ -1,7 +1,39 @@
 #include "DDay.h"
 
 Day DDay::totalDaysToDate(int totalDays) {
-    int year = 1, month = 1;
+    int year = totalDaysToYear(totalDays);
+    //윤년(모듈러 == 0)이면 윤년의 마지막날임
+    // if (totalDays == 0 && isLeapYear(year - 1)) {
+    if (!totalDays && isLeapYear(year - 1) ){
+        return Day(year - 1, 12, 31);
+    }
+    int month = totalDaysToMonth(year, totalDays);
+    int day = totalDays;
+
+    return Day(year, month, day);
+}
+
+int DDay::dateToTotalDays(int year, int month, int day) {
+    return day + monthToTotalDays(year, month) + yearToTotalDays(year);
+}
+
+bool DDay::isLeapYear(int year) {
+    return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+}
+
+bool DDay::isValidDate(int year, int month, int day) {
+    return year > 0 && month > 0 && month < 13 && day <= getDaysInMonth(year, month) && day > 0;
+}
+
+int DDay::getDaysInMonth(int year, int month) {
+    if (isLeapYear(year)) {
+        return leapYearDay[month - 1];
+    }
+    return commonYearDay[month - 1];
+}
+
+int DDay::totalDaysToYear(int &totalDays) {
+    int year = 1;
 
     year += totalDays / 146097 * 400;
     totalDays %= 146097;
@@ -13,54 +45,27 @@ Day DDay::totalDaysToDate(int totalDays) {
 
     for (;totalDays - 365 > 0 ; totalDays -= 365, ++year) {}
 
-    //윤년 계산(모듈러 연산이 딱 0으로 나누어 떨어지면 버그 방지 로직)
-    if (totalDays == 0 && isLeapYear(year - 1)) {
-        year -= 1;
-        totalDays = 366;
-        // 이게 더 나으려나
-        // return Day(year - 1, 12, 31);
-    }
+    return year;
+}
+
+int DDay::totalDaysToMonth(int year, int &totalDays) {
+    int month = 1;
 
     for (int i = 0; i < 12; i++) {
-        month = i + 1;
-        if (isLeapYear(year)) {
-            if (totalDays - leapYearDay[i] <= 0) {
-                break;
-            }
-            totalDays -= leapYearDay[i];
+        int daysInMonth = isLeapYear(year) ? leapYearDay[i] : commonYearDay[i];
+
+        if (totalDays <= daysInMonth) {
+            break;
         }
-        else {
-            if (totalDays - commonYearDay[i] <= 0) {
-                break;
-            }
-            totalDays -= commonYearDay[i];
-        }
+        totalDays -= daysInMonth;
+        month++;
     }
-    int day = totalDays;
 
-    return Day(year, month, day);
+    return month;
 }
 
-bool DDay::isLeapYear(int year) {
-    return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
-}
-
-int DDay::dateToTotalDays(int year, int month, int day) {
+int DDay::yearToTotalDays(int year) {
     int totalDays = 0;
-
-    totalDays += day;
-
-    --month;
-    if (isLeapYear(year)) {
-        for (int i = 0; i < month; i++) {
-            totalDays += leapYearDay[i];
-        }
-    }
-    else {
-        for (int i = 0; i < month; i++) {
-            totalDays += commonYearDay[i];
-        }
-    }
 
     --year;
     totalDays += (year / 400) * 146097;
@@ -77,13 +82,20 @@ int DDay::dateToTotalDays(int year, int month, int day) {
     return totalDays;
 }
 
-bool DDay::isValidDate(int year, int month, int day) {
-    return year > 0 && month > 0 && month < 13 && day <= getDaysInMonth(year, month) && day > 0;
+int DDay::monthToTotalDays(int year, int month) {
+    int totalDays = 0;
+    --month;
+    if (isLeapYear(year)) {
+        for (int i = 0; i < month; i++) {
+            totalDays += leapYearDay[i];
+        }
+    }
+    else {
+        for (int i = 0; i < month; i++) {
+            totalDays += commonYearDay[i];
+        }
+    }
+    return totalDays;
 }
 
-int DDay::getDaysInMonth(int year, int month) {
-    if (isLeapYear(year)) {
-        return leapYearDay[month - 1];
-    }
-    return commonYearDay[month - 1];
-}
+

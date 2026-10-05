@@ -10,6 +10,11 @@ class DDay {
         int getDaysInMonth(int year, int month);
 
     private:
+        int yearToTotalDays(int year);
+        int monthToTotalDays(int year, int month);
+        int totalDaysToYear(int& totalDays);
+        int totalDaysToMonth(int year, int& totalDays);
+
         int commonYearDay[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
         int leapYearDay[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 };

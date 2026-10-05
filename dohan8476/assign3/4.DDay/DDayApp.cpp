@@ -10,8 +10,6 @@ DDayApp::DDayApp() {
     currentDate = Day();
 }
 
-
-
 void DDayApp::run() {
     //<< 2026/10/01 [D-day:+0] 2026/10/01 현재 상태 출력
     printCurrent();

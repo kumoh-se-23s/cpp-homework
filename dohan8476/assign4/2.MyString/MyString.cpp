@@ -6,7 +6,6 @@ MyString::MyString() {
 }
 
 MyString::MyString(const MyString& srcStr){
-    // MyString(srcStr.str);
     int i = 0;
     for (; srcStr.str[i] != '\0' && i < CAPACITY; i++){
         str[i] = srcStr.str[i];
@@ -106,12 +105,13 @@ const MyString MyString::operator+(const char str2nd[]) const {
     MyString result;
     int i = 0;
 
+    //앞배열 result로 복사
     for(;this->str[i] != '\0' && i < CAPACITY; i++) {
         result.str[i] = this->str[i];
     }
 
-    int j = 0;
-    for (;str2nd[j] != '\0' && i < CAPACITY; i++, j++) {
+    //뒷 배열 result로 붙히기
+    for (int j = 0 ;str2nd[j] != '\0' && i < CAPACITY; i++, j++) {
         result.str[i] = str2nd[j];
     }
     result.str[i] = '\0';
@@ -144,7 +144,7 @@ MyString &MyString::operator=(const MyString& str2nd) {
 bool MyString::operator==(const MyString& srcStr) const {
     int len = this->length();
     int len2 = srcStr.length();
-    //길이부터 판별로 아래 문제 해소
+    //길이 판별로 아래 문제 해소
     if (len != len2) {
         return false;
     }
@@ -177,6 +177,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
 
     while (is.get(c)) {
 
+        //엔터치면 컷
         if (c == '\n' || c == '\r') {
             break;
         }
