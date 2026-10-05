@@ -171,7 +171,7 @@ std::ostream &operator<<(std::ostream &os, const MyString& str) {
 }
 
 std::istream &operator>>(std::istream &is, MyString &str) {
-    char temp[16];
+    char temp[MyString::CAPACITY + 1];
     char c;
     int i = 0;
 
@@ -182,7 +182,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
             break;
         }
 
-        if (i < 15) {
+        if (i < MyString::CAPACITY) {
             temp[i++] = c;
         } else {
             //버퍼에 남기는 메소드

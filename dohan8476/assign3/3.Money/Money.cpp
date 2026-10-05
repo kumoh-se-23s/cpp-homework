@@ -1,5 +1,6 @@
 #include "Money.h"
 
+#include <iomanip>
 #include <sstream>
 
 using namespace std;
@@ -86,7 +87,7 @@ string Money::toString() const {
     if (dollar < 0) {
         out << "-";
     }
-    out << "$" << abs(dollar) << "." << abs(cent);
+    out << "$" << abs(dollar) << "." << setfill('0') << setw(2) << abs(cent);
 
     return out.str();
 }

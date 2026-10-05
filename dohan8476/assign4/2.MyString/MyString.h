@@ -3,6 +3,8 @@
 
 class MyString {
     public:
+        static const int CAPACITY = 15;
+
         MyString();
         MyString(const MyString& srcStr);
         MyString(const char srcStr[]);
@@ -28,9 +30,7 @@ class MyString {
         bool operator !=(const MyString& srcStr) const;
 
     private:
-        //CAPACITY를 전역으로 뺴야하려나
-        const int CAPACITY = 15;
-        char str[16];
+        char str[CAPACITY + 1];
         int cstrlen(const char str[]) const;
 
 };
