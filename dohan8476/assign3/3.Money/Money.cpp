@@ -34,6 +34,10 @@ void Money::normalize() {
         --dollar;
         cent += 100;
     }
+    else if(dollar <0 && cent != 0){
+        ++dollar;
+        cent -= 100;
+    }
 }
 
 //-----------연산자 오버로딩----------
@@ -82,7 +86,7 @@ string Money::toString() const {
     if (dollar < 0) {
         out << "-";
     }
-    out << "$" << abs(dollar) << "." << cent;
+    out << "$" << abs(dollar) << "." << abs(cent);
 
     return out.str();
 }
