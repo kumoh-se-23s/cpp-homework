@@ -1,145 +1,89 @@
 #include "DDay.h"
 
-#include <iostream>
-#include <ostream>
+Day DDay::totalDaysToDate(int totalDays) {
+    int year = 1, month = 1;
 
-using namespace std;
+    year += totalDays / 146097 * 400;
+    totalDays %= 146097;
 
-//default : 2026/10/01
-DDay::DDay() {
-    currentDate = Day();
-}
+    for (;totalDays - 36524 > 0; totalDays -= 36524, year += 100) { }
 
+    year += totalDays / 1461 * 4;
+    totalDays %= 1461;
 
+    for (;totalDays - 365 > 0 ; totalDays -= 365, ++year) {}
 
-void DDay::run() {
-    //<< 2026/10/01 [D-day:+0] 2026/10/01 현재 상태 출력
-    printCurrent();
+    //윤년 계산(모듈러 연산이 딱 0으로 나누어 떨어지면 버그 방지 로직)
+    if (totalDays == 0 && isLeapYear(year - 1)) {
+        year -= 1;
+        totalDays = 366;
+        // 이게 더 나으려나
+        // return Day(year - 1, 12, 31);
+    }
 
-    const int STR_MAX_LEN = 8;
-    char input[STR_MAX_LEN + 1];
-
-    //동작 파트
-    bool isRun = true;
-
-    while (isRun) {
-        //>> Move date{yyyymmdd, Tomorrow(T/t), Yesterday(Y/y)}, Set D-day(+/-int), or Quit(Q/q) :  메뉴 출력
-        printMenu();
-
-        cin >> input;
-        for (int i = 0; i < STR_MAX_LEN; i++) {
-            if (input[i] == '\0') {
+    for (int i = 0; i < 12; i++) {
+        month = i + 1;
+        if (isLeapYear(year)) {
+            if (totalDays - leapYearDay[i] <= 0) {
                 break;
             }
-        }
-
-        //입력 받은 문자열 길이 구하기
-        //1글자 << q t y(일반적인 상황에서)
-        //8글자 << + - yyyymmdd
-        //q1234567, +123q456, ++123456, 12q34567 같은 예외 고려하기
-        int currentLength = 0;
-        for (;input[currentLength] != '\0'  && currentLength < STR_MAX_LEN + 1; currentLength++) {}
-
-        //q, t, y 등은 1글자만 판별해도됨
-        if (currentLength == 1) {
-            switch (input[0]) {
-                case 'Q': case 'q':
-                    cout << "=== END ===";
-                    isRun = false;
-                    break;
-
-                case 'T': case 't':
-                    ++currentDate;
-                    printCurrent();
-                    break;
-
-                case 'Y': case 'y':
-                    --currentDate;
-                    printCurrent();
-                    break;
-
-                default:
-                    printError();
-                    break;
-            }
+            totalDays -= leapYearDay[i];
         }
         else {
-            switch (input[0]) {
-                case '+': case '-': {
-                    int offset = 0;
-                    int sign = (input[0] == '+') ? 1 : -1;
-                    bool isNumber = true;
-
-                    //배열 index 1부터 숫자 검사
-                    for (int i = 1; i < currentLength; i++) {
-                        if ('0' <= input[i] && input[i] <= '9') {
-                            offset = offset * 10 + (input[i] - '0');
-                        }
-                        //+123q456같은 문자면 else -> isValid = false;
-                        else {
-                            isNumber = false;
-                            break;
-                        }
-                    }
-                    if (isNumber) {
-                        dDayValue = offset * sign;
-                        printCurrent();
-                    }else {
-                        printError();
-                    }
-                    break;
-                }
-                case '0': case '1': case '2': case '3': case '4':
-                case '5': case '6': case '7': case '8': case '9': {
-                    bool isAllNum = true;
-                    for (int i = 0; i < currentLength; i++) {
-                        if (input[i] < '0' || input[i] > '9') {
-                            isAllNum = false;
-                            break;
-                        }
-                    }
-                    if (isAllNum) {
-                        int year = (input[0] - '0') * 1000 + (input[1] - '0') * 100 + (input[2] - '0') * 10 + (input[3] - '0');
-                        int month = (input[4] - '0') * 10 + (input[5] - '0');
-                        int day = (input[6] - '0') * 10 + (input[7] - '0');
-
-                        if (calc.isValidDate(year, month, day)) {
-                            currentDate = Day(year, month, day);
-                            printCurrent();
-                        }
-                        else {
-                            printError();
-                        }
-                    }
-                    else {
-                        printError();
-                    }
-                    break;
-                }
-                default: {
-                    printError();
-                    break;
-                }
+            if (totalDays - commonYearDay[i] <= 0) {
+                break;
             }
+            totalDays -= commonYearDay[i];
         }
     }
+    int day = totalDays;
+
+    return Day(year, month, day);
 }
 
-void DDay::printCurrent() {
-    Day targetDate = currentDate + dDayValue;
+bool DDay::isLeapYear(int year) {
+    return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+}
 
-    cout << "<< " << currentDate << " [D-day:";
-    if (dDayValue >= 0 ) {
-        cout << "+";
+int DDay::dateToTotalDays(int year, int month, int day) {
+    int totalDays = 0;
+
+    totalDays += day;
+
+    --month;
+    if (isLeapYear(year)) {
+        for (int i = 0; i < month; i++) {
+            totalDays += leapYearDay[i];
+        }
     }
-    cout << dDayValue << "] " << targetDate << endl;
+    else {
+        for (int i = 0; i < month; i++) {
+            totalDays += commonYearDay[i];
+        }
+    }
+
+    --year;
+    totalDays += (year / 400) * 146097;
+    year %= 400;
+
+    totalDays += (year / 100) * 36524;
+    year %= 100;
+
+    totalDays += (year / 4) * 1461;
+    year %= 4;
+
+    totalDays += year * 365;
+
+    return totalDays;
 }
 
-void DDay::printMenu() {
-    cout << ">> Move date{yyyymmdd, Tomorrow(T/t), Yesterday(Y/y)}, Set D-day(+/-int), or Quit(Q/q) : ";
+bool DDay::isValidDate(int year, int month, int day) {
+    return year > 0 && month > 0 && month < 13 && day <= getDaysInMonth(year, month) && day > 0;
 }
 
-void DDay::printError() {
-    cout << "*** ERROR" << endl;
-    printCurrent();
+int DDay::getDaysInMonth(int year, int month) {
+    if (isLeapYear(year)) {
+        return leapYearDay[month - 1];
+    }
+    return commonYearDay[month - 1];
 }

@@ -1,10 +1,10 @@
 #include <iostream>
-#include "DDay.h"
+#include "DDayApp.h"
 
 using namespace std;
 
 int main() {
-    DDay app;
+    DDayApp app;
     app.run();
 
     return 0;

@@ -1,6 +1,6 @@
 #include "Day.h"
 #include <iomanip>
-#include "DateCalculator.h"
+#include "DDay.h"
 
 Day::Day() {
     year = 2026;
@@ -48,7 +48,7 @@ std::ostream& operator<<(std:: ostream& out, const Day& day) {
 
 //연산자 오버로딩
 Day& Day::operator++() {
-    DateCalculator calc;
+    DDay calc;
 
     int year = this->getYear();
     int month = this->getMonth();
@@ -72,7 +72,7 @@ Day& Day::operator++() {
 }
 
 Day& Day::operator--() {
-    DateCalculator calc;
+    DDay calc;
 
     int year = this->getYear();
     int month = this->getMonth();
@@ -97,14 +97,14 @@ Day& Day::operator--() {
 }
 
 Day Day::operator+(int addDays){
-    DateCalculator calc;
+    DDay calc;
     int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
 
     return calc.totalDaysToDate(totalDays + addDays);
 }
 
 Day Day::operator-(int subDays){
-    DateCalculator calc;
+    DDay calc;
     int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
 
     return calc.totalDaysToDate(totalDays - subDays);

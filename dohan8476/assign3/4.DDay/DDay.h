@@ -1,19 +1,16 @@
 #pragma once
-
 #include "Day.h"
-#include "DateCalculator.h"
 
 class DDay {
     public:
-        DDay();
-        void run();
+        bool isLeapYear(int year);
+        bool isValidDate(int year, int month, int day);
+        Day totalDaysToDate(int totalDays);
+        int dateToTotalDays(int year, int month, int day);
+        int getDaysInMonth(int year, int month);
 
     private:
-        Day currentDate;
-        int dDayValue = 0;
-        DateCalculator calc;
-
-        void printCurrent();
-        void printMenu();
-        void printError();
+        int commonYearDay[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        int leapYearDay[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 };
+

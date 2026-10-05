@@ -71,7 +71,9 @@ int Matrix::getMatrix(int row, int col) const{
 }
 
 void Matrix::setMatrix(int row, int col, int val) {
-    matrix[row][col] = val;
+    if (0 <= row && row < SIZE && 0 <= col && col < SIZE) {
+        matrix[row][col] = val;
+    }
 }
 
 Matrix Matrix::transpose() const{

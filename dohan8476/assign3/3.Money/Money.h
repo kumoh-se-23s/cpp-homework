@@ -2,7 +2,6 @@
 #include <iostream>
 
 class Money {
-
     public:
         Money();
         Money(int dollar, int cent);
