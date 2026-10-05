@@ -55,18 +55,26 @@ bool Money::operator==(const Money &m) const {
 }
 
 bool Money::operator<(const Money &m) const {
-    return dollar < m.dollar || cent < m.cent;
+    if (dollar < m.dollar)
+        return true;
+    return cent < m.cent;
 }
 
 bool Money::operator>(const Money &m) const {
-    return dollar > m.dollar || cent > m.cent;
+    if (dollar > m.dollar)
+        return true;
+    return cent > m.cent;
 }
 
 bool Money::operator<=(const Money &m) const {
-    return dollar <= m.dollar || cent <= m.cent;
+    if (dollar <= m.dollar)
+        return true;
+    return cent <= m.cent;
 }
 bool Money::operator>=(const Money &m) const {
-    return dollar >= m.dollar || cent >= m.cent;
+    if (dollar >= m.dollar)
+        return true;
+    return cent >= m.cent;
 }
 
 string Money::toString() const {
