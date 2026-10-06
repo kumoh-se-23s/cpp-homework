@@ -89,7 +89,11 @@ string Money::toString() const{
     ostringstream result;
     if (dollar < 0)
         result << "-";
-    result << "$" << abs(dollar) << "." << abs(cent);
+    result << "$" << abs(dollar) << ".";
+
+    if (cent < 10) //한 자리 수면 0 끼워넣기
+        result << "0";
+    result << abs(cent);
 
     return result.str();
 }
