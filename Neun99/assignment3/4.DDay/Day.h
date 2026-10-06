@@ -8,6 +8,7 @@ class Day {
 public:
     //생성자
     Day();
+    Day(int, int, int);
 
     //getter
     int getYear() const;
@@ -20,8 +21,8 @@ public:
     //연산자 오버로딩
     Day operator++();
     Day operator--();
-    // const Day operator+(int) const;
-    // const Day operator-(int) const;
+    const Day operator+(int) const;
+    const Day operator-(int) const;
 private:
     int year;
     int month;
@@ -29,6 +30,7 @@ private:
 
     int getDaysInMonth(int, int) const;
     bool isLeapYear(int) const;
+    int getDaysInYear(int, int) const;
 };
 
 ostream& operator<<(ostream&, const Day&);
