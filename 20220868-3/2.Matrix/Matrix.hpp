@@ -7,7 +7,7 @@
 #include <format>
 #include <sstream>
 
-template <int SIZE>
+template <int SIZE = 3>
 class Matrix
 {
 
