@@ -5,15 +5,8 @@ using namespace std;
 
 //생성자
 Fraction::Fraction() {}
-Fraction::Fraction(int num, int den) {
-    set(num, den);
-}
-
-//값 변경
-void Fraction::set(int num, int den) {
-    normalize(num, den);
-    numerator = num;
-    denominator = den;
+Fraction::Fraction(int num, int den): numerator(num), denominator(den) {
+    normalize();
 }
 
 //덧셈
@@ -43,23 +36,23 @@ int Fraction::getDen() const{
 }
 
 //입력값 정리
-void Fraction::normalize(int& num, int& den) {
+void Fraction::normalize() {
     //--음수 정리--
-    if (den < 0) {
-        num *= -1;
-        den *= -1;
+    if (denominator < 0) {
+        numerator *= -1;
+        denominator *= -1;
     }
 
     //분모 0 처리
-    if (den == 0) {
+    if (denominator == 0) {
         cout << "ERR ";
-        den = 1;
+        denominator = 1;
     }
 
     //약분
-    int gcd = getGCD(num, den);
-    num /= gcd;
-    den /= gcd;
+    int gcd = getGCD(numerator, denominator);
+    numerator /= gcd;
+    denominator /= gcd;
 }
 
 //최대공약수 반환
