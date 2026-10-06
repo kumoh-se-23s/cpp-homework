@@ -61,7 +61,7 @@ MyArray2::MyArray2() {
 }
 
 void MyArray2::append(int item) {
-    if (nowSize != MAX_ARRAY_SIZE) {
+    if (nowSize < MAX_ARRAY_SIZE) {
         array[nowSize++] = item;
     }
 }

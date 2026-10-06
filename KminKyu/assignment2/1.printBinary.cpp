@@ -14,11 +14,7 @@ int main() {
         cin >> number;
 
         do {
-            if (number % 2 == 1) {
-                binaryArray[arraySize++] = 1;
-            } else {
-                binaryArray[arraySize++] = 0;
-            }
+            binaryArray[arraySize++] = number % 2;
             number /= 2;
         } while (number != 0);
 

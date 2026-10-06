@@ -16,5 +16,5 @@ private:
     static const int MAX_MATRIX_SIZE = 3;
     static int getLength(int);
     int getMaxLengthValue() const;
-    int matrixArray[3][3] = {0,};
+    int matrixArray[MAX_MATRIX_SIZE][MAX_MATRIX_SIZE] = {0,};
 };
