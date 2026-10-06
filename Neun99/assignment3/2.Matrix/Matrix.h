@@ -1,8 +1,8 @@
+#pragma once
 #include <iostream>
 
 using namespace std;
 
-#pragma once
 class Matrix {
 public:
     void setValue(int, int, int);
@@ -10,6 +10,7 @@ public:
     const Matrix operator!() const;
     const Matrix operator+(const Matrix&) const;
     const Matrix operator*(const Matrix&) const;
+
     static const int SIZE = 3;
     const int getMaxWidth() const;
 private:
