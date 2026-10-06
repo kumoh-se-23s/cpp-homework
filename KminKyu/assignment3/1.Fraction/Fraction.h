@@ -9,7 +9,7 @@ public:
     void set(int n, int d);
     int getNumerator() const;
     int getDenominator() const;
-    const Fraction operator +(const Fraction& fraction) const;
+    Fraction operator +(const Fraction& fraction) const;
     Fraction& operator =(const Fraction& fraction);
 private: 
     int numerator;

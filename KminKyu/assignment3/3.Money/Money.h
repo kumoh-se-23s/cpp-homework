@@ -11,8 +11,8 @@ public:
     void set(int d, int c);
     int getDollar() const;
     int getCent() const;
-    const Money operator +(const Money& money) const;
-    const Money operator -(const Money& money) const;
+    Money operator +(const Money& money) const;
+    Money operator -(const Money& money) const;
     bool operator <=(const Money& money) const;
     bool operator >=(const Money& money) const;
     bool operator ==(const Money& money) const;

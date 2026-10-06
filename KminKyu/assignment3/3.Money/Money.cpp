@@ -47,11 +47,11 @@ void Money::set(int dollar, int cent) {
     this->normalize();
 }
 
-const Money Money::operator +(const Money& Money) const {
+Money Money::operator +(const Money& Money) const {
     return add(Money);
 }
 
-const Money Money::operator -(const Money& Money) const {
+Money Money::operator -(const Money& Money) const {
     return minus(Money);
 }
 

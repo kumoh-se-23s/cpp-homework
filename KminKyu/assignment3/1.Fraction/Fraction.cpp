@@ -66,9 +66,14 @@ void Fraction::set(int n, int d) {
     this->organizeFraction();
 }
 
-const Fraction Fraction::operator +(const Fraction& fraction) const {
+Fraction Fraction::operator +(const Fraction& fraction) const {
     return add(fraction);
-} 
+}
+Fraction& Fraction::operator =(const Fraction& fraction) {
+    set(fraction.getNumerator(), fraction.getDenominator());
+    return *this;
+}
+
 ostream& operator <<(ostream& outputStream, const Fraction& fraction) {
     outputStream << fraction.getNumerator();
     if (fraction.getDenominator() != 1) {
@@ -76,10 +81,6 @@ ostream& operator <<(ostream& outputStream, const Fraction& fraction) {
     }
 
     return outputStream;
-}
-Fraction& Fraction::operator =(const Fraction& fraction) {
-    set(fraction.getNumerator(), fraction.getDenominator());
-    return *this;
 }
 
 
