@@ -62,7 +62,7 @@ const Matrix Matrix::operator+(const Matrix& matrix2) const{
 
 const Matrix Matrix::operator*(const Matrix& matrix2) const{
     Matrix resultMatrix;
-
+    //todo: 갠피 반영해서 수정 필요
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {
             for (int idx = 0; idx < SIZE; idx++) {
