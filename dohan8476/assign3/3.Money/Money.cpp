@@ -85,9 +85,9 @@ bool Money::operator>=(const Money &m) const {
 string Money::toString() const {
     ostringstream out;
     if (dollar < 0) {
-        out << "-";
+        out << '-';
     }
-    out << "$" << abs(dollar) << "." << setfill('0') << setw(2) << abs(cent);
+    out << '$' << abs(dollar) << '.' << setfill('0') << setw(2) << abs(cent);
 
     return out.str();
 }

@@ -26,10 +26,7 @@ bool DDay::isValidDate(int year, int month, int day) {
 }
 
 int DDay::getDaysInMonth(int year, int month) {
-    if (isLeapYear(year)) {
-        return leapYearDay[month - 1];
-    }
-    return commonYearDay[month - 1];
+    return isLeapYear(year) ? leapYearDay[--month] : commonYearDay[--month];
 }
 
 int DDay::totalDaysToYear(int &totalDays) {

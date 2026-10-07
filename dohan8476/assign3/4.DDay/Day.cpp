@@ -39,9 +39,13 @@ void Day::setDay(int day) {
 //000nn년/0n월/0n일 형식으로 출력
 std::ostream& operator<<(std:: ostream& out, const Day& day) {
 
-    out << std::setfill('0') << std::setw(4) << day.getYear() << "/";
-    out << std::setfill('0') << std::setw(2) << day.getMonth() << "/";
-    out << std::setfill('0') << std::setw(2) << day.getDay();
+    // out << std::setfill('0') << std::setw(4) << day.getYear() << "/";
+    // out << std::setfill('0') << std::setw(2) << day.getMonth() << "/";
+    // out << std::setfill('0') << std::setw(2) << day.getDay();
+
+    out << std::setfill('0') << std::setw(4) << day.getYear() << '/';
+    out << std::setw(2) << day.getMonth() << '/';
+    out << std::setw(2) << day.getDay();
 
     return out;
 }
