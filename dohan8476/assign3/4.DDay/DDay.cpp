@@ -26,7 +26,10 @@ bool DDay::isValidDate(int year, int month, int day) {
 }
 
 int DDay::getDaysInMonth(int year, int month) {
-    return isLeapYear(year) ? leapYearDay[--month] : commonYearDay[--month];
+    if (isLeapYear(year) && month == 2) {
+        return 29;
+    }
+    return DAYS_IN_MONTH[--month];
 }
 
 int DDay::totalDaysToYear(int &totalDays) {
@@ -46,10 +49,11 @@ int DDay::totalDaysToYear(int &totalDays) {
 }
 
 int DDay::totalDaysToMonth(int year, int &totalDays) {
-    int month = 1;
+    int month = 0;
 
-    for (int i = 0; i < 12; i++) {
-        int daysInMonth = isLeapYear(year) ? leapYearDay[i] : commonYearDay[i];
+    for (int i = 1; i < 13; i++) {
+        // int daysInMonth = isLeapYear(year) ? leapYearDay[i] : commonYearDay[i];
+        int daysInMonth = getDaysInMonth(year, i);
 
         if (totalDays <= daysInMonth) {
             break;
@@ -81,16 +85,19 @@ int DDay::yearToTotalDays(int year) {
 
 int DDay::monthToTotalDays(int year, int month) {
     int totalDays = 0;
-    --month;
-    if (isLeapYear(year)) {
-        for (int i = 0; i < month; i++) {
-            totalDays += leapYearDay[i];
-        }
-    }
-    else {
-        for (int i = 0; i < month; i++) {
-            totalDays += commonYearDay[i];
-        }
+    // --month;
+    // if (isLeapYear(year)) {
+    //     for (int i = 0; i < month; i++) {
+    //         totalDays += leapYearDay[i];
+    //     }
+    // }
+    // else {
+    //     for (int i = 0; i < month; i++) {
+    //         totalDays += commonYearDay[i];
+    //     }
+    // }
+    for (int i = 1 ; i < month + 1 ; i++) {
+        totalDays += getDaysInMonth(year, i);
     }
     return totalDays;
 }
