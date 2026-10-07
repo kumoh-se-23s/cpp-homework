@@ -52,7 +52,6 @@ int DDay::totalDaysToMonth(int year, int &totalDays) {
     int month = 0;
 
     for (int i = 1; i < 13; i++) {
-        // int daysInMonth = isLeapYear(year) ? leapYearDay[i] : commonYearDay[i];
         int daysInMonth = getDaysInMonth(year, i);
 
         if (totalDays <= daysInMonth) {
@@ -85,20 +84,11 @@ int DDay::yearToTotalDays(int year) {
 
 int DDay::monthToTotalDays(int year, int month) {
     int totalDays = 0;
-    // --month;
-    // if (isLeapYear(year)) {
-    //     for (int i = 0; i < month; i++) {
-    //         totalDays += leapYearDay[i];
-    //     }
-    // }
-    // else {
-    //     for (int i = 0; i < month; i++) {
-    //         totalDays += commonYearDay[i];
-    //     }
-    // }
+
     for (int i = 1 ; i < month + 1 ; i++) {
         totalDays += getDaysInMonth(year, i);
     }
+
     return totalDays;
 }
 

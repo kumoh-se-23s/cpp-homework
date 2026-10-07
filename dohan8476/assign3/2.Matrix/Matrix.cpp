@@ -81,7 +81,8 @@ Matrix Matrix::transpose() const{
 
     for (int row = 0; row < SIZE; row++) {
         for (int col = 0; col < SIZE; col++) {
-            resultMatrix.setMatrix(col,row,this->getMatrix(row,col));
+            // resultMatrix.setMatrix(col,row,this->getMatrix(row,col));
+            resultMatrix.matrix[col][row] = matrix[row][col];
         }
     }
 
@@ -93,7 +94,8 @@ Matrix Matrix::add(Matrix m) const{
 
     for (int row = 0; row < SIZE; row++) {
         for (int col = 0; col < SIZE; col++) {
-            resultMatrix.setMatrix(row,col, this->getMatrix(row,col) + m.getMatrix(row,col));
+            // resultMatrix.setMatrix(row,col, this->getMatrix(row,col) + m.getMatrix(row,col));
+            resultMatrix.matrix[row][col] += m.matrix[row][col];
         }
     }
 
@@ -105,10 +107,13 @@ Matrix Matrix::multi(Matrix m) const{
 
     for (int row = 0; row < SIZE; row++) {
         for (int col = 0; col < SIZE; col++) {
-            resultMatrix.setMatrix(row,col,0);
+            // resultMatrix.setMatrix(row,col,0);
+            resultMatrix.matrix[row][col] = 0;
             for (int cur = 0; cur < SIZE; cur++) {
-                resultMatrix.setMatrix(row,col,
-                    resultMatrix.getMatrix(row,col)+ this->getMatrix(row,cur)*m.getMatrix(cur,col));
+                // resultMatrix.setMatrix(row,col,
+                //     resultMatrix.getMatrix(row,col)+ this->getMatrix(row,cur)*m.getMatrix(cur,col));
+                resultMatrix.matrix[row][col] += matrix[row][cur] * m.matrix[cur][col];
+
             }
         }
     }
