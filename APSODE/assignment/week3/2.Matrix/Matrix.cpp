@@ -26,27 +26,6 @@ int Matrix::get_max_element_length() const {
     return get_digit_length(max_length_element);
 }
 
-
-void Matrix::read() {
-    for (int row = 0; row < DEFAULT_ROW_SIZE; ++row) {
-        for (int col = 0; col < DEFAULT_COL_SIZE; ++col) {
-            std::cin >> matrix[row][col];
-        }
-    }
-}
-
-void Matrix::print() const {
-    int max_element_length = this->get_max_element_length();
-
-    for (int row = 0; row < DEFAULT_ROW_SIZE; ++row) {
-        std::cout << "|";
-        for (int col = 0; col < DEFAULT_COL_SIZE; ++col) {
-            printf(" %*d", max_element_length, matrix[row][col]);
-        }
-        std::cout << " |\n";
-    }
-}
-
 Matrix Matrix::transpose() const {
     Matrix result_matrix = Matrix();
     for (int row = 0; row < DEFAULT_ROW_SIZE; ++row) {
@@ -103,12 +82,27 @@ Matrix Matrix::operator*(const Matrix &other_matrix) const {
 }
 
 std::ostream &operator<<(std::ostream &output_stream, const Matrix &matrix) {
+    int max_element_length = matrix.get_max_element_length();
+
     for (int row = 0; row < Matrix::DEFAULT_ROW_SIZE; ++row) {
+        output_stream << "|";
         for (int col = 0; col < Matrix::DEFAULT_COL_SIZE; ++col) {
-            std::cin >> matrix.[row][col];
+            printf(" %*d", max_element_length, matrix.get(row, col));
         }
+        output_stream << " |\n";
     }
+
+    return output_stream;
 }
 
-std::istream &operator>>(std::istream &, Matrix &matrix) {
+std::istream &operator>>(std::istream &input_stream, Matrix &matrix) {
+    for (int row = 0; row < Matrix::DEFAULT_ROW_SIZE; ++row) {
+        for (int col = 0; col < Matrix::DEFAULT_COL_SIZE; ++col) {
+            int input_buffer;
+            input_stream >> input_buffer;
+            matrix.set(row, col, input_buffer);
+        }
+    }
+
+    return input_stream;
 }
