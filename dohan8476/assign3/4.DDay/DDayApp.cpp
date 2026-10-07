@@ -26,9 +26,19 @@ void DDayApp::run() {
 
         cin.getline(input, STR_MAX_LEN + 1);
 
+        //getline에서 범위를 초과하면 fail
+        if (cin.fail()) {
+            printError();
+            //현재꺼 clear
+            cin.clear();
+            //버퍼에 남은것들 '\n' 만날 때 까지 비워주기
+            cin.ignore(1000, '\n');
+            continue;
+        }
+
         int currentLength = 0;
-        //문자 입력 받으면서 길이까지 구하기
-        for (; currentLength < STR_MAX_LEN && input[currentLength] != '\0'; currentLength++) {}
+        //길이 반환
+        for (; currentLength < STR_MAX_LEN + 1 && input[currentLength] != '\0'; currentLength++) {}
 
         //1글자 << q t y(일반적인 상황에서)
         //8글자 << + - yyyymmdd
@@ -67,7 +77,7 @@ void DDayApp::run() {
                     break;
             }
         }
-        else {
+        else if (currentLength <= 8){
             switch (input[0]) {
                 case '+': case '-': {
                     int offset = 0;
@@ -147,6 +157,7 @@ void DDayApp::run() {
             }
         }
     }
+
 }
 
 void DDayApp::printCurrent() {
