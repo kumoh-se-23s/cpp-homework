@@ -41,7 +41,7 @@ void DDayApp::run() {
     }
 }
 
-bool DDayApp::processCommand(const char input[], int length) {
+bool DDayApp::processCommand(const char input[], const int length) {
     //1글자 << q t y(일반적인 상황에서)
     //8글자 << + - yyyymmdd
     //q1234567, +123q456, 12q34567 같은 예외 고려하기
@@ -89,7 +89,7 @@ bool DDayApp::processCommand(const char input[], int length) {
     return true;
 }
 
-void DDayApp::handleSetDDay(const char input[], int length) {
+void DDayApp::handleSetDDay(const char input[], const int length) {
     int offset = 0;
     int sign = (input[0] == '+') ? 1 : -1;
 
@@ -105,7 +105,7 @@ void DDayApp::handleSetDDay(const char input[], int length) {
     isValidNewDate(currentDate, offset * sign);
 }
 
-void DDayApp::handleMoveDate(const char input[], int length) {
+void DDayApp::handleMoveDate(const char input[], const int length) {
 
     for (int i = 0; i < length; i++) {
         if (!isDigit(input[i])) {
@@ -145,7 +145,7 @@ bool DDayApp::isDigit(char c) {
     return (c >= '0' && c <= '9');
 }
 
-bool DDayApp::isValidNewDate(Day newDay, int newDDayValue) {
+bool DDayApp::isValidNewDate(Day newDay, const int newDDayValue) {
     if (!calc.isValidDate(newDay.getYear(), newDay.getMonth(), newDay.getDay())) {
         printError();
         return false;
@@ -163,7 +163,7 @@ bool DDayApp::isValidNewDate(Day newDay, int newDDayValue) {
     return true;
 }
 
-int DDayApp::parseInt(const char input[], int start, int length) {
+int DDayApp::parseInt(const char input[], const int start, const int length) {
     int result = 0;
     for (int i = start; i < start + length; i++) {
         result = result * 10 + (input[i] - '0');
