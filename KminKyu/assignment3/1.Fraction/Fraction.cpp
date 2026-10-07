@@ -21,9 +21,8 @@ int Fraction::getGCD(int n, int d) { //유클리드 호제법 알고리즘
     return d;
 }
 
-Fraction::Fraction(int n, int d)
-    : numerator(n), denominator(d) {
-    organizeFraction();
+Fraction::Fraction(int n, int d) {
+    set(n, d);
 }
 
 void Fraction::organizeFraction() {
@@ -51,12 +50,13 @@ int Fraction::getDenominator() const {
 }
 
 Fraction Fraction::add(const Fraction& fraction) const{
-    int firstNumerator = this->getNumerator() * fraction.getDenominator();
-    int secondNumerator = fraction.getNumerator() * this->getDenominator();
+    int firstNumerator = this->numerator * fraction.denominator;
+    int secondNumerator = fraction.numerator * this->denominator;
 
-    int resultDenominator = fraction.getDenominator() * this->getDenominator();
+    int resultDenominator = fraction.denominator * this->denominator;
 
     int resultNumerator = firstNumerator + secondNumerator;
+
     Fraction resultFraction = Fraction(resultNumerator, resultDenominator);
     return resultFraction;
 }
@@ -70,7 +70,7 @@ Fraction Fraction::operator +(const Fraction& fraction) const {
     return add(fraction);
 }
 Fraction& Fraction::operator =(const Fraction& fraction) {
-    set(fraction.getNumerator(), fraction.getDenominator());
+    set(fraction.numerator, fraction.denominator);
     return *this;
 }
 

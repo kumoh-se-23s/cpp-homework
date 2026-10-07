@@ -23,31 +23,21 @@ int Matrix::getRowLength(int row) const {
 }
 
 int Matrix::getValue(int column, int row) const {
-    if (0 <= column && column < MAX_MATRIX_SIZE &&
-        0 <= row && row < MAX_MATRIX_SIZE) {
-        return matrixArray[column][row];
-    } else {
-        return 0;
-    }
-
+    return matrixArray[column][row];
 }
 
 void Matrix::setValue(int column, int row, int value) {
-    if (0 <= column && column < MAX_MATRIX_SIZE &&
-        0 <= row && row < MAX_MATRIX_SIZE) {
-
+    if (column < MAX_MATRIX_SIZE && row < MAX_MATRIX_SIZE) {
         matrixArray[column][row] = value;
-
-        value = value < 0 ? abs(value * -10) : value;
-        maxValues[row] = maxValues[row] > value ? maxValues[row] : value;
     }
 }
+
 
 Matrix Matrix::transpose() const {
     Matrix resultMatrix;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
-            resultMatrix.setValue(row, column, matrixArray[column][row]);
+            resultMatrix.matrixArray[row][column] = matrixArray[column][row];
         }
     }
     return resultMatrix;
@@ -57,7 +47,8 @@ Matrix Matrix::add(const Matrix& otherMatrix) const {
     Matrix resultMatrix;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
-            resultMatrix.setValue(column, row, this->getValue(column, row) + otherMatrix.getValue(column, row));
+            resultMatrix.matrixArray[column][row] =
+                this->matrixArray[column][row] + otherMatrix.matrixArray[column][row];
         }
     }
     return resultMatrix;
@@ -67,11 +58,10 @@ Matrix Matrix::multi(const Matrix& otherMatrix) const {
     Matrix resultMatrix;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
-            int result = 0;
             for (int indexCount = 0; indexCount < MAX_MATRIX_SIZE; ++indexCount) {
-                result += this->getValue(column, indexCount) * otherMatrix.getValue(indexCount, row);
+                resultMatrix.matrixArray[column][row] +=
+                    this->matrixArray[column][row] + otherMatrix.matrixArray[column][row];
             }
-            resultMatrix.setValue(column, row, result);
         }
     }
     return resultMatrix;
@@ -81,7 +71,7 @@ Matrix& Matrix::operator =(const Matrix& matrix) {
 
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
-            matrixArray[column][row] = matrix.getValue(column, row);
+            matrixArray[column][row] = matrix.matrixArray[column][row];
         }
     }
     return *this;

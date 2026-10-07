@@ -12,8 +12,8 @@ public:
     Fraction operator +(const Fraction& fraction) const;
     Fraction& operator =(const Fraction& fraction);
 private: 
-    int numerator;
-    int denominator;
+    int numerator = 1;
+    int denominator = 1;
     void organizeFraction();
     static void swap(int&, int&);
     static int getGCD(int n, int d);

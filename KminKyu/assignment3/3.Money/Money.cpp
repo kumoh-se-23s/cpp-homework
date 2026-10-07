@@ -19,24 +19,16 @@ void Money::normalize() {
     }
 }
 
-int Money::getCent() const {
-    return cent;
-}
-
-int Money::getDollar() const {
-    return dollar;
-}
-
 Money Money::add(const Money& money) const{
-    int resultCent = this->getCent() + money.getCent();
-    int resultDollar = this->getDollar() + money.getDollar();
+    int resultCent = this->cent + money.cent;
+    int resultDollar = this->dollar + money.dollar;
 
     Money resultMoney = Money(resultDollar, resultCent);
     return resultMoney;
 }
 Money Money::minus(const Money& money) const{
-    int resultCent = this->getCent() - money.getCent();
-    int resultDollar = this->getDollar() - money.getDollar();
+    int resultCent = this->cent - money.cent;
+    int resultDollar = this->dollar - money.dollar;
 
     Money resultMoney = Money(resultDollar, resultCent);
     return resultMoney;
@@ -56,14 +48,14 @@ Money Money::operator -(const Money& Money) const {
 }
 
 bool Money::operator ==(const Money& money) const {
-    return this->getDollar() == money.getDollar() && this->getCent() == money.getCent();
+    return this->dollar == money.dollar && this->cent == money.cent;
 }
 
 bool Money::operator <(const Money& money) const
 {
-    if (this->getDollar() > money.getDollar()) {
+    if (this->dollar > money.dollar) {
         return false;
-    } else if (this->getDollar() == money.getDollar() && this->getCent() >= money.getCent()) {
+    } else if (this->dollar == money.dollar && this->cent >= money.cent) {
         return false;
     } else {
         return true;
@@ -71,18 +63,18 @@ bool Money::operator <(const Money& money) const
 }
 
 bool Money::operator >(const Money& money) const {
-    if (this->getDollar() < money.getDollar()) {
+    if (this->dollar < money.dollar) {
         return false;
-    } else if (this->getDollar() == money.getDollar() && this->getCent() <= money.getCent()) {
+    } else if (this->dollar == money.dollar && this->cent <= money.cent) {
         return false;
     } else {
         return true;
     }
 }
 bool Money::operator >=(const Money& money) const {
-    if (this->getDollar() < money.getDollar()) {
+    if (this->dollar < money.dollar) {
         return false;
-    } else if (this->getDollar() == money.getDollar() && this->getCent() < money.getCent()) {
+    } else if (this->dollar == money.dollar && this->cent < money.cent) {
         return false;
     } else {
         return true;
@@ -90,16 +82,16 @@ bool Money::operator >=(const Money& money) const {
 }
 
 bool Money::operator <=(const Money& money) const {
-    if (this->getDollar() > money.getDollar()) {
+    if (this->dollar > money.dollar) {
         return false;
-    } else if (this->getDollar() == money.getDollar() && this->getCent() > money.getCent()) {
+    } else if (this->dollar == money.dollar && this->cent > money.cent) {
         return false;
     } else {
         return true;
     }
 }
 Money& Money::operator =(const Money& money) {
-    set(money.getDollar(), money.getCent());
+    set(money.dollar, money.cent);
     return *this;
 }
 

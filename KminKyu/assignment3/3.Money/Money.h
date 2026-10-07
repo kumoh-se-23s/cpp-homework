@@ -5,12 +5,8 @@ using namespace std;
 class Money {
 public:
     Money();
-    Money(int dollar, int cent);
-    Money add(const Money& money) const;
-    Money minus(const Money& money) const;
+    Money(int d, int c);
     void set(int d, int c);
-    int getDollar() const;
-    int getCent() const;
     Money operator +(const Money& money) const;
     Money operator -(const Money& money) const;
     bool operator <=(const Money& money) const;
@@ -23,6 +19,8 @@ public:
 private:
     int dollar;
     int cent;
+    Money add(const Money& money) const;
+    Money minus(const Money& money) const;
     void normalize();
 };
 
