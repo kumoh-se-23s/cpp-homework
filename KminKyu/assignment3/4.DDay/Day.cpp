@@ -7,12 +7,7 @@ Day::Day(int year, int month, int day) {
 }
 
 bool Day::isLeapYear(int year) {
-    if (year < 1) {
-        return ((year + 1) % 400 == 0 || ((year + 1) % 100 != 0 && (year + 1) % 4 == 0));
-    } else {
-        return (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0));
-    }
-
+    return (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0));
 }
 bool Day::isCorrectDate(int year, int month, int day) {
     if (month < 0 || MAX_OF_MONTH < month) {
@@ -164,14 +159,17 @@ Day & Day::operator--() {
         this->year -= 1;
         this->month = MAX_OF_MONTH;
     }
-    if (year == 0) {
-        this->year = -1;
-    }
     return *this;
 }
 
 std::ostream &operator<<(std::ostream &out, const Day &day) {
-    out << day.getYear() << '/' << day.getMonth() << "/" << day.getDay();
+    if (day.getYear() < 1) {
+        out << "BC" << abs(day.getYear() - 1);
+    } else {
+        out << day.getYear();
+    }
+
+    out << '/' << day.getMonth() << "/" << day.getDay();
     return out;
 }
 
