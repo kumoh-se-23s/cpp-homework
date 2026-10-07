@@ -45,6 +45,11 @@ bool DDayApp::processCommand(const char input[], int length) {
     //1글자 << q t y(일반적인 상황에서)
     //8글자 << + - yyyymmdd
     //q1234567, +123q456, 12q34567 같은 예외 고려하기
+    if (isDigit(input[0])) {
+        handleMoveDate(input, length);
+        return true;
+    }
+
     if (length == 1) {
         switch (input[0]) {
             case 'Q': case 'q':
@@ -60,14 +65,7 @@ bool DDayApp::processCommand(const char input[], int length) {
             {
                 Day temp = currentDate;
                 --temp;
-
-                if (!calc.isValidDate(temp.getYear(), temp.getMonth(), temp.getDay())) {
-                    printError();
-                    return true;
-                }
-
-                currentDate = temp;
-                printCurrent();
+                isValidNewDate(temp, dDayValue);
 
                 break;
             }
@@ -82,11 +80,6 @@ bool DDayApp::processCommand(const char input[], int length) {
                 handleSetDDay(input, length);
                 break;
             }
-            case '0': case '1': case '2': case '3': case '4':
-            case '5': case '6': case '7': case '8': case '9': {
-                handleMoveDate(input, length);
-                break;
-            }
             default: {
                 printError();
                 break;
@@ -99,71 +92,33 @@ bool DDayApp::processCommand(const char input[], int length) {
 void DDayApp::handleSetDDay(const char input[], int length) {
     int offset = 0;
     int sign = (input[0] == '+') ? 1 : -1;
-    bool isAllNum = true;
 
     //배열 index 1부터 숫자 검사
     for (int i = 1; i < length; i++) {
-        if (isDigit(input[i])) {
-            offset = offset * 10 + (input[i] - '0');
-        }
-        //+123q456같은 문자면 else -> isValid = false;
-        else {
-            isAllNum = false;
-            break;
-        }
-    }
-
-    if (isAllNum) {
-        int tempDDayValue = offset * sign;
-        Day target = currentDate + tempDDayValue;
-
-        //00010101에서 -50 입력하면 뚫리는거 해결완료
-        if (!calc.isValidDate(target.getYear(), target.getMonth(), target.getDay())) {
+        if (!isDigit(input[i])) {
             printError();
             return;
         }
-        dDayValue = tempDDayValue;
-        printCurrent();
+        offset = offset * 10 + (input[i] - '0');
     }
-    else {
-        printError();
-    }
+
+    isValidNewDate(currentDate, offset * sign);
 }
 
 void DDayApp::handleMoveDate(const char input[], int length) {
-    bool isAllNum = true;
 
     for (int i = 0; i < length; i++) {
-        if (input[i] < '0' || input[i] > '9') {
-            isAllNum = false;
-            break;
-        }
-    }
-
-    if (isAllNum) {
-        int year = (input[0] - '0') * 1000 + (input[1] - '0') * 100 + (input[2] - '0') * 10 + (input[3] - '0');
-        int month = (input[4] - '0') * 10 + (input[5] - '0');
-        int day = (input[6] - '0') * 10 + (input[7] - '0');
-
-        if (!calc.isValidDate(year, month, day)) {
+        if (!isDigit(input[i])) {
             printError();
             return;
         }
-        //이미 dDayValue가 -50으로 세팅되어 있는 상태에서
-        //00010101로가면 생기는 버그 해결완료
-        Day tempDate(year, month, day);
-        Day target = tempDate + dDayValue;
-
-        if (!calc.isValidDate(target.getYear(), target.getMonth(), target.getDay())) {
-            printError();
-            return;
-        }
-
-        currentDate = tempDate;
-        printCurrent();
-    } else {
-        printError();
     }
+    int year = parseInt(input, 0, 4);
+    int month = parseInt(input, 4, 2);
+    int day = parseInt(input, 6, 2);
+
+    Day tempDate(year, month, day);
+    isValidNewDate(tempDate, dDayValue);
 }
 
 
@@ -188,4 +143,30 @@ void DDayApp::printError() {
 
 bool DDayApp::isDigit(char c) {
     return (c >= '0' && c <= '9');
+}
+
+bool DDayApp::isValidNewDate(Day newDay, int newDDayValue) {
+    if (!calc.isValidDate(newDay.getYear(), newDay.getMonth(), newDay.getDay())) {
+        printError();
+        return false;
+    }
+
+    Day target = newDay + newDDayValue;
+    if (!calc.isValidDate(target.getYear(), target.getMonth(), target.getDay())) {
+        printError();
+        return false;
+    }
+
+    currentDate = newDay;
+    dDayValue = newDDayValue;
+    printCurrent();
+    return true;
+}
+
+int DDayApp::parseInt(const char input[], int start, int length) {
+    int result = 0;
+    for (int i = start; i < start + length; i++) {
+        result = result * 10 + (input[i] - '0');
+    }
+    return result;
 }

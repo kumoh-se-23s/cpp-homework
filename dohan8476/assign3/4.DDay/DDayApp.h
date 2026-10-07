@@ -22,4 +22,6 @@ class DDayApp {
         void printError();
 
         bool isDigit(char input);
+        bool isValidNewDate(Day newDay, int newDDayValue);
+        int parseInt(const char input[], int start, int length);
 };
