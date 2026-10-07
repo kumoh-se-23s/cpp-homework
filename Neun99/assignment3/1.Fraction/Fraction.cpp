@@ -9,6 +9,18 @@ Fraction::Fraction(int num, int den): numerator(num), denominator(den) {
     normalize();
 }
 
+//getter--------------------
+//분자 반환
+int Fraction::getNum() const{
+    return numerator;
+}
+
+//분모 반환
+int Fraction::getDen() const{
+    return denominator;
+}
+
+//연산자 오버로딩----------------
 //덧셈
 const Fraction Fraction::operator+(const Fraction& fra) const{
     int result_numerator = numerator * fra.getDen() + fra.getNum() * denominator;
@@ -25,16 +37,7 @@ ostream& operator<<(ostream& out, const Fraction& fra) {
     return out;
 }
 
-//분자 반환
-int Fraction::getNum() const{
-    return numerator;
-}
-
-//분모 반환
-int Fraction::getDen() const{
-    return denominator;
-}
-
+//private----------------
 //입력값 정리
 void Fraction::normalize() {
     //--음수 정리--
