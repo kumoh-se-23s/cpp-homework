@@ -4,15 +4,53 @@
 
 using namespace std;
 
+//getter setter----------------
+int Matrix::getValue(int rowIdx, int colIdx) const{
+    return matrix[rowIdx][colIdx];
+}
+
 void Matrix::setValue(int rowIdx, int colIdx, int value) {
     if (rowIdx < SIZE && colIdx < SIZE)
         matrix[rowIdx][colIdx] = value;
 }
-
-int Matrix::getValue(int rowIdx, int colIdx) const{
-    return matrix[rowIdx][colIdx];
-}
 //연산자오버로딩----------------------------------------------
+//단항!
+const Matrix Matrix::operator!() const{
+    Matrix resultMatrix;
+    for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
+        for (int colIdx = 0; colIdx < SIZE; colIdx++) {
+            resultMatrix.matrix[rowIdx][colIdx] = matrix[colIdx][rowIdx];
+        }
+    }
+    return resultMatrix;
+}
+
+//+
+const Matrix Matrix::operator+(const Matrix& mat2) const{
+    Matrix resultMatrix;
+    for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
+        for (int colIdx = 0; colIdx < SIZE; colIdx++) {
+            resultMatrix.matrix[rowIdx][colIdx] = matrix[rowIdx][colIdx] + mat2.matrix[rowIdx][colIdx];
+        }
+    }
+    return resultMatrix;
+}
+
+//*
+const Matrix Matrix::operator*(const Matrix& mat2) const{
+    Matrix resultMatrix;
+    for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
+        for (int colIdx = 0; colIdx < SIZE; colIdx++) {
+            int value = 0;
+            for (int idx = 0; idx < SIZE; idx++) {
+                value += matrix[rowIdx][idx] * mat2.matrix[idx][colIdx];
+            }
+            resultMatrix.matrix[rowIdx][colIdx] = value;
+        }
+    }
+    return resultMatrix;
+}
+
 //>>
 istream& operator>>(istream& in, Matrix& mat) {
     for (int rowIdx = 0; rowIdx < Matrix::SIZE; rowIdx++) {
@@ -38,51 +76,8 @@ ostream& operator<<(ostream& out, const Matrix& mat) {
     return out;
 }
 
-//단항!
-const Matrix Matrix::operator!() const{
-    Matrix resultMatrix;
-
-    for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
-        for (int colIdx = 0; colIdx < SIZE; colIdx++) {
-            resultMatrix.setValue(rowIdx, colIdx, getValue(colIdx, rowIdx));
-        }
-    }
-
-    return resultMatrix;
-}
-
-//+
-const Matrix Matrix::operator+(const Matrix& matrix2) const{
-    Matrix resultMatrix;
-
-    for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
-        for (int colIdx = 0; colIdx < SIZE; colIdx++) {
-            int value = getValue(rowIdx, colIdx) + matrix2.getValue(rowIdx, colIdx);
-            resultMatrix.setValue(rowIdx, colIdx, value);
-        }
-    }
-
-    return resultMatrix;
-}
-
-//*
-const Matrix Matrix::operator*(const Matrix& matrix2) const{
-    Matrix resultMatrix;
-    for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
-        for (int colIdx = 0; colIdx < SIZE; colIdx++) {
-            int value = 0;
-            for (int idx = 0; idx < SIZE; idx++) {
-                value += getValue(rowIdx, idx) * matrix2.getValue(idx, colIdx);
-            }
-            resultMatrix.setValue(rowIdx, colIdx, value);
-        }
-    }
-
-    return resultMatrix;
-}
-
-
-const int Matrix::getMaxWidth() const{
+//배열 내 최대 길이 반환
+int Matrix::getMaxWidth() const{
     int maxWidth = 0;
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {

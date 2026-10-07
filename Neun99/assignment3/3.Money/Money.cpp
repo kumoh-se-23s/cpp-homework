@@ -1,7 +1,6 @@
 #include <iostream>
-#include <string>
-#include <sstream>
 #include "Money.h"
+#include <iomanip>
 
 using namespace std;
 
@@ -12,7 +11,7 @@ Money::Money() {
 }
 
 Money::Money(int newDollar, int newCent): dollar(newDollar), cent(newCent) {
-    normalize(dollar, cent);
+    normalize();
 }
 
 //getter-----------------
@@ -27,13 +26,13 @@ int Money::getCent() const {
 void Money::setValue(int newDollar, int newCent) {
     dollar = newDollar;
     cent = newCent;
-    normalize(dollar, cent);
+    normalize();
 }
 
 //연산자 오버로딩-----------------
 //+
 const Money Money::operator+(const Money& money) const {
-    return Money(dollar + money.getDollar(), cent + money.getCent());
+    return Money(dollar + money.dollar, cent + money.cent);
 }
 
 //단항-
@@ -43,59 +42,45 @@ const Money Money::operator-() const{
 
 //이항-
 const Money Money::operator-(const Money& money) const {
-    return Money(dollar - money.getDollar(), cent - money.getCent());
+    return Money(dollar - money.dollar, cent - money.cent);
 }
 
 //==
 bool Money::operator==(const Money& money) const {
-    return dollar == money.getDollar() && cent == money.getCent();
+    return dollar == money.dollar && cent == money.cent;
 }
 
 //!=
 bool Money::operator!=(const Money& money) const {
-    return dollar != money.getDollar() || cent != money.getCent();
+    return dollar != money.dollar || cent != money.cent;
 }
 
 //<=
 bool Money::operator<=(const Money& money) const {
-    if (dollar <= money.getDollar())
+    if (dollar <= money.dollar)
         return true;
-    return cent <= money.getCent();
+    return cent <= money.cent;
 }
 
 //>=
 bool Money::operator>=(const Money& money) const {
-    if (dollar >= money.getDollar())
+    if (dollar >= money.dollar)
         return true;
-    return cent >= money.getCent();
+    return cent >= money.cent;
 }
 
 //<
 bool Money::operator<(const Money& money) const {
-    if (dollar < money.getDollar())
+    if (dollar < money.dollar)
         return true;
-    return cent < money.getCent();
+    return cent < money.cent;
 }
 
 //>
 bool Money::operator>(const Money& money) const {
-    if (dollar > money.getDollar())
+    if (dollar > money.dollar)
         return true;
-    return cent > money.getCent();
-}
-
-//toString
-string Money::toString() const{
-    ostringstream result;
-    if (dollar < 0)
-        result << "-";
-    result << "$" << abs(dollar) << ".";
-
-    if (cent < 10) //한 자리 수면 0 끼워넣기
-        result << "0";
-    result << abs(cent);
-
-    return result.str();
+    return cent > money.cent;
 }
 
 //in
@@ -111,11 +96,15 @@ istream& operator>>(istream& in, Money& money) {
 
 //out
 ostream& operator<<(ostream& out, const Money& money) {
-    out << money.toString();
+    if (money.getDollar() < 0)
+        out << "-";
+    out << "$" << abs(money.getDollar()) << ".";
+
+    out << setfill('0') << setw(2) << abs(money.getCent());
     return out;
 }
 
-void Money::normalize(int& dollar, int& cent) {
+void Money::normalize() {
     dollar += cent / 100;
     cent %= 100;
 

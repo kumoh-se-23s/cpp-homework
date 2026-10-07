@@ -52,10 +52,15 @@ MyArray2 MyArray1::merge(MyArray1& arr2) {
         }
     }
 
+    for (; arr1Idx < size(); arr1Idx++) {
+        resultArr.append(arr[arr1Idx]);
+    }
+    /*
     while (arr1Idx < size()) {
         resultArr.append(get(arr1Idx));
         arr1Idx++;
     }
+    */
 
     while (arr2Idx < arr2.size()) {
         resultArr.append(arr2.get(arr2Idx));
