@@ -21,8 +21,9 @@ bool DDay::isLeapYear(int year) {
     return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
 }
 
+//한국은 1896년 1월 1일부터 그레고리력을 사용시작
 bool DDay::isValidDate(int year, int month, int day) {
-    return year > 0 && month > 0 && month < 13 && day <= getDaysInMonth(year, month) && day > 0;
+    return year > 1895 && month > 0 && month < 13 && day <= getDaysInMonth(year, month) && day > 0;
 }
 
 //해당 월의 일수 구하는 메소드
@@ -33,7 +34,7 @@ int DDay::getDaysInMonth(int year, int month) {
     return DAYS_IN_MONTH[--month];
 }
 
-//토탈 데이 -> 연
+//토탈 데이
 int DDay::totalDaysToYear(int &totalDays) {
     int year = 1;
 
@@ -52,19 +53,17 @@ int DDay::totalDaysToYear(int &totalDays) {
 
 //토탈데이 -> 월
 int DDay::totalDaysToMonth(int year, int &totalDays) {
-    int month = 0;
 
     for (int i = 1; i < 13; i++) {
         int daysInMonth = getDaysInMonth(year, i);
 
         if (totalDays <= daysInMonth) {
-            break;
+            return i;
         }
         totalDays -= daysInMonth;
-        month++;
     }
 
-    return month;
+    return -1;
 }
 
 
@@ -91,7 +90,7 @@ int DDay::yearToTotalDays(int year) {
 int DDay::monthToTotalDays(int year, int month) {
     int totalDays = 0;
 
-    for (int i = 1 ; i < month + 1 ; i++) {
+    for (int i = 1 ; i < month ; i++) {
         totalDays += getDaysInMonth(year, i);
     }
 
