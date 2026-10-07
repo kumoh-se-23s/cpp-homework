@@ -21,8 +21,6 @@ class Money {
         bool operator<(const Money& m) const;
         bool operator>(const Money& m) const;
 
-        std::string toString() const;
-
     private:
         int dollar;
         int cent;
