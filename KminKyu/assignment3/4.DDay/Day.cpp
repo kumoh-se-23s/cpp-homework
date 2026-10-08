@@ -26,7 +26,7 @@ bool Day::isCorrectDate(int year, int month, int day) {
 
 int Day::getMaxOfYear(int year) {
     if (isLeapYear(year)) {
-        return MAX_OF_LEAF_YEAR;
+        return MAX_OF_NORMAL_YEAR + 1;
     } else {
         return MAX_OF_NORMAL_YEAR;
     }
@@ -136,7 +136,7 @@ Day Day::operator-(int day) const {
     return calculateDays(-1 * day);
 }
 
-Day & Day::operator++() {
+Day &Day::operator++() {
     this->day += 1;
     if (day > getMaxOfDays(this->year, this->month)) {
         this->month += 1;
@@ -149,7 +149,7 @@ Day & Day::operator++() {
     return *this;
 }
 
-Day & Day::operator--() {
+Day &Day::operator--() {
     this->day -= 1;
     if (day < 1) {
         this->month -= 1;

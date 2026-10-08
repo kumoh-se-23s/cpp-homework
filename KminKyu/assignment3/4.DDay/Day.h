@@ -35,7 +35,6 @@ private:
 
     static const int MAX_OF_MONTH = 12;
     static const int MAX_OF_NORMAL_YEAR = 365;
-    static const int MAX_OF_LEAF_YEAR = 366;
 
     Day calculateShortTermDays(int year, int day) const;
 

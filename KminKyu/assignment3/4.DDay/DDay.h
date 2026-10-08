@@ -3,19 +3,31 @@
 
 class DDay {
 public:
-    DDay(Day sDay = Day(), Day eDay = Day(), int dday = 0);
+    DDay();
+
+    DDay(Day sDay, Day eDay, int dday);
+
     void setDDay(int dday);
-    void setStartDay(const Day& startDay);
+
+    bool setStartDay(int dayInt);
+
     void setTomarrow();
+
     void setYesterDay();
+
+    const Day getStartDay() const;
+
+    const Day getEndDay() const;
+
+    int getDDay() const;
 
 private:
     Day startDay = Day();
     Day endDay = Day();
     int dday;
-
-
 };
+
+std::ostream &operator<< (std::ostream &out, const DDay &dday);
 
 
 
