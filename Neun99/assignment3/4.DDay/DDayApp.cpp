@@ -94,12 +94,12 @@ void DDayApp::calculate(const char userInput[], int inputSize) {
         int value = toInt(userInput, 1, inputSize);
 
         if (userInput[0] == '+') {
-            targetDay = targetDay + value;
-            dDay += value;
+            targetDay = currentDay + value;
+            dDay = value;
         }
         else {
-            targetDay = targetDay - value;
-            dDay -= value;
+            targetDay = currentDay - value;
+            dDay = -value;
         }
     } else
         printError();
