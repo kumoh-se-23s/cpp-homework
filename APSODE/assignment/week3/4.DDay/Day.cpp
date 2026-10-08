@@ -136,6 +136,18 @@ Day Day::parse_day(const char date_text[]) {
     );
 }
 
-std::ostream& operator<<(std::ostream &output_stream, const Day &day) {
-    return output_stream << day.get_year() << "/" << day.get_month() << "/" << day.get_day();
+std::ostream &operator<<(std::ostream &output_stream, const Day &day) {
+    output_stream << day.get_year() << "/";
+
+    if (day.get_month() < 10) {
+        output_stream << "0";
+    }
+    output_stream << day.get_month() << "/";
+
+    if (day.get_day() < 10) {
+        output_stream << "0";
+    }
+    output_stream << day.get_day();
+
+    return output_stream;
 }
