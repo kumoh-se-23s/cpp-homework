@@ -63,9 +63,14 @@ bool DDayApp::processCommand(const char input[], const int length) {
 
             case 'Y': case 'y':
             {
-                Day temp = currentDate;
-                --temp;
-                isValidNewDate(temp, dDayValue);
+                --currentDate;
+                //1896년 1월 1일 하루전은 ERROR로 처리
+                if (currentDate.getYear() == 1895) {
+                    ++currentDate;
+                    printError();
+                    return true;
+                }
+                printCurrent();
 
                 break;
             }
