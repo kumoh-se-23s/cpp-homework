@@ -157,11 +157,11 @@ TEST(DayAddTest, AddNegativeMovesBackward) {
 }
 
 TEST(DayAddTest, ReturnsSameValueAsMutatedObject) {
-    // 현재 구현은 operator+가 원본(this)을 직접 변경한 뒤 복사본을 반환함
+    // 현재 구현은 operator+가 원본을 기준으로 새로운 객체를 만든뒤 해당 객체를 수정하는 방식으로 구현됨
     Day d(2026, 10, 8);
     Day result = d + 10;
     expect_day(result, 2026, 10, 18);
-    expect_day(d, 2026, 10, 18);
+    expect_day(d, 2026, 10, 8);
 }
 
 // ---------- 윤년 ----------
@@ -241,11 +241,11 @@ TEST(DaySubTest, SubNegativeMovesForward) {
 }
 
 TEST(DaySubTest, ReturnsSameValueAsMutatedObject) {
-    // 현재 구현은 operator-가 원본(this)을 직접 변경한 뒤 복사본을 반환함
+    // 현재 구현은 operator-가 원본을 기준으로 새로운 객체를 만든뒤 해당 객체를 수정하는 방식으로 구현됨
     Day d(2026, 10, 8);
     Day result = d - 3;
     expect_day(result, 2026, 10, 5);
-    expect_day(d, 2026, 10, 5);
+    expect_day(d, 2026, 10, 8);
 }
 
 // ---------- 덧셈과 뺄셈의 관계 ----------

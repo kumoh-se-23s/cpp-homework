@@ -23,9 +23,9 @@ class Day {
 
         void set(int year, int month, int day);
 
-        Day operator+(int day);
+        Day operator+(int day_delta) const;
 
-        Day operator-(int day);
+        Day operator-(int day_delta) const;
 
         void operator++();
 

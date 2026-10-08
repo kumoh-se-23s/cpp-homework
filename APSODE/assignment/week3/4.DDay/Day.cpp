@@ -37,14 +37,28 @@ void Day::set(int year, int month, int day){
     this->normalize();
 }
 
-Day Day::operator+(int day) {
-    this->add_day(day);
-    return *this;
+Day Day::operator+(int day_delta) const {
+    Day result_day = Day(
+        this->year,
+        this->month,
+        this->day
+    );
+
+    result_day.add_day(day_delta);
+
+    return result_day;
 }
 
-Day Day::operator-(int day) {
-    this->sub_day(day);
-    return *this;
+Day Day::operator-(int day_delta) const {
+    Day result_day = Day(
+        this->year,
+        this->month,
+        this->day
+    );
+
+    result_day.sub_day(day_delta);
+
+    return result_day;
 }
 
 void Day::operator++(){
