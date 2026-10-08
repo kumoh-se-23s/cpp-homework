@@ -26,6 +26,8 @@ class DDay {
 
         void set_dday(int day_delta);
 
+        void set_new_day(Day new_day);
+
         Day calc_dday() const;
 
     private:

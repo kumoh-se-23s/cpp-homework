@@ -42,6 +42,10 @@ Day DDay::calc_dday() const {
     return this->day + this->day_delta;
 }
 
+void DDay::set_new_day(const Day new_day) {
+    this->day = new_day;
+}
+
 std::ostream &operator<<(std::ostream &output_stream, const DDay &dday) {
     char dday_prefix = (dday.get_day_delta() >= 0) ? '+' : '\0';
 

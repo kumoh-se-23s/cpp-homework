@@ -102,10 +102,10 @@ void Day::normalize() {
     }
 }
 
-bool Day::is_valid_day(const Day day) {
-    const bool is_correct_year_bound = 1 <= day.year;
-    const bool is_correct_month_bound = 1 <= day.month && day.month <= 12;
-    const bool is_correct_day_bound = 1 <= day.day && day.day <= get_day_in_month(day);
+bool Day::is_valid_day(const Day maybe_valid_day) {
+    const bool is_correct_year_bound = 1 <= maybe_valid_day.year;
+    const bool is_correct_month_bound = 1 <= maybe_valid_day.month && maybe_valid_day.month <= 12;
+    const bool is_correct_day_bound = 1 <= maybe_valid_day.day && maybe_valid_day.day <= get_day_in_month(maybe_valid_day);
 
     return is_correct_year_bound && is_correct_month_bound && is_correct_day_bound;
 }
@@ -123,16 +123,16 @@ int Day::get_day_in_month(const Day day) {
 }
 
 Day Day::parse_day(const char date_text[]) {
-    int date_text_length = char_utils::get_char_array_length(date_text);
+    const int date_text_length = char_utils::get_char_array_length(date_text);
 
     if (date_text_length != 8) {
         return Day();
     }
 
     return Day(
-        char_utils::to_positive_integer(date_text, 0, 3, date_text_length),
-        char_utils::to_positive_integer(date_text, 4, 5, date_text_length),
-        char_utils::to_positive_integer(date_text, 6, 7, date_text_length)
+        char_utils::to_ranged_integer(date_text, 0, 3, date_text_length),
+        char_utils::to_ranged_integer(date_text, 4, 5, date_text_length),
+        char_utils::to_ranged_integer(date_text, 6, 7, date_text_length)
     );
 }
 

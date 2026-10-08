@@ -23,7 +23,7 @@ class Day {
 
         void set(int year, int month, int day);
 
-        static bool is_valid_day(Day day);
+        static bool is_valid_day(Day maybe_valid_day);
 
         Day operator+(int day_delta) const;
 
