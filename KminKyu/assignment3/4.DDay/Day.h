@@ -26,17 +26,9 @@ public:
 
     static constexpr int MAX_OF_DAYS[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-private:
-    int year;
 
-    int month;
 
-    int day;
-
-    static const int MAX_OF_MONTH = 12;
-    static const int MAX_OF_NORMAL_YEAR = 365;
-
-    Day calculateShortTermDays(int year, int day) const;
+    static Day calculateShortDays(int year, int day);
 
     Day calculateDays(int day) const;
 
@@ -47,6 +39,18 @@ private:
     static bool isLeapYear(int year);
 
     static int getMaxOfDays(int year, int month);
+
+private:
+    int year;
+
+    int month;
+
+    int day;
+
+    static constexpr int MAX_OF_MONTH = 12;
+    static constexpr int MAX_OF_NORMAL_YEAR = 365;
+
+
 
 };
 

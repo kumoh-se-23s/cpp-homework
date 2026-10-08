@@ -1,6 +1,8 @@
 #include<iostream>
 #include "Day.h"
 
+#include <iomanip>
+
 //기원전 처리 가능
 Day::Day(int year, int month, int day) {
     set(year ,month, day);
@@ -15,9 +17,7 @@ bool Day::isCorrectDate(int year, int month, int day) {
     }
     int correctDay = getMaxOfDays(year, month);
 
-
-
-    if (day < 0 || correctDay < day) {
+    if (day < 1 || correctDay < day) {
         return false;
     }
 
@@ -44,12 +44,8 @@ int Day::getRemainDays(int year, int month, int day) {
     }
 }
 
-Day Day::calculateShortTermDays(int year, int day) const { //이 코드가 실행된 시점에서 날짜는 XXXX.12.31로 고정된다
+Day Day::calculateShortDays(int year, int day) { //이 코드가 실행된 시점에서 날짜는 XXXX.12.31로 고정된다
     int maxDay = getMaxOfYear(year);
-    if (day >= maxDay || day == 0) { //만일의 오류를 위한 코드 -> 테스트 후 삭제 예정
-        return Day(this->year, this->month, this->day);
-    }
-
     int remainDay;
 
     if (day < 0) {
@@ -63,13 +59,13 @@ Day Day::calculateShortTermDays(int year, int day) const { //이 코드가 실�
 
     int lastDay = getMaxOfDays(year, resultMonth);
 
-    while (remainDay >= lastDay) {
+    while (remainDay > lastDay) {
         remainDay -= lastDay;
         lastDay = getMaxOfDays(year, ++resultMonth);
     }
     resultDay = remainDay;
 
-    return Day(this->year, resultMonth, resultDay);
+    return Day(year, resultMonth, resultDay);
 }
 int Day::getMaxOfDays(int year, int month) {
     if (month == 2 && isLeapYear(year)) {
@@ -80,29 +76,30 @@ int Day::getMaxOfDays(int year, int month) {
 Day Day::calculateDays(int day) const {
     char sign;
     int resultYear = this->year;
-
-    if (day < 0) { //day 가 365(366) 보다 큰 마이너스 값인 경우
+    int resultMonth, resultDay;
+    if (day < 0) {
         sign = -1;
         day *= -1;
         day += getMaxOfYear(resultYear) - getRemainDays(resultYear, this->month, this->day);  //연말까지 남은 일수롤 더해서 xxxx.12.31로 취급
-    } else if (day > 0) { //day가 365(366)보다 큰 플러스 값인 경우
+        resultMonth = MAX_OF_MONTH, resultDay = MAX_OF_DAYS[resultMonth];
+    } else if (day > 0) {
         sign = 1;
         day += getRemainDays(resultYear, this->month, this->day); //올해 일수를 전부 더해서 xxxx.12.31로 취급
-        if (day < getMaxOfYear(resultYear)) {
-            return calculateShortTermDays(resultYear, day);
-        }
+        resultMonth = MAX_OF_MONTH, resultDay = MAX_OF_DAYS[resultMonth];
     } else {
         return Day(this->year, this->getMonth(), this->getDay());
     }
-    if (day < getMaxOfYear(resultYear)) {
-        return calculateShortTermDays(resultYear, day);
+    while (day >= getMaxOfYear(resultYear)) {
+        day -= getMaxOfYear(resultYear);
+        resultYear += sign;
+    }
+    if (day > 0) {
+        return calculateShortDays(resultYear, sign * day);
+    } else {
+        return Day(resultYear, resultMonth, resultDay);
     }
 
-    while (day >= getMaxOfYear(resultYear)) {
-            day -= getMaxOfYear(resultYear);
-            resultYear += sign;
-    }
-    return Day(resultYear, this->month, this->day);
+
 }
 
 bool Day::set(int year, int month, int day) {
@@ -140,12 +137,13 @@ Day &Day::operator++() {
     this->day += 1;
     if (day > getMaxOfDays(this->year, this->month)) {
         this->month += 1;
+        if (month > MAX_OF_MONTH) {
+            this->year += 1;
+            this->month = 1;
+        }
         this->day = 1;
     }
-    if (month > MAX_OF_MONTH) {
-        this->year += 1;
-        this->month = 1;
-    }
+
     return *this;
 }
 
@@ -153,23 +151,24 @@ Day &Day::operator--() {
     this->day -= 1;
     if (day < 1) {
         this->month -= 1;
+        if (month < 1) {
+            this->year -= 1;
+            this->month = MAX_OF_MONTH;
+        }
         this->day = getMaxOfDays(this->year, this->month);
     }
-    if (month < 1) {
-        this->year -= 1;
-        this->month = MAX_OF_MONTH;
-    }
+
     return *this;
 }
 
 std::ostream &operator<<(std::ostream &out, const Day &day) {
     if (day.getYear() < 1) {
-        out << "BC" << abs(day.getYear() - 1);
+        out << "[BC] : " << std::setfill('0') << std::setw(4) << abs(day.getYear() - 1);
     } else {
-        out << day.getYear();
+        out << std::setfill('0') << std::setw(4) << day.getYear();
     }
-
-    out << '/' << day.getMonth() << "/" << day.getDay();
+    out << '/' << std::setw(2) << day.getMonth();
+    out << "/" << std::setw(2) << day.getDay();
     return out;
 }
 

@@ -17,7 +17,6 @@ public:
     bool operator <(const Money& money) const;
     bool operator >(const Money& money) const;
     Money& operator =(const Money& money);
-    std::string toString() const;
 private:
     int dollar = 0;
     int cent = 0;

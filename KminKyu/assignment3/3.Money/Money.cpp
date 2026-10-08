@@ -1,4 +1,6 @@
 #include "Money.h"
+
+#include <iomanip>
 #include<iostream>
 
 using namespace std;
@@ -103,22 +105,12 @@ Money& Money::operator =(const Money& money) {
     return *this;
 }
 
-string Money::toString() const {
-    string result = "";
-    if (dollar < 0) {
-        result += "-";
-    }
-    result = result + "$" + to_string(abs(dollar)) + ".";
-    if (abs(cent) < 10)
-    {
-        result += "0";
-    }
-    result.append(to_string(abs(cent)));
-    return result;
-}
 
 ostream& operator <<(ostream& out, const Money& money) {
-    out << money.toString();
+    if (money.getDollar() < 0) {
+        out << "-";
+    }
+    out << "$" << abs(money.getDollar()) << "." << std::setfill('0') << abs(money.getCent());
     return out;
 }
 istream& operator >>(istream& in, Money& money){

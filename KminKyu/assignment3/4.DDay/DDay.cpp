@@ -7,20 +7,28 @@ DDay::DDay() {
 }
 
 void DDay::setDDay(int dday) {
-    this->endDay = this->startDay + dday;
+    if (dday < 0) {
+        this->endDay = this->startDay - abs(dday);
+    } else {
+        this->endDay = this->startDay + dday;
+    }
     this->dday = dday;
 }
 
 bool DDay::setStartDay(int dayInt) {
     int year, month, day;
+
     year = dayInt / 10000;
     dayInt %= 10000;
+
     month = dayInt / 100;
+
     day = dayInt % 100;
+
     if (Day::isCorrectDate(year, month, day)) {
         this->startDay.set(year, month, day);
-        this->endDay = this->startDay + dday;
-        return true;
+        setDDay(this->dday);
+       return true;
     } else {
         return false;
     }
@@ -41,7 +49,8 @@ std::ostream & operator<<(std::ostream &out, const DDay &dday) {
     if (dday.getDDay() >= 0) {
         out << "+";
     }
-    out << dday.getDDay() << "] " << dday.getEndDay();
+    out << dday.getDDay() << "] " << dday.getEndDay() << "\n";
+    return out;
 
 }
 

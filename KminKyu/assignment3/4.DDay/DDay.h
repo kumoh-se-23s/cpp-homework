@@ -5,8 +5,6 @@ class DDay {
 public:
     DDay();
 
-    DDay(Day sDay, Day eDay, int dday);
-
     void setDDay(int dday);
 
     bool setStartDay(int dayInt);

@@ -11,12 +11,12 @@ public:
 
 private:
     DDay dday;
-    static const int MAX_ANSWER_LENGTH = 9;
+    static constexpr int MAX_ANSWER_LENGTH = 9;
     static void printMenu();
 
     static char toUpper(char alphabet);
 
-    void menu(char command[]) const;
+    bool menu(char command[]);
 
     static int changeCharToInt(const char answer[], int startIndex);
 };
