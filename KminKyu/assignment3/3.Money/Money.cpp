@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Money::Money() = default;
+Money::Money() : dollar(0), cent(0) {}
 
 Money::Money(int dollar, int cent) {
     set(dollar, cent);
@@ -37,6 +37,14 @@ void Money::set(int dollar, int cent) {
     this->dollar = dollar;
     this->cent = cent;
     this->normalize();
+}
+
+int Money::getDollar() const {
+    return this->dollar;
+}
+
+int Money::getCent() const {
+    return this->cent;
 }
 
 Money Money::operator +(const Money& Money) const {

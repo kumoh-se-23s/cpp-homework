@@ -20,7 +20,6 @@ public:
     int getRowLength(int row) const;
 private:
     int matrixArray[MAX_MATRIX_SIZE][MAX_MATRIX_SIZE] = {0,};
-    int maxValues[MAX_MATRIX_SIZE] = {0,};
 };
 
 ostream& operator <<(ostream&, const Matrix&);

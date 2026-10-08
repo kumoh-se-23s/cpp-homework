@@ -15,8 +15,13 @@ int Matrix::getLength(int number) {
 }
 
 int Matrix::getRowLength(int row) const {
+    int maxLength = 0;
     if (0 <= row && row < MAX_MATRIX_SIZE) {
-        return getLength(maxValues[row]);
+        for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
+            int nowLength = getLength(matrixArray[column][row]);
+            maxLength = maxLength > nowLength ? maxLength : nowLength;
+        }
+        return maxLength;
     } else {
         return 0;
     }
@@ -60,7 +65,7 @@ Matrix Matrix::multi(const Matrix& otherMatrix) const {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
             for (int indexCount = 0; indexCount < MAX_MATRIX_SIZE; ++indexCount) {
                 resultMatrix.matrixArray[column][row] +=
-                    this->matrixArray[column][row] + otherMatrix.matrixArray[column][row];
+                    this->matrixArray[column][indexCount] * otherMatrix.matrixArray[indexCount][row];
             }
         }
     }

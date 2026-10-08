@@ -6,6 +6,8 @@ class Money {
 public:
     Money();
     Money(int d, int c);
+    int getDollar() const;
+    int getCent() const;
     void set(int d, int c);
     Money operator +(const Money& money) const;
     Money operator -(const Money& money) const;
@@ -17,8 +19,8 @@ public:
     Money& operator =(const Money& money);
     std::string toString() const;
 private:
-    int dollar;
-    int cent;
+    int dollar = 0;
+    int cent = 0;
     Money add(const Money& money) const;
     Money minus(const Money& money) const;
     void normalize();
