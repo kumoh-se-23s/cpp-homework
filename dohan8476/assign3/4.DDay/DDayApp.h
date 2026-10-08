@@ -13,7 +13,7 @@ class DDayApp {
         Day currentDate;
         int dDayValue = 0;
 
-        bool processCommand(const char input[], int length);
+        void processCommand(const char input[], int length);
         void handleSetDDay(const char input[], int length);
         void handleMoveDate(const char input[], int length);
 

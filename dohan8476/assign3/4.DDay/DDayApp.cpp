@@ -11,17 +11,14 @@ DDayApp::DDayApp() {
 }
 
 void DDayApp::run() {
-    //<< 2026/10/01 [D-day:+0] 2026/10/01 현재 상태 출력
     printCurrent();
 
     const int STR_MAX_LEN = 8;
     char input[STR_MAX_LEN + 1];
 
-    //동작 파트
     bool isRun = true;
 
     while (isRun) {
-        //>> Move date{yyyymmdd, Tomorrow(T/t), Yesterday(Y/y)}, Set D-day(+/-int), or Quit(Q/q) :  메뉴 출력
         printMenu();
         cin.getline(input, STR_MAX_LEN + 1);
         //getline에서 범위를 초과하면 fail
@@ -32,30 +29,28 @@ void DDayApp::run() {
             cin.ignore(1000, '\n');
             continue;
         }
-
         //현재 입력 받은거 길이 구하기
         int currentLength = 0;
         for (; currentLength < STR_MAX_LEN + 1 && input[currentLength] != '\0'; currentLength++) {}
 
-        isRun = processCommand(input, currentLength);
+        if ((input[0] == 'Q' || input[0] == 'q') && currentLength == 1) {
+            cout << "=== END ===";
+            isRun = false;
+            continue;
+        }
+
+        processCommand(input, currentLength);
     }
 }
 
-bool DDayApp::processCommand(const char input[], const int length) {
-    //1글자 << q t y(일반적인 상황에서)
-    //8글자 << + - yyyymmdd
-    //q1234567, +123q456, 12q34567 같은 예외 고려하기
+void DDayApp::processCommand(const char input[], const int length) {
     if (isDigit(input[0])) {
         handleMoveDate(input, length);
-        return true;
+        return;
     }
 
     if (length == 1) {
         switch (input[0]) {
-            case 'Q': case 'q':
-                cout << "=== END ===";
-                return false;
-
             case 'T': case 't':
                 ++currentDate;
                 printCurrent();
@@ -68,10 +63,9 @@ bool DDayApp::processCommand(const char input[], const int length) {
                 if (currentDate.getYear() == 1895) {
                     ++currentDate;
                     printError();
-                    return true;
+                    return;
                 }
                 printCurrent();
-
                 break;
             }
             default: {
@@ -91,7 +85,6 @@ bool DDayApp::processCommand(const char input[], const int length) {
             }
         }
     }
-    return true;
 }
 
 void DDayApp::handleSetDDay(const char input[], const int length) {
