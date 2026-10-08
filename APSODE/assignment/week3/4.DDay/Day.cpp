@@ -66,6 +66,7 @@ void Day::sub_day(int day_delta) {
 }
 
 void Day::normalize() {
+    // 유레카!
     // 0 & Negative 일수에 대한 보정 작업
     // 0 & Negative의 경우 달(필요할 경우 년도)을 감소시켜가며 일수를 양수화를 진행
     while (this->day < 1) {
