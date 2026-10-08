@@ -3,12 +3,13 @@
 //
 
 #include "Day.h"
+#include "CharacterUtils.h"
 
 Day::Day()
     : year(2026), month(10), day(1) {
 }
 
-Day::Day(char date_text[]) {
+Day::Day(const char date_text[]) {
     *this = parse_day(date_text);
 }
 
@@ -65,18 +66,25 @@ void Day::sub_day(int day_delta) {
 }
 
 void Day::normalize() {
-    if (this->day <= this->get_day_in_month()) {
-        return;
+    // 0 & Negative 일수에 대한 보정 작업
+    // 0 & Negative의 경우 달(필요할 경우 년도)을 감소시켜가며 일수를 양수화를 진행
+    while (this->day < 1) {
+        --this->month;
+        if (this->month < 1) {
+            this->month = 12;
+            --this->year;
+        }
+        this->day += this->get_day_in_month();
     }
 
-
-    for (; this->day > this->get_day_in_month(); this->day -= this->get_day_in_month()) ++this->month;
-
-    int carry_year = this->month / 12;
-    int changed_month = this->month % 12;
-
-    this->year += carry_year;
-    this->month = changed_month;
+    while (this->day > this->get_day_in_month()) {
+        this->day -= this->get_day_in_month();
+        ++this->month;
+        if (this->month > 12) {
+            this->month = 1;
+            ++this->year;
+        }
+    }
 }
 
 bool Day::is_leap_year() const {
@@ -91,12 +99,20 @@ int Day::get_day_in_month() const {
     return DAYS_IN_MONTHS_ON_COMMON_YEAR[this->month - 1];
 }
 
-Day Day::parse_day(char date_text[]) {
-    Day new_day = Day();
+Day Day::parse_day(const char date_text[]) {
+    int date_text_length = char_utils::get_char_array_length(date_text);
 
-    return new_day;
+    if (date_text_length != 8) {
+        return Day();
+    }
+
+    return Day(
+        char_utils::to_positive_integer(date_text, 0, 3, date_text_length),
+        char_utils::to_positive_integer(date_text, 4, 5, date_text_length),
+        char_utils::to_positive_integer(date_text, 6, 7, date_text_length)
+    );
 }
 
 std::ostream& operator<<(std::ostream &output_stream, const Day &day) {
-    return output_stream;
+    return output_stream << day.get_year() << "/" << day.get_month() << "/" << day.get_day();
 }

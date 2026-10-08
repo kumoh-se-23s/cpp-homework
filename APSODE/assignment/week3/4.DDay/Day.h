@@ -11,7 +11,7 @@ class Day {
     public:
         Day();
 
-        Day(char date_text[]);
+        Day(const char date_text[]);
 
         Day(int year, int month, int day);
 
@@ -49,7 +49,7 @@ class Day {
 
         int get_day_in_month() const;
 
-        static Day parse_day(char date_text[]);
+        static Day parse_day(const char date_text[]);
 };
 
 std::ostream &operator <<(std::ostream &output_stream, const Day &day);
