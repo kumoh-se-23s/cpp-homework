@@ -25,7 +25,7 @@ Day Day::operator++() {
 Day Day::operator--() {
     if (day == 1) {
         if (month == 1) {
-            if (year >= 1) {
+            if (year > 1) {
                 --year;
                 month = 12;
                 day = 31;
