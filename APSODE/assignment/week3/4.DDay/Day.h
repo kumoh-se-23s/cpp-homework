@@ -23,6 +23,8 @@ class Day {
 
         void set(int year, int month, int day);
 
+        static bool is_valid_day(Day day);
+
         Day operator+(int day_delta) const;
 
         Day operator-(int day_delta) const;
@@ -30,7 +32,6 @@ class Day {
         void operator++();
 
         void operator--();
-
 
     private:
         constexpr static int DAYS_IN_MONTHS_ON_COMMON_YEAR[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -45,9 +46,9 @@ class Day {
 
         void sub_day(int day_delta = 1);
 
-        bool is_leap_year() const;
+        static bool is_leap_year(Day day);
 
-        int get_day_in_month() const;
+        static int get_day_in_month(Day day);
 
         static Day parse_day(const char date_text[]);
 };

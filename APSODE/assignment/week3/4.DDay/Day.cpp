@@ -89,11 +89,11 @@ void Day::normalize() {
             this->month = 12;
             --this->year;
         }
-        this->day += this->get_day_in_month();
+        this->day += get_day_in_month(*this);
     }
 
-    while (this->day > this->get_day_in_month()) {
-        this->day -= this->get_day_in_month();
+    while (this->day > get_day_in_month(*this)) {
+        this->day -= get_day_in_month(*this);
         ++this->month;
         if (this->month > 12) {
             this->month = 1;
@@ -102,16 +102,24 @@ void Day::normalize() {
     }
 }
 
-bool Day::is_leap_year() const {
-    return (this->year % 4 == 0) && (this->year % 100 != 0) || (this->year % 400 == 0);
+bool Day::is_valid_day(const Day day) {
+    const bool is_correct_year_bound = 1 <= day.year;
+    const bool is_correct_month_bound = 1 <= day.month && day.month <= 12;
+    const bool is_correct_day_bound = 1 <= day.day && day.day <= get_day_in_month(day);
+
+    return is_correct_year_bound && is_correct_month_bound && is_correct_day_bound;
 }
 
-int Day::get_day_in_month() const {
-    if (this->is_leap_year() && this->month == 2) {
+bool Day::is_leap_year(const Day day) {
+    return (day.year % 4 == 0) && (day.year % 100 != 0) || (day.year % 400 == 0);
+}
+
+int Day::get_day_in_month(const Day day) {
+    if (is_leap_year(day) && day.month == 2) {
         return 29;
     }
 
-    return DAYS_IN_MONTHS_ON_COMMON_YEAR[this->month - 1];
+    return DAYS_IN_MONTHS_ON_COMMON_YEAR[day.month - 1];
 }
 
 Day Day::parse_day(const char date_text[]) {
