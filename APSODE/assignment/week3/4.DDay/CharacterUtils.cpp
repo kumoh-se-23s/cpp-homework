@@ -64,12 +64,26 @@ bool char_utils::is_numeric_only(char maybe_numeric_only[]) {
         return false;
     }
 
-    // if (!is_numeric_character(maybe_numeric_only[0]) && maybe_numeric_only[0] != '-' && maybe_numeric_only[0] != '+') {
-    //     return false;
-    // }
-
     for (int char_index = 0; maybe_numeric_only[char_index] != '\0'; ++char_index) {
         if (!is_numeric_character(maybe_numeric_only[char_index])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool char_utils::is_signed_numeric(char maybe_signed_numeric[]) {
+    if (maybe_signed_numeric[0] == '\0') {
+        return false;
+    }
+
+    if (!is_numeric_character(maybe_signed_numeric[0]) && maybe_signed_numeric[0] != '-' && maybe_signed_numeric[0] != '+') {
+        return false;
+    }
+
+    for (int char_index = 1; maybe_signed_numeric[char_index] != '\0'; ++char_index) {
+        if (!is_numeric_character(maybe_signed_numeric[char_index])) {
             return false;
         }
     }

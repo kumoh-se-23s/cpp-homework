@@ -75,7 +75,12 @@ Command DDayApp::resolve_input_command(Command command_struct) {
 Command DDayApp::input_command() const {
     Command command{};
     std::cout << PROMPT;
-    std::cin >> command.input;
+    std::cin.getline(command.input, Command::MAX_INPUT_LENGTH);
+
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+    }
 
     return command;
 }
@@ -108,6 +113,10 @@ bool DDayApp::yesterday() {
 }
 
 bool DDayApp::setting_dday(Command command_struct) {
+    if (!char_utils::is_signed_numeric(command_struct.input)) {
+        return false;
+    }
+
     this->dday.set_dday(char_utils::to_integer(command_struct.input));
 
     return true;

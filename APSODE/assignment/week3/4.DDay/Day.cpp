@@ -137,7 +137,13 @@ Day Day::parse_day(const char date_text[]) {
 }
 
 std::ostream &operator<<(std::ostream &output_stream, const Day &day) {
-    output_stream << day.get_year() << "/";
+    if (day.get_year() <= 0) {
+        output_stream << "BC " << std::abs(day.get_year() - 1);
+    } else {
+        output_stream << day.get_year();
+    }
+    output_stream << "/";
+
 
     if (day.get_month() < 10) {
         output_stream << "0";

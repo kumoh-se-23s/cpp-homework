@@ -10,6 +10,8 @@ namespace char_utils {
 
     bool is_numeric_only(char maybe_numeric_only[]);
 
+    bool is_signed_numeric(char maybe_signed_numeric[]);
+
     int to_ranged_integer(const char integer_text[], int start, int end, int size);
 
     int to_integer(const char integer_text[]);
