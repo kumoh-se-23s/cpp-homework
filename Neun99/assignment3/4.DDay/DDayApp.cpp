@@ -10,11 +10,11 @@ void DDayApp::run() {
 
     while (isRunning) {
         printMenu();
-        cin.getline(userInput, INPUT_MAX_LENGTH);
+        cin >> userInput;
 
         //동작부
-        //한 글자 입력 처리 (tasdf 등 입력 대비)
         int inputSize = getLength(userInput);
+        //한 글자 입력 처리 분리(tasdf 등의 입력 대비)
         if (inputSize == 1) {
             switch (userInput[0]) {
                 //tomorrow
@@ -44,8 +44,8 @@ void DDayApp::run() {
                     calculate(userInput, inputSize);
                     break;
                 default:
-                    //입력 전부 숫자면 moveDate 동작
-                    if (isAllDigit(userInput, 0, INPUT_MAX_LENGTH - 1))
+                    //8자리면서 입력 전부 숫자면 moveDate 동작
+                    if (inputSize == 8 && isAllDigit(userInput, 0, INPUT_MAX_LENGTH - 1))
                         moveDate(userInput);
                     else //그 외 에러처리
                         printError();
@@ -105,6 +105,7 @@ void DDayApp::calculate(const char userInput[], int inputSize) {
         printError();
 }
 
+//util---------------------------------
 //배열의 지정된 범위 int로 변환
 int DDayApp::toInt(const char arr[], int startIdx, int endIdx) {
     int result = 0;
@@ -126,8 +127,8 @@ int DDayApp::getLength(const char arr[]){
 }
 
 //글자 하나 숫자인지 반환
-bool DDayApp::isDigit(const char input){
-    int result = input - '0';
+bool DDayApp::isDigit(char text){
+    int result = text - '0';
     return (result >= 0 && result <= 9);
 }
 

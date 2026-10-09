@@ -7,14 +7,14 @@ class Fraction {
 public:
     //생성자
     Fraction();
-    Fraction(int, int);
+    Fraction(int num, int den);
 
     //getter
     int getNum() const;
     int getDen() const;
 
     //연산자 오버로딩
-    const Fraction operator+(const Fraction&) const;
+    const Fraction operator+(const Fraction& fra2) const;
 
 private:
     int numerator = 1;
@@ -23,4 +23,4 @@ private:
     static int getGCD(int, int);
 };
 
-ostream& operator<<(ostream&, const Fraction&);
+ostream& operator<<(ostream& out, const Fraction& fra);

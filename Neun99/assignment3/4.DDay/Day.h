@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <string>
 
 using namespace std;
 
@@ -8,27 +7,27 @@ class Day {
 public:
     //생성자
     Day();
-    Day(int, int, int);
+    Day(int newYear, int newMonth, int newDay);
 
     //getter setter
     int getYear() const;
     int getMonth() const;
     int getDay() const;
-    bool setValue(int, int, int);
+    bool setValue(int newYear, int newMonth, int newDay);
 
     //연산자 오버로딩
     Day operator++();
     Day operator--();
-    const Day operator+(int) const;
-    const Day operator-(int) const;
+    const Day operator+(int input) const;
+    const Day operator-(int input) const;
 private:
     int year;
     int month;
     int day;
 
-    int getDaysInMonth(int, int) const;
-    bool isLeapYear(int) const;
-    int getDaysInYear(int, int) const;
+    int getDaysInMonth(int year, int month) const;
+    bool isLeapYear(int year) const;
+    int getDaysOfAnYear(int year, int startMonth) const;
 };
 
-ostream& operator<<(ostream&, const Day&);
+ostream& operator<<(ostream& out, const Day& day);

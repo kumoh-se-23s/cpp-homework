@@ -6,13 +6,13 @@ using namespace std;
 class Matrix {
 public:
     //getter setter
-    int getValue(int, int) const;
-    void setValue(int, int, int);
+    int getValue(int rowIdx, int colIdx) const;
+    void setValue(int rowIdx, int colIdx, int value);
 
     //연산자 오버로딩
     const Matrix operator!() const;
-    const Matrix operator+(const Matrix&) const;
-    const Matrix operator*(const Matrix&) const;
+    const Matrix operator+(const Matrix& mat2) const;
+    const Matrix operator*(const Matrix& mat2) const;
 
     //배열 관련 ( << >> 오버로딩 때문에 public)
     static constexpr int SIZE = 3;
@@ -21,5 +21,5 @@ private:
     int matrix[SIZE][SIZE] = {};
 };
 
-ostream& operator<<(ostream&, const Matrix&);
-istream& operator>>(istream&, Matrix&);
+ostream& operator<<(ostream& out, const Matrix& mat);
+istream& operator>>(istream& in, Matrix& mat);

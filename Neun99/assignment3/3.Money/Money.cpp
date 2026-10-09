@@ -31,8 +31,8 @@ void Money::setValue(int newDollar, int newCent) {
 
 //연산자 오버로딩-----------------
 //+
-const Money Money::operator+(const Money& money) const {
-    return Money(dollar + money.dollar, cent + money.cent);
+const Money Money::operator+(const Money& money2) const {
+    return Money(dollar + money2.dollar, cent + money2.cent);
 }
 
 //단항-
@@ -41,46 +41,46 @@ const Money Money::operator-() const{
 }
 
 //이항-
-const Money Money::operator-(const Money& money) const {
-    return Money(dollar - money.dollar, cent - money.cent);
+const Money Money::operator-(const Money& money2) const {
+    return Money(dollar - money2.dollar, cent - money2.cent);
 }
 
 //==
-bool Money::operator==(const Money& money) const {
-    return dollar == money.dollar && cent == money.cent;
+bool Money::operator==(const Money& money2) const {
+    return dollar == money2.dollar && cent == money2.cent;
 }
 
 //!=
-bool Money::operator!=(const Money& money) const {
-    return dollar != money.dollar || cent != money.cent;
+bool Money::operator!=(const Money& money2) const {
+    return dollar != money2.dollar || cent != money2.cent;
 }
 
 //<=
-bool Money::operator<=(const Money& money) const {
-    if (dollar <= money.dollar)
+bool Money::operator<=(const Money& money2) const {
+    if (dollar <= money2.dollar)
         return true;
-    return cent <= money.cent;
+    return cent <= money2.cent;
 }
 
 //>=
-bool Money::operator>=(const Money& money) const {
-    if (dollar >= money.dollar)
+bool Money::operator>=(const Money& money2) const {
+    if (dollar >= money2.dollar)
         return true;
-    return cent >= money.cent;
+    return cent >= money2.cent;
 }
 
 //<
-bool Money::operator<(const Money& money) const {
-    if (dollar < money.dollar)
+bool Money::operator<(const Money& money2) const {
+    if (dollar < money2.dollar)
         return true;
-    return cent < money.cent;
+    return cent < money2.cent;
 }
 
 //>
-bool Money::operator>(const Money& money) const {
-    if (dollar > money.dollar)
+bool Money::operator>(const Money& money2) const {
+    if (dollar > money2.dollar)
         return true;
-    return cent > money.cent;
+    return cent > money2.cent;
 }
 
 //in

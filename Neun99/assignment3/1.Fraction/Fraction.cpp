@@ -22,9 +22,9 @@ int Fraction::getDen() const{
 
 //연산자 오버로딩----------------
 //덧셈
-const Fraction Fraction::operator+(const Fraction& fra) const{
-    int result_numerator = numerator * fra.getDen() + fra.getNum() * denominator;
-    int result_denominator = denominator * fra.getDen();
+const Fraction Fraction::operator+(const Fraction& fra2) const{
+    int result_numerator = numerator * fra2.getDen() + fra2.getNum() * denominator;
+    int result_denominator = denominator * fra2.getDen();
 
     return Fraction(result_numerator, result_denominator);
 }

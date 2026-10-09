@@ -11,11 +11,13 @@ private:
 
     void printMenu() const;
     void printError() const;
-    void moveDate(const char[]);
-    void calculate(const char[], int);
-    
-    static int toInt(const char[], int, int);
-    static int getLength(const char[]);
-    static bool isDigit(char);
-    static bool isAllDigit(const char [], int, int);
+
+    void moveDate(const char userInput[]);
+    void calculate(const char userInput[], int inputSize);
+
+    //util
+    static int toInt(const char arr[], int startIdx, int endIdx);
+    static int getLength(const char arr[]);
+    static bool isDigit(char text);
+    static bool isAllDigit(const char arr[], int startIdx, int endIdx);
 };
