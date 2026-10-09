@@ -1,7 +1,7 @@
-#include "DDayApp.h"
+#include "DDay.h"
 
 int main() {
-    DDayApp app;
+    DDay app;
     app.run();
     return 0;
 }

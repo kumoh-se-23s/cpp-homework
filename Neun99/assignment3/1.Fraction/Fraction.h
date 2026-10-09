@@ -9,9 +9,10 @@ public:
     Fraction();
     Fraction(int num, int den);
 
-    //getter
+    //getter setter
     int getNum() const;
     int getDen() const;
+    void set(int num, int den);
 
     //연산자 오버로딩
     const Fraction operator+(const Fraction& fra2) const;

@@ -12,9 +12,12 @@ Day::Day() {
 }
 
 Day::Day(int newYear, int newMonth, int newDay) {
-    year = newYear;
-    month = newMonth;
-    day = newDay;
+    //유효하지 않은 값이면 기본값
+    if (!setValue(newYear, newMonth, newDay)) {
+        year = 2026;
+        month = 10;
+        day = 1;
+    }
 }
 
 //getter setter-------------------
@@ -35,9 +38,11 @@ int Day::getDay() const {
 
 //유효하지 않은 값 들어오면 변경하지 않고 false 리턴
 bool Day::setValue(int newYear, int newMonth, int newDay) {
-    if (newMonth < 1 || newMonth > 12)
+    if (newYear < 1) //년
         return false;
-    if (newDay < 1 || newDay > getDaysInMonth(newYear, newMonth))
+    if (newMonth < 1 || newMonth > 12) //월
+        return false;
+    if (newDay < 1 || newDay > getDaysInMonth(newYear, newMonth)) //일
         return false;
 
     year = newYear;
@@ -47,9 +52,9 @@ bool Day::setValue(int newYear, int newMonth, int newDay) {
     return true;
 }
 
-//기능---------------------
-//해당 달에 며칠까지 있는지 반환 (static?)
-int Day::getDaysInMonth(int year, int month) const {
+//util---------------------
+//해당 달에 며칠까지 있는지 반환
+int Day::getDaysInMonth(int year, int month) {
     static constexpr int DAYS[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     if (isLeapYear(year) && month == 2)
         return 29;
@@ -57,7 +62,7 @@ int Day::getDaysInMonth(int year, int month) const {
 }
 
 //윤년인지 반환
-bool Day::isLeapYear(int year) const{
+bool Day::isLeapYear(int year){
     if (year % 400 == 0)
         return true;
     if (year % 100 == 0)
@@ -68,11 +73,11 @@ bool Day::isLeapYear(int year) const{
 }
 
 //인자로부터 앞으로 1년이 며칠인지 반환
-int Day::getDaysOfAnYear(int year, int startMonth) const {
-    //올해가 윤년인데 2월이 안 지남 or 2월 이후부터인데 내년이 윤년임 -> 366일
-    if ((isLeapYear(year) && startMonth <= 2) || (startMonth >= 3 && isLeapYear(year + 1)))
+int Day::getDaysOfAnYear(int startYear, int startMonth) {
+    //올해가 윤년인데 2월이 안 지남 or 2월 이후부터인데 내년이 윤년임: 366일
+    if ((isLeapYear(startYear) && startMonth <= 2) || (startMonth >= 3 && isLeapYear(startYear + 1)))
         return 366;
-    return 365; //그 외
+    return 365; //그 외 365일
 }
 
 //연산자 오버로딩----------------------------
@@ -110,14 +115,16 @@ Day Day::operator--() {
 
 //이항+
 const Day Day::operator+(int input) const {
+    if (input < 0) //음수면 -로
+        return *this - -input;
+
     int newYear = year;
     int newMonth = month;
     int newDay = day;
 
     //400년단위 선처리
-    constexpr int DAYS_OF_400YEAR = 146097; //400년 일수
-    newYear += 400 * (input / DAYS_OF_400YEAR);
-    input %= DAYS_OF_400YEAR;
+    newYear += 400 * (input / DAYS_OF_400YEARS);
+    input %= DAYS_OF_400YEARS;
 
     //년 단위 처리 (최대 400번 동작)
     for (; input >= getDaysOfAnYear(newYear, newMonth); newYear++) {
@@ -155,14 +162,16 @@ const Day Day::operator+(int input) const {
 
 //이항-
 const Day Day::operator-(int input) const {
+    if (input < 0) //음수면 +로
+        return *this + -input;
+
     int newYear = year;
     int newMonth = month;
     int newDay = day;
 
     //400년단위 선처리
-    constexpr int DAYS_OF_400YEAR = 146097; //
-    newYear -= 400 * (input / DAYS_OF_400YEAR);
-    input %= DAYS_OF_400YEAR;
+    newYear -= 400 * (input / DAYS_OF_400YEARS);
+    input %= DAYS_OF_400YEARS;
 
     //년 단위 처리 (최대 400번 동작)
     for (; input >= getDaysOfAnYear(newYear - 1, newMonth); newYear--) {
@@ -180,9 +189,9 @@ const Day Day::operator-(int input) const {
         input -= getDaysInMonth(newYear, newMonth);
     }
 
-    //일 단위 처리(최대 2번 동작)
+    //일 단위 처리
     newDay = day - input;
-    while (newDay <= 0) {
+    if (newDay <= 0) { //일수가 0 아래까지 떨어진 경우
         if (newMonth == 1) {
             newYear--;
             newMonth = 12;
@@ -192,13 +201,24 @@ const Day Day::operator-(int input) const {
         newDay += getDaysInMonth(newYear, newMonth);
     }
 
+    if (newDay > getDaysInMonth(newYear, newMonth)) { //달 처리 이후에 일수가 그대로 남아 오버된 경우
+        newDay -= getDaysInMonth(newYear, newMonth);
+        if (newMonth == 12) {
+            newYear++;
+            newMonth = 1;
+        } else {
+            newMonth++;
+        }
+    }
+
     return Day(newYear, newMonth, newDay);
 }
 
 //<<
 ostream& operator<<(ostream& out, const Day& day) {
-    out << setfill ('0') << setw(4) << day.getYear() << "/";
+    out << setfill('0') << setw(4) << day.getYear() << "/";
     out << setw(2) << day.getMonth() << "/";
     out << setw(2) << day.getDay();
+    out << setfill(' ');
     return out;
 }
