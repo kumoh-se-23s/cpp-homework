@@ -10,7 +10,7 @@ class Fraction {
         int getDenominator() const;
 
         const Fraction operator+(const Fraction& a) const;
-        // Fraction operator=(const Fraction& a);
+        Fraction operator=(const Fraction& a);
 
 
     private:

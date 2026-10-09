@@ -34,15 +34,15 @@ int DDay::getDaysInMonth(int year, int month) {
     return DAYS_IN_MONTH[--month];
 }
 
-//토탈 데이
+//토탈 데이 -> 연
 int DDay::totalDaysToYear(int &totalDays) {
     int year = 1;
-
+    //400년(146097일)
     year += totalDays / 146097 * 400;
     totalDays %= 146097;
-
+    //100년(36524일)
     for (;totalDays - 36524 > 0; totalDays -= 36524, year += 100) { }
-
+    //4년(1461일)
     year += totalDays / 1461 * 4;
     totalDays %= 1461;
 

@@ -36,13 +36,13 @@ void DDayApp::run() {
         if ((input[0] == 'Q' || input[0] == 'q') && currentLength == 1) {
             cout << "=== END ===";
             isRun = false;
-            continue;
         }
-
-        processCommand(input, currentLength);
+        else {
+            processCommand(input, currentLength);
+        }
     }
 }
-
+//메뉴 목록 처리
 void DDayApp::processCommand(const char input[], const int length) {
     if (isDigit(input[0])) {
         handleMoveDate(input, length);
@@ -58,14 +58,9 @@ void DDayApp::processCommand(const char input[], const int length) {
 
             case 'Y': case 'y':
             {
-                --currentDate;
-                //1896년 1월 1일 하루전은 ERROR로 처리
-                if (currentDate.getYear() == 1895) {
-                    ++currentDate;
-                    printError();
-                    return;
-                }
-                printCurrent();
+                Day temp = currentDate;
+                --temp;
+                isValidNewDate(temp, dDayValue);
                 break;
             }
             default: {
@@ -86,7 +81,7 @@ void DDayApp::processCommand(const char input[], const int length) {
         }
     }
 }
-
+// +, -로 DDay 세팅
 void DDayApp::handleSetDDay(const char input[], const int length) {
     int offset = 0;
     int sign = (input[0] == '+') ? 1 : -1;
@@ -102,7 +97,7 @@ void DDayApp::handleSetDDay(const char input[], const int length) {
 
     isValidNewDate(currentDate, offset * sign);
 }
-
+//yyyymmdd로 세팅
 void DDayApp::handleMoveDate(const char input[], const int length) {
 
     for (int i = 0; i < length; i++) {
@@ -151,7 +146,8 @@ bool DDayApp::isValidNewDate(Day newDay, const int newDDayValue) {
 
     Day target = newDay + newDDayValue;
     if (!calc.isValidDate(target.getYear(), target.getMonth(), target.getDay())) {
-        printError();
+        cout << "Cannot subtract days: Date must be after 1896/01/01" << endl;
+        printCurrent();
         return false;
     }
 

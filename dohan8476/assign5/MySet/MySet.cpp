@@ -18,14 +18,11 @@ void MySet::resize() {
 
     int *newArray = new int[capacity];
 
-    for (int i = *this ; i < size ; i++) {
+    for (int i = 0 ; i < size ; i++) {
         newArray[i] = array[i];
     }
     delete [] array;
     array = newArray;
-
-    delete [] newArray;
-    newArray = nullptr;
 }
 
 void MySet::unionSet(const MySet &set) {

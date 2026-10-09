@@ -84,9 +84,11 @@ const Fraction Fraction::operator +(const Fraction& a) const{
     return Fraction(num, den);
 }
 
-// Fraction Fraction::operator=(const Fraction &a) {
-//
-// }
+Fraction Fraction::operator=(const Fraction &a) {
+    this->numerator = a.numerator;
+    this->denominator = a.denominator;
+    return *this;
+}
 
 ostream& operator<<(ostream& output, const Fraction& a) {
     output << a.getNumerator() ;
