@@ -15,9 +15,9 @@ void DDayAPP::run() {
             cin.clear();
             cin.ignore(10000, '\n');
         }
-        if (menu(answer)) {
-            cout << dday;
-        }
+        menu(answer);
+        cout << dday;
+
     } while (toUpper(answer[0]) != 'Q');
 
     cout << "=== END ===";

@@ -163,7 +163,7 @@ Day &Day::operator--() {
 
 std::ostream &operator<<(std::ostream &out, const Day &day) {
     if (day.getYear() < 1) {
-        out << "[BC] : " << std::setfill('0') << std::setw(4) << abs(day.getYear() - 1);
+        out << "[BC]" << std::setfill('0') << std::setw(4) << abs(day.getYear() - 1);
     } else {
         out << std::setfill('0') << std::setw(4) << day.getYear();
     }
