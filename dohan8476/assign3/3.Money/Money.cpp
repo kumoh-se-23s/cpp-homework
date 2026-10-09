@@ -1,8 +1,6 @@
 #include "Money.h"
 
 #include <iomanip>
-#include <sstream>
-
 using namespace std;
 
 Money::Money() {
@@ -31,11 +29,11 @@ void Money::normalize() {
     dollar += cent / 100;
     cent %= 100;
 
-    if (cent < 0) {
+    if (dollar > 0 && cent < 0) {
         --dollar;
         cent += 100;
     }
-    else if(dollar <0 && cent != 0){
+    else if (dollar < 0 && cent > 0) {
         ++dollar;
         cent -= 100;
     }
@@ -43,15 +41,15 @@ void Money::normalize() {
 
 //-----------연산자 오버로딩----------
 
-const Money Money::operator+(const Money& m) const {
+Money Money::operator+(const Money& m) const {
     return Money(dollar + m.dollar, cent + m.cent);
 }
 
-const Money Money::operator-(const Money& m) const {
+Money Money::operator-(const Money& m) const {
     return Money(dollar - m.dollar, cent - m.cent);
 }
 
-bool Money::operator!=(const Money &m) {
+bool Money::operator!=(const Money &m) const{
     return dollar != m.dollar || cent != m.cent;
 }
 
@@ -60,25 +58,26 @@ bool Money::operator==(const Money &m) const {
 }
 
 bool Money::operator<(const Money &m) const {
-    if (dollar < m.dollar)
-        return true;
+    if (dollar != m.dollar)
+        return dollar < m.dollar;
     return cent < m.cent;
 }
 
 bool Money::operator>(const Money &m) const {
-    if (dollar > m.dollar)
-        return true;
+    if (dollar != m.dollar)
+        return dollar > m.dollar;
     return cent > m.cent;
 }
 
 bool Money::operator<=(const Money &m) const {
-    if (dollar <= m.dollar)
-        return true;
+    if (dollar != m.dollar)
+        return dollar < m.dollar;
     return cent <= m.cent;
 }
+
 bool Money::operator>=(const Money &m) const {
-    if (dollar >= m.dollar)
-        return true;
+    if (dollar != m.dollar)
+        return dollar > m.dollar;
     return cent >= m.cent;
 }
 
@@ -101,7 +100,7 @@ ostream& operator<<(ostream& out, const Money& m) {
     if (m.getDollar() < 0) {
         out << '-';
     }
-    out << '$' << abs(m.getDollar()) << '.' << setfill('0') << setw(2) << abs(m.getCent());
+    out << '$' << m.abs(m.getDollar()) << '.' << setfill('0') << setw(2) << m.abs(m.getCent());
 
     return out;
 }

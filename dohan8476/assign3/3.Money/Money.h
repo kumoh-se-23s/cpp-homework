@@ -1,5 +1,5 @@
 #pragma once
-#include <iostream>
+#include <iosfwd>
 
 class Money {
     public:
@@ -11,22 +11,22 @@ class Money {
 
         void set(int dollar, int cent);
 
-        const Money operator+(const Money& m) const;
-        const Money operator-(const Money& m) const;
+        Money operator+(const Money& m) const;
+        Money operator-(const Money& m) const;
 
-        bool operator!=(const Money& m) ;
+        bool operator!=(const Money& m) const;
         bool operator==(const Money& m) const;
         bool operator>=(const Money& m) const;
         bool operator<=(const Money& m) const;
         bool operator<(const Money& m) const;
         bool operator>(const Money& m) const;
 
+        [[nodiscard]] int abs(int num) const;
+
     private:
         int dollar;
         int cent;
         void normalize();
-        int abs(int num) const;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const Money& m);

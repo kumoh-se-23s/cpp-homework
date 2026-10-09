@@ -4,14 +4,13 @@ class Fraction {
     public:
         Fraction();
         Fraction(int numerator, int denominator);
-        void set(int num, int den);
 
+        void set(int num, int den);
         int getNumerator() const;
         int getDenominator() const;
 
-        const Fraction operator+(const Fraction& a) const;
-        Fraction operator=(const Fraction& a);
-
+        Fraction operator+(const Fraction& a) const;
+        Fraction& operator=(const Fraction& a);
 
     private:
         int calcGCD(int num, int den);
@@ -19,7 +18,6 @@ class Fraction {
         int abs(int num);
         int max(int num1, int num2);
         int min(int num1, int num2);
-
 
         int numerator;
         int denominator;

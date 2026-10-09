@@ -100,14 +100,14 @@ Day& Day::operator--() {
     return *this;
 }
 
-Day Day::operator+(int addDays){
+Day Day::operator+(int addDays) const{
     DDay calc;
     int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
 
     return calc.totalDaysToDate(totalDays + addDays);
 }
 
-Day Day::operator-(int subDays){
+Day Day::operator-(int subDays) const{
     DDay calc;
     int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
 

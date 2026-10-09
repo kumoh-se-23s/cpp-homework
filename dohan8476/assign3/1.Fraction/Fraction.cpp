@@ -12,6 +12,22 @@ Fraction::Fraction(int num, int den) {
     set(num, den);
 }
 
+
+// 연산자 오버로딩---------------
+
+Fraction Fraction::operator +(const Fraction& a) const{
+    int num = (this->numerator * a.denominator) + (a.numerator * this->denominator);
+    int den = this->denominator * a.denominator;
+
+    return Fraction(num, den);
+}
+
+Fraction& Fraction::operator=(const Fraction& a) {
+    this->numerator = a.numerator;
+    this->denominator = a.denominator;
+    return *this;
+}
+
 void Fraction::set(int num, int den) {
     if (den == 0 ) {
         cout << "ERR ";
@@ -73,21 +89,6 @@ int Fraction::getNumerator() const {
 
 int Fraction::getDenominator() const {
     return denominator;
-}
-
-// 연산자 오버로딩---------------
-
-const Fraction Fraction::operator +(const Fraction& a) const{
-    int num = (this->numerator * a.denominator) + (a.numerator * this->denominator);
-    int den = this->denominator * a.denominator;
-
-    return Fraction(num, den);
-}
-
-Fraction Fraction::operator=(const Fraction &a) {
-    this->numerator = a.numerator;
-    this->denominator = a.denominator;
-    return *this;
 }
 
 ostream& operator<<(ostream& output, const Fraction& a) {

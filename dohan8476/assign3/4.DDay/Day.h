@@ -12,8 +12,8 @@ class Day {
         void setMonth(int month);
         void setDay(int day);
 
-        Day operator+(int addDays);
-        Day operator-(int subDays);
+        Day operator+(int addDays) const;
+        Day operator-(int subDays) const;
         Day& operator++();
         Day& operator--();
 
