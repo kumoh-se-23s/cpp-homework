@@ -138,7 +138,7 @@ Day Day::parse_day(const char date_text[]) {
 
 std::ostream &operator<<(std::ostream &output_stream, const Day &day) {
     if (day.get_year() <= 0) {
-        output_stream << "BC " << std::abs(day.get_year() - 1);
+        output_stream << "BC - " << std::abs(day.get_year() - 1);
     } else {
         output_stream << day.get_year();
     }
