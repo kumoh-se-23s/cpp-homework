@@ -10,7 +10,7 @@
 
 struct Command {
     constexpr static int MAX_INPUT_LENGTH = 9;
-    char input[MAX_INPUT_LENGTH];
+    char input[MAX_INPUT_LENGTH]{};
     int length = 0;
     char resolved = '?';
 };

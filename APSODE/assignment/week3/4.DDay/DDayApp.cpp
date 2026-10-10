@@ -7,7 +7,7 @@
 
 #include "CharacterUtils.h"
 
-DDayApp::DDayApp() : dday(DDay()){
+DDayApp::DDayApp() : is_running(true), dday(DDay()){
 }
 
 void DDayApp::run() {
