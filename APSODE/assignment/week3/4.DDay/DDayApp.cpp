@@ -30,6 +30,7 @@ void DDayApp::run() {
                 is_success = this->setting_dday(resolved_command);
                 break;
             case '5' : // resolve('q' | 'Q') => '5'
+                is_success = this->stop();
                 break;
 
             default: // resolve fail => '?'
