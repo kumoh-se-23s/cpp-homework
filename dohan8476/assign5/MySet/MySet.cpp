@@ -1,6 +1,5 @@
 #include "MySet.h"
-
-#include <array>
+#include <iomanip>
 
 MySet::MySet() = default;
 
@@ -23,6 +22,41 @@ MySet MySet::operator-(const MySet& set) const{
 MySet MySet::operator&(const MySet& set) const{
     return this->intersectionSet(set);
 }
+
+std::istream& operator>>(std::istream& is, MySet& set) {
+    int value;
+
+    while (is >> value) {
+        if (value < 0) {
+            break;
+        }
+        set.insert(value);
+    }
+
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const MySet& set) {
+    os << "{" << set.getArray(0);
+    for (int i = 1; i < set.getSize(); i++) {
+        os << ", " << set.getArray(i);
+    }
+    os << "}";
+
+    return os;
+}
+
+int MySet::getSize() const {
+    return this->size;
+}
+
+int MySet::getArray(int index) const {
+    if (0 <= index && index < this->size) {
+        return this->array[index];
+    }
+    return -1;
+}
+
 
 MySet& MySet::operator=(const MySet& set) {
     if (this == &set) {

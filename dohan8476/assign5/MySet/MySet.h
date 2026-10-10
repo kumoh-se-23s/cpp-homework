@@ -11,10 +11,16 @@ class MySet {
         MySet operator&(const MySet& set) const;
         MySet& operator=(const MySet& set);
 
+        int getSize() const;
+        int getArray(int index) const;
+
+        void insert(int value);
+
+
     private:
-        int *array = new int[capacity];
         int size = 0;
         int capacity = 4;
+        int *array = new int[capacity];
         void resize();
 
         MySet unionSet(const MySet &set) const;
@@ -22,8 +28,6 @@ class MySet {
         MySet intersectionSet(const MySet &set) const;
 
         MySet differenceSet(const MySet &set) const;
-
-        void insert(int value);
 
 };
 
