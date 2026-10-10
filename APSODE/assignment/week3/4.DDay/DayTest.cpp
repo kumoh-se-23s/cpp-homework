@@ -386,25 +386,25 @@ TEST(DayIncDecTest, IncrementDoesNotAffectCopy) {
 // ---------- 출력 (operator<<) ----------
 
 TEST(DayOutputTest, PrintsWithSlashSeparator) {
-    EXPECT_EQ(capture_output(Day(2026, 10, 8)), "2026/10/8");
+    EXPECT_EQ(capture_output(Day(2026, 10, 8)), "2026/10/08");
 }
 
 TEST(DayOutputTest, DoesNotPadSingleDigits) {
-    EXPECT_EQ(capture_output(Day(2026, 1, 5)), "2026/1/5");
+    EXPECT_EQ(capture_output(Day(2026, 1, 5)), "2026/01/05");
 }
 
 TEST(DayOutputTest, PrintsDefaultDate) {
-    EXPECT_EQ(capture_output(Day()), "2026/10/1");
+    EXPECT_EQ(capture_output(Day()), "2026/10/01");
 }
 
 TEST(DayOutputTest, PrintsAfterAddition) {
-    EXPECT_EQ(capture_output(Day(2026, 12, 31) + 1), "2027/1/1");
+    EXPECT_EQ(capture_output(Day(2026, 12, 31) + 1), "2027/01/01");
 }
 
 TEST(DayOutputTest, PrintsAfterIncrement) {
     Day d(2024, 2, 28);
     ++d;
-    EXPECT_EQ(capture_output(d), "2024/2/29");
+    EXPECT_EQ(capture_output(d), "2024/02/29");
 }
 
 TEST(DayOutputTest, DoesNotAppendNewline) {

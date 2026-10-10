@@ -151,6 +151,7 @@ TEST(DDayAppTomorrowTest, CrossesMonthBoundary) {
     // 2026/10/01 -> 31번 이동하면 11/01
     std::string commands;
     for (int i = 0; i < 31; ++i) commands += "t\n";
+    commands += "q\n";
 
     const auto results = results_of(commands);
 

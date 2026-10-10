@@ -130,9 +130,9 @@ Day Day::parse_day(const char date_text[]) {
     }
 
     return Day(
-        char_utils::to_ranged_integer(date_text, 0, 3, date_text_length),
-        char_utils::to_ranged_integer(date_text, 4, 5, date_text_length),
-        char_utils::to_ranged_integer(date_text, 6, 7, date_text_length)
+        char_utils::to_integer(date_text, 0, 3, date_text_length),
+        char_utils::to_integer(date_text, 4, 5, date_text_length),
+        char_utils::to_integer(date_text, 6, 7, date_text_length)
     );
 }
 
