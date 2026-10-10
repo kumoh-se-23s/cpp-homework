@@ -7,7 +7,7 @@
 
 #include "CharacterUtils.h"
 
-DDayApp::DDayApp() : is_running(true), dday(DDay()){
+DDayApp::DDayApp() : dday(DDay()){
 }
 
 void DDayApp::run() {
@@ -26,11 +26,10 @@ void DDayApp::run() {
             case '3' : // resolve('y' | 'Y') => '3'
                 is_success = this->yesterday();
                 break;
-            case '4' : // resolve('+' | '-') => '1'
+            case '4' : // resolve('+' | '-') => '4'
                 is_success = this->setting_dday(resolved_command);
                 break;
-            case '5' : // resolve('q' | 'Q') => '1'
-                is_success = this->stop();
+            case '5' : // resolve('q' | 'Q') => '5'
                 break;
 
             default: // resolve fail => '?'
