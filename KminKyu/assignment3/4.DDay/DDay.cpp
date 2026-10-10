@@ -7,39 +7,26 @@ DDay::DDay() {
 }
 
 void DDay::setDDay(int dday) {
-    if (dday < 0) {
-        this->endDay = this->startDay - abs(dday);
-    } else {
-        this->endDay = this->startDay + dday;
-    }
+    this->endDay = this->startDay +dday;
     this->dday = dday;
 }
 
-bool DDay::setStartDay(int dayInt) {
-    int year, month, day;
-
-    year = dayInt / 10000;
-    dayInt %= 10000;
-
-    month = dayInt / 100;
-
-    day = dayInt % 100;
-
+bool DDay::setStartDay(int year, int month, int day) {
     if (Day::isCorrectDate(year, month, day)) {
         this->startDay.set(year, month, day);
         setDDay(this->dday);
        return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
-void DDay::setTomarrow() {
+void DDay::setTomorrow() {
     ++this->startDay;
     ++this->endDay;
 }
 
-void DDay::setYesterDay() {
+void DDay::setYesterday() {
     --this->startDay;
     --this->endDay;
 }
@@ -54,11 +41,11 @@ std::ostream & operator<<(std::ostream &out, const DDay &dday) {
 
 }
 
-const Day DDay::getStartDay() const {
+const Day& DDay::getStartDay() const {
     return startDay;
 }
 
-const Day DDay::getEndDay() const {
+const Day& DDay::getEndDay() const {
     return endDay;
 }
 

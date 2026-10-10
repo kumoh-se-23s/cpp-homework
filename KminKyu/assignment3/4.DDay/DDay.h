@@ -1,3 +1,5 @@
+#pragma once
+
 #include<iostream>
 #include "Day.h"
 
@@ -7,15 +9,15 @@ public:
 
     void setDDay(int dday);
 
-    bool setStartDay(int dayInt);
+    bool setStartDay(int year, int month, int day);
 
-    void setTomarrow();
+    void setTomorrow();
 
-    void setYesterDay();
+    void setYesterday();
 
-    const Day getStartDay() const;
+    const Day& getStartDay() const;
 
-    const Day getEndDay() const;
+    const Day& getEndDay() const;
 
     int getDDay() const;
 

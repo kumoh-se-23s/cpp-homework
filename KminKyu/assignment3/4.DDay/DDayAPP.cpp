@@ -16,9 +16,12 @@ void DDayAPP::run() {
             cin.ignore(10000, '\n');
         }
         menu(answer);
-        cout << dday;
+        if (toUpper(answer[0]) != 'Q' || answer[1] != '\0') {
+            cout << dday;
+        }
 
-    } while (toUpper(answer[0]) != 'Q');
+
+    } while (toUpper(answer[0]) != 'Q' || answer[1] != '\0');
 
     cout << "=== END ===";
 }
@@ -35,23 +38,23 @@ char DDayAPP::toUpper(char alphabet) {
     }
 }
 
-bool DDayAPP::menu(char command[]) {
+void DDayAPP::menu(char command[]) {
     int result;
     for (int index = 0; index < MAX_ANSWER_LENGTH; ++index) {
         command[index] = toUpper(command[index]);
     }
-    if (command[0] == 'Y') {
-        this->dday.setYesterDay();
+    if (command[0] == 'Y' && command[1] == '\0') {
+        this->dday.setYesterday();
 
-    } else if (command[0] == 'T') {
-        this->dday.setTomarrow();
+    } else if (command[0] == 'T' && command[1] == '\0') {
+        this->dday.setTomorrow();
 
     } else if (command[0] == '+' || command[0] == '-') {
         result = changeCharToInt(command, 1);
 
         if (result == -1) {
             cout << "*** ERROR\n";
-            return false;
+            return;
         }
 
         if (command[0] == '-') {
@@ -60,17 +63,13 @@ bool DDayAPP::menu(char command[]) {
         this->dday.setDDay(result);
     } else if ('0' <= command[0] && command[0] <= '9') {
         result = changeCharToInt(command, 0);
-        if (result == -1 || !this->dday.setStartDay(result)) {
+        if (result == -1 || !this->trySetStartDay(result)) {
             cout << "*** ERROR\n";
-            return false;
         }
 
-    } else if (command[0] != 'Q') {
+    } else if (command[0] != 'Q' || command[1] != '\0') {
         cout << "*** ERROR\n";
-        return false;
     }
-    return true;
-
 }
 
 int DDayAPP::changeCharToInt(const char character[], int startIndex) {
@@ -87,5 +86,12 @@ int DDayAPP::changeCharToInt(const char character[], int startIndex) {
         }
     }
     return result;
+}
 
+bool DDayAPP::trySetStartDay(int yyyymmdd) {
+    int year = yyyymmdd / 10000;
+    yyyymmdd %= 10000;
+    int month = yyyymmdd / 100;
+    int day = yyyymmdd % 100;
+    return this->dday.setStartDay(year, month, day);
 }
