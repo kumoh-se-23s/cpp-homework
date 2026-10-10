@@ -37,9 +37,13 @@ std::istream& operator>>(std::istream& is, MySet& set) {
 }
 
 std::ostream& operator<<(std::ostream& os, const MySet& set) {
-    os << "{" << set.getArray(0);
-    for (int i = 1; i < set.getSize(); i++) {
-        os << ", " << set.getArray(i);
+    os << "{" ;
+    if (set.getSize() > 0) {
+        os << set.getArray(0);
+        
+        for (int i = 1; i < set.getSize(); i++) {
+            os << ", " << set.getArray(i);
+        }
     }
     os << "}";
 
