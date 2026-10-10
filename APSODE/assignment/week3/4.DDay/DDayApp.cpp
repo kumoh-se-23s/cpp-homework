@@ -132,9 +132,3 @@ bool DDayApp::setting_new_day(const Command &command_struct) {
     this->dday.set_new_day(maybe_valid_day);
     return true;
 }
-
-//
-// int main(int argc, char *argv[]) {
-//     DDayApp app = DDayApp();
-//     app.run();
-// }
