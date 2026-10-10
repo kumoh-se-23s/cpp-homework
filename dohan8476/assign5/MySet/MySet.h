@@ -6,10 +6,9 @@ class MySet {
         MySet();
         ~MySet();
 
-        const MySet& operator+(const MySet& set) const;
-        const MySet& operator-(const MySet& set) const;
-        const MySet& operator*(const MySet& set) const;
-
+        MySet operator+(const MySet& set) const;
+        MySet operator-(const MySet& set) const;
+        MySet operator&(const MySet& set) const;
         MySet& operator=(const MySet& set);
 
     private:
@@ -18,14 +17,14 @@ class MySet {
         int capacity = 4;
         void resize();
 
-        void unionSet();
-        void intersectionSet();
-        void differenceSet();
+        MySet unionSet(const MySet &set) const;
 
-        void insertionSort(const int *array, int size);
+        MySet intersectionSet(const MySet &set) const;
 
-        void swap(int &a,int &b) noexcept;
-        void swap(int a, int b);
+        MySet differenceSet(const MySet &set) const;
+
+        void insert(int value);
+
 };
 
 std::ostream& operator <<(std::ostream& out, const MySet& set);

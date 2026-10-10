@@ -2,12 +2,44 @@
 
 #include <array>
 
-MySet::MySet();
+MySet::MySet() = default;
 
-MySet::~MySet();
+MySet::~MySet() {
+    delete [] array;
+    array = nullptr;
+}
 
 //연산자 오버로딩
 
+MySet MySet::operator+(const MySet& set) const{
+    return this->unionSet(set);
+}
+
+MySet MySet::operator-(const MySet& set) const{
+    return this->differenceSet(set);
+
+}
+
+MySet MySet::operator&(const MySet& set) const{
+    return this->intersectionSet(set);
+}
+
+MySet& MySet::operator=(const MySet& set) {
+    if (this == &set) {
+        return *this;
+    }
+    //기존 동적 배열 반드시 delete
+    delete [] array;
+    //크기 복사 후 새로 할당
+    capacity = set.capacity;
+    size = set.size;
+    array = new int[capacity];
+
+    for (int i = 0 ; i < set.size ; i++) {
+        array[i] = set.array[i];
+    }
+    return *this;
+}
 
 //private 영역
 
@@ -25,39 +57,55 @@ void MySet::resize() {
     array = newArray;
 }
 
-void MySet::unionSet(const MySet &set) {
+MySet MySet::unionSet(const MySet &set) const{
+    MySet result;
+
+    //현재 먼저 넣기
+    for (int i = 0; i < this->size; i++) {
+        result.insert(this->array[i]);
+    }
+    //나머지 붙히기
+    for (int i = 0; i < set.size; i++) {
+        result.insert(set.array[i]);
+    }
+    return result;
+}
+
+MySet MySet::intersectionSet(const MySet &set) const{
 
 }
 
-void MySet::intersectionSet() {
+MySet MySet::differenceSet(const MySet &set) const{
 
 }
 
-void MySet::differenceSet() {
+//정렬이랑 중복검사 같이하며 값을 넣음
+void MySet::insert(int value) {
+    bool isExist = false;
+    int pos = 0;
 
-}
-
-void MySet::insertionSort(const int *array, const int currentSize) {
-    for (int i = *array + 1 ; i < *array + currentSize; i++) {
-        for (int j = i; j > *array; j--) {
-            if (array[j] < array[j - 1]) {
-                swap(array[j], array[j - 1]);
-            }
+    for (pos = 0; pos < this->size; pos++) {
+        //중복 검사
+        if (this->array[pos] == value) {
+            isExist = true;
+            break;
+        }
+        //위치 검사
+        if (this->array[pos] > value) {
+            break;
         }
     }
-}
 
-//noexcept는 이 메소드엔 예외가 없다고 컴파일러에게 던져서
-//원래라면 값을 복사해서 대입해서 넘기는데 noexcept가 있으면
-//그냥 바로 주소값을 넘긴다??
-void MySet::swap(int &a, int &b) noexcept {
-    int temp = a;
-    a = b;
-    b = temp;
-}
-
-void MySet::swap(int a, int b) {
-    int temp = a;
-    a = b;
-    b = temp;
+    if (!isExist) {
+        //값 삽입 전 size 검사
+        if (this->size >= this->capacity) {
+            this->resize();
+        }
+        // 정렬 된 덩어리 뒤로 Shift
+        for (int k = this->size; k > pos; k--) {
+            this->array[k] = this->array[k - 1];
+        }
+        this->array[pos] = value;
+        this->size++;
+    }
 }
