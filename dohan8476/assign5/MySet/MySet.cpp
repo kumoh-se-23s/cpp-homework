@@ -40,7 +40,6 @@ std::ostream& operator<<(std::ostream& os, const MySet& set) {
     os << "{" ;
     if (set.getSize() > 0) {
         os << set.getArray(0);
-        
         for (int i = 1; i < set.getSize(); i++) {
             os << ", " << set.getArray(i);
         }
@@ -112,12 +111,15 @@ MySet MySet::unionSet(const MySet &set) const{
 MySet MySet::intersectionSet(const MySet &set) const{
     MySet result;
 
-    //일단 바로 생각나는건 전체 확인인데 더 최적화 없으려나
     for (int i = 0; i < this->size; i++) {
         int target = this->array[i];
         for (int j = 0; j < set.size; j++) {
             if (target == set.array[j]) {
                 result.insert(target);
+                break;
+            }
+            //이미 정렬되어 있으니 타겟보다 큰 숫자면 없음
+            if (set.array[j] > target) {
                 break;
             }
         }
@@ -137,6 +139,9 @@ MySet MySet::differenceSet(const MySet &set) const{
             //교집합과 반대로 못찾았을 때 값 넣어야함
             if (target == set.array[j]) {
                 isExist = true;
+                break;
+            }
+            if (set.array[j] > target) {
                 break;
             }
         }
