@@ -89,7 +89,25 @@ MySet MySet::intersectionSet(const MySet &set) const{
 }
 
 MySet MySet::differenceSet(const MySet &set) const{
+    MySet result;
 
+    for (int i = 0; i < this->size; i++) {
+        bool isExist = false;
+        int target = this->array[i];
+
+        for (int j = 0; j < set.size; j++) {
+            //교집합과 반대로 못찾았을 때 값 넣어야함
+            if (target == set.array[j]) {
+                isExist = true;
+                break;
+            }
+        }
+        //다 돌아도 false면 값을 채워야함
+        if (!isExist) {
+            result.insert(target);
+        }
+    }
+    return result;
 }
 
 //정렬이랑 중복검사 같이하며 값을 넣음
