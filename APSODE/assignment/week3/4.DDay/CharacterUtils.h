@@ -8,13 +8,15 @@
 namespace char_utils {
     bool is_numeric_character(char maybe_numeric);
 
-    bool is_numeric_only(char maybe_numeric_only[]);
+    bool is_numeric_only(const char maybe_numeric_only[]);
 
-    bool is_signed_numeric(char maybe_signed_numeric[]);
-
-    int to_ranged_integer(const char integer_text[], int start, int end, int size);
+    bool is_signed_numeric(const char maybe_signed_numeric[]);
 
     int to_integer(const char integer_text[]);
+
+    int to_integer(const char integer_text[], int start, int end, int size);
+
+    int parse_integer(const char integer_text[], int start, int end);
 
     int get_char_array_length(const char char_array[]);
 

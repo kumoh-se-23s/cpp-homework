@@ -12,7 +12,7 @@ struct Command {
     constexpr static int MAX_INPUT_LENGTH = 9;
     char input[MAX_INPUT_LENGTH];
     int length = 0;
-    char resolved = '0';
+    char resolved = '?';
 };
 
 class DDayApp {
@@ -30,7 +30,7 @@ class DDayApp {
 
         static Command resolve_input_command(Command command_struct);
 
-        Command input_command() const;
+        static Command input_command();
 
         void print_result() const;
 
@@ -42,9 +42,9 @@ class DDayApp {
 
         bool yesterday();
 
-        bool setting_dday(Command command_struct);
+        bool setting_dday(const Command &command_struct);
 
-        bool setting_new_day(Command command_struct);
+        bool setting_new_day(const Command &command_struct);
 
 };
 #endif //CPP_HOMEWORK_DDAYAPP_H

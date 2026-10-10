@@ -23,7 +23,7 @@ class Day {
 
         void set(int year, int month, int day);
 
-        static bool is_valid_day(Day maybe_valid_day);
+        static bool is_valid_day(const Day &maybe_valid_day);
 
         Day operator+(int day_delta) const;
 
@@ -46,9 +46,9 @@ class Day {
 
         void sub_day(int day_delta = 1);
 
-        static bool is_leap_year(Day day);
+        static bool is_leap_year(const Day &maybe_leap_year);
 
-        static int get_day_in_month(Day day);
+        static int get_day_in_month(const Day &day);
 
         static Day parse_day(const char date_text[]);
 };

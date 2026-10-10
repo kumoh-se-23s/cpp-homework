@@ -14,7 +14,7 @@ class DDay {
 
         DDay(Day manual_day);
 
-        DDay(char date_text[]);
+        DDay(const char date_text[]);
 
         Day get_day() const;
 

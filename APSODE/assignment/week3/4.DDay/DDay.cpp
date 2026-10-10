@@ -10,11 +10,11 @@ DDay::DDay()
     : day(Day()), day_delta(0) {
 }
 
-DDay::DDay(Day manual_day)
+DDay::DDay(const Day manual_day)
     : day(manual_day), day_delta(0) {
 }
 
-DDay::DDay(char date_text[])
+DDay::DDay(const char date_text[])
     : day(Day(date_text)), day_delta(0) {
 }
 

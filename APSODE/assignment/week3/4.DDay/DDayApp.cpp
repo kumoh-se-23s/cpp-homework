@@ -13,27 +13,27 @@ DDayApp::DDayApp() : is_running(true), dday(DDay()){
 void DDayApp::run() {
     std::cout << "<< " << this->dday << std::endl;
     while (is_running) {
-        Command resolved_command = resolve_input_command(this->input_command());
+        const Command resolved_command = resolve_input_command(input_command());
         bool is_success = true;
 
         switch (resolved_command.resolved) {
-            case '1' :
+            case '1' : // resolve(format:YYYYMMDD) => '1'
                 is_success = this->setting_new_day(resolved_command);
                 break;
-            case '2' :
+            case '2' : // resolve('t' | 'T') => '2'
                 is_success = this->tomorrow();
                 break;
-            case '3' :
+            case '3' : // resolve('y' | 'Y') => '3'
                 is_success = this->yesterday();
                 break;
-            case '4' :
+            case '4' : // resolve('+' | '-') => '1'
                 is_success = this->setting_dday(resolved_command);
                 break;
-            case '5' :
+            case '5' : // resolve('q' | 'Q') => '1'
                 is_success = this->stop();
                 break;
 
-            default:
+            default: // resolve fail => '?'
                 is_success = false;
                 break;
         }
@@ -72,7 +72,7 @@ Command DDayApp::resolve_input_command(Command command_struct) {
     return command_struct;
 }
 
-Command DDayApp::input_command() const {
+Command DDayApp::input_command() {
     Command command{};
     std::cout << PROMPT;
     std::cin.getline(command.input, Command::MAX_INPUT_LENGTH);
@@ -112,7 +112,7 @@ bool DDayApp::yesterday() {
     return true;
 }
 
-bool DDayApp::setting_dday(Command command_struct) {
+bool DDayApp::setting_dday(const Command &command_struct) {
     if (!char_utils::is_signed_numeric(command_struct.input)) {
         return false;
     }
@@ -122,7 +122,7 @@ bool DDayApp::setting_dday(Command command_struct) {
     return true;
 }
 
-bool DDayApp::setting_new_day(Command command_struct) {
+bool DDayApp::setting_new_day(const Command &command_struct) {
     const Day maybe_valid_day = Day(command_struct.input);
 
     if (!Day::is_valid_day(maybe_valid_day)) {

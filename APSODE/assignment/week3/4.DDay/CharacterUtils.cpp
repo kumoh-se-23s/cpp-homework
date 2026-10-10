@@ -5,23 +5,8 @@
 #include "CharacterUtils.h"
 
 
-int char_utils::to_ranged_integer(const char integer_text[], const int start, const int end, const int size) {
-    if (!is_correct_range(start, end, size)) {
-        return -1;
-    }
-
-    int result = 0;
-    int base = 1;
-    for (int char_index = end; char_index >= start; --char_index) {
-        result += (integer_text[char_index] - '0') * base;
-        base *= 10;
-    }
-
-    return result;
-}
-
-int char_utils::to_integer(const char integer_text[]) {
-    int text_index = 0;
+int char_utils::parse_integer(const char integer_text[], const int start, const int end) {
+    int text_index = start;
     bool is_negative = false;
 
     if (integer_text[text_index] == '+' || integer_text[text_index] == '-') {
@@ -31,11 +16,29 @@ int char_utils::to_integer(const char integer_text[]) {
 
     int result = 0;
 
-    for (; integer_text[text_index] != '\0'; ++text_index) {
+    for (; text_index <= end; ++text_index) {
         result = result * 10 + (integer_text[text_index] - '0');
     }
 
     return is_negative ? -result : result;
+}
+
+int char_utils::to_integer(const char integer_text[], const int start, const int end, const int size) {
+    if (!is_correct_range(start, end, size)) {
+        return -1;
+    }
+
+    return parse_integer(integer_text, start, end);
+}
+
+int char_utils::to_integer(const char integer_text[]) {
+    int last_index = -1;
+
+    while (integer_text[last_index + 1] != '\0') {
+        ++last_index;
+    }
+
+    return parse_integer(integer_text, 0, last_index);
 }
 
 bool char_utils::is_correct_range(const int start, const int end, const int size) {
@@ -59,7 +62,7 @@ bool char_utils::is_numeric_character(const char maybe_numeric) {
     return '0' <= maybe_numeric && maybe_numeric <= '9';
 }
 
-bool char_utils::is_numeric_only(char maybe_numeric_only[]) {
+bool char_utils::is_numeric_only(const char maybe_numeric_only[]) {
     if (maybe_numeric_only[0] == '\0') {
         return false;
     }
@@ -73,7 +76,7 @@ bool char_utils::is_numeric_only(char maybe_numeric_only[]) {
     return true;
 }
 
-bool char_utils::is_signed_numeric(char maybe_signed_numeric[]) {
+bool char_utils::is_signed_numeric(const char maybe_signed_numeric[]) {
     if (maybe_signed_numeric[0] == '\0') {
         return false;
     }
