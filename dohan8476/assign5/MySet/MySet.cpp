@@ -72,7 +72,20 @@ MySet MySet::unionSet(const MySet &set) const{
 }
 
 MySet MySet::intersectionSet(const MySet &set) const{
+    MySet result;
 
+    //일단 바로 생각나는건 전체 확인인데 더 최적화 없으려나
+    for (int i = 0; i < this->size; i++) {
+        int target = this->array[i];
+        for (int j = 0; j < set.size; j++) {
+            if (target == set.array[j]) {
+                result.insert(target);
+                break;
+            }
+        }
+    }
+
+    return result;
 }
 
 MySet MySet::differenceSet(const MySet &set) const{
