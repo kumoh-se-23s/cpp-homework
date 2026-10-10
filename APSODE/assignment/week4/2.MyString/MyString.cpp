@@ -50,6 +50,6 @@ void String::copy_from_other(const char other[]) {
 }
 
 std::istream& operator>>(std::istream &input_stream, String &string) {
-
+    //
     return input_stream;
 }
