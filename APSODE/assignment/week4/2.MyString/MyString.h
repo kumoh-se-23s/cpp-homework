@@ -6,48 +6,39 @@
 #define CPP_HOMEWORK_MYSTRING_H
 #include "CharSequence.h"
 
-class String : public CharSequence {
+class MyString : public CharSequence {
     public:
-        constexpr static int MAX_LENGTH = 15;
+        MyString() = default;
 
-        String();
+        explicit MyString(const CharSequence &other)
+            : CharSequence(other) {
+        }
 
-        String(const char other_char_array[]);
+        explicit MyString(const char other[])
+            : CharSequence(other) {
+        }
 
-        String(const String &other);
+        MyString(const MyString &other);
 
-        ~String() override;
-
-
-        int length() const override;
-
-        char at(int pos) const override;
-
-        bool empty() const override;
-
-        void set(char target_char, int pos) override;
+        ~MyString() override;
 
 
-        bool operator==(const String &other) const;
+        bool operator==(const MyString &other) const;
 
-        String operator=(const String &other);
+        bool operator!=(const MyString &other) const;
 
-        String operator+(const String &other) const;
+        MyString& operator=(const MyString &other);
 
-        String operator+(const CharSequence &other) const;
+        MyString operator+(const MyString &other) const;
 
-        String operator+(const char char_array[]) const;
+        MyString operator+(const CharSequence &other) const;
 
-    private:
-        char container[MAX_LENGTH + 1];
+        MyString operator+(const char char_array[]) const;
 
-        int length;
-
-        void copy_from_other(const CharSequence &other);
-
-        void copy_from_other(const char other[]);
+        MyString substr(int pos, int len) const;
 };
 
-std::istream &operator>>(std::istream &input_stream, String &string);
-#endif //CPP_HOMEWORK_MYSTRING_H
+std::istream& operator>>(std::istream &input_stream, MyString &string);
 
+std::istream& get_line(std::istream &input_stream, MyString &string, char delim = '\n') ;
+#endif //CPP_HOMEWORK_MYSTRING_H

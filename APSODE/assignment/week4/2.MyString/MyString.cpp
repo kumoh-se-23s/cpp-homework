@@ -2,54 +2,113 @@
 // Created by leegu on 26. 10. 10..
 //
 
-#include <MyString.h>
+#include "MyString.h"
 
-String::String() {
+MyString::MyString(const MyString &other) {
+    this->copy_from_other(other);
 }
 
-String::String(const char other_char_array[]) {
+MyString::~MyString() {
 }
 
-String::String(const String &other) {
+bool MyString::operator==(const MyString &other) const {
+    return this->equals(other);
 }
 
-String::~String() {
+bool MyString::operator!=(const MyString &other) const {
+    return !this->equals(other);
 }
 
-int String::length() const {
+MyString& MyString::operator=(const MyString &other) {
+    this->copy_from_other(other);
+
+    return *this;
 }
 
-char String::at(int pos) const {
+MyString MyString::operator+(const MyString &other) const {
+    return MyString(this->append_truncated(other));
 }
 
-bool String::empty() const {
+MyString MyString::operator+(const CharSequence &other) const {
+    return MyString(this->append_truncated(other));
 }
 
-void String::set(char target_char, int pos) {
+MyString MyString::operator+(const char char_array[]) const {
+    return MyString(this->append_truncated(char_array));
 }
 
-bool String::operator==(const String &other) const {
+MyString MyString::substr(const int pos, const int len) const {
+    const int start = (pos < 0) ? 0 : pos;
+
+    if (start >= this->length_ || len <= 0) {
+        return MyString();
+    }
+
+    const int remaining = this->length_ - start;
+    const int count = (len > remaining) ? remaining : len;
+
+    MyString substring;
+    for (int index = 0; index < count; ++index) {
+        substring.add_last(this->container[start + index]);
+    }
+
+    return substring;
 }
 
-String String::operator=(const String &other) {
+std::istream& operator>>(std::istream &input_stream, MyString &string) {
+    MyString temp;
+    int char_code = input_stream.get();
+
+    // early return
+    if (char_code == EOF) {
+        return input_stream;
+    }
+
+    // strip lead\
+    // TODO char_code 비교를 메소드화 고려해볼것.
+    while (char_code == ' ' || char_code == '\t' || char_code == '\n') {
+        char_code = input_stream.get();
+    }
+
+    for (;
+        char_code != EOF;
+        char_code = input_stream.get()
+    ) {
+        if (char_code == ' ' || char_code == '\n' || temp.length() >= CharSequence::MAX_LENGTH) {
+            input_stream.putback(static_cast<char>(char_code));
+            break;
+        }
+
+        temp.add_last(static_cast<char>(char_code));
+    }
+
+    temp.add_last('\0');
+    string = temp;
+    return input_stream;
 }
 
-String String::operator+(const String &other) const {
-}
+std::istream& get_line(std::istream &input_stream, MyString &string, const char delim) {
+    MyString temp;
+    int char_code = input_stream.get();
 
-String String::operator+(const CharSequence &other) const {
-}
+    // early return
+    if (char_code == EOF) {
+        return input_stream;
+    }
 
-String String::operator+(const char char_array[]) const {
-}
+    for (;
+        char_code != EOF && char_code != delim;
+        char_code = input_stream.get()
+    ) {
+        if (temp.length() >= CharSequence::MAX_LENGTH) {
+            input_stream.ignore(10000, delim);
+            break;
+        }
 
-void String::copy_from_other(const CharSequence &other) {
-}
+        temp.add_last(static_cast<char>(char_code));
+    }
 
-void String::copy_from_other(const char other[]) {
-}
-
-std::istream& operator>>(std::istream &input_stream, String &string) {
-    //
+    temp.add_last('\0');
+    string = temp;
     return input_stream;
 }

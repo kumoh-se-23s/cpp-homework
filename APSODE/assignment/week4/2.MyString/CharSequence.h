@@ -6,19 +6,52 @@
 #define CPP_HOMEWORK_CHARSEQUENCE_H
 #include <iostream>
 
-class CharSequence {
+#include "Sequence.h"
+
+class CharSequence : public Sequence<char> {
     public:
-        virtual ~CharSequence() = default;
+        constexpr static int MAX_LENGTH = 15;
 
-        virtual int length() const = 0;
+        CharSequence();
 
-        virtual char at(int pos) const = 0;
+        CharSequence(const CharSequence &other);
 
-        virtual void set(char target_char, int pos) = 0;
+        CharSequence(const char other[]);
 
-        virtual bool empty() const = 0;
+        ~CharSequence() override;
+
+
+        int length() const override;
+
+        char at(int pos) const override;
+
+        bool set(char object, int pos) override;
+
+        void add_last(char object) override;
+
+        bool empty() const override;
+
+        bool equals(const CharSequence &other) const;
+
+
+        CharSequence append_truncated(const char other[]) const;
+
+        CharSequence append_truncated(const CharSequence &other) const;
+
+        void copy_from_other(const char other[]);
+
+        void copy_from_other(const CharSequence &other);
+
+    protected:
+        char container[MAX_LENGTH + 1];
+
+        int length_;
+
+        bool is_correct_index_bound(int index) const;
+
+        void flush();
 };
 
-std::ostream &operator<<(std::ostream &output_stream, const CharSequence &char_sequence);
+std::ostream& operator<<(std::ostream &output_stream, const CharSequence &char_sequence);
 
 #endif //CPP_HOMEWORK_CHARSEQUENCE_H
