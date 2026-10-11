@@ -5,8 +5,8 @@ using namespace std;
 
 //생성자
 Fraction::Fraction() {}
-Fraction::Fraction(int num, int den): numerator(num), denominator(den) {
-    normalize();
+Fraction::Fraction(int num, int den) {
+    set(num, den);
 }
 
 //getter--------------------
@@ -20,11 +20,16 @@ int Fraction::getDen() const{
     return denominator;
 }
 
+void Fraction::set(int num, int den){
+    numerator = num;
+    denominator = den;
+    normalize();
+}
 //연산자 오버로딩----------------
 //덧셈
 const Fraction Fraction::operator+(const Fraction& fra2) const{
-    int result_numerator = numerator * fra2.getDen() + fra2.getNum() * denominator;
-    int result_denominator = denominator * fra2.getDen();
+    int result_numerator = numerator * fra2.denominator + fra2.numerator * denominator;
+    int result_denominator = denominator * fra2.denominator;
 
     return Fraction(result_numerator, result_denominator);
 }

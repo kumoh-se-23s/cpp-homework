@@ -25,9 +25,10 @@ private:
     int month;
     int day;
 
-    int getDaysInMonth(int year, int month) const;
-    bool isLeapYear(int year) const;
-    int getDaysOfAnYear(int year, int startMonth) const;
+    static constexpr int DAYS_OF_400YEARS = 146097; //400년 일수
+    static int getDaysInMonth(int year, int month);
+    static bool isLeapYear(int year);
+    static int getDaysOfAnYear(int year, int startMonth);
 };
 
 ostream& operator<<(ostream& out, const Day& day);

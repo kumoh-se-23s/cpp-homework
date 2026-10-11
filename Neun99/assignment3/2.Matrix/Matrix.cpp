@@ -6,11 +6,13 @@ using namespace std;
 
 //getter setter----------------
 int Matrix::getValue(int rowIdx, int colIdx) const{
-    return matrix[rowIdx][colIdx];
+    if (rowIdx < SIZE && colIdx < SIZE && rowIdx >= 0 && colIdx >= 0)
+        return matrix[rowIdx][colIdx];
+    return -2123456789; //범위가 int전체라 뭘 return해도 정상범위랑 겹치지만, 최대한 안 나올거 같은 숫자로..
 }
 
 void Matrix::setValue(int rowIdx, int colIdx, int value) {
-    if (rowIdx < SIZE && colIdx < SIZE)
+    if (rowIdx < SIZE && colIdx < SIZE && rowIdx >= 0 && colIdx >= 0)
         matrix[rowIdx][colIdx] = value;
 }
 //연산자오버로딩----------------------------------------------
@@ -67,9 +69,9 @@ istream& operator>>(istream& in, Matrix& mat) {
 ostream& operator<<(ostream& out, const Matrix& mat) {
     int width = mat.getMaxWidth();
     for (int rowIdx = 0; rowIdx < Matrix::SIZE; rowIdx++) {
-        out << "| ";
+        out << "|";
         for (int colIdx = 0; colIdx < Matrix::SIZE; colIdx++) {
-            out << setw(width) << mat.getValue(rowIdx, colIdx);
+            out << setw(width) << mat.getValue(rowIdx, colIdx) << " ";
         }
         out << "|" << endl;
     }
@@ -81,11 +83,8 @@ int Matrix::getMaxWidth() const{
     int maxWidth = 0;
     for (int rowIdx = 0; rowIdx < SIZE; rowIdx++) {
         for (int colIdx = 0; colIdx < SIZE; colIdx++) {
-            int value = getValue(rowIdx, colIdx);
-            int width = 1;
-
-            if (value < 0) //value가 음수면 마이너스 출력할 한자리 추가
-                width++;
+            int value = matrix[rowIdx][colIdx];
+            int width = 3; //자릿수 + 부호공간 + 1
 
             for (; value >= 10 || value <= -10; value /= 10) { //자릿수 구하기
                 width++;

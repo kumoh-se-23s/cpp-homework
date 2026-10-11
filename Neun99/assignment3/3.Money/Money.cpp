@@ -10,7 +10,9 @@ Money::Money() {
     cent = 0;
 }
 
-Money::Money(int newDollar, int newCent): dollar(newDollar), cent(newCent) {
+Money::Money(int newDollar, int newCent) {
+    dollar = newDollar;
+    cent = newCent;
     normalize();
 }
 
@@ -52,35 +54,35 @@ bool Money::operator==(const Money& money2) const {
 
 //!=
 bool Money::operator!=(const Money& money2) const {
-    return dollar != money2.dollar || cent != money2.cent;
+    return !(dollar == money2.dollar && cent == money2.cent);
 }
 
 //<=
 bool Money::operator<=(const Money& money2) const {
-    if (dollar <= money2.dollar)
-        return true;
-    return cent <= money2.cent;
+    if (dollar == money2.dollar)
+        return cent <= money2.cent;
+    return dollar < money2.dollar;
 }
 
 //>=
 bool Money::operator>=(const Money& money2) const {
-    if (dollar >= money2.dollar)
-        return true;
-    return cent >= money2.cent;
+    if (dollar == money2.dollar)
+        return cent >= money2.cent;
+    return dollar > money2.dollar;
 }
 
 //<
 bool Money::operator<(const Money& money2) const {
-    if (dollar < money2.dollar)
-        return true;
-    return cent < money2.cent;
+    if (dollar == money2.dollar)
+        return cent < money2.cent;
+    return dollar < money2.dollar;
 }
 
 //>
 bool Money::operator>(const Money& money2) const {
-    if (dollar > money2.dollar)
-        return true;
-    return cent > money2.cent;
+    if (dollar == money2.dollar)
+        return cent > money2.cent;
+    return dollar > money2.dollar;
 }
 
 //in
@@ -96,11 +98,11 @@ istream& operator>>(istream& in, Money& money) {
 
 //out
 ostream& operator<<(ostream& out, const Money& money) {
-    if (money.getDollar() < 0)
+    if (money.getDollar() < 0 || (money.getDollar() == 0 && money.getCent() < 0 )) //달러가 음수거나, 달러가 0인데 센트가 음수
         out << "-";
     out << "$" << abs(money.getDollar()) << ".";
 
-    out << setfill('0') << setw(2) << abs(money.getCent());
+    out << setfill('0') << setw(2) << abs(money.getCent()) << setfill(' ');
     return out;
 }
 
