@@ -144,7 +144,7 @@ int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
     for (int index = 1; index < subStrLength; ++index) { //슬라이딩 할때마다 뺄 값 계산
         minusNum = minusNum * hashBase % hashMod;
     }
-    for (int index = 0; index < subStrLength; ++index) { //첫 해시 값 계산
+    for (int index = 0; index < subStrLength; ++index) { //첫 해시 값 계산 -> index -1이 불가능하므로 따로 계산
         findHash = (findHash * hashBase + subStr[index]) % hashMod;
         resultHash = (resultHash * hashBase + charArray[pos + index]) % hashMod;
     }
@@ -154,6 +154,7 @@ int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
             resultHash = (resultHash * hashBase + charArray[index + subStrLength - 1]) % hashMod;
         }
         if (findHash == resultHash && isSame(charArray, subStr, index, index + subStrLength - 1)) {
+            //해시 값이 같으면 실제로 같은지 확인 -> 이중 해시 쓰면 확률이 낮아짐
             return index;
         }
     }
@@ -181,7 +182,7 @@ istream& operator>>(istream& is, MyString& str) {
     str.clear();
     char input;
 
-    while (is.get(input) && input != '\n' && input != '\r') {
+    while (is.get(input) && input != '\n' && input != ' ' && input != '\r') {
         str.append(input);
         if (str.length() == str.getCapacity()) {
             return is;
