@@ -61,6 +61,10 @@ bool Money::operator ==(const Money& money) const {
     return this->dollar == money.dollar && this->cent == money.cent;
 }
 
+bool Money::operator!=(const Money& money) const {
+    return this->dollar != money.dollar && this->cent != money.cent;
+}
+
 bool Money::operator <(const Money& money) const
 {
     if (this->dollar > money.dollar) {
