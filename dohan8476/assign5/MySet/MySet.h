@@ -6,16 +6,15 @@ class MySet {
         MySet();
         ~MySet();
 
-        MySet operator+(const MySet& set) const;
-        MySet operator-(const MySet& set) const;
-        MySet operator&(const MySet& set) const;
-        MySet& operator=(const MySet& set);
-
         int getSize() const;
         int getArray(int index) const;
 
         void insert(int value);
 
+        MySet operator+(const MySet& set) const;
+        MySet operator-(const MySet& set) const;
+        MySet operator&(const MySet& set) const;
+        MySet& operator=(const MySet& set);
 
     private:
         int size = 0;

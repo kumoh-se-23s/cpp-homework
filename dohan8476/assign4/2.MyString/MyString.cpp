@@ -1,6 +1,10 @@
 #include "MyString.h"
 #include <iostream>
 
+// =================================================================
+// PUBLIC SECTION
+// =================================================================
+
 MyString::MyString() {
     str[0] = '\0';
 }
@@ -13,21 +17,12 @@ MyString::MyString(const MyString& srcStr){
     str[i] = '\0';
 }
 
-
 MyString::MyString(const char srcStr[]) {
     int i = 0;
     for (; srcStr[i] != '\0' && i < CAPACITY ; i++){
         str[i] = srcStr[i];
     }
     str[i] = '\0';
-}
-
-int MyString::cstrlen(const char s[]) const {
-    int len = 0;
-    while (s[len] != '\0') {
-        len++;
-    }
-    return len;
 }
 
 int MyString::length() const {
@@ -43,10 +38,6 @@ char MyString::at(int pos) const {
         return str[pos];
     }
     return '\0';
-}
-
-char MyString::operator[](int pos) const {
-    return this->at(pos);
 }
 
 int MyString::find(const char subStr[], int pos) const {
@@ -99,6 +90,14 @@ MyString MyString::substr(int pos, int len) const {
     result.str[i] = '\0';
 
     return result;
+}
+
+// =================================================================
+// OPERATOR OVERLOADING SECTION
+// =================================================================
+
+char MyString::operator[](int pos) const {
+    return this->at(pos);
 }
 
 const MyString MyString::operator+(const char str2nd[]) const {
@@ -214,4 +213,16 @@ std::istream &getline(std::istream &is, MyString &str, char delimiter) {
     str = temp;
 
     return is;
+}
+
+// =================================================================
+// PRIVATE SECTION
+// =================================================================
+
+int MyString::cstrlen(const char s[]) const {
+    int len = 0;
+    while (s[len] != '\0') {
+        len++;
+    }
+    return len;
 }

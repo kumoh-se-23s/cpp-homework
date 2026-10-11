@@ -8,10 +8,6 @@ class MyMatrix {
         MyMatrix(const MyMatrix& m);
         ~MyMatrix();
 
-        MyMatrix operator +(const MyMatrix & matrix) const;
-        MyMatrix operator *(const MyMatrix & matrix) const;
-        MyMatrix& operator =(const MyMatrix & matrix);
-
         int getMatrix(int row, int col) const;
         void setMatrix(int row, int col, int val);
 
@@ -22,6 +18,11 @@ class MyMatrix {
         int getCol() const;
 
         void init(int* arr);
+
+        MyMatrix operator +(const MyMatrix & matrix) const;
+        MyMatrix operator *(const MyMatrix & matrix) const;
+        MyMatrix& operator =(const MyMatrix & matrix);
+
     private:
         int row = 0;
         int col = 0;

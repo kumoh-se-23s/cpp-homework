@@ -1,6 +1,10 @@
 #include "MySet.h"
 #include <iomanip>
 
+// =================================================================
+// PUBLIC SECTION
+// =================================================================
+
 MySet::MySet() = default;
 
 MySet::~MySet() {
@@ -8,7 +12,51 @@ MySet::~MySet() {
     array = nullptr;
 }
 
-//연산자 오버로딩
+
+void MySet::insert(int value) {
+    bool isExist = false;
+    int pos = 0;
+
+    for (pos = 0; pos < this->size; pos++) {
+        //중복 검사
+        if (this->array[pos] == value) {
+            isExist = true;
+            break;
+        }
+        //위치 검사
+        if (this->array[pos] > value) {
+            break;
+        }
+    }
+
+    if (!isExist) {
+        //값 삽입 전 size 검사
+        if (this->size >= this->capacity) {
+            this->resize();
+        }
+        // 정렬 된 덩어리 뒤로 Shift
+        for (int k = this->size; k > pos; k--) {
+            this->array[k] = this->array[k - 1];
+        }
+        this->array[pos] = value;
+        this->size++;
+    }
+}
+
+int MySet::getSize() const {
+    return this->size;
+}
+
+int MySet::getArray(int index) const {
+    if (0 <= index && index < this->size) {
+        return this->array[index];
+    }
+    return -1;
+}
+
+// =================================================================
+// OPERATOR OVERLOADING SECTION
+// =================================================================
 
 MySet MySet::operator+(const MySet& set) const{
     return this->unionSet(set);
@@ -49,18 +97,6 @@ std::ostream& operator<<(std::ostream& os, const MySet& set) {
     return os;
 }
 
-int MySet::getSize() const {
-    return this->size;
-}
-
-int MySet::getArray(int index) const {
-    if (0 <= index && index < this->size) {
-        return this->array[index];
-    }
-    return -1;
-}
-
-
 MySet& MySet::operator=(const MySet& set) {
     if (this == &set) {
         return *this;
@@ -78,7 +114,9 @@ MySet& MySet::operator=(const MySet& set) {
     return *this;
 }
 
-//private 영역
+// =================================================================
+// PRIVATE SECTION
+// =================================================================
 
 void MySet::resize() {
     if (size >= capacity) {
@@ -151,35 +189,4 @@ MySet MySet::differenceSet(const MySet &set) const{
         }
     }
     return result;
-}
-
-//정렬이랑 중복검사 같이하며 값을 넣음
-void MySet::insert(int value) {
-    bool isExist = false;
-    int pos = 0;
-
-    for (pos = 0; pos < this->size; pos++) {
-        //중복 검사
-        if (this->array[pos] == value) {
-            isExist = true;
-            break;
-        }
-        //위치 검사
-        if (this->array[pos] > value) {
-            break;
-        }
-    }
-
-    if (!isExist) {
-        //값 삽입 전 size 검사
-        if (this->size >= this->capacity) {
-            this->resize();
-        }
-        // 정렬 된 덩어리 뒤로 Shift
-        for (int k = this->size; k > pos; k--) {
-            this->array[k] = this->array[k - 1];
-        }
-        this->array[pos] = value;
-        this->size++;
-    }
 }

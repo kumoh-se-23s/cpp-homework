@@ -1,6 +1,10 @@
 #include "MyMatrix.h"
 #include <iomanip>
 
+// =================================================================
+// PUBLIC SECTION
+// =================================================================
+
 MyMatrix::MyMatrix() {
     this->row = 1;
     this->col = 1;
@@ -51,53 +55,6 @@ MyMatrix::~MyMatrix() {
     matrix = nullptr;
 }
 
-
-//연산자 오버로딩-----
-MyMatrix MyMatrix::operator +(const MyMatrix& m) const {
-    return this->add(m);
-}
-
-MyMatrix MyMatrix::operator *(const MyMatrix& m) const {
-    return this->multi(m);
-}
-
-MyMatrix& MyMatrix::operator =(const MyMatrix& m) {
-    if (this == &m) {
-        return *this;
-    }
-
-    for (int i = 0; i < this->row; i++) {
-        delete[] this->matrix[i];
-    }
-    delete[] this->matrix;
-
-
-    this->row = m.row;
-    this->col = m.col;
-    this->matrix = new int*[this->row];
-
-    for (int i = 0; i < this->row; i++) {
-        this->matrix[i] = new int[this->col];
-        for (int j = 0; j < this->col; j++) {
-            this->matrix[i][j] = m.matrix[i][j];
-        }
-    }
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& os, const MyMatrix& m) {
-    int maxWidth = m.getMaxWidth();
-
-    for (int row = 0; row < m.getRow(); row++) {
-        os << "|";
-        for (int col = 0; col < m.getCol(); col++) {
-            os << " " << std::setw(maxWidth) << m.getMatrix(row,col) << " ";
-        }
-        os << "|" << std::endl;
-    }
-    return os;
-}
-/////
 void MyMatrix::init(int *arr) {
     int index = 0;
     for (int row = 0; row < this->row; row++) {
@@ -149,6 +106,59 @@ int MyMatrix::getRow() const {
 int MyMatrix::getCol() const {
     return this->col;
 }
+
+// =================================================================
+// OPERATOR OVERLOADING SECTION
+// =================================================================
+
+MyMatrix MyMatrix::operator +(const MyMatrix& m) const {
+    return this->add(m);
+}
+
+MyMatrix MyMatrix::operator *(const MyMatrix& m) const {
+    return this->multi(m);
+}
+
+MyMatrix& MyMatrix::operator =(const MyMatrix& m) {
+    if (this == &m) {
+        return *this;
+    }
+
+    for (int i = 0; i < this->row; i++) {
+        delete[] this->matrix[i];
+    }
+    delete[] this->matrix;
+
+
+    this->row = m.row;
+    this->col = m.col;
+    this->matrix = new int*[this->row];
+
+    for (int i = 0; i < this->row; i++) {
+        this->matrix[i] = new int[this->col];
+        for (int j = 0; j < this->col; j++) {
+            this->matrix[i][j] = m.matrix[i][j];
+        }
+    }
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& os, const MyMatrix& m) {
+    int maxWidth = m.getMaxWidth();
+
+    for (int row = 0; row < m.getRow(); row++) {
+        os << "|";
+        for (int col = 0; col < m.getCol(); col++) {
+            os << " " << std::setw(maxWidth) << m.getMatrix(row,col) << " ";
+        }
+        os << "|" << std::endl;
+    }
+    return os;
+}
+
+// =================================================================
+// PRIVATE SECTION
+// =================================================================
 
 MyMatrix MyMatrix::add(const MyMatrix& m) const{
     //크기 다르면 합 불가
