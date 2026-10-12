@@ -50,6 +50,15 @@ class CharSequence : public Sequence<char> {
         bool is_correct_index_bound(int index) const;
 
         void flush();
+
+    private:
+        constexpr static int HASH_MODULAR = 1e9 + 7;
+        constexpr static int HASH_BASE = 257;
+
+        int rabin_karp(const CharSequence &pattern, int start) const;
+
+        static int is_same(const CharSequence &target, const CharSequence &pattern, int pattern_start);
+
 };
 
 std::ostream& operator<<(std::ostream &output_stream, const CharSequence &char_sequence);

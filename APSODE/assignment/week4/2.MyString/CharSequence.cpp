@@ -4,14 +4,17 @@
 #include "CharSequence.h"
 
 
-CharSequence::CharSequence() : container{}, length_(0){
+CharSequence::CharSequence()
+    : container{}, length_(0) {
 }
 
-CharSequence::CharSequence(const CharSequence &other) : container{}, length_(0) {
+CharSequence::CharSequence(const CharSequence &other)
+    : container{}, length_(0) {
     this->copy_from_other(other);
 }
 
-CharSequence::CharSequence(const char other[]) : container{}, length_(0){
+CharSequence::CharSequence(const char other[])
+    : container{}, length_(0) {
     this->copy_from_other(other);
 }
 
@@ -122,6 +125,58 @@ CharSequence CharSequence::append_truncated(const CharSequence &other) const {
     }
 
     return appended_sequence;
+}
+
+int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
+    start = start < 0 ? 0 : start;
+    if (pattern.length_ == 0 || pattern.length_ + start > this->length_) {
+        return -1;
+    }
+
+    // 최고차항에 곱해질 수
+    long long int highest_power = 1;
+    for (int loop = 1; loop < pattern.length_; ++loop) {
+        highest_power *= HASH_BASE;
+        highest_power %= HASH_MODULAR;
+    }
+
+    // 첫번째 윈도우의 해싱
+    long long int hashed_pattern = 0, hashed_target = 0;
+    for (int index = 0; index < pattern.length_; ++index) {
+        hashed_pattern = (hashed_pattern * HASH_BASE + pattern.container[index]) % HASH_MODULAR;
+        hashed_target = (hashed_target * HASH_BASE + pattern.container[start + index]) % HASH_MODULAR;
+    }
+
+    // 슬라이딩 윈도우 시작
+    const int end = this->length_ - pattern.length_;
+    for (int index = start; index <= end; ++index) {
+        if (index != start) {
+            hashed_target -= this->container[index - 1] * highest_power % HASH_MODULAR;
+
+            if (hashed_target < 0) {
+                hashed_target += HASH_MODULAR;
+            }
+
+            hashed_target += this->container[index + pattern.length_ - 1];
+            hashed_target %= HASH_MODULAR;
+        }
+
+        if (hashed_pattern == hashed_target && is_same(*this, pattern, index)) {
+            return index;
+        }
+    }
+
+    return -1;
+}
+
+int CharSequence::is_same(const CharSequence &target, const CharSequence &pattern, const int pattern_start) {
+    for (int index = pattern_start; index - pattern_start < pattern.length_; ++index) {
+        if (target.container[index] != pattern.container[index]) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void CharSequence::flush() {
