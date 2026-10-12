@@ -5,16 +5,16 @@
 
 
 CharSequence::CharSequence()
-    : container{}, length_(0) {
+    : container{}, m_length(0) {
 }
 
 CharSequence::CharSequence(const CharSequence &other)
-    : container{}, length_(0) {
+    : container{}, m_length(0) {
     this->copy_from_other(other);
 }
 
 CharSequence::CharSequence(const char other[])
-    : container{}, length_(0) {
+    : container{}, m_length(0) {
     this->copy_from_other(other);
 }
 
@@ -24,11 +24,11 @@ CharSequence::~CharSequence() {
 }
 
 int CharSequence::length() const {
-    return this->length_;
+    return this->m_length;
 }
 
 bool CharSequence::empty() const {
-    return this->length_ == 0;
+    return this->m_length == 0;
 }
 
 char CharSequence::at(const int pos) const {
@@ -49,15 +49,15 @@ bool CharSequence::set(const char object, const int pos) {
 }
 
 void CharSequence::add_last(const char object) {
-    if (this->length_ + 1 > MAX_LENGTH) {
+    if (this->m_length + 1 > MAX_LENGTH) {
         return;
     }
 
-    this->container[this->length_++] = object;
+    this->container[this->m_length++] = object;
 }
 
 bool CharSequence::equals(const CharSequence &other) const {
-    if (this->length_ != other.length_) {
+    if (this->m_length != other.m_length) {
         return false;
     }
 
@@ -82,10 +82,10 @@ void CharSequence::copy_from_other(const char other[]) {
     if (other[0] == '\0') {
         return this->flush();
     }
-    this->length_ = 0;
+    this->m_length = 0;
     for (int char_index = 0; char_index < MAX_LENGTH && other[char_index] != '\0'; ++char_index) {
         this->container[char_index] = other[char_index];
-        ++this->length_;
+        ++this->m_length;
     }
 }
 
@@ -94,7 +94,7 @@ void CharSequence::copy_from_other(const CharSequence &other) {
 }
 
 bool CharSequence::is_correct_index_bound(const int index) const {
-    return 0 <= index && index < this->length_;
+    return 0 <= index && index < this->m_length;
 }
 
 CharSequence CharSequence::append_truncated(const char other[]) const {
@@ -105,12 +105,12 @@ CharSequence CharSequence::append_truncated(const char other[]) const {
     }
 
     for (
-        int this_index = this->length_, other_index = 0;
+        int this_index = this->m_length, other_index = 0;
         this_index < MAX_LENGTH && other[other_index] != '\0';
         ++this_index, ++other_index
     ) {
         appended_sequence.container[this_index] = other[other_index];
-        ++appended_sequence.length_;
+        ++appended_sequence.m_length;
     }
 
     return appended_sequence;
@@ -124,12 +124,12 @@ CharSequence CharSequence::append_truncated(const CharSequence &other) const {
     }
 
     for (
-        int this_index = this->length_, other_index = 0;
-        this_index < MAX_LENGTH && other_index < other.length_;
+        int this_index = this->m_length, other_index = 0;
+        this_index < MAX_LENGTH && other_index < other.m_length;
         ++this_index, ++other_index
     ) {
         appended_sequence.container[this_index] = other.container[other_index];
-        ++appended_sequence.length_;
+        ++appended_sequence.m_length;
     }
 
     return appended_sequence;
@@ -137,26 +137,26 @@ CharSequence CharSequence::append_truncated(const CharSequence &other) const {
 
 int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
     start = start < 0 ? 0 : start;
-    if (pattern.length_ == 0 || pattern.length_ + start > this->length_) {
+    if (pattern.m_length == 0 || pattern.m_length + start > this->m_length) {
         return -1;
     }
 
     // 최고차항에 곱해질 수
     long long int highest_power = 1;
-    for (int loop = 1; loop < pattern.length_; ++loop) {
+    for (int loop = 1; loop < pattern.m_length; ++loop) {
         highest_power *= HASH_BASE;
         highest_power %= HASH_MODULAR;
     }
 
     // 첫번째 윈도우의 해싱
     long long int hashed_pattern = 0, hashed_target = 0;
-    for (int index = 0; index < pattern.length_; ++index) {
+    for (int index = 0; index < pattern.m_length; ++index) {
         hashed_pattern = (hashed_pattern * HASH_BASE + pattern.container[index]) % HASH_MODULAR;
         hashed_target = (hashed_target * HASH_BASE + this->container[start + index]) % HASH_MODULAR;
     }
 
     // 슬라이딩 윈도우 시작
-    const int end = this->length_ - pattern.length_;
+    const int end = this->m_length - pattern.m_length;
     for (int index = start; index <= end; ++index) {
         if (index != start) {
             hashed_target -= this->container[index - 1] * highest_power % HASH_MODULAR;
@@ -168,7 +168,7 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
             hashed_target *= HASH_BASE;
 
 
-            hashed_target += this->container[index + pattern.length_ - 1];
+            hashed_target += this->container[index + pattern.m_length - 1];
             hashed_target %= HASH_MODULAR;
         }
 
@@ -181,7 +181,7 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
 }
 
 bool CharSequence::is_same(const CharSequence &target, const CharSequence &pattern, const int pattern_start) {
-    for (int index = 0; index < pattern.length_; ++index) {
+    for (int index = 0; index < pattern.m_length; ++index) {
         if (target.container[index + pattern_start] != pattern.container[index]) {
             return false;
         }
@@ -191,7 +191,7 @@ bool CharSequence::is_same(const CharSequence &target, const CharSequence &patte
 }
 
 void CharSequence::flush() {
-    this->length_ = 0;
+    this->m_length = 0;
     for (int char_index = 0; char_index < MAX_LENGTH; ++char_index) {
         this->container[char_index] = '\0';
     }

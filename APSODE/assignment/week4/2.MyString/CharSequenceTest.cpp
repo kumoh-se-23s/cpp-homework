@@ -43,7 +43,7 @@ namespace {
 
             const char *raw() const { return container; }
 
-            int raw_length() const { return length_; }
+            int raw_length() const { return m_length; }
     };
 }
 

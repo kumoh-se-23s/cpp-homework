@@ -40,11 +40,11 @@ MyString MyString::operator+(const char char_array[]) const {
 MyString MyString::substr(const int pos, const int len) const {
     const int start = (pos < 0) ? 0 : pos;
 
-    if (start >= this->length_ || len <= 0) {
+    if (start >= this->m_length || len <= 0) {
         return MyString();
     }
 
-    const int remaining = this->length_ - start;
+    const int remaining = this->m_length - start;
     const int count = (len > remaining) ? remaining : len;
 
     MyString substring;

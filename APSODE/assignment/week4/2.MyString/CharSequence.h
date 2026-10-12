@@ -49,7 +49,7 @@ class CharSequence : public Sequence<char> {
     protected:
         char container[MAX_LENGTH + 1];
 
-        int length_;
+        int m_length;
 
         bool is_correct_index_bound(int index) const;
 
