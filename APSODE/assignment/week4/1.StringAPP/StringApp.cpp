@@ -21,7 +21,7 @@ void StringApp::run() {
 }
 
 void StringApp::input() {
-    std::cin.getline(this->input_container, TextFormatter::MAX_INPUT_LENGTH);
+    std::cin.getline(this->input_container, TextFormatter::MAX_INPUT_LENGTH + 1);
 
     if (std::cin.fail()) {
         std::cin.clear();
@@ -45,14 +45,14 @@ void StringApp::print_alphabet_count() const {
 }
 
 void StringApp::print_capitalized_text() const {
-    char text_container[TextFormatter::MAX_INPUT_LENGTH] = {};
+    char text_container[TextFormatter::MAX_INPUT_LENGTH + 1] = {};
     TextFormatter formatter = TextFormatter(this->input_container);
     formatter.capitalize_first().build(text_container);
     std::cout << text_container << std::endl;
 }
 
 void StringApp::print_encrypted_text() const {
-    char text_container[TextFormatter::MAX_INPUT_LENGTH] = {};
+    char text_container[TextFormatter::MAX_INPUT_LENGTH + 1] = {};
     TextFormatter formatter = TextFormatter(this->input_container);
     formatter.encrypt(gap).build(text_container);
     std::cout << text_container << std::endl;

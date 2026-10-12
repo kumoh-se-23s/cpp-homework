@@ -7,7 +7,7 @@
 
 class TextFormatter {
     public:
-        constexpr static int MAX_INPUT_LENGTH = 128;
+        constexpr static int MAX_INPUT_LENGTH = 127;
         constexpr static int MIN_GAP = -25;
         constexpr static int MAX_GAP = 25;
 
@@ -23,7 +23,7 @@ class TextFormatter {
         void build(char text[]) const;
 
     private:
-        char container[MAX_INPUT_LENGTH];
+        char container[MAX_INPUT_LENGTH + 1];
 
         static bool is_valid_gap_range(int gap);
 
