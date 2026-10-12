@@ -70,6 +70,14 @@ bool CharSequence::equals(const CharSequence &other) const {
     return true;
 }
 
+int CharSequence::find(const CharSequence &pattern, const int start) const {
+    return this->rabin_karp(pattern, start);
+}
+
+int CharSequence::find(const char pattern[], const int start) const {
+    return this->rabin_karp(CharSequence(pattern), start);
+}
+
 void CharSequence::copy_from_other(const char other[]) {
     if (other[0] == '\0') {
         return this->flush();
@@ -170,8 +178,8 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
 }
 
 int CharSequence::is_same(const CharSequence &target, const CharSequence &pattern, const int pattern_start) {
-    for (int index = pattern_start; index - pattern_start < pattern.length_; ++index) {
-        if (target.container[index] != pattern.container[index]) {
+    for (int index = 0; index < pattern.length_; ++index) {
+        if (target.container[index + pattern_start] != pattern.container[index]) {
             return false;
         }
     }

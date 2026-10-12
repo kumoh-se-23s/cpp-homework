@@ -55,6 +55,10 @@ MyString MyString::substr(const int pos, const int len) const {
     return substring;
 }
 
+int MyString::find(const MyString &pattern, const int start) const {
+    return CharSequence::find(pattern, start);
+}
+
 std::istream& operator>>(std::istream &input_stream, MyString &string) {
     MyString temp;
     int char_code = input_stream.get();

@@ -33,6 +33,10 @@ class CharSequence : public Sequence<char> {
 
         bool equals(const CharSequence &other) const;
 
+        int find(const CharSequence &pattern, int start) const;
+
+        int find(const char pattern[], int start) const;
+
 
         CharSequence append_truncated(const char other[]) const;
 

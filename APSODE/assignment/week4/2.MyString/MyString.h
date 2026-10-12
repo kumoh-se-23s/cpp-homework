@@ -36,6 +36,8 @@ class MyString : public CharSequence {
         MyString operator+(const char char_array[]) const;
 
         MyString substr(int pos, int len) const;
+
+        int find(const MyString &pattern, int start) const;
 };
 
 std::istream& operator>>(std::istream &input_stream, MyString &string);

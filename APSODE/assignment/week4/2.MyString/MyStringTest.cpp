@@ -10,6 +10,25 @@ namespace {
         stream << sequence;
         return stream.str();
     }
+
+    // MyString::find(const MyString&, int)를 편하게 호출하기 위한 도우미
+    int find_in(const char *text, const char *pattern, int start) {
+        MyString string(text);
+        return string.find(MyString(pattern), start);
+    }
+
+    // std::string::find와 같은 결과를 기대값으로 계산한다.
+    // (과제 조건: start가 음수이면 0으로 취급, 문자열 길이를 넘으면 -1)
+    int expected_find(const std::string &text, const std::string &pattern, int start) {
+        if (start < 0) {
+            start = 0;
+        }
+        if (start > static_cast<int>(text.size())) {
+            return -1;
+        }
+        const std::size_t found = text.find(pattern, static_cast<std::size_t>(start));
+        return found == std::string::npos ? -1 : static_cast<int>(found);
+    }
 }
 
 // =====================================================================
@@ -888,4 +907,273 @@ TEST(MyStringPlus, AssignedResultMatchesDirectResult) {
     assigned = a + b;
 
     EXPECT_TRUE(assigned == (a + b));
+}
+
+// =====================================================================
+// find
+// =====================================================================
+
+TEST(MyStringFind, FindsAtStart) {
+    EXPECT_EQ(0, find_in("hello world", "hello", 0));
+}
+
+TEST(MyStringFind, FindsInMiddle) {
+    EXPECT_EQ(3, find_in("hello world", "lo w", 0));
+}
+
+TEST(MyStringFind, FindsAtEnd) {
+    EXPECT_EQ(6, find_in("hello world", "world", 0));
+}
+
+TEST(MyStringFind, FindsSingleCharacter) {
+    EXPECT_EQ(2, find_in("hello", "l", 0));
+}
+
+TEST(MyStringFind, FindsWholeString) {
+    EXPECT_EQ(0, find_in("hello", "hello", 0));
+}
+
+TEST(MyStringFind, ReturnsMinusOneWhenNotFound) {
+    EXPECT_EQ(-1, find_in("hello", "xyz", 0));
+}
+
+TEST(MyStringFind, ReturnsMinusOneWhenPatternIsLongerThanText) {
+    EXPECT_EQ(-1, find_in("abc", "abcd", 0));
+}
+
+TEST(MyStringFind, ReturnsMinusOneOnEmptyText) {
+    EXPECT_EQ(-1, find_in("", "a", 0));
+}
+
+TEST(MyStringFind, ReturnsFirstOccurrence) {
+    EXPECT_EQ(0, find_in("abcabcabc", "abc", 0));
+    EXPECT_EQ(1, find_in("xabcabc", "abc", 0));
+}
+
+TEST(MyStringFind, StartPositionSkipsEarlierMatch) {
+    EXPECT_EQ(3, find_in("abcabcabc", "abc", 1));
+    EXPECT_EQ(3, find_in("abcabcabc", "abc", 3));
+    EXPECT_EQ(6, find_in("abcabcabc", "abc", 4));
+}
+
+TEST(MyStringFind, StartPositionAfterLastMatchReturnsMinusOne) {
+    EXPECT_EQ(-1, find_in("abcabc", "abc", 4));
+}
+
+// 과제 조건: start가 음수이면 0으로 취급
+TEST(MyStringFind, NegativeStartIsTreatedAsZero) {
+    EXPECT_EQ(0, find_in("hello", "he", -1));
+    EXPECT_EQ(0, find_in("hello", "he", -100));
+    EXPECT_EQ(3, find_in("hello", "lo", -3));
+}
+
+// 과제 조건: start가 문자열 길이를 넘으면 -1
+TEST(MyStringFind, StartBeyondLengthReturnsMinusOne) {
+    EXPECT_EQ(-1, find_in("hello", "h", 6));
+    EXPECT_EQ(-1, find_in("hello", "h", 100));
+}
+
+TEST(MyStringFind, StartAtLengthReturnsMinusOne) {
+    EXPECT_EQ(-1, find_in("hello", "o", 5));
+}
+
+TEST(MyStringFind, StartAtLastCharacter) {
+    EXPECT_EQ(4, find_in("hello", "o", 4));
+}
+
+TEST(MyStringFind, RepeatedCharacters) {
+    EXPECT_EQ(0, find_in("aaaaaaaaaa", "aaa", 0));
+    EXPECT_EQ(7, find_in("aaaaaaaaaa", "aaa", 7));
+    EXPECT_EQ(-1, find_in("aaaaaaaaaa", "aaa", 8));
+}
+
+TEST(MyStringFind, PartialMatchBeforeRealMatch) {
+    EXPECT_EQ(3, find_in("aaaaab", "aab", 0));
+    EXPECT_EQ(4, find_in("abababc", "abc", 0));
+}
+
+TEST(MyStringFind, SamePrefixDifferentTail) {
+    EXPECT_EQ(3, find_in("abcabd", "abd", 0));
+    EXPECT_EQ(-1, find_in("abcabd", "abe", 0));
+}
+
+TEST(MyStringFind, SameCharactersInDifferentOrderAreNotFound) {
+    EXPECT_EQ(-1, find_in("abcdef", "cba", 0));
+    EXPECT_EQ(-1, find_in("abcdef", "fed", 0));
+}
+
+TEST(MyStringFind, IsCaseSensitive) {
+    EXPECT_EQ(-1, find_in("Hello", "hello", 0));
+    EXPECT_EQ(0, find_in("Hello", "Hello", 0));
+}
+
+TEST(MyStringFind, FindsSpacesAndSymbols) {
+    EXPECT_EQ(1, find_in("a b-c_d", " ", 0));
+    EXPECT_EQ(3, find_in("a b-c_d", "-c_", 0));
+}
+
+TEST(MyStringFind, FindsDigits) {
+    EXPECT_EQ(5, find_in("2026/10/12", "10", 0));
+    EXPECT_EQ(-1, find_in("2026/10/12", "10", 6));
+}
+
+TEST(MyStringFind, HighAsciiCharactersDoNotCauseFalseMatch) {
+    // 해시 값이 큰 문자들로 구성된 경우에도 정확히 비교해야 한다.
+    EXPECT_EQ(0, find_in("~}|{zyxwvutsrqp", "~}|", 0));
+    EXPECT_EQ(12, find_in("~}|{zyxwvutsrqp", "rqp", 0));
+    EXPECT_EQ(-1, find_in("~}|{zyxwvutsrqp", "}~", 0));
+}
+
+TEST(MyStringFind, WorksOnMaxLengthString) {
+    EXPECT_EQ(4, find_in("123456789012345", "5", 0));
+    EXPECT_EQ(14, find_in("123456789012345", "5", 5));
+    EXPECT_EQ(0, find_in("123456789012345", "12345", 0));
+    EXPECT_EQ(10, find_in("123456789012345", "12345", 1));
+}
+
+TEST(MyStringFind, WorksOnTruncatedString) {
+    // 15글자로 잘린 뒤의 내용만 검색 대상이 된다.
+    EXPECT_EQ(2, find_in("123456789012345678", "345", 0));
+    EXPECT_EQ(-1, find_in("123456789012345678", "678", 0));
+}
+
+TEST(MyStringFind, FindsPatternAtEveryPosition) {
+    const std::string text = "abcdefghijklmno";
+
+    for (int i = 0; i < static_cast<int>(text.size()); ++i) {
+        const std::string pattern = text.substr(static_cast<std::size_t>(i), 1);
+        EXPECT_EQ(i, find_in(text.c_str(), pattern.c_str(), 0)) << "pattern: " << pattern;
+    }
+}
+
+TEST(MyStringFind, DoesNotModifyString) {
+    MyString string("hello");
+
+    string.find(MyString("ll"), 0);
+
+    EXPECT_EQ("hello", to_std_string(string));
+    EXPECT_EQ(5, string.length());
+}
+
+TEST(MyStringFind, DoesNotModifyPattern) {
+    MyString string("hello");
+    MyString pattern("ll");
+
+    string.find(pattern, 0);
+
+    EXPECT_EQ("ll", to_std_string(pattern));
+}
+
+TEST(MyStringFind, StringCanBeUsedAsItsOwnPattern) {
+    MyString string("hello");
+
+    EXPECT_EQ(0, string.find(string, 0));
+}
+
+TEST(MyStringFind, WorksOnConcatenatedResult) {
+    MyString a("hello ");
+    MyString b("world");
+
+    MyString joined = a + b;
+
+    EXPECT_EQ(6, joined.find(MyString("world"), 0));
+    EXPECT_EQ(4, joined.find(MyString("o w"), 0));
+}
+
+TEST(MyStringFind, WorksOnSubstrResult) {
+    MyString string("hello world");
+
+    MyString part = string.substr(6, 5);
+
+    EXPECT_EQ(2, part.find(MyString("rl"), 0));
+    EXPECT_EQ(-1, part.find(MyString("hello"), 0));
+}
+
+TEST(MyStringFind, WorksOnAssignedString) {
+    MyString source("find me");
+    MyString target("other");
+
+    target = source;
+
+    EXPECT_EQ(5, target.find(MyString("me"), 0));
+}
+
+TEST(MyStringFind, WorksOnInputString) {
+    std::istringstream input("needle haystack");
+    MyString first;
+    MyString second;
+
+    input >> first >> second;
+
+    EXPECT_EQ(3, second.find(MyString("st"), 0));
+    EXPECT_EQ(-1, first.find(MyString("st"), 0));
+}
+
+TEST(MyStringFind, WorksOnGetLineString) {
+    std::istringstream input("find in line\n");
+    MyString line;
+
+    get_line(input, line);
+
+    EXPECT_EQ(5, line.find(MyString("in"), 0));
+}
+
+TEST(MyStringFind, MatchesStdStringForManyInputs) {
+    const char *texts[] = {"abcabcabc", "aaaaaaaaaa", "hello world", "2026/10/12", "abababababababa", "123456789012345"};
+    const char *patterns[] = {"a", "ab", "aba", "abc", "aa", "o", "lo w", "10", "/", "5", "345", "zz", "ba"};
+
+    for (const char *text: texts) {
+        for (const char *pattern: patterns) {
+            for (int start = -3; start <= 17; ++start) {
+                EXPECT_EQ(expected_find(text, pattern, start), find_in(text, pattern, start))
+                    << "text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
+            }
+        }
+    }
+}
+
+// =====================================================================
+// 상속받은 find (CharSequence 참조를 통한 호출)
+// MyString::find가 기반 클래스의 find를 가리므로 기반 참조로 호출해 검사한다.
+// =====================================================================
+
+TEST(MyStringInheritedFind, CharArrayOverloadThroughBaseReference) {
+    MyString string("hello world");
+    const CharSequence &base = string;
+
+    EXPECT_EQ(2, base.find("ll", 0));
+    EXPECT_EQ(-1, base.find("xyz", 0));
+}
+
+TEST(MyStringInheritedFind, CharSequenceOverloadThroughBaseReference) {
+    MyString string("hello world");
+    const CharSequence &base = string;
+
+    EXPECT_EQ(6, base.find(CharSequence("world"), 0));
+    EXPECT_EQ(-1, base.find(CharSequence("xyz"), 0));
+}
+
+TEST(MyStringInheritedFind, StartRulesApplyThroughBaseReference) {
+    MyString string("abcabc");
+    const CharSequence &base = string;
+
+    EXPECT_EQ(0, base.find("abc", -5));
+    EXPECT_EQ(3, base.find("abc", 1));
+    EXPECT_EQ(-1, base.find("abc", 10));
+}
+
+TEST(MyStringInheritedFind, BaseAndDerivedFindAgree) {
+    const char *texts[] = {"", "a", "abcabc", "hello world", "123456789012345"};
+    const char *patterns[] = {"a", "abc", "ll", "o w", "345", "zzz"};
+
+    for (const char *text: texts) {
+        MyString string(text);
+        const CharSequence &base = string;
+        for (const char *pattern: patterns) {
+            for (int start = -2; start <= 17; ++start) {
+                EXPECT_EQ(base.find(CharSequence(pattern), start), string.find(MyString(pattern), start))
+                    << "text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
+            }
+        }
+    }
 }

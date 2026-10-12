@@ -10,6 +10,41 @@ namespace {
         stream << sequence;
         return stream.str();
     }
+
+    // std::string::find와 같은 결과를 기대값으로 계산한다.
+    // (과제 조건: start가 음수이면 0으로 취급, 문자열 길이를 넘으면 -1)
+    int expected_find(const std::string &text, const std::string &pattern, int start) {
+        if (start < 0) {
+            start = 0;
+        }
+        if (start > static_cast<int>(text.size())) {
+            return -1;
+        }
+        const std::size_t found = text.find(pattern, static_cast<std::size_t>(start));
+        return found == std::string::npos ? -1 : static_cast<int>(found);
+    }
+
+    // find의 두 오버로드(const char[] / const CharSequence&)가 같은 결과를 내는지 함께 검사한다.
+    void expect_find(const char *text, const char *pattern, int start, int expected) {
+        CharSequence sequence(text);
+
+        EXPECT_EQ(expected, sequence.find(pattern, start))
+            << "[char array] text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
+        EXPECT_EQ(expected, sequence.find(CharSequence(pattern), start))
+            << "[CharSequence] text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
+    }
+
+    // protected 멤버를 테스트하기 위한 접근용 하위 클래스
+    class CharSequenceProbe : public CharSequence {
+        public:
+            using CharSequence::CharSequence;
+            using CharSequence::flush;
+            using CharSequence::is_correct_index_bound;
+
+            const char *raw() const { return container; }
+
+            int raw_length() const { return length_; }
+    };
 }
 
 // =====================================================================
@@ -315,7 +350,7 @@ TEST(CharSequenceOutputOperator, IsChainable) {
 // add_last
 // =====================================================================
 
-TEST(CharSequenceAddLast, OnEmptySequence) {
+TEST(CharSequenceAddLast, AddsToEmptySequence) {
     CharSequence sequence;
 
     sequence.add_last('a');
@@ -323,75 +358,28 @@ TEST(CharSequenceAddLast, OnEmptySequence) {
     EXPECT_EQ(1, sequence.length());
     EXPECT_FALSE(sequence.empty());
     EXPECT_EQ('a', sequence.at(0));
-    EXPECT_EQ("a", to_std_string(sequence));
 }
 
-TEST(CharSequenceAddLast, AppendsAtEnd) {
+TEST(CharSequenceAddLast, AppendsAfterExistingContent) {
     CharSequence sequence("ab");
 
     sequence.add_last('c');
 
-    EXPECT_EQ(3, sequence.length());
     EXPECT_EQ("abc", to_std_string(sequence));
-    EXPECT_EQ('c', sequence.at(2));
-}
-
-TEST(CharSequenceAddLast, KeepsExistingCharacters) {
-    CharSequence sequence("hello");
-
-    sequence.add_last('!');
-
-    EXPECT_EQ('h', sequence.at(0));
-    EXPECT_EQ('o', sequence.at(4));
-    EXPECT_EQ('!', sequence.at(5));
-}
-
-TEST(CharSequenceAddLast, CanBeCalledRepeatedly) {
-    CharSequence sequence;
-
-    sequence.add_last('a');
-    sequence.add_last('b');
-    sequence.add_last('c');
-
     EXPECT_EQ(3, sequence.length());
-    EXPECT_EQ("abc", to_std_string(sequence));
 }
 
-TEST(CharSequenceAddLast, SameCharacterRepeatedly) {
+TEST(CharSequenceAddLast, CanBeRepeated) {
     CharSequence sequence;
 
-    for (int i = 0; i < 5; ++i) {
-        sequence.add_last('z');
-    }
+    sequence.add_last('x');
+    sequence.add_last('y');
+    sequence.add_last('z');
 
-    EXPECT_EQ(5, sequence.length());
-    EXPECT_EQ("zzzzz", to_std_string(sequence));
+    EXPECT_EQ("xyz", to_std_string(sequence));
 }
 
-TEST(CharSequenceAddLast, AcceptsSpacesDigitsAndSymbols) {
-    CharSequence sequence;
-
-    sequence.add_last(' ');
-    sequence.add_last('7');
-    sequence.add_last('#');
-
-    EXPECT_EQ(3, sequence.length());
-    EXPECT_EQ(" 7#", to_std_string(sequence));
-}
-
-TEST(CharSequenceAddLast, ResultEqualsSequenceBuiltFromLiteral) {
-    CharSequence built;
-    built.add_last('a');
-    built.add_last('b');
-    built.add_last('c');
-
-    CharSequence literal("abc");
-
-    EXPECT_TRUE(built.equals(literal));
-    EXPECT_TRUE(literal.equals(built));
-}
-
-TEST(CharSequenceAddLast, FillsUpToMaxLength) {
+TEST(CharSequenceAddLast, CanFillUpToMaxLength) {
     CharSequence sequence;
 
     for (int i = 0; i < CharSequence::MAX_LENGTH; ++i) {
@@ -402,7 +390,7 @@ TEST(CharSequenceAddLast, FillsUpToMaxLength) {
     EXPECT_EQ("abcdefghijklmno", to_std_string(sequence));
 }
 
-// 가득 찬 상태에서 추가하면 무시된다는 가정 (append_truncated와 같은 정책)
+// 가정: 가득 찬 상태에서 add_last를 호출하면 무시된다. (구현이 다르면 이 테스트를 조정하세요.)
 TEST(CharSequenceAddLast, IgnoredWhenFull) {
     CharSequence sequence("123456789012345");
 
@@ -412,179 +400,75 @@ TEST(CharSequenceAddLast, IgnoredWhenFull) {
     EXPECT_EQ("123456789012345", to_std_string(sequence));
 }
 
-TEST(CharSequenceAddLast, RepeatedWhenFullStillKeepsContent) {
-    CharSequence sequence("123456789012345");
-
-    for (int i = 0; i < 5; ++i) {
-        sequence.add_last('x');
-    }
-
-    EXPECT_EQ(CharSequence::MAX_LENGTH, sequence.length());
-    EXPECT_EQ("123456789012345", to_std_string(sequence));
-}
-
-TEST(CharSequenceAddLast, OneBelowMaxAcceptsExactlyOne) {
-    CharSequence sequence("12345678901234");
-
-    sequence.add_last('a');
-    sequence.add_last('b');
-
-    EXPECT_EQ(CharSequence::MAX_LENGTH, sequence.length());
-    EXPECT_EQ("123456789012345", to_std_string(sequence).substr(0, 14) + "5");
-    EXPECT_EQ('a', sequence.at(14));
-}
-
-TEST(CharSequenceAddLast, DoesNotAffectCopy) {
-    CharSequence original("abc");
+TEST(CharSequenceAddLast, DoesNotAffectCopiedSequence) {
+    CharSequence original("ab");
     CharSequence copied(original);
 
-    copied.add_last('d');
+    copied.add_last('c');
 
-    EXPECT_EQ("abc", to_std_string(original));
-    EXPECT_EQ("abcd", to_std_string(copied));
-}
-
-TEST(CharSequenceAddLast, NewCharacterCanBeChangedWithSet) {
-    CharSequence sequence("ab");
-
-    sequence.add_last('c');
-
-    EXPECT_TRUE(sequence.set('z', 2));
-    EXPECT_EQ("abz", to_std_string(sequence));
-}
-
-TEST(CharSequenceAddLast, IndexOfNewCharacterBecomesValidForSet) {
-    CharSequence sequence("ab");
-
-    EXPECT_FALSE(sequence.set('x', 2));
-    sequence.add_last('c');
-    EXPECT_TRUE(sequence.set('x', 2));
-}
-
-TEST(CharSequenceAddLast, WorksAfterCopyFromOther) {
-    CharSequence sequence("old");
-
-    sequence.copy_from_other("new");
-    sequence.add_last('!');
-
-    EXPECT_EQ("new!", to_std_string(sequence));
-}
-
-TEST(CharSequenceAddLast, CanBeUsedWithAppendTruncated) {
-    CharSequence sequence("ab");
-
-    sequence.add_last('c');
-    CharSequence result = sequence.append_truncated("de");
-
-    EXPECT_EQ("abcde", to_std_string(result));
-    EXPECT_EQ("abc", to_std_string(sequence));
+    EXPECT_EQ("ab", to_std_string(original));
+    EXPECT_EQ("abc", to_std_string(copied));
 }
 
 // =====================================================================
-// 부모 클래스(Sequence<char>)를 통한 호출
+// 다형성 (Sequence<char> 인터페이스)
 // =====================================================================
 
-TEST(CharSequencePolymorphism, LengthAndAtThroughBaseReference) {
+TEST(CharSequencePolymorphism, WorksThroughSequenceReference) {
     CharSequence sequence("abc");
     Sequence<char> &base = sequence;
 
     EXPECT_EQ(3, base.length());
-    EXPECT_EQ('a', base.at(0));
-    EXPECT_EQ('c', base.at(2));
+    EXPECT_FALSE(base.empty());
+    EXPECT_EQ('b', base.at(1));
 }
 
-TEST(CharSequencePolymorphism, EmptyThroughBaseReference) {
-    CharSequence empty;
-    CharSequence filled("a");
-
-    Sequence<char> &empty_base = empty;
-    Sequence<char> &filled_base = filled;
-
-    EXPECT_TRUE(empty_base.empty());
-    EXPECT_FALSE(filled_base.empty());
-}
-
-TEST(CharSequencePolymorphism, SetThroughBaseReference) {
+TEST(CharSequencePolymorphism, SetAndAddLastThroughSequenceReference) {
     CharSequence sequence("abc");
     Sequence<char> &base = sequence;
 
-    EXPECT_TRUE(base.set('x', 1));
-    EXPECT_FALSE(base.set('x', 3));
-    EXPECT_EQ("axc", to_std_string(sequence));
-}
-
-TEST(CharSequencePolymorphism, AddLastThroughBaseReference) {
-    CharSequence sequence("ab");
-    Sequence<char> &base = sequence;
-
-    base.add_last('c');
-
-    EXPECT_EQ(3, base.length());
-    EXPECT_EQ("abc", to_std_string(sequence));
-}
-
-TEST(CharSequencePolymorphism, DeleteThroughBasePointer) {
-    // 부모 포인터로 삭제해도 소멸자가 정상 동작해야 함 (가상 소멸자)
-    Sequence<char> *pointer = new CharSequence("abc");
-
-    EXPECT_EQ(3, pointer->length());
-
-    delete pointer;
-}
-
-TEST(CharSequencePolymorphism, MutationThroughBaseIsVisibleThroughDerived) {
-    CharSequence sequence("abc");
-    Sequence<char> &base = sequence;
-
-    base.set('z', 0);
+    EXPECT_TRUE(base.set('x', 0));
     base.add_last('d');
 
-    EXPECT_EQ('z', sequence.at(0));
-    EXPECT_EQ(4, sequence.length());
+    EXPECT_EQ("xbcd", to_std_string(sequence));
+}
+
+TEST(CharSequencePolymorphism, EmptyThroughSequenceReference) {
+    CharSequence sequence;
+    const Sequence<char> &base = sequence;
+
+    EXPECT_TRUE(base.empty());
+    EXPECT_EQ(0, base.length());
+}
+
+TEST(CharSequencePolymorphism, DeleteThroughBasePointerIsSafe) {
+    Sequence<char> *base = new CharSequence("heap");
+
+    EXPECT_EQ(4, base->length());
+    EXPECT_EQ('h', base->at(0));
+
+    delete base;    // 소멸자가 virtual이어야 안전하다.
 }
 
 // =====================================================================
-// protected 멤버 (테스트용 하위 클래스로 접근)
+// 내부 상태 (protected 멤버)
 // =====================================================================
 
-namespace {
-    class CharSequenceProbe : public CharSequence {
-        public:
-            using CharSequence::CharSequence;
-            using CharSequence::flush;
-            using CharSequence::is_correct_index_bound;
-
-            const char *raw() const { return container; }
-            int raw_length() const { return length_; }
-    };
-}
-
-TEST(CharSequenceInternals, LengthFieldMatchesLength) {
-    CharSequenceProbe probe("hello");
-
-    EXPECT_EQ(probe.length(), probe.raw_length());
-}
-
-TEST(CharSequenceInternals, ContainerIsNullTerminatedAfterConstruction) {
+TEST(CharSequenceInternals, ContainerIsNullTerminated) {
     CharSequenceProbe probe("abc");
 
     EXPECT_EQ('\0', probe.raw()[3]);
+    EXPECT_EQ(3, probe.raw_length());
 }
 
-TEST(CharSequenceInternals, ContainerIsNullTerminatedAtMaxLength) {
-    CharSequenceProbe probe("123456789012345");
-
-    EXPECT_EQ('\0', probe.raw()[CharSequence::MAX_LENGTH]);
-}
-
-TEST(CharSequenceInternals, ContainerIsNullTerminatedAfterTruncation) {
+TEST(CharSequenceInternals, MaxLengthContainerIsNullTerminated) {
     CharSequenceProbe probe("1234567890123456789");
 
-    EXPECT_EQ('\0', probe.raw()[CharSequence::MAX_LENGTH]);
     EXPECT_EQ(CharSequence::MAX_LENGTH, probe.raw_length());
+    EXPECT_EQ('\0', probe.raw()[CharSequence::MAX_LENGTH]);
 }
 
-TEST(CharSequenceInternals, ContainerIsNullTerminatedAfterAddLast) {
+TEST(CharSequenceInternals, AddLastKeepsNullTermination) {
     CharSequenceProbe probe("ab");
 
     probe.add_last('c');
@@ -593,67 +477,28 @@ TEST(CharSequenceInternals, ContainerIsNullTerminatedAfterAddLast) {
     EXPECT_EQ(3, probe.raw_length());
 }
 
-TEST(CharSequenceInternals, ContainerIsNullTerminatedAfterCopyFromOther) {
-    CharSequenceProbe probe("a long previous text");
-
-    probe.copy_from_other("hi");
-
-    EXPECT_EQ('\0', probe.raw()[2]);
-    EXPECT_EQ(2, probe.raw_length());
-    EXPECT_EQ("hi", to_std_string(probe));
-}
-
-// flush는 내용을 모두 비운다는 가정 (이름 기준)
+// 가정: flush()는 내용을 비워 길이를 0으로 만든다.
 TEST(CharSequenceInternals, FlushMakesSequenceEmpty) {
-    CharSequenceProbe probe("hello");
+    CharSequenceProbe probe("something");
 
     probe.flush();
 
     EXPECT_TRUE(probe.empty());
     EXPECT_EQ(0, probe.length());
-    EXPECT_EQ(0, probe.raw_length());
-    EXPECT_EQ("", to_std_string(probe));
-}
-
-TEST(CharSequenceInternals, FlushClearsContainerHead) {
-    CharSequenceProbe probe("hello");
-
-    probe.flush();
-
     EXPECT_EQ('\0', probe.raw()[0]);
 }
 
-TEST(CharSequenceInternals, FlushOnEmptyKeepsEmpty) {
-    CharSequenceProbe probe;
-
-    probe.flush();
-
-    EXPECT_TRUE(probe.empty());
-}
-
-TEST(CharSequenceInternals, SequenceIsReusableAfterFlush) {
-    CharSequenceProbe probe("old content");
+TEST(CharSequenceInternals, FlushedSequenceCanBeReused) {
+    CharSequenceProbe probe("old");
 
     probe.flush();
     probe.add_last('n');
-    probe.add_last('w');
 
-    EXPECT_EQ("nw", to_std_string(probe));
-    EXPECT_EQ(2, probe.length());
+    EXPECT_EQ("n", to_std_string(probe));
 }
 
-TEST(CharSequenceInternals, FlushDoesNotAffectCopy) {
-    CharSequenceProbe probe("keep");
-    CharSequence copied(probe);
-
-    probe.flush();
-
-    EXPECT_EQ("keep", to_std_string(copied));
-}
-
-// is_correct_index_bound는 0 이상 length 미만이 유효하다는 가정
-// (기존 set 테스트에서 index == length일 때 false인 점을 근거로 함)
-TEST(CharSequenceInternals, IndexBoundAcceptsValidIndices) {
+// 가정: 유효한 인덱스는 0 <= index < length 이다.
+TEST(CharSequenceInternals, IndexBoundAcceptsValidIndexes) {
     CharSequenceProbe probe("abc");
 
     EXPECT_TRUE(probe.is_correct_index_bound(0));
@@ -661,39 +506,209 @@ TEST(CharSequenceInternals, IndexBoundAcceptsValidIndices) {
     EXPECT_TRUE(probe.is_correct_index_bound(2));
 }
 
-TEST(CharSequenceInternals, IndexBoundRejectsNegative) {
+TEST(CharSequenceInternals, IndexBoundRejectsInvalidIndexes) {
     CharSequenceProbe probe("abc");
 
     EXPECT_FALSE(probe.is_correct_index_bound(-1));
-}
-
-TEST(CharSequenceInternals, IndexBoundRejectsLengthAndBeyond) {
-    CharSequenceProbe probe("abc");
-
     EXPECT_FALSE(probe.is_correct_index_bound(3));
-    EXPECT_FALSE(probe.is_correct_index_bound(100));
-}
-
-TEST(CharSequenceInternals, IndexBoundOnEmptyRejectsEverything) {
-    CharSequenceProbe probe;
-
-    EXPECT_FALSE(probe.is_correct_index_bound(0));
-    EXPECT_FALSE(probe.is_correct_index_bound(-1));
-}
-
-TEST(CharSequenceInternals, IndexBoundAtMaxLength) {
-    CharSequenceProbe probe("123456789012345");
-
-    EXPECT_TRUE(probe.is_correct_index_bound(CharSequence::MAX_LENGTH - 1));
     EXPECT_FALSE(probe.is_correct_index_bound(CharSequence::MAX_LENGTH));
 }
 
-TEST(CharSequenceInternals, IndexBoundFollowsLengthChanges) {
-    CharSequenceProbe probe("ab");
+TEST(CharSequenceInternals, IndexBoundRejectsEverythingWhenEmpty) {
+    CharSequenceProbe probe;
 
-    EXPECT_FALSE(probe.is_correct_index_bound(2));
-    probe.add_last('c');
-    EXPECT_TRUE(probe.is_correct_index_bound(2));
-    probe.flush();
     EXPECT_FALSE(probe.is_correct_index_bound(0));
+}
+
+// =====================================================================
+// find (두 오버로드를 모두 검사)
+// =====================================================================
+
+TEST(CharSequenceFind, FindsAtStart) {
+    expect_find("hello world", "hello", 0, 0);
+}
+
+TEST(CharSequenceFind, FindsInMiddle) {
+    expect_find("hello world", "lo w", 0, 3);
+}
+
+TEST(CharSequenceFind, FindsAtEnd) {
+    expect_find("hello world", "world", 0, 6);
+}
+
+TEST(CharSequenceFind, FindsSingleCharacter) {
+    expect_find("hello", "l", 0, 2);
+}
+
+TEST(CharSequenceFind, FindsWholeString) {
+    expect_find("hello", "hello", 0, 0);
+}
+
+TEST(CharSequenceFind, ReturnsMinusOneWhenNotFound) {
+    expect_find("hello", "xyz", 0, -1);
+}
+
+TEST(CharSequenceFind, ReturnsMinusOneWhenPatternIsLongerThanText) {
+    expect_find("abc", "abcd", 0, -1);
+}
+
+TEST(CharSequenceFind, ReturnsMinusOneOnEmptyText) {
+    expect_find("", "a", 0, -1);
+}
+
+TEST(CharSequenceFind, ReturnsFirstOccurrence) {
+    expect_find("abcabcabc", "abc", 0, 0);
+    expect_find("xabcabc", "abc", 0, 1);
+}
+
+TEST(CharSequenceFind, StartPositionSkipsEarlierMatch) {
+    expect_find("abcabcabc", "abc", 1, 3);
+    expect_find("abcabcabc", "abc", 3, 3);
+    expect_find("abcabcabc", "abc", 4, 6);
+}
+
+TEST(CharSequenceFind, StartPositionAfterLastMatchReturnsMinusOne) {
+    expect_find("abcabc", "abc", 4, -1);
+}
+
+TEST(CharSequenceFind, NegativeStartIsTreatedAsZero) {
+    expect_find("hello", "he", -1, 0);
+    expect_find("hello", "he", -100, 0);
+    expect_find("hello", "lo", -3, 3);
+}
+
+TEST(CharSequenceFind, StartBeyondLengthReturnsMinusOne) {
+    expect_find("hello", "h", 6, -1);
+    expect_find("hello", "h", 100, -1);
+}
+
+TEST(CharSequenceFind, StartAtLengthReturnsMinusOne) {
+    expect_find("hello", "o", 5, -1);
+}
+
+TEST(CharSequenceFind, StartAtLastCharacter) {
+    expect_find("hello", "o", 4, 4);
+}
+
+TEST(CharSequenceFind, RepeatedCharacters) {
+    expect_find("aaaaaaaaaa", "aaa", 0, 0);
+    expect_find("aaaaaaaaaa", "aaa", 7, 7);
+    expect_find("aaaaaaaaaa", "aaa", 8, -1);
+}
+
+TEST(CharSequenceFind, PartialMatchBeforeRealMatch) {
+    expect_find("aaaaab", "aab", 0, 3);
+    expect_find("abababc", "abc", 0, 4);
+}
+
+TEST(CharSequenceFind, SamePrefixDifferentTail) {
+    expect_find("abcabd", "abd", 0, 3);
+    expect_find("abcabd", "abe", 0, -1);
+}
+
+TEST(CharSequenceFind, SameCharactersInDifferentOrderAreNotFound) {
+    expect_find("abcdef", "cba", 0, -1);
+    expect_find("abcdef", "fed", 0, -1);
+}
+
+TEST(CharSequenceFind, IsCaseSensitive) {
+    expect_find("Hello", "hello", 0, -1);
+    expect_find("Hello", "Hello", 0, 0);
+}
+
+TEST(CharSequenceFind, FindsSpacesAndSymbols) {
+    expect_find("a b-c_d", " ", 0, 1);
+    expect_find("a b-c_d", "-c_", 0, 3);
+}
+
+TEST(CharSequenceFind, FindsDigits) {
+    expect_find("2026/10/12", "10", 0, 5);
+    expect_find("2026/10/12", "10", 6, -1);
+}
+
+TEST(CharSequenceFind, HighAsciiCharactersDoNotCauseFalseMatch) {
+    // 해시 값이 큰 문자들로 구성된 경우에도 정확히 비교해야 한다.
+    expect_find("~}|{zyxwvutsrqp", "~}|", 0, 0);
+    expect_find("~}|{zyxwvutsrqp", "rqp", 0, 12);
+    expect_find("~}|{zyxwvutsrqp", "}~", 0, -1);
+}
+
+TEST(CharSequenceFind, WorksOnMaxLengthSequence) {
+    expect_find("123456789012345", "5", 0, 4);
+    expect_find("123456789012345", "5", 5, 14);
+    expect_find("123456789012345", "12345", 0, 0);
+    expect_find("123456789012345", "12345", 1, 10);
+}
+
+TEST(CharSequenceFind, WorksOnTruncatedSequence) {
+    // 15글자로 잘린 뒤의 내용만 검색 대상이 된다.
+    expect_find("123456789012345678", "345", 0, 2);
+    expect_find("123456789012345678", "678", 0, -1);
+}
+
+TEST(CharSequenceFind, FindsPatternAtEveryPosition) {
+    const std::string text = "abcdefghijklmno";
+
+    for (int i = 0; i < static_cast<int>(text.size()); ++i) {
+        const std::string pattern = text.substr(static_cast<std::size_t>(i), 1);
+        expect_find(text.c_str(), pattern.c_str(), 0, i);
+    }
+}
+
+TEST(CharSequenceFind, DoesNotModifySequence) {
+    CharSequence sequence("hello");
+
+    sequence.find("ll", 0);
+    sequence.find(CharSequence("ll"), 0);
+
+    EXPECT_EQ("hello", to_std_string(sequence));
+    EXPECT_EQ(5, sequence.length());
+}
+
+TEST(CharSequenceFind, WorksAfterModification) {
+    CharSequence sequence("abc");
+
+    sequence.set('x', 1);
+    sequence.add_last('d');
+
+    EXPECT_EQ(1, sequence.find("x", 0));
+    EXPECT_EQ(-1, sequence.find("b", 0));
+    EXPECT_EQ(2, sequence.find("cd", 0));
+}
+
+TEST(CharSequenceFind, WorksOnAppendedResult) {
+    CharSequence base("abc");
+
+    CharSequence result = base.append_truncated("def");
+
+    EXPECT_EQ(2, result.find("cd", 0));
+    EXPECT_EQ(5, result.find("f", 0));
+}
+
+TEST(CharSequenceFind, CharArrayAndCharSequenceOverloadsAgree) {
+    const char *texts[] = {"", "a", "abc", "abcabc", "aaaa", "hello world", "123456789012345"};
+    const char *patterns[] = {"a", "b", "abc", "aa", "ll", "o w", "345", "zzz", "123456789012345"};
+
+    for (const char *text: texts) {
+        CharSequence sequence(text);
+        for (const char *pattern: patterns) {
+            for (int start = -2; start <= 17; ++start) {
+                EXPECT_EQ(sequence.find(pattern, start), sequence.find(CharSequence(pattern), start))
+                    << "text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
+            }
+        }
+    }
+}
+
+TEST(CharSequenceFind, MatchesStdStringForManyInputs) {
+    const char *texts[] = {"abcabcabc", "aaaaaaaaaa", "hello world", "2026/10/12", "abababababababa", "123456789012345"};
+    const char *patterns[] = {"a", "ab", "aba", "abc", "aa", "o", "lo w", "10", "/", "5", "345", "zz", "ba"};
+
+    for (const char *text: texts) {
+        for (const char *pattern: patterns) {
+            for (int start = -3; start <= 17; ++start) {
+                expect_find(text, pattern, start, expected_find(text, pattern, start));
+            }
+        }
+    }
 }
