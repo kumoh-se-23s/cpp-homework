@@ -46,10 +46,12 @@ std::istream &operator>>(std::istream &in, MySet &obj){
     
     int input = 0;
 
-    while(input >= 0){
+    while(true){
         in >> input;
-        if (input >= 0) obj.getData().add(input);
+        if (input < 0) return in;
+
+        const int index = obj.findPlacementIndex(input);
+        if (index < 0) obj.getData().insert(~index, input);
     }
-    obj.getData().mergeSort();
     return in;
 }

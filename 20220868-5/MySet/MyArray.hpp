@@ -129,49 +129,6 @@ bool MyArray<T>::contains(T v) {
     return false;
 }
 
-template<typename T> requires std::is_trivially_copyable_v<T>
-void MyArray<T>::merge(const int left, const int mid, const int right) {
-    MyArray temp;
-
-    int i = left;
-    int j = mid + 1;
-
-    while (i <= mid && j <= right) {
-        if (raw[i] <= raw[j]) {
-            temp.add(raw[i++]);
-        } else {
-            temp.add(raw[j++]);
-        }
-    }
-
-    for (;i <= mid; ++i) {
-        temp.add(raw[i]);
-    }
-
-    for (;j <= right; ++j) {
-        temp.add(raw[j]);
-    }
-
-    for (int k = 0; k < temp.getSize(); k++) {
-        raw[left + k] = temp[k];
-    }
-}
-template<typename T> requires std::is_trivially_copyable_v<T>
-void MyArray<T>::mergeSort() {
-    mergeSort(0, size - 1);
-}
-
-template<typename T> requires std::is_trivially_copyable_v<T>
-void MyArray<T>::mergeSort(const int left, const int right) {
-    if (left >= right) {
-        return;
-    }
-
-    const int mid = (left + right) / 2;
-    mergeSort(left, mid);
-    mergeSort(mid + 1, right);
-    merge(left, mid, right);
-}
 
 
 template <typename T> requires std::is_trivially_copyable_v<T>
