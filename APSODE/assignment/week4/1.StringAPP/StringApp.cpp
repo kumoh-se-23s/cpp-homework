@@ -8,8 +8,6 @@
 
 #include "CharacterUtils.h"
 #include "TextFormatter.h"
-#include "4.DDay/CharacterUtils.h"
-
 
 StringApp::StringApp() : gap(0) {
 }
@@ -47,11 +45,15 @@ void StringApp::print_alphabet_count() const {
 }
 
 void StringApp::print_capitalized_text() const {
+    char text_container[TextFormatter::MAX_INPUT_LENGTH] = {};
     TextFormatter formatter = TextFormatter(this->input_container);
-    std::cout << formatter.capitalize_first().build() << std::endl;
+    formatter.capitalize_first().build(text_container);
+    std::cout << text_container << std::endl;
 }
 
 void StringApp::print_encrypted_text() const {
+    char text_container[TextFormatter::MAX_INPUT_LENGTH] = {};
     TextFormatter formatter = TextFormatter(this->input_container);
-    std::cout << formatter.encrypt(gap).build();
+    formatter.encrypt(gap).build(text_container);
+    std::cout << text_container << std::endl;
 }

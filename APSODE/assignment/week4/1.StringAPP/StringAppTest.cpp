@@ -228,3 +228,34 @@ TEST(StringAppEncryptTest, OppositeGapRestoresOriginalText) {
         EXPECT_EQ(restored[2], REFERENCE_TEXT) << "gap: " << gap;
     }
 }
+
+// ---------- 입력 길이 제한 (최대 127글자) ----------
+
+TEST(StringAppLimitTest, MaximumLengthInputIsKept) {
+    const std::string text(TextFormatter::MAX_INPUT_LENGTH - 1, 'a');
+    const auto lines = run_string_app(text, 1);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[0], "[a:127]");
+    EXPECT_EQ(lines[1], "A" + std::string(126, 'a'));
+    EXPECT_EQ(lines[2], std::string(127, 'b'));
+}
+
+// 아래 두 개는 StringApp::input()이 넘친 글자를 버리고 다음 줄(gap)을 정상적으로 읽는다는
+// 현재 구현에 의존합니다. input()을 바꾸셨다면 기대값을 확인해 주십시오.
+TEST(StringAppLimitTest, OverLimitInputIsTruncated) {
+    const std::string text(200, 'a');
+    const auto lines = run_string_app(text, 1);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[0], "[a:127]");
+    EXPECT_EQ(lines[2], std::string(127, 'b'));
+}
+
+TEST(StringAppLimitTest, GapIsStillReadAfterOverLimitInput) {
+    const std::string text(200, 'a');
+    const auto lines = run_string_app(text, 3);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[2], std::string(127, 'd'));
+}

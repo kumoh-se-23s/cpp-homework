@@ -10,7 +10,8 @@ TextFormatter::TextFormatter()
     : container{} {
 }
 
-TextFormatter::TextFormatter(const char target_text[]) {
+TextFormatter::TextFormatter(const char target_text[])
+    : container{} {
     this->fill_container(target_text);
 }
 
@@ -56,6 +57,10 @@ TextFormatter& TextFormatter::encrypt(const int gap) {
     return *this;
 }
 
-char* TextFormatter::build() {
-    return this->container;
+void TextFormatter::build(char text[]) const {
+    int index = 0;
+    for (; index < MAX_INPUT_LENGTH - 1 && this->container[index] != '\0'; ++index) {
+        text[index] = this->container[index];
+    }
+    text[index] = '\0';
 }

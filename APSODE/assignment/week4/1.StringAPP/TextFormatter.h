@@ -20,7 +20,7 @@ class TextFormatter {
 
         TextFormatter& encrypt(int gap);
 
-        char* build();
+        void build(char text[]) const;
 
     private:
         char container[MAX_INPUT_LENGTH];
