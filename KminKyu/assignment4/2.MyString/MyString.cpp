@@ -138,20 +138,25 @@ int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
     if (subStrLength == 0 || subStrLength + pos > size) {
         return -1;
     }
-    long long int findHash = 0, resultHash = 0, hashMod = 1000000000 + 7, minusNum = 1;
-    int hashBase = 257, endPos = size - subStrLength + 1;
+    const long long int HASH_MOD = 1e9 + 7;
+    const int HASH_BASE = 257;
+    long long int findHash = 0, resultHash = 0, highestPower = 1; //HASH_BASSE ^ (m-1)을 저장할 변수
+    int endPos = size - subStrLength + 1;
 
     for (int index = 1; index < subStrLength; ++index) { //슬라이딩 할때마다 뺄 값 계산
-        minusNum = minusNum * hashBase % hashMod;
+        highestPower = highestPower * HASH_BASE % HASH_MOD;
     }
     for (int index = 0; index < subStrLength; ++index) { //첫 해시 값 계산 -> index -1이 불가능하므로 따로 계산
-        findHash = (findHash * hashBase + subStr[index]) % hashMod;
-        resultHash = (resultHash * hashBase + charArray[pos + index]) % hashMod;
+        findHash = (findHash * HASH_BASE + subStr[index]) % HASH_MOD;
+        resultHash = (resultHash * HASH_BASE + charArray[pos + index]) % HASH_MOD;
     }
     for (int index = pos; index < endPos; ++index) {
         if (index != pos) { //해시 값 계산
-            resultHash = (resultHash - charArray[index - 1] * minusNum) % hashMod + hashMod;
-            resultHash = (resultHash * hashBase + charArray[index + subStrLength - 1]) % hashMod;
+            resultHash -= charArray[index - 1] * highestPower % HASH_MOD;
+            if (resultHash < 0) {
+                resultHash += HASH_MOD;
+            }
+            resultHash = (resultHash * HASH_BASE + charArray[index + subStrLength - 1]) % HASH_MOD;
         }
         if (findHash == resultHash && isSame(charArray, subStr, index, index + subStrLength - 1)) {
             //해시 값이 같으면 실제로 같은지 확인 -> 이중 해시 쓰면 확률이 낮아짐
