@@ -138,8 +138,7 @@ int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
     if (subStrLength == 0 || subStrLength + pos > size) {
         return -1;
     }
-    const long long int HASH_MOD = 1e9 + 7;
-    const int HASH_BASE = 257;
+    constexpr int HASH_BASE = 257, HASH_MOD = 1e9 + 7;
     long long int findHash = 0, resultHash = 0, highestPower = 1; //HASH_BASSE ^ (m-1)을 저장할 변수
     int endPos = size - subStrLength + 1;
 
@@ -152,10 +151,7 @@ int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
     }
     for (int index = pos; index < endPos; ++index) {
         if (index != pos) { //해시 값 계산
-            resultHash -= charArray[index - 1] * highestPower % HASH_MOD;
-            if (resultHash < 0) {
-                resultHash += HASH_MOD;
-            }
+            resultHash = (resultHash - charArray[index - 1] * highestPower % HASH_MOD + HASH_MOD) % HASH_MOD;
             resultHash = (resultHash * HASH_BASE + charArray[index + subStrLength - 1]) % HASH_MOD;
         }
         if (findHash == resultHash && isSame(charArray, subStr, index, index + subStrLength - 1)) {
