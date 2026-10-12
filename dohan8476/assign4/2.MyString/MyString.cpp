@@ -51,18 +51,44 @@ int MyString::find(const char subStr[], int pos) const {
     if (pos >= currentLen || subLen == 0 || currentLen < subLen) {
         return -1;
     }
-
+    //일반적 단어에서 자음 > 모음이 올 확률이 높음 그럼 2번째 검사할 확률 1/5에 가까울듯(아마도)
+    //그럼 앞뒤 앞뒤로 넘어가면 좀 더 확률이 낮아지지 않을까?
+    //첫 인덱스 pos, 마지막은 pos+subLen-1
     for (int i = pos; i <= currentLen - subLen; i++) {
         bool match = true;
-        for (int j = 0; j < subLen; j++) {
-            if (str[i + j] != subStr[j]) {
+
+        for (int sourceIndex = 0, targetIndex = subLen -1 ; sourceIndex <= targetIndex; sourceIndex++, targetIndex--) {
+            if (str[i+sourceIndex] != subStr[sourceIndex]) {
                 match = false;
                 break;
             }
+
+            if (sourceIndex != targetIndex) {
+                if (str[i + targetIndex] != subStr[targetIndex]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                //단어의 위치는 0부터 시작이 아니라 1부터 시작
+                return i + 1;
+            }
+            return -1;
         }
-        if (match) {
-            return i;
-        }
+        //이건 그냥 앞에서부터 순서대로 쭉 보는거 참고용
+        // for (int i = pos; i <= currentLen - subLen; i++) {
+        //     bool match = true;
+        //     for (int j = 0; j < subLen; j++) {
+        //         if (str[i + j] != subStr[j]) {
+        //             match = false;
+        //             break;
+        //         }
+        //     }
+        //     if (match) {
+        //         return i;
+        //     }
+        // }
+        // return -1;
     }
     return -1;
 }
@@ -219,9 +245,9 @@ std::istream &getline(std::istream &is, MyString &str, char delimiter) {
 // PRIVATE SECTION
 // =================================================================
 
-int MyString::cstrlen(const char s[]) const {
+int MyString::cstrlen(const char str[]) const {
     int len = 0;
-    while (s[len] != '\0') {
+    while (str[len] != '\0') {
         len++;
     }
     return len;
