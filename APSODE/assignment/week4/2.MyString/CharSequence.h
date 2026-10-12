@@ -61,7 +61,7 @@ class CharSequence : public Sequence<char> {
 
         int rabin_karp(const CharSequence &pattern, int start) const;
 
-        static int is_same(const CharSequence &target, const CharSequence &pattern, int pattern_start);
+        static bool is_same(const CharSequence &target, const CharSequence &pattern, int pattern_start);
 
 };
 

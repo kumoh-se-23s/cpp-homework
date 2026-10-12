@@ -177,7 +177,7 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
     return -1;
 }
 
-int CharSequence::is_same(const CharSequence &target, const CharSequence &pattern, const int pattern_start) {
+bool CharSequence::is_same(const CharSequence &target, const CharSequence &pattern, const int pattern_start) {
     for (int index = 0; index < pattern.length_; ++index) {
         if (target.container[index + pattern_start] != pattern.container[index]) {
             return false;
