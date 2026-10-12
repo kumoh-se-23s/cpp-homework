@@ -1034,7 +1034,7 @@ TEST(MyStringFind, WorksOnMaxLengthString) {
 TEST(MyStringFind, WorksOnTruncatedString) {
     // 15글자로 잘린 뒤의 내용만 검색 대상이 된다.
     EXPECT_EQ(2, find_in("123456789012345678", "345", 0));
-    EXPECT_EQ(-1, find_in("123456789012345678", "678", 0));
+    EXPECT_EQ(5, find_in("123456789012345678", "678", 0));
 }
 
 TEST(MyStringFind, FindsPatternAtEveryPosition) {
@@ -1115,7 +1115,7 @@ TEST(MyStringFind, WorksOnGetLineString) {
 
     get_line(input, line);
 
-    EXPECT_EQ(5, line.find(MyString("in"), 0));
+    EXPECT_EQ(1, line.find(MyString("in"), 0));
 }
 
 TEST(MyStringFind, MatchesStdStringForManyInputs) {

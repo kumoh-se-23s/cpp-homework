@@ -152,7 +152,7 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
     long long int hashed_pattern = 0, hashed_target = 0;
     for (int index = 0; index < pattern.length_; ++index) {
         hashed_pattern = (hashed_pattern * HASH_BASE + pattern.container[index]) % HASH_MODULAR;
-        hashed_target = (hashed_target * HASH_BASE + pattern.container[start + index]) % HASH_MODULAR;
+        hashed_target = (hashed_target * HASH_BASE + this->container[start + index]) % HASH_MODULAR;
     }
 
     // 슬라이딩 윈도우 시작
@@ -164,6 +164,9 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
             if (hashed_target < 0) {
                 hashed_target += HASH_MODULAR;
             }
+
+            hashed_target *= HASH_BASE;
+
 
             hashed_target += this->container[index + pattern.length_ - 1];
             hashed_target %= HASH_MODULAR;
