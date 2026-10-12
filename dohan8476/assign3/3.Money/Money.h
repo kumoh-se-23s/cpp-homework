@@ -21,7 +21,7 @@ class Money {
         bool operator<(const Money& m) const;
         bool operator>(const Money& m) const;
 
-        [[nodiscard]] int abs(int num) const;
+        [[nodiscard]] static int abs(int num);
 
     private:
         int dollar;

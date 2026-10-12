@@ -2,17 +2,16 @@
 #include <iostream>
 using namespace std;
 
-void countAlphabets(const char input[]);
-void convertCase(const char input[]);
-void encryptInput(const char input[], int gap);
+static void countAlphabets(const char input[]);
+static void convertCase(const char input[]);
+static void encryptInput(const char input[], int gap);
 
-char toUpper(char c);
-char toLower(char c);
-
-bool isUpper(char c);
-bool isLower(char c);
-bool isAlphabet(char c);
-bool isDigit(char c);
+static char toUpper(char c);
+static char toLower(char c);
+static bool isUpper(char c);
+static bool isLower(char c);
+static bool isAlphabet(char c);
+static bool isDigit(char c);
 
 int main() {
     const int STR_MAX_LEN = 127;
@@ -63,7 +62,7 @@ void convertCase(const char input[]) {
 }
 // 원형 queue에서 배열 앞으로 하듯이 %26하면 맞춰질려나
 // -23 -> +3이랑 동일
-void encryptInput(const char input[], int gap) {
+void encryptInput(const char input[], const int gap) {
     for (int i = 0; input[i] != '\0'; i++) {
         if (isUpper(input[i])) {
             char c = ((input[i] - 'A' + gap) % 26 + 26) % 26 + 'A';
@@ -81,30 +80,30 @@ void encryptInput(const char input[], int gap) {
     cout << endl;
 }
 
-bool isUpper(char c) {
+bool isUpper(const char c) {
     return c >= 'A' && c <= 'Z';
 }
 
-bool isLower(char c) {
+bool isLower(const char c) {
     return c >= 'a' && c <= 'z';
 }
 
-bool isAlphabet(char c) {
+bool isAlphabet(const char c) {
     return isUpper(c) || isLower(c);
 }
 
-bool isDigit(char c) {
+bool isDigit(const char c) {
     return c >= '0' && c <= '9';
 }
 
-char toUpper(char c) {
+char toUpper(const char c) {
     if (isLower(c)) {
         return c - 'a' + 'A';
     }
     return c;
 }
 
-char toLower(char c) {
+char toLower(const char c) {
     if (isUpper(c)) {
         return c - 'A' + 'a';
     }

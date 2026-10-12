@@ -17,11 +17,13 @@ class DDayApp {
         void handleSetDDay(const char input[], int length);
         void handleMoveDate(const char input[], int length);
 
-        void printCurrent();
-        void printMenu();
-        void printError();
+        void printCurrent() const;
 
-        bool isDigit(char input);
+        static void printMenu();
+        void printError() const;
+
+        static bool isDigit(char input);
         bool isValidNewDate(Day newDay, int newDDayValue);
-        int parseInt(const char input[], int start, int length);
+
+        static int parseInt(const char input[], int start, int length);
 };

@@ -54,9 +54,9 @@ std::ostream& operator<<(std:: ostream& out, const Day& day) {
 Day& Day::operator++() {
     DDay calc;
 
-    int year = this->getYear();
-    int month = this->getMonth();
-    int day = this->getDay() + 1;
+    int year = this->year;
+    int month = this->month;
+    int day = this->day + 1;
 
     if (day > calc.getDaysInMonth(year, month)) {
         day = 1;
@@ -68,9 +68,9 @@ Day& Day::operator++() {
         }
     }
 
-    this->setYear(year);
-    this->setMonth(month);
-    this->setDay(day);
+    this->year = year;
+    this->month = month;
+    this->day = day;
 
     return *this;
 }
@@ -78,9 +78,9 @@ Day& Day::operator++() {
 Day& Day::operator--() {
     DDay calc;
 
-    int year = this->getYear();
-    int month = this->getMonth();
-    int day = this->getDay() - 1;
+    int year = this->year;
+    int month = this->month;
+    int day = this->day - 1;
 
     if (day == 0) {
         --month;
@@ -93,23 +93,23 @@ Day& Day::operator--() {
         day = calc.getDaysInMonth(year, month);
     }
 
-    this->setYear(year);
-    this->setMonth(month);
-    this->setDay(day);
+    this->year = year;
+    this->month = month;
+    this->day = day;
 
     return *this;
 }
 
 Day Day::operator+(int addDays) const{
     DDay calc;
-    int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
+    int totalDays = calc.dateToTotalDays(year, month, day);
 
     return calc.totalDaysToDate(totalDays + addDays);
 }
 
 Day Day::operator-(int subDays) const{
     DDay calc;
-    int totalDays = calc.dateToTotalDays(getYear(), getMonth(), getDay());
+    int totalDays = calc.dateToTotalDays(year, month, day);
 
     return calc.totalDaysToDate(totalDays - subDays);
 }

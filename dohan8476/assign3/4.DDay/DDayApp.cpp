@@ -106,16 +106,16 @@ void DDayApp::handleMoveDate(const char input[], const int length) {
             return;
         }
     }
-    int year = parseInt(input, 0, 4);
-    int month = parseInt(input, 4, 2);
-    int day = parseInt(input, 6, 2);
+    const int year = parseInt(input, 0, 4);
+    const int month = parseInt(input, 4, 2);
+    const int day = parseInt(input, 6, 2);
 
     Day tempDate(year, month, day);
     isValidNewDate(tempDate, dDayValue);
 }
 
 
-void DDayApp::printCurrent() {
+void DDayApp::printCurrent() const{
     Day targetDate = currentDate + dDayValue;
 
     cout << "<< " << currentDate << " [D-day:";
@@ -129,7 +129,7 @@ void DDayApp::printMenu() {
     cout << ">> Move date{yyyymmdd, Tomorrow(T/t), Yesterday(Y/y)}, Set D-day(+/-int), or Quit(Q/q) : ";
 }
 
-void DDayApp::printError() {
+void DDayApp::printError() const{
     cout << "*** ERROR" << endl;
     printCurrent();
 }

@@ -81,7 +81,7 @@ bool Money::operator>=(const Money &m) const {
     return cent >= m.cent;
 }
 
-int Money::abs(int num) const{
+int Money::abs(int num) {
     if (num < 0) num = -num;
 
     return num;
@@ -97,7 +97,7 @@ istream& operator>>(istream& in, Money& m) {
     return in;
 }
 ostream& operator<<(ostream& out, const Money& m) {
-    if (m.getDollar() < 0) {
+    if (m.getDollar() < 0 || m.getCent() < 0) {
         out << '-';
     }
     out << '$' << m.abs(m.getDollar()) << '.' << setfill('0') << setw(2) << m.abs(m.getCent());

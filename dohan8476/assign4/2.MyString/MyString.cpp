@@ -51,7 +51,7 @@ int MyString::find(const char subStr[], int pos) const {
     if (pos >= currentLen || subLen == 0 || currentLen < subLen) {
         return -1;
     }
-    //일반적 단어에서 자음 > 모음이 올 확률이 높음 그럼 2번째 검사할 확률 1/5에 가까울듯(아마도)
+    //일반적 단어에서 자음 > 모음이 올 확률이 높음 그럼 2번째 검사 통과할 확률 1/5에 가까울듯(아마도)
     //그럼 앞뒤 앞뒤로 넘어가면 좀 더 확률이 낮아지지 않을까?
     //첫 인덱스 pos, 마지막은 pos+subLen-1
     for (int i = pos; i <= currentLen - subLen; i++) {

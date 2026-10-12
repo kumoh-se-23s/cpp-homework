@@ -1,4 +1,5 @@
 #pragma once
+#include <iosfwd>
 
 class Fraction {
     public:
@@ -13,11 +14,14 @@ class Fraction {
         Fraction& operator=(const Fraction& a);
 
     private:
-        int calcGCD(int num, int den);
+        static int calcGCD(int num, int den);
         void simplify();
-        int abs(int num);
-        int max(int num1, int num2);
-        int min(int num1, int num2);
+
+        static int abs(int num);
+
+        static int max(int num1, int num2);
+
+        static int min(int num1, int num2);
 
         int numerator;
         int denominator;

@@ -1,6 +1,6 @@
 #include "DDay.h"
 
-Day DDay::totalDaysToDate(int totalDays) {
+Day DDay::totalDaysToDate(int totalDays) const{
     int year = totalDaysToYear(totalDays);
     //윤년(모듈러 == 0)이면 윤년의 마지막날임
     // if (totalDays == 0 && isLeapYear(year - 1)) {
@@ -13,21 +13,21 @@ Day DDay::totalDaysToDate(int totalDays) {
     return Day(year, month, day);
 }
 
-int DDay::dateToTotalDays(int year, int month, int day) {
+int DDay::dateToTotalDays(int year, int month, int day) const{
     return day + monthToTotalDays(year, month) + yearToTotalDays(year);
 }
 
-bool DDay::isLeapYear(int year) {
+bool DDay::isLeapYear(int year) const{
     return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
 }
 
 //한국은 1896년 1월 1일부터 그레고리력을 사용시작
-bool DDay::isValidDate(int year, int month, int day) {
+bool DDay::isValidDate(int year, int month, int day) const{
     return year > 1895 && month > 0 && month < 13 && day <= getDaysInMonth(year, month) && day > 0;
 }
 
 //해당 월의 일수 구하는 메소드
-int DDay::getDaysInMonth(int year, int month) {
+int DDay::getDaysInMonth(int year, int month) const{
     if (isLeapYear(year) && month == 2) {
         return 29;
     }
@@ -35,7 +35,7 @@ int DDay::getDaysInMonth(int year, int month) {
 }
 
 //토탈 데이 -> 연
-int DDay::totalDaysToYear(int &totalDays) {
+int DDay::totalDaysToYear(int &totalDays) const{
     int year = 1;
     //400년(146097일)
     year += totalDays / 146097 * 400;
@@ -52,7 +52,7 @@ int DDay::totalDaysToYear(int &totalDays) {
 }
 
 //토탈데이 -> 월
-int DDay::totalDaysToMonth(int year, int &totalDays) {
+int DDay::totalDaysToMonth(int year, int &totalDays) const{
 
     for (int i = 1; i < 13; i++) {
         int daysInMonth = getDaysInMonth(year, i);
@@ -68,7 +68,7 @@ int DDay::totalDaysToMonth(int year, int &totalDays) {
 
 
 // 연 -> 토탈데이
-int DDay::yearToTotalDays(int year) {
+int DDay::yearToTotalDays(int year) const{
     int totalDays = 0;
 
     --year;
@@ -87,7 +87,7 @@ int DDay::yearToTotalDays(int year) {
 }
 
 // 월 -> 토탈데이
-int DDay::monthToTotalDays(int year, int month) {
+int DDay::monthToTotalDays(int year, int month) const{
     int totalDays = 0;
 
     for (int i = 1 ; i < month ; i++) {
