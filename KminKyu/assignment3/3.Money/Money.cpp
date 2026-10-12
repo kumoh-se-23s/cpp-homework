@@ -114,7 +114,7 @@ ostream& operator <<(ostream& out, const Money& money) {
     if (money.getDollar() < 0) {
         out << "-";
     }
-    out << "$" << abs(money.getDollar()) << "." << std::setfill('0') << abs(money.getCent());
+    out << "$" << abs(money.getDollar()) << "." << std::setw(2) << std::setfill('0') << abs(money.getCent());
     return out;
 }
 istream& operator >>(istream& in, Money& money){
