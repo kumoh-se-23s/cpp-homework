@@ -44,7 +44,7 @@ public:
     void clear();
 
 private:
-    const static int MAX_STR_SIZE = 16;
+    constexpr static int MAX_STR_SIZE = 16;
     char charArray[MAX_STR_SIZE] = {};
     int size = 0;
     int capacity = MAX_STR_SIZE - 1;

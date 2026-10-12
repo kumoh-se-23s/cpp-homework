@@ -19,15 +19,14 @@ public:
 
     static bool isDigit(char chr);
 
-    const static int MAX_OF_ALPHABETS = 26;
-    const static int MAX_OF_DIGITS = 10;
+    constexpr static int MAX_OF_ALPHABETS = 26;
+
+    constexpr static  int MAX_OF_DIGITS = 10;
 
 private:
     static int getFirstLetterIndex(const char str[]);
 
     static char getGapChar(char chr, int gap, int maxLength);
-
-
 
 };
 
