@@ -14,7 +14,7 @@ void DDay::run() {
         cin.getline(userInput, INPUT_MAX_LENGTH);
         if (cin.fail()) {
             cin.clear();
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             printError();
         } else {
             handleInput(userInput);
