@@ -57,24 +57,26 @@ int MyString::find(const char subStr[], int pos) const {
     for (int i = pos; i <= currentLen - subLen; i++) {
         bool match = true;
 
-        for (int sourceIndex = 0, targetIndex = subLen -1 ; sourceIndex <= targetIndex; sourceIndex++, targetIndex--) {
-            if (str[i+sourceIndex] != subStr[sourceIndex]) {
+        for (int frontIndex = 0, backIndex = subLen -1 ; frontIndex <= backIndex; frontIndex++, backIndex--) {
+            if (str[i+frontIndex] != subStr[frontIndex]) {
                 match = false;
                 break;
             }
 
-            if (sourceIndex != targetIndex) {
-                if (str[i + targetIndex] != subStr[targetIndex]) {
+            if (frontIndex != backIndex) {
+                if (str[i + backIndex] != subStr[backIndex]) {
                     match = false;
                     break;
                 }
             }
-            if (match) {
-                //단어의 위치는 0부터 시작이 아니라 1부터 시작
-                return i + 1;
-            }
-            return -1;
         }
+        if (match) {
+            //단어의 위치는 0부터 시작이 아니라 1부터 시작
+            return i + 1;
+        }
+    }
+    return -1;
+}
         //이건 그냥 앞에서부터 순서대로 쭉 보는거 참고용
         // for (int i = pos; i <= currentLen - subLen; i++) {
         //     bool match = true;
@@ -89,9 +91,6 @@ int MyString::find(const char subStr[], int pos) const {
         //     }
         // }
         // return -1;
-    }
-    return -1;
-}
 
 int MyString::find(const MyString& subStr, int pos) const {
     return find(subStr.str, pos);
