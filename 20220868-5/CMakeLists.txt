@@ -4,9 +4,10 @@ set(CMAKE_CXX_STANDARD 20)
 project(set)
 project(matrix)
 
-#add_executable(set
-#    MySet/Main.cpp
-#)
+add_executable(set
+        MySet/MyArray.h
+        MySet/MyArray.h
+)
 
 
 #add_executable(matrix

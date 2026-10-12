@@ -1,3 +1,4 @@
+#pragma once
 #include "MyArray.h"
 
 template <typename T> requires std::is_trivially_copyable_v<T>
@@ -22,7 +23,7 @@ MyArray<T>::MyArray(const MyArray &other) noexcept
     }
 }
 template <typename T> requires std::is_trivially_copyable_v<T>
-MyArray<T> MyArray<T>::operator=(const MyArray &other) noexcept
+MyArray<T> &MyArray<T>::operator=(const MyArray &other) noexcept
 {
     if(&other == this){
         return *this;
@@ -47,7 +48,7 @@ MyArray<T>::MyArray(MyArray &&other) noexcept
     std::swap(capacity, other.capacity);
 }
 template <typename T> requires std::is_trivially_copyable_v<T>
-MyArray<T> MyArray<T>::operator=(MyArray &&other) noexcept
+MyArray<T> &MyArray<T>::operator=(MyArray &&other) noexcept
 {
     if(&other == this){
         return *this;

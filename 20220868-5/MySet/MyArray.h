@@ -1,5 +1,5 @@
+#pragma once
 #include <cstdint>
-#include <cstring>
 #include <cmath>
 
 template <typename T = int>
@@ -17,9 +17,9 @@ public:
     ~MyArray();
 
     MyArray(const MyArray &other) noexcept;
-    MyArray operator=(const MyArray &other) noexcept;
+    MyArray &operator=(const MyArray &other) noexcept;
     MyArray(MyArray &&other) noexcept;
-    MyArray operator=(MyArray &&other) noexcept;
+    MyArray &operator=(MyArray &&other) noexcept;
 
     void resize(uint64_t newSize, T setter = {});
 
