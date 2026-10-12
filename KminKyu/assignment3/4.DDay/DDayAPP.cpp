@@ -32,7 +32,7 @@ void DDayAPP::printMenu() {
 
 char DDayAPP::toUpper(char alphabet) {
     if ('a' <= alphabet && alphabet <= 'z') {
-        return (alphabet - 'a' + 'A');
+        return static_cast<char>(alphabet - 'a' + 'A');
     } else {
         return alphabet;
     }
@@ -40,9 +40,8 @@ char DDayAPP::toUpper(char alphabet) {
 
 void DDayAPP::menu(char command[]) {
     int result;
-    for (int index = 0; index < MAX_ANSWER_LENGTH; ++index) {
-        command[index] = toUpper(command[index]);
-    }
+    command[0] = toUpper(command[0]);
+
     if (command[0] == 'Y' && command[1] == '\0') {
         this->dday.setYesterday();
 
