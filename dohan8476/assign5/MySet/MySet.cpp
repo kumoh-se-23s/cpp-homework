@@ -64,7 +64,6 @@ MySet MySet::operator+(const MySet& set) const{
 
 MySet MySet::operator-(const MySet& set) const{
     return this->differenceSet(set);
-
 }
 
 MySet MySet::operator&(const MySet& set) const{

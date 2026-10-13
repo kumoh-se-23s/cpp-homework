@@ -129,7 +129,6 @@ MyMatrix& MyMatrix::operator =(const MyMatrix& m) {
     }
     delete[] this->matrix;
 
-
     this->row = m.row;
     this->col = m.col;
     this->matrix = new int*[this->row];
