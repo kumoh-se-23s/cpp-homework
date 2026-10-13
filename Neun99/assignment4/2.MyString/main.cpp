@@ -9,7 +9,7 @@ int main() {
     MyString str3;
     cin >> str1;
     cin >> str2;
-    // cin.getline(str3);
+    //cin.getline(str3);
     cout << str1 << endl;
     cout << str2 << endl;
     cout << str3 << endl;

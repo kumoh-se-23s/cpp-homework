@@ -1,9 +1,10 @@
 #include <iostream>
 #include "MyString.h"
+#include <limits>
 
 //생성자---------------------------
 MyString::MyString() {
-
+    str[usingSize] = '\0';
 }
 
 MyString::MyString(const MyString &srcStr) {
@@ -12,66 +13,60 @@ MyString::MyString(const MyString &srcStr) {
 
 //연산자 오버로딩---------------------
 //대입
-MyString MyString::operator=(const MyString &srcStr) const {
-    MyString resultStr;
+MyString& MyString::operator=(const MyString &srcStr) {
     for (int idx = 0; idx < srcStr.usingSize; idx++) {
-        resultStr.str[idx] = srcStr.str[idx];
+        str[idx] = srcStr.str[idx];
     }
-    resultStr.usingSize = usingSize;
-    resultStr.str[usingSize + 1] = '\0';
-    return resultStr;
+    usingSize = srcStr.usingSize;
+    str[usingSize] = '\0';
+    return *this;
 }
-MyString &MyString::operator=(const char str2nd[]) const {
-    MyString resultStr;
+MyString& MyString::operator=(const char str2nd[]) {
     int idx = 0; //usingSize 위해 따로 빼둠
     for (; idx < MAX_SIZE && str2nd[idx] != '\0'; idx++) {
-        resultStr.str[idx] = str2nd[idx];
+        str[idx] = str2nd[idx];
     }
-    resultStr.usingSize = idx;
-    resultStr.str[usingSize + 1] = '\0';
-    return resultStr;
+    usingSize = idx;
+    str[usingSize] = '\0';
+    return *this;
 }
 
 //+
 const MyString MyString::operator+(const MyString &str2nd) const {
     MyString resultStr = *this;
-    for (int idx = 0; idx + usingSize < MAX_SIZE && idx < str2nd.usingSize; idx++) {
+    int idx = 0;
+    for (; idx + usingSize < MAX_SIZE && idx < str2nd.usingSize; idx++) {
         resultStr.str[usingSize + idx] = str2nd.str[idx];
     }
-    resultStr.usingSize += str2nd.usingSize;
-    resultStr.str[usingSize + 1] = '\0';
+    resultStr.usingSize += idx;
+    resultStr.str[resultStr.usingSize] = '\0';
     return resultStr;
 }
 const MyString MyString::operator+(const char str2nd[]) const {
-    MyString resultStr = *this;
-    int idx = 0;
-    for (; idx + usingSize < MAX_SIZE && str2nd[idx] != '\0'; idx++) {
-        resultStr.str[usingSize + idx] = str2nd[idx];
-    }
-    resultStr.usingSize += idx;
-    resultStr.str[usingSize + 1] = '\0';
-    return resultStr;
+    MyString operand;
+    operand = str2nd;
+    return *this + operand;
 }
 
 //==
-bool MyString::operator==(const MyString &str) const {
-    if (usingSize != str.usingSize) //길이 다르면 바로 false
+bool MyString::operator==(const MyString &str2nd) const {
+    if (usingSize != str2nd.usingSize) //길이 다르면 바로 false
         return false;
     for (int idx = 0; idx < usingSize; idx++) {
-        if (str[idx] != str.str[idx])
+        if (str2nd[idx] != str2nd.str[idx])
             return false;
     }
     return true;
 }
 
 //!=
-bool MyString::operator!=(const MyString &str) const {
-    return !(*this == str);
+bool MyString::operator!=(const MyString &str2nd) const {
+    return !(*this == str2nd);
 }
 
 //[]
 char MyString::operator[](int pos) const {
-    if (pos < usingSize)
+    if (pos >= 0 && pos < usingSize)
         return str[pos];
     return '\0';
 }
@@ -85,32 +80,32 @@ ostream& operator<<(ostream & out, const MyString &str) {
 }
 
 istream& operator>>(istream& in, MyString& str) {
-    char input[MyString::MAX_SIZE + 1];
+    char result[MyString::MAX_SIZE + 1];
+    char input;
+    in.get(input);
 
     int idx = 0;
-    for (; idx < MyString::MAX_SIZE; idx++) {
-        input[idx] = cin.get();
-        if (input[idx] == ' ') //공백 들어오면 그만 받고 탈출, 버퍼 유지
-            break;
+    for (; idx < MyString::MAX_SIZE && input != ' '; in.get(input)) {
+        result[idx] = input;
     }
-    input[idx + 1] = '\0';
-    str = input;
+    result[idx] = '\0';
+    str = result;
     return in;
 }
 
 istream& getline(istream& in, MyString& str, char delim) {
-    char input[MyString::MAX_SIZE + 1];
+    char result[MyString::MAX_SIZE + 1];
+    char input;
+    in.get(input);
 
     int idx = 0;
-    for (; idx < MyString::MAX_SIZE; idx++) {
-        input[idx] = cin.get();
-        if (input[idx] == delim)
-            break;
+    for (; idx < MyString::MAX_SIZE && input != delim; idx++, in.get(input)) {
+        result[idx] = input;
     }
-    cin.ignore(1000, '\n');
+    result[idx] = '\0';
+    in.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    input[idx + 1] = '\0';
-    str = input;
+    str = result;
     return in;
 }
 
@@ -124,19 +119,21 @@ bool MyString::empty() const {
 }
 
 char MyString::at(int pos) const {
-    if (pos < usingSize)
+    if (pos >= 0 && pos < usingSize)
         return str[pos];
     return '\0';
 }
 
 int MyString::find(const MyString &subStr, int pos) const {
+    if (pos < 0)
+        pos = 0;
     if (subStr.usingSize == 0)
         return -1;
     for (int idx = 0; idx + pos < usingSize; idx++) {
         //첫 글자 같으면 substr로 범위 비교
-        if (str[idx + pos] == subStr[idx]) {
+        if (str[idx + pos] == subStr[0]) {
             if (substr(idx + pos, subStr.usingSize) == subStr)
-                return idx;
+                return idx + pos;
         }
     }
     return -1;
