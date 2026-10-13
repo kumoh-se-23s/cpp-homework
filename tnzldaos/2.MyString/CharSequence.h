@@ -1,14 +1,16 @@
 class CharSequence {
     public:
     protected:
-        static constexpr int MY_STRING_SIZE = 15;
-        char charArr[MY_STRING_SIZE + 1];
-        int stringLength = 0;
+        static constexpr int CAPACITY = 15;
+        char charArr[CAPACITY + 1];
+        int arrLength = 0;
 
         void fillArray(char inputArr[]);
 
     public:
-        virtual ~CharSequence() = default;
+        ~CharSequence() = default;
+
+        void setChar(char inputChar, int pos);
 
         virtual int length() const;
         virtual bool empty() const;
