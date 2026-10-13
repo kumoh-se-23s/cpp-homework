@@ -31,7 +31,7 @@ void DDay::printMenu() const{
     if (dDay >= 0)
         cout << "+";
     cout << dDay << "] ";
-    cout << currentDay + dDay << endl;
+    cout << targetDay << endl;
 
     //둘째줄
     cout << ">> Move date{yyyymmdd, Tomorrow(T/t), Yesterday(Y/y)}, Set D-day(+/-int), or Quit(Q/q) : ";
@@ -52,11 +52,13 @@ void DDay::handleInput(const char input[]) {
             case 'T':
             case 't':
                 ++currentDay;
+                ++targetDay;
                 break;
             //yesterday
             case 'Y':
             case 'y':
                 --currentDay;
+                --targetDay;
                 break;
             //quit
             case 'Q':
@@ -92,6 +94,7 @@ void DDay::moveDate(const char input[]) {
     //setValue 시도, 유효하지 않은 값이면 에러
     if (!currentDay.setValue(newYear, newMonth, newDay))
         printError();
+    targetDay = currentDay + dDay;
 }
 
 //+ - 연산 동작
@@ -103,6 +106,8 @@ void DDay::setDDay(const char input[], int inputSize) {
             dDay = value;
         else
             dDay = -value;
+
+        targetDay = currentDay + value;
     } else //+- 이후로의 입력이 전부 숫자가 아니면 에러
         printError();
 }

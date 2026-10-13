@@ -6,6 +6,7 @@ public:
     void run();
 private:
     Day currentDay;
+    Day targetDay;
     int dDay = 0;
     bool isRunning;
     static constexpr int INPUT_MAX_LENGTH = 9;
