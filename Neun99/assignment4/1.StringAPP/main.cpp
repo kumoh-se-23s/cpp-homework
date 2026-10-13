@@ -158,5 +158,5 @@ static char moveDigit(char ch, int gap) {
     //한 자리 수로 정리
     result %= 10;
 
-    return (char)result;
+    return result + '0';
 }
