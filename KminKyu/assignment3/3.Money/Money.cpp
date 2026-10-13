@@ -49,11 +49,11 @@ int Money::getCent() const {
     return this->cent;
 }
 
-Money Money::operator +(const Money& Money) const {
+const Money Money::operator +(const Money& Money) const {
     return add(Money);
 }
 
-Money Money::operator -(const Money& Money) const {
+const Money Money::operator -(const Money& Money) const {
     return minus(Money);
 }
 
@@ -111,7 +111,7 @@ Money& Money::operator =(const Money& money) {
 
 
 ostream& operator <<(ostream& out, const Money& money) {
-    if (money.getDollar() < 0) {
+    if (money.getDollar() < 0 || money.getCent() < 0) {
         out << "-";
     }
     out << "$" << abs(money.getDollar()) << "." << std::setw(2) << std::setfill('0') << abs(money.getCent());
