@@ -36,11 +36,13 @@ int MyString::find(const MyString &subStr, int pos) const {
 MyString MyString::substr(int pos, int len) {
     MyString myString = MyString();
 
+    int inputCharArrIndex = 0;
     pos = pos >= 0 ? pos : 0;
 
     if(pos <= arrLength) {
         for(int index = pos ; index <= pos + len ; index++) {
-            myString.setChar(charArr[index], );
+            myString.setChar(charArr[index], inputCharArrIndex);
+            inputCharArrIndex++;
         }
     } 
     return myString;
@@ -68,10 +70,6 @@ const MyString MyString::operator+(const MyString& str2nd) {
         resultMyString;
         inputIndex++;
     }
-}
-
-void MyString::operator=(const MyString &srcStr) {
-    
 }
 
 MyString& MyString::operator=(const char str2nd[]) {
