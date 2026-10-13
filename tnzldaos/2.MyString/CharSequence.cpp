@@ -34,7 +34,6 @@ char CharSequence::at(int pos) const {
 
 int CharSequence::find(const char subStr[], int pos) const {
     int subStrIndex = 0;
-    //int correctCount = 0;
 
     for(int index = pos >= 0 ? pos : 0 ; index < arrLength ; index++) {
         if(charArr[index] == subStr[subStrIndex]) {
@@ -51,7 +50,20 @@ int CharSequence::find(const char subStr[], int pos) const {
     return -1;
 }
 
-int CharSequence::find(const CharSequence &sequence, int pos) {
-    
-}
+int CharSequence::find(const CharSequence &sequence, int pos) const {
+    int subStrIndex = 0;
 
+    for(int index = pos >= 0 ? pos : 0 ; index < arrLength ; index++) {
+        if(charArr[index] == sequence.at(subStrIndex)) {
+            subStrIndex++;
+        }
+        else {
+            subStrIndex = 0;
+        }
+        
+        if(subStrIndex == sequence.length()) {
+            return index - subStrIndex;
+        }
+    }
+    return -1;
+}

@@ -30,7 +30,7 @@ int MyString::find(const char subStr[], int pos) const {
 }
 
 int MyString::find(const MyString &subStr, int pos) const {
-    
+    return CharSequence::find(subStr, pos);
 }
 
 MyString MyString::substr(int pos, int len) {
