@@ -73,11 +73,15 @@ const MyString MyString::operator+(const MyString& str2nd) {
 }
 
 MyString& MyString::operator=(const char str2nd[]) {
-
+    for(int index = 0 ; index < strlen(str2nd) ; index++) {
+        charArr[index] = str2nd[index];
+    }
+    
+    return *this;
 }
 
 char MyString::operator[](int pos) {
-    
+    return charArr[pos];
 }
 
 bool MyString::operator==(const MyString &str) {
