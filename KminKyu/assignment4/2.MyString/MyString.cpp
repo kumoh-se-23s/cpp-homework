@@ -6,16 +6,16 @@ using namespace std;
 MyString::MyString() {
     this->charArray[0] = '\0';
     this->size = 0;
-    this->capacity = MAX_STR_SIZE - 1;
+    this->capacity = MAX_STR_SIZE;
 }
 
 MyString::MyString(const MyString& srcStr) {
-    this->capacity = MAX_STR_SIZE - 1;
+    this->capacity = MAX_STR_SIZE;
     setString(srcStr.charArray);
 }
 
 MyString::MyString(const char str2nd[]) {
-    this->capacity = MAX_STR_SIZE - 1;
+    this->capacity = MAX_STR_SIZE;
     setString(str2nd);
 }
 
@@ -183,7 +183,7 @@ istream& operator>>(istream& is, MyString& str) {
     str.clear();
     char input;
 
-    while (is.get(input) && input != '\n' && input != ' ' && input != '\r') {
+    while (is.get(input) && input != '\n' && input != ' ' && input != '\r' && input != '\t') {
         str.append(input);
         if (str.length() == str.getCapacity()) {
             return is;

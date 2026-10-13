@@ -44,10 +44,10 @@ public:
     void clear();
 
 private:
-    constexpr static int MAX_STR_SIZE = 16;
-    char charArray[MAX_STR_SIZE] = {};
+    constexpr static int MAX_STR_SIZE = 15;
+    char charArray[MAX_STR_SIZE + 1] = {};
     int size = 0;
-    int capacity = MAX_STR_SIZE - 1;
+    int capacity = MAX_STR_SIZE;
 
     void setString(const char str2nd[]);
 

@@ -15,9 +15,9 @@ public:
     void run();
 
 private:
-    constexpr static int MAX_STR_SIZE = 128;
+    constexpr static int MAX_STR_SIZE = 127;
 
-    char inputCharArray[MAX_STR_SIZE] = {};
+    char inputCharArray[MAX_STR_SIZE + 1] = {};
 
     int gap = 0;
 };

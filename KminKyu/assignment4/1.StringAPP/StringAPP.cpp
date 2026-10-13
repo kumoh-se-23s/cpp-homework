@@ -7,7 +7,7 @@ using namespace std;
 StringAPP::StringAPP() = default;
 
 void StringAPP::readInput() {
-    cin.getline(inputCharArray, MAX_STR_SIZE);
+    cin.getline(inputCharArray, MAX_STR_SIZE + 1);
     if (cin.fail()) {
         cin.clear();
         cin.ignore(10000, '\n');
@@ -27,13 +27,13 @@ void StringAPP::printAlphabetCounts() const {
 }
 
 void StringAPP::printCapitalized() const {
-    char result[MAX_STR_SIZE] = {};
+    char result[MAX_STR_SIZE + 1] = {};
     TextFormatter::capitalizeFirstLetter(inputCharArray, result);
     cout << result << "\n";
 }
 
 void StringAPP::printEncryptedSentence() const {
-    char result[MAX_STR_SIZE] = {};
+    char result[MAX_STR_SIZE + 1] = {};
     TextFormatter::encryptSentence(inputCharArray, result, gap);
     cout << result << "\n";
 }
