@@ -38,7 +38,7 @@ void Matrix::setValue(int column, int row, int value) {
 }
 
 
-Matrix Matrix::transpose() const {
+const Matrix Matrix::transpose() const {
     Matrix resultMatrix;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
@@ -48,7 +48,7 @@ Matrix Matrix::transpose() const {
     return resultMatrix;
 }
 
-Matrix Matrix::add(const Matrix& otherMatrix) const {
+const Matrix Matrix::add(const Matrix& otherMatrix) const {
     Matrix resultMatrix;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {
@@ -59,7 +59,7 @@ Matrix Matrix::add(const Matrix& otherMatrix) const {
     return resultMatrix;
 }
 
-Matrix Matrix::multi(const Matrix& otherMatrix) const {
+const Matrix Matrix::multi(const Matrix& otherMatrix) const {
     Matrix resultMatrix;
     for (int column = 0; column < MAX_MATRIX_SIZE; ++column) {
         for (int row = 0; row < MAX_MATRIX_SIZE; ++row) {

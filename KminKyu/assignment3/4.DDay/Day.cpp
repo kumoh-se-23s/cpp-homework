@@ -72,7 +72,7 @@ Day Day::calculateShortDays(int year, int dday) { //이 코드가 실행된 시�
     return Day(year, resultMonth, resultDay);
 }
 
-Day Day::calculateDays(int dday) const {
+const Day Day::calculateDays(int dday) const {
     char sign;
     int resultYear = this->year;
     int resultMonth, resultDay;
@@ -125,11 +125,11 @@ int Day::getDay() const {
     return day;
 }
 
-Day Day::operator+(int dday) const {
+const Day Day::operator+(int dday) const {
     return calculateDays(dday);
 }
 
-Day Day::operator-(int dday) const {
+const Day Day::operator-(int dday) const {
     return calculateDays(-1 * dday);
 }
 

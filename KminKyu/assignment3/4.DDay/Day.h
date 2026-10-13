@@ -16,9 +16,9 @@ public:
 
     int getDay() const;
 
-    Day operator+(int dday) const;
+    const Day operator+(int dday) const;
 
-    Day operator-(int dday) const;
+    const Day operator-(int dday) const;
 
     Day& operator++();
 
@@ -31,7 +31,7 @@ private:
 
     int day;
 
-    Day calculateDays(int dday) const;
+    const Day calculateDays(int dday) const;
 
     static constexpr int MAX_OF_DAYS[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 

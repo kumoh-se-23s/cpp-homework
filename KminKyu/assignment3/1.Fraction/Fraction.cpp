@@ -49,7 +49,7 @@ int Fraction::getDenominator() const {
     return denominator;
 }
 
-Fraction Fraction::add(const Fraction& fraction) const{
+const Fraction Fraction::add(const Fraction& fraction) const{
     int firstNumerator = this->numerator * fraction.denominator;
     int secondNumerator = fraction.numerator * this->denominator;
 
@@ -66,7 +66,7 @@ void Fraction::set(int n, int d) {
     this->organizeFraction();
 }
 
-Fraction Fraction::operator +(const Fraction& fraction) const {
+const Fraction Fraction::operator +(const Fraction& fraction) const {
     return add(fraction);
 }
 Fraction& Fraction::operator =(const Fraction& fraction) {
