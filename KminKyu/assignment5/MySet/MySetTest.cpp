@@ -69,6 +69,67 @@ namespace {
                 std::chrono::steady_clock::now() - start).count();
     }
 }
+// =====================================================================
+// binarySearch(left, right, value)
+// =====================================================================
+
+TEST(MySetBinarySearchTest, FindsEveryExistingValue) {
+    MySet s = make_raw({1, 3, 5, 7, 9, 11, 13});
+    for (int i = 0; i < s.size; ++i) {
+        const int idx = s.binarySearch(0, s.size - 1, s.array[i]);
+        EXPECT_EQ(i, idx) << "value: " << s.array[i];
+    }
+}
+
+TEST(MySetBinarySearchTest, FindsFirstAndLast) {
+    MySet s = make_raw({2, 4, 6, 8});
+    EXPECT_EQ(0, s.binarySearch(0, 3, 2));
+    EXPECT_EQ(3, s.binarySearch(0, 3, 8));
+}
+
+TEST(MySetBinarySearchTest, SingleElement) {
+    MySet s = make_raw({5});
+    EXPECT_EQ(0, s.binarySearch(0, 0, 5));
+}
+
+TEST(MySetBinarySearchTest, FindsOnlyInsideGivenRange) {
+    MySet s = make_raw({1, 2, 3, 4, 5, 6, 7});
+    EXPECT_EQ(3, s.binarySearch(2, 5, 4));
+    // 값 1 은 배열에는 있지만 [2, 5] 범위 밖 -> 찾으면 안 됨
+    const int idx = s.binarySearch(2, 5, 1);
+    EXPECT_TRUE(idx < 2 || idx > 5 || s.array[idx] != 1) << "idx: " << idx;
+}
+
+// 없는 값: -1 이거나, 정렬을 유지하는 삽입 위치 [left, right+1] 중 하나이면 통과
+TEST(MySetBinarySearchTest, MissingValueGivesMinusOneOrInsertionPoint) {
+    MySet s = make_raw({10, 20, 30, 40, 50});
+    for (int value: {5, 15, 25, 35, 45, 55}) {
+        const int idx = s.binarySearch(0, 4, value);
+        if (idx == -1) continue;
+        ASSERT_GE(idx, 0) << "value: " << value;
+        ASSERT_LE(idx, 5) << "value: " << value;
+        for (int i = 0; i < idx; ++i) EXPECT_LT(s.array[i], value) << "value: " << value;
+        for (int i = idx; i < 5; ++i) EXPECT_GT(s.array[i], value) << "value: " << value;
+    }
+}
+
+TEST(MySetBinarySearchTest, MatchesStdBinarySearchOnRandomData) {
+    std::mt19937 rng(17);
+    for (int trial = 0; trial < 200; ++trial) {
+        Vec v = sorted_random_vec(rng, 1 + static_cast<int>(rng() % 100), 200);
+        v.erase(std::unique(v.begin(), v.end()), v.end());
+        MySet s = make_raw(v);
+        const int value = 1 + static_cast<int>(rng() % 200);
+        const int idx = s.binarySearch(0, s.size - 1, value);
+        if (std::binary_search(v.begin(), v.end(), value)) {
+            ASSERT_GE(idx, 0) << "trial " << trial;
+            ASSERT_LT(idx, s.size) << "trial " << trial;
+            ASSERT_EQ(value, s.array[idx]) << "trial " << trial;
+        } else if (idx >= 0 && idx < s.size) {
+            ASSERT_NE(value, s.array[idx]) << "trial " << trial; // 없는 값을 있다고 하면 안 됨
+        }
+    }
+}
 
 // =====================================================================
 // timSort
@@ -359,68 +420,6 @@ TEST(MySetMergeSortTest, RandomMerges) {
         s.mergeSort(left, mid, right);
         std::inplace_merge(v.begin() + left, v.begin() + mid + 1, v.begin() + right + 1);
         ASSERT_EQ(v, raw(s)) << "trial " << trial;
-    }
-}
-
-// =====================================================================
-// binarySearch(left, right, value)
-// =====================================================================
-
-TEST(MySetBinarySearchTest, FindsEveryExistingValue) {
-    MySet s = make_raw({1, 3, 5, 7, 9, 11, 13});
-    for (int i = 0; i < s.size; ++i) {
-        const int idx = s.binarySearch(0, s.size - 1, s.array[i]);
-        EXPECT_EQ(i, idx) << "value: " << s.array[i];
-    }
-}
-
-TEST(MySetBinarySearchTest, FindsFirstAndLast) {
-    MySet s = make_raw({2, 4, 6, 8});
-    EXPECT_EQ(0, s.binarySearch(0, 3, 2));
-    EXPECT_EQ(3, s.binarySearch(0, 3, 8));
-}
-
-TEST(MySetBinarySearchTest, SingleElement) {
-    MySet s = make_raw({5});
-    EXPECT_EQ(0, s.binarySearch(0, 0, 5));
-}
-
-TEST(MySetBinarySearchTest, FindsOnlyInsideGivenRange) {
-    MySet s = make_raw({1, 2, 3, 4, 5, 6, 7});
-    EXPECT_EQ(3, s.binarySearch(2, 5, 4));
-    // 값 1 은 배열에는 있지만 [2, 5] 범위 밖 -> 찾으면 안 됨
-    const int idx = s.binarySearch(2, 5, 1);
-    EXPECT_TRUE(idx < 2 || idx > 5 || s.array[idx] != 1) << "idx: " << idx;
-}
-
-// 없는 값: -1 이거나, 정렬을 유지하는 삽입 위치 [left, right+1] 중 하나이면 통과
-TEST(MySetBinarySearchTest, MissingValueGivesMinusOneOrInsertionPoint) {
-    MySet s = make_raw({10, 20, 30, 40, 50});
-    for (int value: {5, 15, 25, 35, 45, 55}) {
-        const int idx = s.binarySearch(0, 4, value);
-        if (idx == -1) continue;
-        ASSERT_GE(idx, 0) << "value: " << value;
-        ASSERT_LE(idx, 5) << "value: " << value;
-        for (int i = 0; i < idx; ++i) EXPECT_LT(s.array[i], value) << "value: " << value;
-        for (int i = idx; i < 5; ++i) EXPECT_GT(s.array[i], value) << "value: " << value;
-    }
-}
-
-TEST(MySetBinarySearchTest, MatchesStdBinarySearchOnRandomData) {
-    std::mt19937 rng(17);
-    for (int trial = 0; trial < 200; ++trial) {
-        Vec v = sorted_random_vec(rng, 1 + static_cast<int>(rng() % 100), 200);
-        v.erase(std::unique(v.begin(), v.end()), v.end());
-        MySet s = make_raw(v);
-        const int value = 1 + static_cast<int>(rng() % 200);
-        const int idx = s.binarySearch(0, s.size - 1, value);
-        if (std::binary_search(v.begin(), v.end(), value)) {
-            ASSERT_GE(idx, 0) << "trial " << trial;
-            ASSERT_LT(idx, s.size) << "trial " << trial;
-            ASSERT_EQ(value, s.array[idx]) << "trial " << trial;
-        } else if (idx >= 0 && idx < s.size) {
-            ASSERT_NE(value, s.array[idx]) << "trial " << trial; // 없는 값을 있다고 하면 안 됨
-        }
     }
 }
 

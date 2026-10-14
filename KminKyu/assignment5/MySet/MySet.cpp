@@ -177,16 +177,16 @@ void MySet::insertionSort(int left, int right) {
 }
 
 int MySet::binarySearch(int left, int right, int value) {
-    if (left >= right) {
+    if (left > right) {
         return -1;
     }
     int mid = (left + right) / 2;
     if (array[mid] < value) {
-        return binarySearch(left, mid - 1, value);
-    } else if (array[mid] > value) {
         return binarySearch(mid + 1, right, value);
+    } else if (array[mid] > value) {
+        return binarySearch(left, mid - 1, value);
     } else {
-        return value;
+        return mid;
     }
 }
 

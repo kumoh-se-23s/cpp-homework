@@ -28,11 +28,13 @@ int Matrix::getRowLength(int row) const {
 }
 
 int Matrix::getValue(int column, int row) const {
-    return matrixArray[column][row];
+    if (0 <= column && column < MAX_MATRIX_SIZE && 0 <= row && row < MAX_MATRIX_SIZE) {
+        return matrixArray[column][row];
+    }
 }
 
 void Matrix::setValue(int column, int row, int value) {
-    if (column < MAX_MATRIX_SIZE && row < MAX_MATRIX_SIZE) {
+    if (0 <= column && column < MAX_MATRIX_SIZE && 0 <= row && row < MAX_MATRIX_SIZE) {
         matrixArray[column][row] = value;
     }
 }
