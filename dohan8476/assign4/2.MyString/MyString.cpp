@@ -51,46 +51,21 @@ int MyString::find(const char subStr[], int pos) const {
     if (pos >= currentLen || subLen == 0 || currentLen < subLen) {
         return -1;
     }
-    //일반적 단어에서 자음 > 모음이 올 확률이 높음 그럼 2번째 검사 통과할 확률 1/5에 가까울듯(아마도)
-    //그럼 앞뒤 앞뒤로 넘어가면 좀 더 확률이 낮아지지 않을까?
-    //첫 인덱스 pos, 마지막은 pos+subLen-1
     for (int i = pos; i <= currentLen - subLen; i++) {
         bool match = true;
 
-        for (int frontIndex = 0, backIndex = subLen -1 ; frontIndex <= backIndex; frontIndex++, backIndex--) {
-            if (str[i+frontIndex] != subStr[frontIndex]) {
+        for (int j = 0; j < subLen && match; j++) {
+            if (str[i + j] != subStr[j]) {
                 match = false;
-                break;
-            }
-
-            if (frontIndex != backIndex) {
-                if (str[i + backIndex] != subStr[backIndex]) {
-                    match = false;
-                    break;
-                }
             }
         }
         if (match) {
-            //단어의 위치는 0부터 시작이 아니라 1부터 시작
-            return i + 1;
+            return i;
         }
     }
     return -1;
 }
-        //이건 그냥 앞에서부터 순서대로 쭉 보는거 참고용
-        // for (int i = pos; i <= currentLen - subLen; i++) {
-        //     bool match = true;
-        //     for (int j = 0; j < subLen; j++) {
-        //         if (str[i + j] != subStr[j]) {
-        //             match = false;
-        //             break;
-        //         }
-        //     }
-        //     if (match) {
-        //         return i;
-        //     }
-        // }
-        // return -1;
+
 
 int MyString::find(const MyString& subStr, int pos) const {
     return find(subStr.str, pos);
@@ -125,7 +100,7 @@ char MyString::operator[](int pos) const {
     return this->at(pos);
 }
 
-const MyString MyString::operator+(const char str2nd[]) const {
+MyString MyString::operator+(const char str2nd[]) const {
     MyString result;
     int i = 0;
 
@@ -142,7 +117,7 @@ const MyString MyString::operator+(const char str2nd[]) const {
 
     return result;
 }
-const MyString MyString::operator+(const MyString& str2nd) const {
+MyString MyString::operator+(const MyString& str2nd) const {
     // 뒤에 .str을 붙히면 char 배열 -> 연산자를 만나서 위의 연산자 오버로딩 됨
     return *this + str2nd.str;
 }

@@ -3,7 +3,7 @@
 
 class MyString {
     public:
-        static const int CAPACITY = 15;
+        static constexpr int CAPACITY = 15;
 
         MyString();
         MyString(const MyString& srcStr);
@@ -23,8 +23,8 @@ class MyString {
         MyString& operator =(const MyString& srcStr);
         MyString& operator =(const char str2nd[]);
 
-        const MyString operator +(const char str2nd[]) const;
-        const MyString operator +(const MyString& srcStr) const;
+        MyString operator +(const char str2nd[]) const;
+        MyString operator +(const MyString& srcStr) const;
 
         bool operator ==(const MyString& srcStr) const;
         bool operator !=(const MyString& srcStr) const;

@@ -70,7 +70,7 @@ void encryptInput(const char input[], const int gap) {
             char c = ((input[i] - 'a' + gap) % 26 + 26) % 26 + 'a';
             cout << c;
         } else if (isDigit(input[i])) {
-            char c = ((input[i] - '0' + gap) % 10 + 10) % 10 + '0';
+            char c = ((input[i] - '0' + gap) % 10 + 10) % 26 + '0';
             cout << c;
         } else {
             cout << input[i];
