@@ -20,7 +20,7 @@ bool TextFormatter::is_valid_gap_range(const int gap) {
 }
 
 void TextFormatter::fill_container(const char target_char_arr[]) {
-    for (int char_index = 0; target_char_arr[char_index] != '\0' && char_index < MAX_INPUT_LENGTH - 1; ++char_index) {
+    for (int char_index = 0; target_char_arr[char_index] != '\0' && char_index < MAX_INPUT_LENGTH; ++char_index) {
         this->container[char_index] = target_char_arr[char_index];
     }
 }
@@ -59,7 +59,7 @@ TextFormatter& TextFormatter::encrypt(const int gap) {
 
 void TextFormatter::build(char text[]) const {
     int index = 0;
-    for (; index < MAX_INPUT_LENGTH - 1 && this->container[index] != '\0'; ++index) {
+    for (; this->container[index] != '\0' && index < MAX_INPUT_LENGTH; ++index) {
         text[index] = this->container[index];
     }
     text[index] = '\0';

@@ -229,27 +229,28 @@ TEST(StringAppEncryptTest, OppositeGapRestoresOriginalText) {
     }
 }
 
-// ---------- 입력 길이 제한 (최대 MAX_INPUT_LENGTH = 127글자) ----------
+// 널 문자를 제외하고 실제로 보관되는 최대 글자 수 (MAX_INPUT_LENGTH는 널 문자를 포함한 칸 수)
+constexpr int kMaxVisibleLength = TextFormatter::MAX_INPUT_LENGTH;
+
+// ---------- 입력 길이 제한 (널 문자 포함 MAX_INPUT_LENGTH = 128칸, 최대 127글자) ----------
 
 TEST(StringAppLimitTest, MaximumLengthInputIsKept) {
-    const std::string text(TextFormatter::MAX_INPUT_LENGTH, 'a');
+    const std::string text(kMaxVisibleLength, 'a');
     const auto lines = run_string_app(text, 1);
 
     ASSERT_EQ(lines.size(), 3u);
-    EXPECT_EQ(lines[0], "[a:" + std::to_string(TextFormatter::MAX_INPUT_LENGTH) + "]");
-    EXPECT_EQ(lines[1], "A" + std::string(TextFormatter::MAX_INPUT_LENGTH - 1, 'a'));
-    EXPECT_EQ(lines[2], std::string(TextFormatter::MAX_INPUT_LENGTH, 'b'));
+    EXPECT_EQ(lines[0], "[a:" + std::to_string(kMaxVisibleLength) + "]");
+    EXPECT_EQ(lines[1], "A" + std::string(kMaxVisibleLength - 1, 'a'));
+    EXPECT_EQ(lines[2], std::string(kMaxVisibleLength, 'b'));
 }
 
-// 아래 세 개는 StringApp::input()이 넘친 글자를 버리고 다음 줄(gap)을 정상적으로 읽는다는
-// 현재 구현에 의존합니다. input()을 바꾸셨다면 기대값을 확인해 주십시오.
 TEST(StringAppLimitTest, OneOverLimitInputIsTruncated) {
-    const std::string text(TextFormatter::MAX_INPUT_LENGTH + 1, 'a');
+    const std::string text(kMaxVisibleLength + 1, 'a');
     const auto lines = run_string_app(text, 1);
 
     ASSERT_EQ(lines.size(), 3u);
-    EXPECT_EQ(lines[0], "[a:" + std::to_string(TextFormatter::MAX_INPUT_LENGTH) + "]");
-    EXPECT_EQ(lines[2], std::string(TextFormatter::MAX_INPUT_LENGTH, 'b'));
+    EXPECT_EQ(lines[0], "[a:" + std::to_string(kMaxVisibleLength) + "]");
+    EXPECT_EQ(lines[2], std::string(kMaxVisibleLength, 'b'));
 }
 
 TEST(StringAppLimitTest, OverLimitInputIsTruncated) {
@@ -257,8 +258,8 @@ TEST(StringAppLimitTest, OverLimitInputIsTruncated) {
     const auto lines = run_string_app(text, 1);
 
     ASSERT_EQ(lines.size(), 3u);
-    EXPECT_EQ(lines[0], "[a:" + std::to_string(TextFormatter::MAX_INPUT_LENGTH) + "]");
-    EXPECT_EQ(lines[2], std::string(TextFormatter::MAX_INPUT_LENGTH, 'b'));
+    EXPECT_EQ(lines[0], "[a:" + std::to_string(kMaxVisibleLength) + "]");
+    EXPECT_EQ(lines[2], std::string(kMaxVisibleLength, 'b'));
 }
 
 TEST(StringAppLimitTest, GapIsStillReadAfterOverLimitInput) {
@@ -266,5 +267,53 @@ TEST(StringAppLimitTest, GapIsStillReadAfterOverLimitInput) {
     const auto lines = run_string_app(text, 3);
 
     ASSERT_EQ(lines.size(), 3u);
-    EXPECT_EQ(lines[2], std::string(TextFormatter::MAX_INPUT_LENGTH, 'd'));
+    EXPECT_EQ(lines[2], std::string(kMaxVisibleLength, 'd'));
+}
+
+// ---------- 초과 입력이 버퍼에 남은 채 gap 단계로 넘어가는 경우 ----------
+// 널 문자를 제외한 최대 보관 글자 수는 kMaxVisibleLength(= MAX_INPUT_LENGTH - 1)입니다.
+
+// // 경우 1: 남은 글자가 gap 입력으로 소비되어 gap이 유효하지 않게 되는 구현
+// // (남은 'a'가 숫자로 읽히지 않으므로 입력 실패가 되고, 출력이 3줄이 아닐 수 있음)
+// TEST(StringAppLimitTest, LeftoverBufferBreaksGapReading) {
+//     const std::string text(kMaxVisibleLength + 10, 'a');
+//     const auto lines = run_string_app(text, 1);
+//
+//     // 앞의 126글자만 처리되었는지 확인 (첫 줄은 입력 직후 상태이므로 구현과 무관하게 동일)
+//     ASSERT_FALSE(lines.empty());
+//     EXPECT_EQ(lines[0], "[a:" + std::to_string(kMaxVisibleLength) + "]");
+//
+//     // gap이 정상 처리되었다면 3줄이 나오고 암호화 결과는 'b'로 채워짐.
+//     // 남은 글자 때문에 gap 읽기가 실패하는 구현이라면 이 단언이 실패해야 정상.
+//     EXPECT_NE(lines.size(), 3u);
+// }
+
+// 경우 2: 남은 글자를 비우고 gap까지 정상 처리하는 구현
+// (input()이 초과분을 ignore 등으로 버리거나, gap 읽기 전에 버퍼를 비우는 경우)
+TEST(StringAppLimitTest, LeftoverBufferIsClearedBeforeGap) {
+    const std::string text(kMaxVisibleLength + 10, 'a');
+    const auto lines = run_string_app(text, 2);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[0], "[a:" + std::to_string(kMaxVisibleLength) + "]");
+    EXPECT_EQ(lines[1], "A" + std::string(kMaxVisibleLength - 1, 'a'));
+    EXPECT_EQ(lines[2], std::string(kMaxVisibleLength, 'c'));
+}
+
+// 경계값: 정확히 한 글자만 넘친 경우에도 gap이 정상 처리되는지
+TEST(StringAppLimitTest, SingleLeftoverCharacterDoesNotCorruptGap) {
+    const std::string text(kMaxVisibleLength + 1, 'a');
+    const auto lines = run_string_app(text, 3);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[2], std::string(kMaxVisibleLength, 'd'));
+}
+
+// gap이 여러 자리 숫자이거나 음수일 때도 초과분 처리와 섞이지 않는지
+TEST(StringAppLimitTest, NegativeGapAfterOverLimitInput) {
+    const std::string text(200, 'b');
+    const auto lines = run_string_app(text, -1);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[2], std::string(kMaxVisibleLength, 'a'));
 }

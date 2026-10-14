@@ -5,6 +5,7 @@
 #include "StringApp.h"
 
 #include <iostream>
+#include <limits>
 
 #include "CharacterUtils.h"
 #include "TextFormatter.h"
@@ -25,7 +26,7 @@ void StringApp::input() {
 
     if (std::cin.fail()) {
         std::cin.clear();
-        std::cin.ignore(10000, '\n');
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
     std::cin >> this->gap;
