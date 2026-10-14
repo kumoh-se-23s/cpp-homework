@@ -44,10 +44,4 @@ public:
 
     [[nodiscard]] uint64_t getCapacity() const { return capacity; }
 
-
-    void merge(int left, int mid, int right);
-
-    void mergeSort();
-
-    void mergeSort(int left, int right);
 };

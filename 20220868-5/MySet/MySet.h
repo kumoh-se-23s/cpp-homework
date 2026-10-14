@@ -32,7 +32,7 @@ public:
 };
 
 
-std::ostream &operator<<(std::ostream &out, MySet &obj){
+inline std::ostream &operator<<(std::ostream &out, MySet &obj){
     
     for(int i = 0; i < obj.getData().getSize(); ++i){
         out << obj.getData()[i] << " ";
@@ -42,7 +42,7 @@ std::ostream &operator<<(std::ostream &out, MySet &obj){
 }
 
 
-std::istream &operator>>(std::istream &in, MySet &obj){
+inline std::istream &operator>>(std::istream &in, MySet &obj){
     
     int input = 0;
 
