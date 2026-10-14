@@ -568,7 +568,7 @@ TEST(MyStringGetlineTest, MixedWithExtraction) {
     in >> w;
     getline(in, line);
     expectStr(w, "word");
-    expectStr(line, "rest of line");
+    expectStr(line, " rest of line");
 }
 
 TEST(MyStringFindCollisionTest, CollisionIsRejectedByDirectComparison) {
@@ -590,4 +590,116 @@ TEST(MyStringFindCollisionTest, ThreeCharCollision) {
 TEST(MyStringFindCollisionTest, CollisionWithPos) {
     EXPECT_EQ(MyString("baah").find("ah", 1), 2);
     EXPECT_EQ(MyString("ba").find("ah", 0), -1);
+}
+
+
+// ---------- operator>> : EOF / 스트림 상태 ----------
+
+TEST(MyStringInputEofTest, LastWordWithoutTrailingWhitespaceSucceeds) {
+    std::istringstream in("abc");              // 끝에 공백/개행 없음
+    MyString a;
+    ASSERT_TRUE(static_cast<bool>(in >> a));   // 원래 코드: 여기서 실패
+    expectStr(a, "abc");
+}
+
+TEST(MyStringInputEofTest, WhileLoopReadsEveryWord) {
+    std::istringstream in("one two three");    // 마지막 단어 뒤 개행 없음
+    MyString w;
+    int count = 0;
+    while (in >> w) ++count;
+    EXPECT_EQ(count, 3);                       // 원래 코드: 2
+}
+
+TEST(MyStringInputEofTest, TrailingNewlineDoesNotAddExtraRead) {
+    std::istringstream in("one two\n");
+    MyString w;
+    int count = 0;
+    while (in >> w) ++count;
+    EXPECT_EQ(count, 2);
+}
+
+TEST(MyStringInputEofTest, ReadAfterLastWordFails) {
+    std::istringstream in("abc");
+    MyString a, b;
+    in >> a;
+    EXPECT_FALSE(static_cast<bool>(in >> b));
+    expectStr(b, "");                          // 실패해도 clear된 상태
+}
+
+TEST(MyStringInputEofTest, EmptyStreamFails) {
+    std::istringstream in("");
+    MyString a("old");
+    EXPECT_FALSE(static_cast<bool>(in >> a));
+    expectStr(a, "");
+}
+
+TEST(MyStringInputEofTest, WhitespaceOnlyFails) {
+    std::istringstream in("   \n\t  ");
+    MyString a;
+    EXPECT_FALSE(static_cast<bool>(in >> a));
+}
+
+TEST(MyStringInputEofTest, AlreadyFailedStreamStaysFailed) {
+    std::istringstream in("abc");
+    in.setstate(std::ios::failbit);
+    MyString a;
+    in >> a;
+    EXPECT_TRUE(in.fail());
+    // 원래 코드는 초기화 안 된 char를 putback함 (UB) -> sanitizer/valgrind에서만 잡힘
+}
+
+TEST(MyStringInputEofTest, NonAsciiBytesDoNotBreakIsspace) {
+    std::istringstream in("안녕 world");        // UTF-8 바이트는 signed char에서 음수
+    MyString a, b;
+    in >> a >> b;                              // MSVC 디버그: isspace assertion
+    expectStr(a, "안녕");
+    expectStr(b, "world");
+}
+
+// ---------- getline : EOF / 스트림 상태 ----------
+
+TEST(MyStringGetlineEofTest, LastLineWithoutDelimiterSucceeds) {
+    std::istringstream in("last line");
+    MyString s;
+    ASSERT_TRUE(static_cast<bool>(getline(in, s)));   // 원래 코드: 여기서 실패
+    expectStr(s, "last line");
+}
+
+TEST(MyStringGetlineEofTest, WhileLoopReadsEveryLine) {
+    std::istringstream in("line1\nline2");     // 마지막 줄 개행 없음
+    MyString s;
+    int count = 0;
+    while (getline(in, s)) ++count;
+    EXPECT_EQ(count, 2);                       // 원래 코드: 1
+}
+
+TEST(MyStringGetlineEofTest, TrailingNewlineDoesNotAddExtraLine) {
+    std::istringstream in("a\nb\n");
+    MyString s;
+    int count = 0;
+    while (getline(in, s)) ++count;
+    EXPECT_EQ(count, 2);                       // 3이 되면 안 됨
+}
+
+TEST(MyStringGetlineEofTest, EmptyStreamFails) {
+    std::istringstream in("");
+    MyString s("old");
+    EXPECT_FALSE(static_cast<bool>(getline(in, s)));
+    expectStr(s, "");
+}
+
+TEST(MyStringGetlineEofTest, LoneDelimiterIsOneEmptyLine) {
+    std::istringstream in("\n");
+    MyString s("old");
+    ASSERT_TRUE(static_cast<bool>(getline(in, s)));
+    expectStr(s, "");
+    EXPECT_FALSE(static_cast<bool>(getline(in, s)));
+}
+
+TEST(MyStringGetlineEofTest, CustomDelimiterLastTokenWithoutDelimiter) {
+    std::istringstream in("abc,def");
+    MyString s;
+    int count = 0;
+    while (getline(in, s, ',')) ++count;
+    EXPECT_EQ(count, 2);                       // 원래 코드: 1
 }
