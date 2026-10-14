@@ -63,7 +63,7 @@ void toCapitalize(char inputCharArr[], char resultCharArr[]) {
 int calculateCypherIndex(int charIndex, int inputGap, int cycleNum) {
     int tempNum = charIndex + inputGap;
 
-    while (tempNum > cycleNum) {
+    while (tempNum >= cycleNum || -tempNum >= cycleNum) {
         if (tempNum > 0) {
             tempNum = tempNum - cycleNum;
         }
@@ -71,38 +71,35 @@ int calculateCypherIndex(int charIndex, int inputGap, int cycleNum) {
             tempNum = tempNum + cycleNum;
         }
     }
-    return tempNum;
+
+
+    return tempNum + (tempNum < 0) * cycleNum;
 
 }
 
 void toEncrypted(char inputCharArr[], int inputGap, char resultCharArr[]) {
     constexpr int ALPHABET_CYCLE = 26;
-    constexpr int NUM_CYCLE = 9;
-    constexpr char CYPHER_TABLE[2][26] = {
-    {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'},
-    {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
-    };
+    constexpr int NUM_CYCLE = 10;
 
     int index{0};
 
     while (inputCharArr[index] != '\0') {
+        int cypherIndex;
+
         if('a' <= inputCharArr[index] && inputCharArr[index] <= 'z') {
-            int cypherIndex = calculateCypherIndex(inputCharArr[index] - 'a', inputGap, ALPHABET_CYCLE);
+            cypherIndex = calculateCypherIndex(inputCharArr[index] - 'a', inputGap, ALPHABET_CYCLE);
 
-            resultCharArr[index] = CYPHER_TABLE[0][cypherIndex];
-
+            resultCharArr[index] = static_cast<char> ('a' + cypherIndex);
         } 
         else if ('A' <= inputCharArr[index] && inputCharArr[index] <= 'Z') {
-            int cypherIndex = calculateCypherIndex(inputCharArr[index] - 'A', inputGap, ALPHABET_CYCLE);
+            cypherIndex = calculateCypherIndex(inputCharArr[index] - 'A', inputGap, ALPHABET_CYCLE);
 
-            resultCharArr[index] = CYPHER_TABLE[1][cypherIndex];
+            resultCharArr[index] = static_cast<char> ('A' + cypherIndex);
         }
         else if ('0' <= inputCharArr[index] && inputCharArr[index] <= '9') {
-            int cypherIndex = calculateCypherIndex(inputCharArr[index] - '0', inputGap, NUM_CYCLE);
+            cypherIndex = calculateCypherIndex(inputCharArr[index] - '0', inputGap, NUM_CYCLE);
 
-            resultCharArr[index] = (char) cypherIndex + '0';
+            resultCharArr[index] = static_cast<char> ('0' + cypherIndex);
         } 
         else {
             resultCharArr[index] = inputCharArr[index];
@@ -114,7 +111,7 @@ void toEncrypted(char inputCharArr[], int inputGap, char resultCharArr[]) {
 void printAlphabetCount(int alphabetCountArr[], int arrLength) {
     for(int index = 0 ; index < arrLength ; index++) {
         if(alphabetCountArr[index] > 0) {
-            cout << "[" << (char) ('a' + index )<< " : " << alphabetCountArr[index] << "]";
+            cout << "[" << (char) ('a' + index )<< ":" << alphabetCountArr[index] << "]";
             cout << " ";
         }
     }
