@@ -130,7 +130,7 @@ void run() {
     printSentence(resultSentenceArr, arrLength);
 
     toEncrypted(inputCharArr, inputGap, resultSentenceArr);
-    int arrLength = strlen(resultSentenceArr);
+    arrLength = strlen(resultSentenceArr);
     printSentence(resultSentenceArr, arrLength);
 }
 int main()
