@@ -13,7 +13,7 @@ int main() {
     int usingSize;
     int gap;
 
-    cin.getline(str, MAX_INPUT_LENGTH);
+    cin.getline(str, MAX_INPUT_LENGTH + 1);
     usingSize = strlen(str);
 
     cin >> gap;
@@ -142,7 +142,7 @@ static char moveAlphabet(char ch, int gap) {
         ascii -= 26;
 
     //대문자였으면 다시 올려서 리턴
-    char result = (char)ascii;
+    char result = static_cast<char>(ascii);
     if (isUpper(ch))
         return toUpper(result);
     return result;

@@ -25,10 +25,15 @@ public:
     int find(const MyString& subStr, int pos = 0) const; //int 이후부터 겹친 문자열 시작 위치 반환
     int find(const char subStr[], int pos = 0) const;
     MyString substr(int pos, int len) const;
-    static constexpr int MAX_SIZE = 15;
+
+    void append(char ch);
+
+    static constexpr int MAX_INPUT_SIZE = 15;
 private:
-    char str[MAX_SIZE + 1];
+    char str[MAX_INPUT_SIZE + 1];
     int usingSize = 0;
+
+
 };
 
 ostream& operator<<(ostream& out, const MyString& str);
