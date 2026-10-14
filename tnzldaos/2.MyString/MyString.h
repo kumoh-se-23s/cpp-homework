@@ -20,7 +20,7 @@ class MyString : public CharSequence {
 
         const MyString operator+(const char str2nd[]);
         const MyString operator+(const MyString& str2nd);
-        void operator=(const MyString &srcStr);
+        //void operator=(const MyString &srcStr);
         MyString& operator=(const char str2nd[]);
         char operator[](int pos);
 

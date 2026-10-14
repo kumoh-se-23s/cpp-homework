@@ -1,10 +1,6 @@
 #include "CharSequence.h"
 #include <cstring>
 
-CharSequence::~CharSequence() {
-
-}
-
 void CharSequence::fillArray(char inputArr[]) {
     for (int index = 0; inputArr[index] != '\0' && index < CAPACITY; ++index) {
         this->charArr[index] = inputArr[index];

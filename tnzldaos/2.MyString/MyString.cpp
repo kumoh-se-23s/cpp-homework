@@ -7,6 +7,13 @@ MyString::MyString() {
     }
 }
 
+MyString::MyString(char inputCharArr[]) {
+    for(int index = 0 ; index < strlen(inputCharArr) ; index++) {
+        charArr[index] = inputCharArr[index];
+    }
+}
+
+
 MyString::MyString(const MyString &srcStr) {
     for(int index = 0 ; index < srcStr.length() ; index++) {
         charArr[index] = srcStr.at(index);
