@@ -61,20 +61,20 @@ const MyString MyString::operator+(const MyString& str2nd) const {
     return *this + str2nd.charArray;
 }
 
-bool MyString::operator==(const MyString& str) const {
-    return !(*this != str);
+bool MyString::operator!=(const MyString& str) const {
+    return !(*this == str);
 }
 
-bool MyString::operator!=(const MyString& str) const {
+bool MyString::operator==(const MyString& str) const {
     if (str.size != this->size) {
-        return true;
+        return false;
     }
     for (int index = 0; charArray[index] != '\0'; ++index) {
         if (charArray[index] != str.charArray[index]) {
-            return true;
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 int MyString::find(const char subStr[], int pos) const {

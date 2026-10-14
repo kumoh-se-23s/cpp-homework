@@ -18,4 +18,7 @@ int main(){
     cout << str1 + str2 << endl;
     cout << str2 + "dgfg" << endl;
     cout << (str2 == str1) << endl;
+    MyString temp1 = "test";
+    MyString temp2 = "test";
+    cout << (temp1 == temp2) << endl;
 }
