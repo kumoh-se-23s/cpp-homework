@@ -207,4 +207,3 @@ istream& getline(istream& is, MyString& str, char delim) {
 
     return is;
 }
-
