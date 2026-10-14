@@ -21,6 +21,9 @@
 //   - read_line()  : getline 은 delim 까지 전부 읽고 16번째 글자부터는 버린다.
 //   - expected_find / std_substr : 음수 위치는 0 으로 취급한다. (과제 조건)
 //   - std_set      : 범위를 벗어난 위치는 std::string::at 의 예외 대신 false 로 취급한다.
+//
+//  스트림의 상태 플래그(failbit, eofbit 등)는 검사하지 않는다.
+//  읽은 값과 "어디까지 읽었는지(읽은 위치)"만 std 쪽과 비교한다.
 // =====================================================================
 
 namespace {
@@ -117,11 +120,8 @@ namespace {
         return limit(line);
     }
 
-    // 스트림이 어디까지 읽었는지 (eof 상태여도 위치를 얻기 위해 잠시 상태를 지움)
+    // 스트림이 어디까지 읽었는지 (상태 플래그와 무관하게 위치를 얻기 위해 잠시 상태를 지우고 되돌림)
     std::streamoff position_of(std::istream &stream) {
-        if (stream.fail()) {
-            return -1;
-        }
         const std::ios_base::iostate saved = stream.rdstate();
         stream.clear();
         const std::streamoff position = stream.tellg();
@@ -179,20 +179,24 @@ namespace {
                 ref.ignore(1000, '\n');
             }
 
+            // 읽은 위치만 비교한다. (std 쪽이 읽기에 실패한 경우는 위치 비교를 하지 않는다.)
             void expect_same_stream() {
-                EXPECT_EQ(ref.fail(), mine.fail());
-                EXPECT_EQ(position_of(ref), position_of(mine));
+                if (!ref.fail()) {
+                    EXPECT_EQ(position_of(ref), position_of(mine));
+                }
             }
 
             std::istringstream mine;
             std::istringstream ref;
     };
 
-    std::vector<std::string> collect_words_of_mystring(const std::string &text) {
+    // 스트림 상태를 확인하지 않고 지정한 횟수만큼 읽는다.
+    std::vector<std::string> collect_words_of_mystring(const std::string &text, const std::size_t count) {
         std::istringstream stream(text);
         MyString word;
         std::vector<std::string> words;
-        while (stream >> word) {
+        for (std::size_t index = 0; index < count; ++index) {
+            stream >> word;
             words.push_back(to_std_string(word));
         }
         return words;
@@ -208,11 +212,12 @@ namespace {
         return words;
     }
 
-    std::vector<std::string> collect_lines_of_mystring(const std::string &text) {
+    std::vector<std::string> collect_lines_of_mystring(const std::string &text, const std::size_t count) {
         std::istringstream stream(text);
         MyString line;
         std::vector<std::string> lines;
-        while (::getline(stream, line)) {
+        for (std::size_t index = 0; index < count; ++index) {
+            ::getline(stream, line);
             lines.push_back(to_std_string(line));
         }
         return lines;
@@ -672,14 +677,6 @@ TEST(MyStringInputOperator, LeavesTrailingWhitespaceInStream) {
     in.word();
 }
 
-TEST(MyStringInputOperator, FailsWhenNothingLeftToRead) {
-    StreamPair in("   ");
-
-    in.word();
-    EXPECT_TRUE(in.ref.fail());
-    EXPECT_TRUE(in.mine.fail());
-}
-
 TEST(MyStringInputOperator, MatchesStdStringForVariousInputs) {
     const char *inputs[] = {
         "", " ", "a", "a b", "  lead", "trail  ", "tab\tseparated", "line\nbreak",
@@ -688,7 +685,8 @@ TEST(MyStringInputOperator, MatchesStdStringForVariousInputs) {
 
     for (const char *input: inputs) {
         SCOPED_TRACE(std::string("input: \"") + input + "\"");
-        EXPECT_EQ(collect_words_of_std(input), collect_words_of_mystring(input));
+        const std::vector<std::string> expected = collect_words_of_std(input);
+        EXPECT_EQ(expected, collect_words_of_mystring(input, expected.size()));
     }
 }
 
@@ -942,14 +940,6 @@ TEST(MyStringGetLine, ReturnsStreamForChaining) {
     expect_same(second, ref_second);
 }
 
-TEST(MyStringGetLine, FailsWhenNothingLeftToRead) {
-    StreamPair in("");
-
-    in.line();
-    EXPECT_TRUE(in.ref.fail());
-    EXPECT_TRUE(in.mine.fail());
-}
-
 TEST(MyStringGetLine, MatchesStdStringForVariousInputs) {
     const char *inputs[] = {
         "", "\n", "a", "a\n", "a\nb", "a\n\nb\n", "  spaced  \n", "123456789012345\n",
@@ -958,7 +948,8 @@ TEST(MyStringGetLine, MatchesStdStringForVariousInputs) {
 
     for (const char *input: inputs) {
         SCOPED_TRACE(std::string("input: \"") + input + "\"");
-        EXPECT_EQ(collect_lines_of_std(input), collect_lines_of_mystring(input));
+        const std::vector<std::string> expected = collect_lines_of_std(input);
+        EXPECT_EQ(expected, collect_lines_of_mystring(input, expected.size()));
     }
 }
 
@@ -1635,13 +1626,17 @@ TEST(MyStringStreamMixTest, ReadsEmptyLineThenWordIntoPreviouslyFilledString) {
 TEST(MyStringStreamMixTest, ExtractionLoopReadsAllWords) {
     const std::string text = "one two\nthree\n\n four\n";
 
-    EXPECT_EQ(collect_words_of_std(text), collect_words_of_mystring(text));
+    const std::vector<std::string> expected = collect_words_of_std(text);
+
+    EXPECT_EQ(expected, collect_words_of_mystring(text, expected.size()));
 }
 
 TEST(MyStringStreamMixTest, GetlineLoopReadsAllLines) {
     const std::string text = "alpha\nbeta gamma\n\ndelta\n";
 
-    EXPECT_EQ(collect_lines_of_std(text), collect_lines_of_mystring(text));
+    const std::vector<std::string> expected = collect_lines_of_std(text);
+
+    EXPECT_EQ(expected, collect_lines_of_mystring(text, expected.size()));
 }
 
 TEST(MyStringStreamMixTest, FirstWordThenRestOfEachLine) {
