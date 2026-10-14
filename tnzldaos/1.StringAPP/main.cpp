@@ -2,16 +2,37 @@
 #include <cstring>
 using namespace std;
 
+char toUpper(char inputChar) {
+    if('a' <= inputChar && inputChar <= 'z') {
+        int alphabetIndex = inputChar - 'a';
+        return static_cast<char> ('A' + alphabetIndex);
+    } 
+    return inputChar;
+}
+
+char toLower(char inputChar) {
+    if('A' <= inputChar && inputChar <= 'Z') {
+        int alphabetIndex = inputChar - 'A';
+        return static_cast<char> ('a' + alphabetIndex);
+    } 
+    return inputChar;
+}
+
 void countLetters(char inputCharArr[], int resultCharArr[]) {
     int index{0};
 
     while (inputCharArr[index] != '\0') {
-        int resultArrIndex = tolower(inputCharArr[index]) - 'a';
+        int resultArrIndex;
 
-        if(0 <= resultArrIndex && resultArrIndex <= 25) {
+        if('a' <= inputCharArr[index] && inputCharArr[index] <= 'z') {
+            resultArrIndex = inputCharArr[index] - 'a';
             resultCharArr[resultArrIndex] = resultCharArr[resultArrIndex] + 1;
         }
-
+        else if ('A' <= inputCharArr[index] && inputCharArr[index] <= 'Z') {
+            resultArrIndex = inputCharArr[index] - 'A';
+            resultCharArr[resultArrIndex] = resultCharArr[resultArrIndex] + 1;
+        }
+        
         index++;
     }
 }
@@ -27,12 +48,12 @@ void toCapitalize(char inputCharArr[], char resultCharArr[]) {
             isFirst = !isFirst;
         } 
         else if (isFirst && 97 <= inputCharArr[index] && inputCharArr[index] <= 122) {
-            resultCharArr[index] = (char) toupper(inputCharArr[index]);
+            resultCharArr[index] = toUpper(inputCharArr[index]);
 
             isFirst = !isFirst;
         } 
         else {
-            resultCharArr[index] = (char) tolower(inputCharArr[index]);
+            resultCharArr[index] = toLower(inputCharArr[index]);
         }
 
         index++;
@@ -43,8 +64,6 @@ int calculateCypherIndex(int charIndex, int inputGap, int cycleNum) {
     int tempNum = charIndex + inputGap;
 
     while (tempNum > cycleNum) {
-        //tempNum = tempNum + (-(tempNum > 0)) * cycleNum;
-
         if (tempNum > 0) {
             tempNum = tempNum - cycleNum;
         }
