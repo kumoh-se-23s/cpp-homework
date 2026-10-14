@@ -37,15 +37,6 @@ class CharSequence : public Sequence<char> {
 
         int find(const char pattern[], int start) const;
 
-
-        CharSequence append_truncated(const char other[]) const;
-
-        CharSequence append_truncated(const CharSequence &other) const;
-
-        void copy_from_other(const char other[]);
-
-        void copy_from_other(const CharSequence &other);
-
     protected:
         char container[MAX_LENGTH + 1];
 
@@ -54,6 +45,14 @@ class CharSequence : public Sequence<char> {
         bool is_correct_index_bound(int index) const;
 
         void flush();
+
+        CharSequence append_truncated(const char other[]) const;
+
+        CharSequence append_truncated(const CharSequence &other) const;
+
+        void copy_from_other(const char other[]);
+
+        void copy_from_other(const CharSequence &other);
 
     private:
         constexpr static int HASH_MODULAR = 1e9 + 7;

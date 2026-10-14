@@ -106,7 +106,7 @@ TEST(MyStringInherited, CanBeUsedThroughCharSequenceReference) {
 TEST(MyStringInherited, AppendTruncatedWorks) {
     MyString string("1234567890");
 
-    CharSequence result = string.append_truncated("abcdefghij");
+    CharSequence result = string + "abcdefghij";
 
     EXPECT_EQ("1234567890abcde", to_std_string(result));
 }
@@ -565,7 +565,7 @@ TEST(MyStringGetLine, ReadsWholeLineIncludingSpaces) {
     std::istringstream input("hello world\n");
     MyString string;
 
-    get_line(input, string);
+    getline(input, string);
 
     EXPECT_EQ("hello world", to_std_string(string));
 }
@@ -574,7 +574,7 @@ TEST(MyStringGetLine, DoesNotIncludeDelimiter) {
     std::istringstream input("abc\n");
     MyString string;
 
-    get_line(input, string);
+    getline(input, string);
 
     EXPECT_EQ(3, string.length());
     EXPECT_EQ(std::string::npos, to_std_string(string).find('\n'));
@@ -585,8 +585,8 @@ TEST(MyStringGetLine, ConsumesDelimiterSoNextLineIsRead) {
     MyString a;
     MyString b;
 
-    get_line(input, a);
-    get_line(input, b);
+    getline(input, a);
+    getline(input, b);
 
     EXPECT_EQ("first", to_std_string(a));
     EXPECT_EQ("second", to_std_string(b));
@@ -596,7 +596,7 @@ TEST(MyStringGetLine, KeepsLeadingWhitespace) {
     std::istringstream input("  hi\n");
     MyString string;
 
-    get_line(input, string);
+    getline(input, string);
 
     EXPECT_EQ("  hi", to_std_string(string));
 }
@@ -606,8 +606,8 @@ TEST(MyStringGetLine, EmptyLineGivesEmptyString) {
     MyString a;
     MyString b;
 
-    get_line(input, a);
-    get_line(input, b);
+    getline(input, a);
+    getline(input, b);
 
     EXPECT_TRUE(a.empty());
     EXPECT_EQ("next", to_std_string(b));
@@ -617,7 +617,7 @@ TEST(MyStringGetLine, LastLineWithoutDelimiterIsRead) {
     std::istringstream input("only line");
     MyString string;
 
-    get_line(input, string);
+    getline(input, string);
 
     EXPECT_EQ("only line", to_std_string(string));
 }
@@ -628,9 +628,9 @@ TEST(MyStringGetLine, CustomDelimiter) {
     MyString b;
     MyString c;
 
-    get_line(input, a, ',');
-    get_line(input, b, ',');
-    get_line(input, c, ',');
+    getline(input, a, ',');
+    getline(input, b, ',');
+    getline(input, c, ',');
 
     EXPECT_EQ("a", to_std_string(a));
     EXPECT_EQ("b", to_std_string(b));
@@ -641,7 +641,7 @@ TEST(MyStringGetLine, NewlineIsNotDelimiterWhenCustomDelimiterGiven) {
     std::istringstream input("ab\ncd,ef");
     MyString string;
 
-    get_line(input, string, ',');
+    getline(input, string, ',');
 
     EXPECT_EQ("ab\ncd", to_std_string(string));
 }
@@ -651,8 +651,8 @@ TEST(MyStringGetLine, ExactlyMaxLengthIsKept) {
     MyString a;
     MyString b;
 
-    get_line(input, a);
-    get_line(input, b);
+    getline(input, a);
+    getline(input, b);
 
     EXPECT_EQ("123456789012345", to_std_string(a));
     EXPECT_EQ("next", to_std_string(b));
@@ -664,8 +664,8 @@ TEST(MyStringGetLine, DiscardsCharactersBeyondLimit) {
     MyString a;
     MyString b;
 
-    get_line(input, a);
-    get_line(input, b);
+    getline(input, a);
+    getline(input, b);
 
     EXPECT_EQ(CharSequence::MAX_LENGTH, a.length());
     EXPECT_EQ("123456789012345", to_std_string(a));
@@ -676,7 +676,7 @@ TEST(MyStringGetLine, OverwritesExistingContent) {
     std::istringstream input("new\n");
     MyString string("previous");
 
-    get_line(input, string);
+    getline(input, string);
 
     EXPECT_EQ("new", to_std_string(string));
 }
@@ -686,8 +686,8 @@ TEST(MyStringGetLine, ReturnsStreamForChaining) {
     MyString first;
     MyString second;
 
-    std::istream &returned = get_line(input, first);
-    get_line(returned, second);
+    std::istream &returned = getline(input, first);
+    getline(returned, second);
 
     EXPECT_EQ("a", to_std_string(first));
     EXPECT_EQ("b", to_std_string(second));
@@ -701,7 +701,7 @@ TEST(MyStringGetLine, MixesWithExtractionOperator) {
 
     input >> word;
     input.get();    // >>가 남긴 개행 소비
-    get_line(input, line);
+    getline(input, line);
 
     EXPECT_EQ("word", to_std_string(word));
     EXPECT_EQ("rest of line", to_std_string(line));
@@ -1113,7 +1113,7 @@ TEST(MyStringFind, WorksOnGetLineString) {
     std::istringstream input("find in line\n");
     MyString line;
 
-    get_line(input, line);
+    getline(input, line);
 
     EXPECT_EQ(1, line.find(MyString("in"), 0));
 }
@@ -1176,4 +1176,482 @@ TEST(MyStringInheritedFind, BaseAndDerivedFindAgree) {
             }
         }
     }
+}
+// operator>> 와 getline 을 하나의 스트림에서 함께 사용하는 경우를 검사한다.
+// 규칙 (기존 MyString 과제 조건과 동일)
+//  - >> : 앞쪽 공백을 건너뛰고 공백 전까지 읽는다. 15글자를 넘는 글자는 스트림에 남긴다.
+//  - getline : delim 까지 읽고 delim 은 소비한다. 16번째 글자부터는 버린다.
+//  - >> 는 뒤따르는 공백(개행 포함)을 소비하지 않는다.
+
+// ---------------------------------------------------------------------
+// >> 다음에 getline
+// ---------------------------------------------------------------------
+
+TEST(MyStringStreamMixTest, GetlineAfterExtractionReadsRestOfSameLine) {
+    // >> 가 단어 뒤 공백을 소비하지 않으므로 getline 은 그 공백부터 읽는다.
+    std::istringstream input("word rest of line\nnext\n");
+    MyString word;
+    MyString rest;
+
+    input >> word;
+    ::getline(input, rest);
+
+    EXPECT_EQ("word", to_std_string(word));
+    EXPECT_EQ(" rest of line", to_std_string(rest));
+}
+
+TEST(MyStringStreamMixTest, GetlineRightAfterExtractionAtLineEndGivesEmptyString) {
+    // >> 가 개행을 남기므로 바로 이어지는 getline 은 빈 줄을 읽는다.
+    std::istringstream input("word\nrest\n");
+    MyString word;
+    MyString empty_line;
+    MyString next_line;
+
+    input >> word;
+    ::getline(input, empty_line);
+    ::getline(input, next_line);
+
+    EXPECT_EQ("word", to_std_string(word));
+    EXPECT_TRUE(empty_line.empty());
+    EXPECT_EQ("rest", to_std_string(next_line));
+}
+
+TEST(MyStringStreamMixTest, GetlineAfterExtractionAndManualNewlineSkip) {
+    std::istringstream input("word\nrest of line\n");
+    MyString word;
+    MyString line;
+
+    input >> word;
+    input.get();    // >> 가 남긴 개행 소비
+    ::getline(input, line);
+
+    EXPECT_EQ("word", to_std_string(word));
+    EXPECT_EQ("rest of line", to_std_string(line));
+}
+
+TEST(MyStringStreamMixTest, GetlineAfterExtractionAndIgnore) {
+    std::istringstream input("word\nrest of line\n");
+    MyString word;
+    MyString line;
+
+    input >> word;
+    input.ignore(1000, '\n');
+    ::getline(input, line);
+
+    EXPECT_EQ("rest of line", to_std_string(line));
+}
+
+TEST(MyStringStreamMixTest, ExtractionThenGetlineThenExtraction) {
+    std::istringstream input("first second\nthird fourth\n");
+    MyString a;
+    MyString b;
+    MyString c;
+
+    input >> a;
+    ::getline(input, b);    // " second"
+    input >> c;
+
+    EXPECT_EQ("first", to_std_string(a));
+    EXPECT_EQ(" second", to_std_string(b));
+    EXPECT_EQ("third", to_std_string(c));
+}
+
+// ---------------------------------------------------------------------
+// getline 다음에 >>
+// ---------------------------------------------------------------------
+
+TEST(MyStringStreamMixTest, ExtractionAfterGetlineReadsNextLineWord) {
+    std::istringstream input("whole line here\nword other\n");
+    MyString line;
+    MyString word;
+
+    ::getline(input, line);
+    input >> word;
+
+    EXPECT_EQ("whole line here", to_std_string(line));
+    EXPECT_EQ("word", to_std_string(word));
+}
+
+TEST(MyStringStreamMixTest, ExtractionSkipsEmptyLinesLeftByGetline) {
+    std::istringstream input("line\n\n\n   word\n");
+    MyString line;
+    MyString word;
+
+    ::getline(input, line);
+    input >> word;
+
+    EXPECT_EQ("line", to_std_string(line));
+    EXPECT_EQ("word", to_std_string(word));
+}
+
+TEST(MyStringStreamMixTest, AlternatesBetweenGetlineAndExtraction) {
+    std::istringstream input("title line\nkeyword extra\nsecond title\nkeyword2\n");
+    MyString title1;
+    MyString keyword1;
+    MyString title2;
+    MyString keyword2;
+
+    ::getline(input, title1);
+    input >> keyword1;
+    input.ignore(1000, '\n');
+    ::getline(input, title2);
+    input >> keyword2;
+
+    EXPECT_EQ("title line", to_std_string(title1));
+    EXPECT_EQ("keyword", to_std_string(keyword1));
+    EXPECT_EQ("second title", to_std_string(title2));
+    EXPECT_EQ("keyword2", to_std_string(keyword2));
+}
+
+// ---------------------------------------------------------------------
+// 길이 제한이 걸린 경우의 조합
+// ---------------------------------------------------------------------
+
+// 과제 조건: >> 는 넘친 글자를 스트림에 남기고, getline 이 그 나머지를 읽는다.
+TEST(MyStringStreamMixTest, OverflowLeftByExtractionIsReadByGetline) {
+    std::istringstream input("1234567890123456789\nnext\n");
+    MyString head;
+    MyString tail;
+    MyString next;
+
+    input >> head;
+    ::getline(input, tail);
+    ::getline(input, next);
+
+    EXPECT_EQ("123456789012345", to_std_string(head));
+    EXPECT_EQ("6789", to_std_string(tail));
+    EXPECT_EQ("next", to_std_string(next));
+}
+
+TEST(MyStringStreamMixTest, OverflowLeftByExtractionIsReadByNextExtraction) {
+    std::istringstream input("1234567890123456789 word\n");
+    MyString head;
+    MyString tail;
+    MyString word;
+
+    input >> head >> tail >> word;
+
+    EXPECT_EQ("123456789012345", to_std_string(head));
+    EXPECT_EQ("6789", to_std_string(tail));
+    EXPECT_EQ("word", to_std_string(word));
+}
+
+// 과제 조건: getline 은 16번째 글자부터 버리고 delim 까지 소비한다.
+TEST(MyStringStreamMixTest, GetlineDiscardsOverflowThenExtractionReadsNextLine) {
+    std::istringstream input("1234567890123456789\nword\n");
+    MyString line;
+    MyString word;
+
+    ::getline(input, line);
+    input >> word;
+
+    EXPECT_EQ("123456789012345", to_std_string(line));
+    EXPECT_EQ("word", to_std_string(word));
+}
+
+TEST(MyStringStreamMixTest, ExactlyMaxLengthWordThenGetlineGivesEmptyRemainder) {
+    std::istringstream input("123456789012345\nnext\n");
+    MyString word;
+    MyString remainder;
+    MyString next;
+
+    input >> word;
+    ::getline(input, remainder);
+    ::getline(input, next);
+
+    EXPECT_EQ("123456789012345", to_std_string(word));
+    EXPECT_TRUE(remainder.empty());
+    EXPECT_EQ("next", to_std_string(next));
+}
+
+TEST(MyStringStreamMixTest, ExactlyMaxLengthLineThenExtraction) {
+    std::istringstream input("123456789012345\nword\n");
+    MyString line;
+    MyString word;
+
+    ::getline(input, line);
+    input >> word;
+
+    EXPECT_EQ("123456789012345", to_std_string(line));
+    EXPECT_EQ("word", to_std_string(word));
+}
+
+// ---------------------------------------------------------------------
+// 구분자(delim) 지정
+// ---------------------------------------------------------------------
+
+TEST(MyStringStreamMixTest, CustomDelimiterWithExtraction) {
+    std::istringstream input("a,b c,d");
+    MyString first;
+    MyString second;
+    MyString third;
+
+    ::getline(input, first, ',');    // "a"
+    input >> second;                 // "b"
+    ::getline(input, third, ',');    // " c"
+
+    EXPECT_EQ("a", to_std_string(first));
+    EXPECT_EQ("b", to_std_string(second));
+    EXPECT_EQ(" c", to_std_string(third));
+}
+
+TEST(MyStringStreamMixTest, CustomDelimiterConsumesDelimiterBeforeExtraction) {
+    std::istringstream input("key=value other");
+    MyString key;
+    MyString value;
+    MyString other;
+
+    ::getline(input, key, '=');
+    input >> value >> other;
+
+    EXPECT_EQ("key", to_std_string(key));
+    EXPECT_EQ("value", to_std_string(value));
+    EXPECT_EQ("other", to_std_string(other));
+}
+
+TEST(MyStringStreamMixTest, NewlineIsPlainCharacterForCustomDelimiter) {
+    std::istringstream input("ab\ncd,ef gh");
+    MyString first;
+    MyString second;
+
+    ::getline(input, first, ',');
+    input >> second;
+
+    EXPECT_EQ("ab\ncd", to_std_string(first));
+    EXPECT_EQ("ef", to_std_string(second));
+}
+
+// ---------------------------------------------------------------------
+// 다른 입력 방식과의 조합
+// ---------------------------------------------------------------------
+
+TEST(MyStringStreamMixTest, IntegerExtractionThenGetline) {
+    std::istringstream input("42\nhello world\n");
+    int number = 0;
+    MyString line;
+
+    input >> number;
+    input.ignore(1000, '\n');
+    ::getline(input, line);
+
+    EXPECT_EQ(42, number);
+    EXPECT_EQ("hello world", to_std_string(line));
+}
+
+TEST(MyStringStreamMixTest, GetlineThenIntegerExtraction) {
+    std::istringstream input("hello world\n42\n");
+    MyString line;
+    int number = 0;
+
+    ::getline(input, line);
+    input >> number;
+
+    EXPECT_EQ("hello world", to_std_string(line));
+    EXPECT_EQ(42, number);
+}
+
+TEST(MyStringStreamMixTest, MyStringAndStdStringCanShareStream) {
+    std::istringstream input("mine yours\nrest of line\n");
+    MyString mine;
+    std::string yours;
+    MyString line;
+
+    input >> mine >> yours;
+    input.ignore(1000, '\n');
+    ::getline(input, line);
+
+    EXPECT_EQ("mine", to_std_string(mine));
+    EXPECT_EQ("yours", yours);
+    EXPECT_EQ("rest of line", to_std_string(line));
+}
+
+// ---------------------------------------------------------------------
+// 반환값 / 체이닝
+// ---------------------------------------------------------------------
+
+TEST(MyStringStreamMixTest, GetlineCanTakeResultOfExtraction) {
+    std::istringstream input("word tail\n");
+    MyString word;
+    MyString tail;
+
+    ::getline(input >> word, tail);
+
+    EXPECT_EQ("word", to_std_string(word));
+    EXPECT_EQ(" tail", to_std_string(tail));
+}
+
+TEST(MyStringStreamMixTest, ExtractionCanTakeResultOfGetline) {
+    std::istringstream input("line one\nword\n");
+    MyString line;
+    MyString word;
+
+    ::getline(input, line) >> word;
+
+    EXPECT_EQ("line one", to_std_string(line));
+    EXPECT_EQ("word", to_std_string(word));
+}
+
+TEST(MyStringStreamMixTest, BothReturnTheSameStream) {
+    std::istringstream input("a b\nc\n");
+    MyString a;
+    MyString b;
+
+    std::istream &after_extraction = (input >> a);
+    std::istream &after_getline = ::getline(input, b);
+
+    EXPECT_EQ(&input, &after_extraction);
+    EXPECT_EQ(&input, &after_getline);
+}
+
+// ---------------------------------------------------------------------
+// 덮어쓰기 / 반복 읽기
+// ---------------------------------------------------------------------
+
+TEST(MyStringStreamMixTest, SameVariableIsOverwrittenByEachRead) {
+    std::istringstream input("first\nsecond line\nthird\n");
+    MyString value;
+
+    input >> value;
+    EXPECT_EQ("first", to_std_string(value));
+
+    input >> value;
+    EXPECT_EQ("second", to_std_string(value));
+
+    ::getline(input, value);
+    EXPECT_EQ(" line", to_std_string(value));
+
+    ::getline(input, value);
+    EXPECT_EQ("third", to_std_string(value));
+}
+
+TEST(MyStringStreamMixTest, ReadsEmptyLineThenWordIntoPreviouslyFilledString) {
+    std::istringstream input("\nword\n");
+    MyString value("previous");
+
+    ::getline(input, value);
+    EXPECT_TRUE(value.empty());
+
+    input >> value;
+    EXPECT_EQ("word", to_std_string(value));
+}
+
+// 가정: 읽을 내용이 더 없으면 >> 와 getline 모두 스트림을 실패 상태로 만든다. (std 와 동일)
+TEST(MyStringStreamMixTest, ExtractionLoopReadsAllWords) {
+    std::istringstream input("one two\nthree\n\n four\n");
+    MyString word;
+    std::vector<std::string> words;
+
+    while (input >> word) {
+        words.push_back(to_std_string(word));
+    }
+
+    ASSERT_EQ(4u, words.size());
+    EXPECT_EQ("one", words[0]);
+    EXPECT_EQ("two", words[1]);
+    EXPECT_EQ("three", words[2]);
+    EXPECT_EQ("four", words[3]);
+}
+
+TEST(MyStringStreamMixTest, GetlineLoopReadsAllLines) {
+    std::istringstream input("alpha\nbeta gamma\n\ndelta\n");
+    MyString line;
+    std::vector<std::string> lines;
+
+    while (::getline(input, line)) {
+        lines.push_back(to_std_string(line));
+    }
+
+    ASSERT_EQ(4u, lines.size());
+    EXPECT_EQ("alpha", lines[0]);
+    EXPECT_EQ("beta gamma", lines[1]);
+    EXPECT_EQ("", lines[2]);
+    EXPECT_EQ("delta", lines[3]);
+}
+
+TEST(MyStringStreamMixTest, FirstWordThenRestOfEachLine) {
+    // 각 줄을 "명령어 + 나머지" 로 나누어 읽는 전형적인 사용 예
+    std::istringstream input("add apple pie\nremove old\n");
+    MyString command;
+    MyString argument;
+    std::vector<std::string> commands;
+    std::vector<std::string> arguments;
+
+    while (input >> command) {
+        ::getline(input, argument);
+        commands.push_back(to_std_string(command));
+        arguments.push_back(to_std_string(argument));
+    }
+
+    ASSERT_EQ(2u, commands.size());
+    EXPECT_EQ("add", commands[0]);
+    EXPECT_EQ(" apple pie", arguments[0]);
+    EXPECT_EQ("remove", commands[1]);
+    EXPECT_EQ(" old", arguments[1]);
+}
+
+// ---------------------------------------------------------------------
+// 읽은 결과의 사용
+// ---------------------------------------------------------------------
+
+TEST(MyStringStreamMixTest, ReadValuesCanBeConcatenated) {
+    std::istringstream input("hello\nworld\n");
+    MyString first;
+    MyString second;
+
+    input >> first;
+    input.get();
+    ::getline(input, second);
+
+    EXPECT_EQ("hello world", to_std_string(first + " " + second));
+}
+
+TEST(MyStringStreamMixTest, ReadValuesCanBeCompared) {
+    std::istringstream input("same\nsame\n");
+    MyString from_extraction;
+    MyString from_getline;
+
+    input >> from_extraction;
+    input.get();
+    ::getline(input, from_getline);
+
+    EXPECT_TRUE(from_extraction == from_getline);
+}
+
+TEST(MyStringStreamMixTest, ReadValuesCanBePrinted) {
+    std::istringstream input("alpha beta gamma\n");
+    MyString word;
+    MyString rest;
+    std::ostringstream output;
+
+    input >> word;
+    ::getline(input, rest);
+    output << word << "|" << rest;
+
+    EXPECT_EQ("alpha| beta gamma", output.str());
+}
+
+TEST(MyStringStreamMixTest, ReadValuesCanBeSubstringed) {
+    std::istringstream input("key: value\n");
+    MyString key;
+    MyString rest;
+
+    input >> key;
+    ::getline(input, rest);
+
+    EXPECT_EQ("value", to_std_string(rest.substr(1, 5)));
+}
+
+TEST(MyStringStreamMixTest, LHMsTest) {
+    std::istringstream input("  123 456\n789\n");
+    MyString str1, str2, str3, str4;
+
+    input >> str1;
+    input >> str2;
+    getline(input, str3);
+    getline(input, str4);
+
+    EXPECT_EQ("123", to_std_string(str1));
+    EXPECT_EQ("456", to_std_string(str2));
+    EXPECT_EQ("", to_std_string(str3));
+    EXPECT_EQ("789", to_std_string(str4));
 }
