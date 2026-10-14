@@ -223,6 +223,16 @@ namespace {
         return lines;
     }
 
+    std::vector<std::string> collect_lines_of_std_with(const std::string &text, const char delim) {
+        std::istringstream stream(text);
+        std::vector<std::string> lines;
+        std::string line;
+        while (std::getline(stream, line, delim)) {
+            lines.push_back(limit(line));
+        }
+        return lines;
+    }
+
     std::vector<std::string> collect_lines_of_std(const std::string &text) {
         std::istringstream stream(text);
         std::vector<std::string> lines;
@@ -1709,4 +1719,386 @@ TEST(MyStringStreamMixTest, LHMsTest) {
     in.word(str2);
     in.line(str3);
     in.line(str4);
+}
+
+// =====================================================================
+// EOF 검증 (스트림 상태 플래그는 검사하지 않는다)
+//
+//  입력의 끝(EOF)에 도달했을 때, 그리고 끝을 지나서 더 읽으려 할 때
+//  >> 와 getline 이 std 와 똑같이 동작하는지 확인한다.
+//  비교하는 것은 아래 두 가지뿐이다.
+//   1. 읽기에 성공한 경우, 읽은 값 (std 쪽에서 읽기에 실패한 경우는 대상 문자열을 비교하지 않는다.
+//      std 는 이미 EOF/실패 상태인 스트림에서는 대상 문자열을 건드리지 않는데, 이것은 상태 플래그에 따른 동작이기 때문이다.)
+//   2. 읽기 후 스트림이 어디에 있는지 (읽은 위치) - 실패한 읽기에서도 비교한다.
+//  eof / fail / bad / good 은 확인하지 않는다.
+//
+//  반복은 스트림 상태가 아니라 "정해진 횟수"로 한다.
+//  std 쪽에서 읽을 수 있는 개수를 구한 뒤, 그보다 몇 번 더 읽어서 끝 이후의 동작까지 비교한다.
+// =====================================================================
+
+namespace {
+    const char *PREVIOUS = "previous";
+
+    // 끝을 지난 뒤에도 읽어 보기 위해 읽을 수 있는 개수보다 더 읽는 횟수
+    const std::size_t EXTRA_READS = 3;
+
+    // 읽은 위치 비교. 실패한 읽기에서도 std 와 같은 위치에 있어야 한다.
+    void expect_same_position(StreamPair &in) {
+        EXPECT_EQ(position_of(in.ref), position_of(in.mine));
+    }
+
+    // >> 한 번: 대상 문자열의 값과 읽은 위치를 std 쪽과 비교
+    void word_checked(StreamPair &in) {
+        MyString target(PREVIOUS);
+        std::string expected = PREVIOUS;
+
+        in.mine >> target;
+        in.ref >> std::setw(static_cast<int>(MAX_LEN)) >> expected;
+
+        if (!in.ref.fail()) {
+            expect_same(target, expected);
+        }
+        expect_same_position(in);
+    }
+
+    // getline 한 번: 대상 문자열의 값과 읽은 위치를 std 쪽과 비교
+    void line_checked(StreamPair &in, const char delim = '\n') {
+        MyString target(PREVIOUS);
+        std::string expected = PREVIOUS;
+
+        ::getline(in.mine, target, delim);
+        std::getline(in.ref, expected, delim);
+        expected = limit(expected);
+
+        if (!in.ref.fail()) {
+            expect_same(target, expected);
+        }
+        expect_same_position(in);
+    }
+
+    // 입력 전체를 단어 단위로 끝까지 읽고, 끝을 지나서도 몇 번 더 읽으며 매번 std 와 비교
+    void expect_words_until_and_past_eof(const std::string &text) {
+        const std::size_t readable = collect_words_of_std(text).size();
+        StreamPair in(text);
+
+        for (std::size_t count = 0; count < readable + EXTRA_READS; ++count) {
+            SCOPED_TRACE("word read #" + std::to_string(count + 1));
+            word_checked(in);
+        }
+    }
+
+    // 입력 전체를 줄 단위로 끝까지 읽고, 끝을 지나서도 몇 번 더 읽으며 매번 std 와 비교
+    void expect_lines_until_and_past_eof(const std::string &text, const char delim = '\n') {
+        const std::size_t readable = collect_lines_of_std_with(text, delim).size();
+        StreamPair in(text);
+
+        for (std::size_t count = 0; count < readable + EXTRA_READS; ++count) {
+            SCOPED_TRACE("line read #" + std::to_string(count + 1));
+            line_checked(in, delim);
+        }
+    }
+}
+
+// ---------- operator>> 와 EOF ----------
+
+// 단어가 입력 끝에서 끝나는 경우
+TEST(MyStringEofTest, ExtractionWordEndingAtEof) {
+    StreamPair in("hello");
+
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ExtractionWordFollowedBySpace) {
+    StreamPair in("hello ");
+
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ExtractionWordFollowedByNewline) {
+    StreamPair in("hello\n");
+
+    word_checked(in);
+}
+
+// 마지막 단어 이후에 더 읽으려는 경우
+TEST(MyStringEofTest, ExtractionAfterLastWord) {
+    StreamPair in("hello");
+
+    word_checked(in);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ExtractionAfterLastWordWithTrailingNewline) {
+    StreamPair in("hello\n");
+
+    word_checked(in);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ExtractionOnEmptyInput) {
+    StreamPair in("");
+
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ExtractionOnWhitespaceOnlyInput) {
+    StreamPair in(" \n\t  \n");
+
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, RepeatedExtractionPastEnd) {
+    StreamPair in("a");
+
+    for (int count = 0; count < 5; ++count) {
+        word_checked(in);
+    }
+}
+
+TEST(MyStringEofTest, ExactlyMaxLengthWordAtEof) {
+    StreamPair in("123456789012345");
+
+    word_checked(in);
+    word_checked(in);
+}
+
+// 15글자 + 남은 글자("6789") 순서로 읽히고, 그 뒤에 끝에 도달한다.
+TEST(MyStringEofTest, OverflowWordAtEof) {
+    StreamPair in("1234567890123456789");
+
+    word_checked(in);
+    word_checked(in);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, OverflowWordFollowedByNewlineAtEnd) {
+    StreamPair in("1234567890123456789\n");
+
+    word_checked(in);
+    word_checked(in);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ReadingAgainAfterSeekToBeginning) {
+    StreamPair in("abc");
+
+    word_checked(in);
+    in.mine.clear();
+    in.ref.clear();
+    in.mine.seekg(0);
+    in.ref.seekg(0);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ExtractionUntilAndPastEofForVariousInputs) {
+    const char *inputs[] = {
+        "", " ", "\n", "a", "a ", "a b", "a b\n", "a b  \n\n", "  lead", "one\ntwo\nthree",
+        "123456789012345", "1234567890123456789", "12345678901234567890 x"
+    };
+
+    for (const char *input: inputs) {
+        SCOPED_TRACE(std::string("input: \"") + input + "\"");
+        expect_words_until_and_past_eof(input);
+    }
+}
+
+// ---------- getline 과 EOF ----------
+
+// 구분자 없이 입력이 끝나는 마지막 줄
+TEST(MyStringEofTest, GetlineLastLineWithoutDelimiter) {
+    StreamPair in("only line");
+
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineLineWithDelimiterAtEnd) {
+    StreamPair in("line\n");
+
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineAfterLastLine) {
+    StreamPair in("line\n");
+
+    line_checked(in);
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineOnEmptyInput) {
+    StreamPair in("");
+
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineOnlyNewline) {
+    StreamPair in("\n");
+
+    line_checked(in);    // 빈 줄
+    line_checked(in);    // 읽을 게 없음
+}
+
+TEST(MyStringEofTest, GetlineEmptyLastLine) {
+    StreamPair in("a\n\n");
+
+    line_checked(in);
+    line_checked(in);
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, RepeatedGetlinePastEnd) {
+    StreamPair in("a\n");
+
+    for (int count = 0; count < 5; ++count) {
+        line_checked(in);
+    }
+}
+
+TEST(MyStringEofTest, GetlineExactlyMaxLengthLastLine) {
+    StreamPair in("123456789012345");
+
+    line_checked(in);
+    line_checked(in);
+}
+
+// 16번째 글자부터 버려도 입력의 끝까지는 모두 소비해야 한다.
+TEST(MyStringEofTest, GetlineLongLastLineWithoutDelimiter) {
+    StreamPair in("1234567890123456789");
+
+    line_checked(in);
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineLongLineWithDelimiterAtEnd) {
+    StreamPair in("1234567890123456789\n");
+
+    line_checked(in);
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineCustomDelimiterAtEnd) {
+    StreamPair in("a,b,");
+
+    line_checked(in, ',');
+    line_checked(in, ',');
+    line_checked(in, ',');
+}
+
+TEST(MyStringEofTest, GetlineCustomDelimiterMissingAtEnd) {
+    StreamPair in("a,b");
+
+    line_checked(in, ',');
+    line_checked(in, ',');
+    line_checked(in, ',');
+}
+
+TEST(MyStringEofTest, GetlineCustomDelimiterNeverFound) {
+    StreamPair in("no delimiter here");
+
+    line_checked(in, ',');
+    line_checked(in, ',');
+}
+
+TEST(MyStringEofTest, GetlineUntilAndPastEofForVariousInputs) {
+    const char *inputs[] = {
+        "", "\n", "a", "a\n", "a\nb", "a\n\nb\n", "\n\n\n", "  spaced  \n", "123456789012345",
+        "123456789012345\n", "1234567890123456\nx\n", "12345678901234567890123\nshort\n\n", "no newline at end"
+    };
+
+    for (const char *input: inputs) {
+        SCOPED_TRACE(std::string("input: \"") + input + "\"");
+        expect_lines_until_and_past_eof(input);
+    }
+}
+
+TEST(MyStringEofTest, GetlineWithCustomDelimiterUntilAndPastEof) {
+    const char *inputs[] = {"", ",", "a", "a,", "a,b", "a,,b,", ",,,", "x\ny,z"};
+
+    for (const char *input: inputs) {
+        SCOPED_TRACE(std::string("input: \"") + input + "\"");
+        expect_lines_until_and_past_eof(input, ',');
+    }
+}
+
+// ---------- >> 와 getline 을 섞어 쓸 때의 EOF ----------
+
+// >> 로 마지막 단어를 읽어 끝에 도달한 뒤 이어서 getline 하는 경우
+TEST(MyStringEofTest, GetlineAfterExtractionReachedEnd) {
+    StreamPair in("word");
+
+    word_checked(in);
+    line_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineAfterExtractionLeavesEmptyLineBeforeEnd) {
+    StreamPair in("word\n");
+
+    word_checked(in);
+    line_checked(in);    // >> 가 남긴 개행 때문에 빈 줄
+    line_checked(in);    // 그 다음은 끝
+}
+
+TEST(MyStringEofTest, ExtractionAfterGetlineReachedEnd) {
+    StreamPair in("line");
+
+    line_checked(in);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, ExtractionAfterGetlineOfLastLineWithNewline) {
+    StreamPair in("line\n");
+
+    line_checked(in);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, MixedReadsUntilAndPastEnd) {
+    StreamPair in("a b\nc d e\nf");
+
+    word_checked(in);
+    word_checked(in);
+    line_checked(in);
+    line_checked(in);
+    word_checked(in);
+    line_checked(in);
+    line_checked(in);
+    word_checked(in);
+}
+
+TEST(MyStringEofTest, GetlineAfterIntegerExtractionAtEnd) {
+    StreamPair in("42");
+    int mine_number = 0;
+    int ref_number = 0;
+
+    in.mine >> mine_number;
+    in.ref >> ref_number;
+    EXPECT_EQ(ref_number, mine_number);
+
+    line_checked(in);
+}
+
+// ---------- 끝 위치 확인 ----------
+
+// 모두 읽은 뒤 다음에 읽을 글자가 없어야 한다. (peek 결과가 std 와 같아야 한다.)
+TEST(MyStringEofTest, NothingLeftAfterConsumingEverything) {
+    StreamPair in("last\n");
+
+    word_checked(in);
+    in.get();    // >> 가 남긴 개행 소비
+
+    const int ref_next = in.ref.peek();
+    const int mine_next = in.mine.peek();
+
+    EXPECT_EQ(ref_next, mine_next);
+    EXPECT_EQ(std::char_traits<char>::eof(), mine_next);
+}
+
+TEST(MyStringEofTest, ReadingToEndConsumesWholeInput) {
+    StreamPair in("ab");
+
+    word_checked(in);
+    in.mine.clear();
+    in.ref.clear();
+
+    EXPECT_EQ(in.ref.peek(), in.mine.peek());
+    EXPECT_EQ(std::char_traits<char>::eof(), in.mine.peek());
 }
