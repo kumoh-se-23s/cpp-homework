@@ -1,3 +1,5 @@
+#pragma once
+
 class CharSequence {
     public:
     protected:
@@ -8,11 +10,16 @@ class CharSequence {
         void fillArray(char inputArr[]);
 
     public:
+        CharSequence();
+        CharSequence(char inputArr[]);
+
         ~CharSequence() = default;
 
         void setChar(char inputChar, int pos);
+        void appendChar(char inputChar);
 
         virtual int length() const;
+        virtual void incrementLength();
         virtual bool empty() const;
         virtual char at(int pos) const;
 

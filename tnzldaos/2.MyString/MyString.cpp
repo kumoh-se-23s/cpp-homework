@@ -1,15 +1,18 @@
 #include "MyString.h"
-#include <cstring>
 
+//배열 초기화
 MyString::MyString() {
-    for(int index = 0; index < strlen(charArr) ; index++) {
+    for(int index = 0; index < CAPACITY ; index++) {
         charArr[index];
     }
+    arrLength = 0;
 }
 
+//
 MyString::MyString(char inputCharArr[]) {
-    for(int index = 0 ; index < strlen(inputCharArr) ; index++) {
+    for(int index = 0 ; index < CAPACITY && inputCharArr[index] != '\0'; index++) {
         charArr[index] = inputCharArr[index];
+        arrLength++;
     }
 }
 
@@ -17,6 +20,7 @@ MyString::MyString(char inputCharArr[]) {
 MyString::MyString(const MyString &srcStr) {
     for(int index = 0 ; index < srcStr.length() ; index++) {
         charArr[index] = srcStr.at(index);
+        arrLength++;
     }
 }
 
@@ -43,13 +47,11 @@ int MyString::find(const MyString &subStr, int pos) const {
 MyString MyString::substr(int pos, int len) {
     MyString myString = MyString();
 
-    int inputCharArrIndex = 0;
     pos = pos >= 0 ? pos : 0;
 
     if(pos <= arrLength) {
-        for(int index = pos ; index <= pos + len ; index++) {
-            myString.setChar(charArr[index], inputCharArrIndex);
-            inputCharArrIndex++;
+        for(int index = pos ; index < pos + len ; index++) {
+            myString.appendChar(charArr[index]);
         }
     } 
     return myString;
@@ -65,6 +67,8 @@ const MyString MyString::operator+(const char str2nd[]) {
         resultMyString.charArr[index] = str2nd[inputIndex];
         inputIndex++;
     }
+
+    return resultMyString;
 }
 
 const MyString MyString::operator+(const MyString& str2nd) {
@@ -74,14 +78,21 @@ const MyString MyString::operator+(const MyString& str2nd) {
     int inputIndex{0};
 
     for(int index = arrLength ; index < CAPACITY ; index++) {
-        resultMyString;
+        resultMyString.appendChar(str2nd.at(inputIndex));
         inputIndex++;
     }
+
+    return resultMyString;
 }
 
 MyString& MyString::operator=(const char str2nd[]) {
-    for(int index = 0 ; index < strlen(str2nd) ; index++) {
+    int index{0};
+    arrLength = 0;
+
+    while(str2nd[index] != '\0') {
         charArr[index] = str2nd[index];
+        arrLength++;
+        index++;
     }
     
     return *this;
@@ -92,29 +103,27 @@ char MyString::operator[](int pos) {
 }
 
 bool MyString::operator==(const MyString &str) {
-    if(arrLength != str.length()) {
+    if(str.arrLength != arrLength) {
         return false;
-    } 
-    else {
-        for(int index = 0 ; index < arrLength ; index++) {
-            if(charArr[index] != str.at(index)) {
-                return false;
-            }
+    }
+
+    for(int index = 0 ; index < arrLength ; index++) {
+        if(charArr[index] != str.at(index)) {
+            return false;
         }
     }
     return true;
-}
+}   
 
 bool MyString::operator!=(const MyString &str) {
-    if(arrLength != str.length()) {
+    if(str.arrLength != arrLength) {
         return true;
-    } 
-    else {
-        for(int index = 0 ; index < arrLength ; index++) {
-            if(charArr[index] == str.at(index)) {
-                return false;
-            }
+    }
+
+    for(int index = 0 ; index < arrLength ; index++) {
+        if(charArr[index] != str.at(index)) {
+            return true;
         }
     }
-    return true;
+    return false;
 }   

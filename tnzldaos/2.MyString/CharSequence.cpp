@@ -2,25 +2,51 @@
 #include <cstring>
 
 void CharSequence::fillArray(char inputArr[]) {
-    for (int index = 0; inputArr[index] != '\0' && index < CAPACITY; ++index) {
-        this->charArr[index] = inputArr[index];
+    arrLength = 0;
+
+    for (int index = 0; index < CAPACITY && inputArr[index] != '\0'; index++) {
+        charArr[index] = inputArr[index];
+        arrLength++;
     }
+
+    charArr[arrLength] = '\0';
 }
 
+CharSequence::CharSequence() {
+
+}
+
+CharSequence::CharSequence(char inputArr[]) {
+    fillArray(inputArr);
+}
+
+//특정 인덱스에 있는 값 수정6
 void CharSequence::setChar(char inputChar, int pos) {
     charArr[pos] = inputChar;
+}
+
+void CharSequence::appendChar(char inputChar) {
+    if(arrLength < 15) {
+        charArr[arrLength] = inputChar;
+        arrLength++;
+    }
 }
 
 int CharSequence::length() const {
     return arrLength;
 }
 
+void CharSequence::incrementLength() {
+    arrLength++;
+}
+
 bool CharSequence::empty() const {
+    
     return arrLength == 0;
 }
 
 char CharSequence::at(int pos) const {
-    if(pos > arrLength || pos < 0) {
+    if(pos >= arrLength || pos < 0) {
         return '\0';
     }
     else {
@@ -40,7 +66,7 @@ int CharSequence::find(const char subStr[], int pos) const {
         }
         
         if(subStrIndex == strlen(subStr)) {
-            return index - subStrIndex;
+            return index - subStrIndex + 1;
         }
     }
     return -1;
@@ -58,7 +84,7 @@ int CharSequence::find(const CharSequence &sequence, int pos) const {
         }
         
         if(subStrIndex == sequence.length()) {
-            return index - subStrIndex;
+            return index - subStrIndex + 1;
         }
     }
     return -1;
