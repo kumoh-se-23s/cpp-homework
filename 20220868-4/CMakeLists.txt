@@ -5,5 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 project(stringApp)
 project(myString)
 
-add_executable(stringApp Main.cpp)
-add_executable(MyString MyString.cpp)
+#add_executable(stringApp Main.cpp)
+add_executable(MyString
+        2.MyString/MyString.cpp)
