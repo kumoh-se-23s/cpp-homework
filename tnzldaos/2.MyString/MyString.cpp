@@ -50,7 +50,7 @@ MyString MyString::substr(int pos, int len) {
     pos = pos >= 0 ? pos : 0;
 
     if(pos <= arrLength) {
-        for(int index = pos ; index < pos + len ; index++) {
+        for(int index = pos ; index < arrLength && index < pos + len ; index++) {
             if(charArr[index] != '\0') {
                 myString.appendChar(charArr[index]);
             }
