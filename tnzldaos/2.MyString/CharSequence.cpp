@@ -1,5 +1,5 @@
 #include "CharSequence.h"
-#include <cstring>
+#include "utils.h"
 
 void CharSequence::fillArray(char inputArr[]) {
     arrLength = 0;
@@ -28,6 +28,7 @@ void CharSequence::setChar(char inputChar, int pos) {
 void CharSequence::appendChar(char inputChar) {
     if(arrLength < 15) {
         charArr[arrLength] = inputChar;
+        charArr[arrLength + 1] = '\0';
         arrLength++;
     }
 }
@@ -55,6 +56,7 @@ char CharSequence::at(int pos) const {
 }
 
 int CharSequence::find(const char subStr[], int pos) const {
+    Utils utils;
     int subStrIndex = 0;
 
     for(int index = pos >= 0 ? pos : 0 ; index < arrLength ; index++) {
@@ -65,7 +67,7 @@ int CharSequence::find(const char subStr[], int pos) const {
             subStrIndex = 0;
         }
         
-        if(subStrIndex == strlen(subStr)) {
+        if(subStrIndex == utils.getCharArrLength(subStr)) {
             return index - subStrIndex + 1;
         }
     }

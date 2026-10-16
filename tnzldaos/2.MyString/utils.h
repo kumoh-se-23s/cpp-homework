@@ -6,7 +6,7 @@ using namespace std;
 class Utils {
     public:
         bool isCharacter(char input);
-
+        int getCharArrLength(const char inputCharArr[]);
 };
 
 ostream& operator<<(ostream& os, const MyString &str);

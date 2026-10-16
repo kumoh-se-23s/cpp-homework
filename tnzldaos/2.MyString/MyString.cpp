@@ -51,7 +51,9 @@ MyString MyString::substr(int pos, int len) {
 
     if(pos <= arrLength) {
         for(int index = pos ; index < pos + len ; index++) {
-            myString.appendChar(charArr[index]);
+            if(charArr[index] != '\0') {
+                myString.appendChar(charArr[index]);
+            }
         }
     } 
     return myString;
@@ -64,7 +66,7 @@ const MyString MyString::operator+(const char str2nd[]) {
     int inputIndex{0};
 
     for(int index = arrLength ; index < CAPACITY ; index++) {
-        resultMyString.charArr[index] = str2nd[inputIndex];
+         resultMyString.appendChar(str2nd[index]);
         inputIndex++;
     }
 
@@ -77,7 +79,7 @@ const MyString MyString::operator+(const MyString& str2nd) {
 
     int inputIndex{0};
 
-    for(int index = arrLength ; index < CAPACITY ; index++) {
+    for(int index = arrLength ; str2nd.at(inputIndex) != '\0' && index < CAPACITY ; index++) {
         resultMyString.appendChar(str2nd.at(inputIndex));
         inputIndex++;
     }
