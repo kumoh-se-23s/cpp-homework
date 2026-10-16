@@ -48,7 +48,7 @@ void StringApp::print_alphabet_count() const {
 void StringApp::print_capitalized_text() const {
     char text_container[TextFormatter::MAX_INPUT_LENGTH + 1] = {};
     TextFormatter formatter = TextFormatter(this->input_container);
-    formatter.capitalize_first().build(text_container);
+    formatter.capitalize().build(text_container);
     std::cout << text_container << std::endl;
 }
 

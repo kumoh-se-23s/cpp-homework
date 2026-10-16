@@ -16,7 +16,7 @@ class TextFormatter {
         TextFormatter(const char target_text[]);
 
 
-        TextFormatter& capitalize_first();
+        TextFormatter& capitalize();
 
         TextFormatter& encrypt(int gap);
 
@@ -29,7 +29,7 @@ class TextFormatter {
 
         void fill_container(const char target_char_arr[]);
 
-        int get_first_alphabet_index() const;
+        int get_first_not_blank_index() const;
 };
 
 #endif //CPP_HOMEWORK_TEXTENCRYPTER_H

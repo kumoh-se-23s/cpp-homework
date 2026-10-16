@@ -52,6 +52,24 @@ namespace {
         return lines;
     }
 
+    // 대문자화 규칙: 앞의 공백을 모두 건너뛰고 처음 나온 문자가 영어일 때만 대문자로 바꾸고,
+    // 나머지 영어는 모두 소문자로 바꾼다. (처음 나온 문자가 숫자/기호이면 대문자로 바꾸지 않는다.)
+    std::string expected_capitalized(std::string text) {
+        for (char &chr: text) {
+            if (chr >= 'A' && chr <= 'Z') {
+                chr = static_cast<char>(chr - 'A' + 'a');
+            }
+        }
+        std::size_t first = 0;
+        while (first < text.size() && text[first] == ' ') {
+            ++first;
+        }
+        if (first < text.size() && text[first] >= 'a' && text[first] <= 'z') {
+            text[first] = static_cast<char>(text[first] - 'a' + 'A');
+        }
+        return text;
+    }
+
     const std::string REFERENCE_TEXT = "This is A My 1-st Test PROGram.";
     const std::string REFERENCE_COUNTS =
             "[a:2] [e:1] [g:1] [h:1] [i:2] [m:2] [o:1] [p:1] [r:2] [s:4] [t:4] [y:1]";
@@ -151,6 +169,139 @@ TEST(StringAppCapitalizeTest, KeepsDigitsAndSymbols) {
     EXPECT_EQ(lines[1], "2026 10 09");
 }
 
+// 앞의 공백은 건너뛰고, 처음 나온 문자가 영어이면 대문자로 바꾼다.
+TEST(StringAppCapitalizeTest, SkipsLeadingBlanksAndUppersFirstLetter) {
+    const auto lines = run_string_app("   hello", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "   Hello");
+}
+
+TEST(StringAppCapitalizeTest, SkipsLeadingBlanksAndLowersTheRest) {
+    const auto lines = run_string_app("  hELLO wORLD", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "  Hello world");
+}
+
+TEST(StringAppCapitalizeTest, SingleLeadingBlank) {
+    const auto lines = run_string_app(" abc", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], " Abc");
+}
+
+TEST(StringAppCapitalizeTest, OnlyBlanksStayBlank) {
+    const auto lines = run_string_app("     ", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "");    // 오른쪽 공백은 테스트에서 잘라내므로 빈 줄로 보인다.
+}
+
+// 처음 나온 문자가 숫자이면 대문자로 바꾸지 않고, 뒤의 영어는 모두 소문자여야 한다.
+TEST(StringAppCapitalizeTest, DigitFirstDoesNotUpperFollowingLetter) {
+    const auto lines = run_string_app("1st", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "1st");    // "1St" 이면 안 된다.
+}
+
+TEST(StringAppCapitalizeTest, DigitFirstLowersTheRest) {
+    const auto lines = run_string_app("1ST PLACE", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "1st place");
+}
+
+TEST(StringAppCapitalizeTest, DigitFirstThenWords) {
+    const auto lines = run_string_app("2nd Test PROGram", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "2nd test program");
+}
+
+TEST(StringAppCapitalizeTest, DigitThenSpaceThenLetter) {
+    const auto lines = run_string_app("123 abc", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "123 abc");    // 첫 글자가 숫자이므로 뒤의 abc 는 대문자가 되지 않는다.
+}
+
+TEST(StringAppCapitalizeTest, LeadingBlanksThenDigitDoesNotUpperLetter) {
+    const auto lines = run_string_app("  1st", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "  1st");
+}
+
+TEST(StringAppCapitalizeTest, LeadingBlanksThenDigitLowersTheRest) {
+    const auto lines = run_string_app("   9LIVES Are", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "   9lives are");
+}
+
+// 처음 나온 문자가 기호인 경우에도 영어가 아니므로 대문자로 바꾸지 않는다.
+TEST(StringAppCapitalizeTest, SymbolFirstDoesNotUpperFollowingLetter) {
+    const auto lines = run_string_app("-abc DEF", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "-abc def");
+}
+
+TEST(StringAppCapitalizeTest, SymbolFirstLowersTheRest) {
+    const auto lines = run_string_app("!HELLO", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "!hello");
+}
+
+TEST(StringAppCapitalizeTest, LeadingBlanksThenSymbol) {
+    const auto lines = run_string_app("  .Hi There", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "  .hi there");
+}
+
+// 대문자가 되는 글자는 처음 나온 영어 하나뿐이다.
+TEST(StringAppCapitalizeTest, OnlyOneLetterIsUpper) {
+    const auto lines = run_string_app("aBcDeF gHiJ", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "Abcdef ghij");
+}
+
+TEST(StringAppCapitalizeTest, AlreadyCapitalizedStaysTheSame) {
+    const auto lines = run_string_app("Hello world", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "Hello world");
+}
+
+TEST(StringAppCapitalizeTest, KeepsLengthAndNonLetterPositions) {
+    const std::string text = "  1ST-place, 9 LIVES!";
+    const auto lines = run_string_app(text, 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "  1st-place, 9 lives!");
+    EXPECT_EQ(lines[1].size(), text.size());
+}
+
+TEST(StringAppCapitalizeTest, MatchesRuleForManyInputs) {
+    const char *inputs[] = {
+        "a", "A", "1", "1a", "1A", "a1", "A1", " a", " A", " 1", " 1a", " 1A",
+        "   hello WORLD", "1st", "1ST", "1St", "2nd Test", "-a", "- a", ". A", "a b c", "A B C",
+        "  a  b  c", "z", "Z", "0Z", "  0Z  z", "x-ray", "X-RAY", "3D PRINTER", "e-mail ADDRESS"
+    };
+
+    for (const char *input: inputs) {
+        const auto lines = run_string_app(input, 0);
+
+        ASSERT_EQ(lines.size(), 3u) << "input: \"" << input << "\"";
+        EXPECT_EQ(lines[1], rtrim(expected_capitalized(input))) << "input: \"" << input << "\"";
+    }
+}
+
 TEST(StringAppCapitalizeTest, DoesNotDependOnGap) {
     for (int gap = -25; gap <= 25; ++gap) {
         const auto lines = run_string_app("Hello World", gap);
@@ -216,6 +367,22 @@ TEST(StringAppEncryptTest, UsesOriginalTextNotCapitalizedText) {
     ASSERT_EQ(lines.size(), 3u);
     EXPECT_EQ(lines[1], "Hello");
     EXPECT_EQ(lines[2], "hELLO");
+}
+
+TEST(StringAppEncryptTest, UsesOriginalTextWhenDigitIsFirst) {
+    // 대문자화 결과("1st")가 아니라 입력 원본("1ST")의 대소문자가 유지되어야 함
+    const auto lines = run_string_app("1ST", 0);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[1], "1st");
+    EXPECT_EQ(lines[2], "1ST");
+}
+
+TEST(StringAppEncryptTest, KeepsLeadingBlanks) {
+    const auto lines = run_string_app("  abc", 1);
+
+    ASSERT_EQ(lines.size(), 3u);
+    EXPECT_EQ(lines[2], "  bcd");
 }
 
 TEST(StringAppEncryptTest, OppositeGapRestoresOriginalText) {

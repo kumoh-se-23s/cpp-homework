@@ -25,9 +25,9 @@ void TextFormatter::fill_container(const char target_char_arr[]) {
     }
 }
 
-int TextFormatter::get_first_alphabet_index() const {
+int TextFormatter::get_first_not_blank_index() const {
     for (int char_index = 0; this->container[char_index] != '\0'; ++char_index) {
-        if (char_utils::is_alphabet_character(this->container[char_index])) {
+        if (this->container[char_index] != ' ') {
             return char_index;
         }
     }
@@ -35,11 +35,12 @@ int TextFormatter::get_first_alphabet_index() const {
     return -1;
 }
 
-TextFormatter& TextFormatter::capitalize_first() {
-    const int first_alphabet_index = this->get_first_alphabet_index();
+TextFormatter& TextFormatter::capitalize() {
+    const int first_alphabet_index = this->get_first_not_blank_index();
     char_utils::to_lower(this->container);
 
     this->container[first_alphabet_index] = char_utils::to_upper(this->container[first_alphabet_index]);
+
 
     return *this;
 }

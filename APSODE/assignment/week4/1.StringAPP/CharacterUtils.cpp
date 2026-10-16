@@ -28,8 +28,8 @@ bool char_utils::is_signed_numeric(const char maybe_signed_numeric[]) {
         return false;
     }
 
-    if (!is_numeric_character(maybe_signed_numeric[0]) && maybe_signed_numeric[0] != '-' && maybe_signed_numeric[0] !=
-        '+') {
+    bool is_signed = maybe_signed_numeric[0] != '-' && maybe_signed_numeric[0] != '+';
+    if (!is_numeric_character(maybe_signed_numeric[0]) && is_signed) {
         return false;
     }
 
