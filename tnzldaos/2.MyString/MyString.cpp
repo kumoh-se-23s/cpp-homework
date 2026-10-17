@@ -2,17 +2,16 @@
 
 //배열 초기화
 MyString::MyString() {
-    for(int index = 0; index < CAPACITY ; index++) {
-        charArr[index];
-    }
     arrLength = 0;
+    charArr[arrLength] = '\0';
 }
 
-//
 MyString::MyString(char inputCharArr[]) {
-    for(int index = 0 ; index < CAPACITY && inputCharArr[index] != '\0'; index++) {
-        charArr[index] = inputCharArr[index];
-        arrLength++;
+    int index = 0;
+
+    while(inputCharArr[index] != '\0') {
+        appendChar(inputCharArr[index]);
+        index++;
     }
 }
 
@@ -65,8 +64,8 @@ const MyString MyString::operator+(const char str2nd[]) {
 
     int inputIndex{0};
 
-    for(int index = arrLength ; index < CAPACITY ; index++) {
-         resultMyString.appendChar(str2nd[index]);
+    for(int index = arrLength ; str2nd[inputIndex] != '\0' && index < CAPACITY ; index++) {
+        resultMyString.appendChar(str2nd[inputIndex]);
         inputIndex++;
     }
 

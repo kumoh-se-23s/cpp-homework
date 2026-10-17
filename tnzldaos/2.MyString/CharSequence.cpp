@@ -57,37 +57,54 @@ char CharSequence::at(int pos) const {
 
 int CharSequence::find(const char subStr[], int pos) const {
     Utils utils;
-    int subStrIndex = 0;
 
-    for(int index = pos >= 0 ? pos : 0 ; index < arrLength ; index++) {
-        if(charArr[index] == subStr[subStrIndex]) {
-            subStrIndex++;
+    int startIndex{pos < 0 ? 0 : pos};
+    int windowSize = utils.getCharArrLength(subStr);
+    
+    while(startIndex + windowSize <= arrLength) {
+        int subStrIndex{0};
+
+        for(int index = startIndex ; index < startIndex + windowSize ; index++) {
+            if(charArr[index] == subStr[subStrIndex]) {
+                subStrIndex++;
+            }
+            else {
+                startIndex = subStrIndex == 0 ? index + 1: index;
+                break;
+            }
         }
-        else {
-            subStrIndex = 0;
-        }
-        
-        if(subStrIndex == utils.getCharArrLength(subStr)) {
-            return index - subStrIndex + 1;
+
+        if(subStrIndex == windowSize) {
+            return startIndex;
         }
     }
+
     return -1;
 }
 
 int CharSequence::find(const CharSequence &sequence, int pos) const {
-    int subStrIndex = 0;
+    Utils utils;
 
-    for(int index = pos >= 0 ? pos : 0 ; index < arrLength ; index++) {
-        if(charArr[index] == sequence.at(subStrIndex)) {
-            subStrIndex++;
+    int startIndex{pos < 0 ? 0 : pos};
+    int windowSize = utils.getCharArrLength(sequence.charArr);
+    
+    while(startIndex + windowSize <= arrLength) {
+        int subStrIndex{0};
+
+        for(int index = startIndex ; index < startIndex + windowSize ; index++) {
+            if(charArr[index] == sequence.charArr[subStrIndex]) {
+                subStrIndex++;
+            }
+            else {
+                startIndex = subStrIndex == 0 ? index + 1: index;
+                break;
+            }
         }
-        else {
-            subStrIndex = 0;
-        }
-        
-        if(subStrIndex == sequence.length()) {
-            return index - subStrIndex + 1;
+
+        if(subStrIndex == windowSize) {
+            return startIndex;
         }
     }
+
     return -1;
 }
