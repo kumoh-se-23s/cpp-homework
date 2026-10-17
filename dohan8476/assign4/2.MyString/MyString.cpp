@@ -176,7 +176,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
 
     while (is.get(c)) {
         //엔터, 공백 기준 짜르기
-        if (c == '\n' || c == '\r' || c == ' '){
+        if (c == '\n' || c == '\r' || c == ' ' || c == '\t'){
             break;
         }
 
