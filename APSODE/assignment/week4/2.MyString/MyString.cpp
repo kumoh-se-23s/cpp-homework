@@ -17,7 +17,7 @@ MyString::MyString(const char other[]) : CharSequence(other){
 
 MyString::~MyString() = default;
 
-MyString MyString::substr(const int pos, const int len) const {
+MyString MyString::substr(int pos, int len) const {
     const int start = (pos < 0) ? 0 : pos;
 
     if (start >= this->m_length || len <= 0) {
@@ -65,14 +65,15 @@ std::istream& operator>>(std::istream &input_stream, MyString &string) {
     MyString temp;
     int char_code = input_stream.get();
 
+    // EOF를 검증을 해줘야할까..?
+
     // early return
     if (char_code == EOF) {
         return input_stream;
     }
 
-    // strip lead\
-    // TODO char_code 비교를 메소드화 고려해볼것.
-    while (char_code == ' ' || char_code == '\t' || char_code == '\n') {
+    // strip lead
+    while (std::isspace(char_code)) {
         char_code = input_stream.get();
     }
 
@@ -80,7 +81,7 @@ std::istream& operator>>(std::istream &input_stream, MyString &string) {
         char_code != EOF;
         char_code = input_stream.get()
     ) {
-        if (char_code == ' ' || char_code == '\t' || char_code == '\n' || temp.length() >= CharSequence::MAX_LENGTH) {
+        if (std::isspace(char_code) || temp.length() >= CharSequence::MAX_LENGTH) {
             input_stream.putback(static_cast<char>(char_code));
             break;
         }

@@ -31,7 +31,7 @@ bool CharSequence::empty() const {
     return this->m_length == 0;
 }
 
-char CharSequence::at(const int pos) const {
+char CharSequence::at(int pos) const {
     if (!this->is_correct_index_bound(pos)) {
         return '\0';
     }
@@ -39,7 +39,7 @@ char CharSequence::at(const int pos) const {
     return this->container[pos];
 }
 
-bool CharSequence::set(const char object, const int pos) {
+bool CharSequence::set(char object, int pos) {
     if (!this->is_correct_index_bound(pos)) {
         return false;
     }
@@ -48,7 +48,7 @@ bool CharSequence::set(const char object, const int pos) {
     return true;
 }
 
-void CharSequence::add_last(const char object) {
+void CharSequence::add_last(char object) {
     if (this->m_length + 1 > MAX_LENGTH) {
         return;
     }
@@ -70,11 +70,11 @@ bool CharSequence::equals(const CharSequence &other) const {
     return true;
 }
 
-int CharSequence::find(const CharSequence &pattern, const int start) const {
+int CharSequence::find(const CharSequence &pattern, int start) const {
     return this->rabin_karp(pattern, start);
 }
 
-int CharSequence::find(const char pattern[], const int start) const {
+int CharSequence::find(const char pattern[], int start) const {
     return this->rabin_karp(CharSequence(pattern), start);
 }
 
@@ -93,7 +93,7 @@ void CharSequence::copy_from_other(const CharSequence &other) {
     this->copy_from_other(other.container);
 }
 
-bool CharSequence::is_correct_index_bound(const int index) const {
+bool CharSequence::is_correct_index_bound(int index) const {
     return 0 <= index && index < this->m_length;
 }
 
@@ -180,7 +180,7 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
     return -1;
 }
 
-bool CharSequence::is_same(const CharSequence &target, const CharSequence &pattern, const int pattern_start) {
+bool CharSequence::is_same(const CharSequence &target, const CharSequence &pattern, int pattern_start) {
     for (int index = 0; index < pattern.m_length; ++index) {
         if (target.container[index + pattern_start] != pattern.container[index]) {
             return false;
