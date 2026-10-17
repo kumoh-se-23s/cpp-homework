@@ -16,6 +16,7 @@ class CharSequence {
         ~CharSequence() = default;
 
         void setChar(char inputChar, int pos);
+        void setLength(int inputLength);
         void appendChar(char inputChar);
 
         virtual int length() const;

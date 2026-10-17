@@ -25,8 +25,12 @@ void CharSequence::setChar(char inputChar, int pos) {
     charArr[pos] = inputChar;
 }
 
+void CharSequence::setLength(int inputLength) {
+    arrLength = inputLength;
+}
+
 void CharSequence::appendChar(char inputChar) {
-    if(arrLength < 15) {
+    if(arrLength < CAPACITY) {
         charArr[arrLength] = inputChar;
         charArr[arrLength + 1] = '\0';
         arrLength++;

@@ -37,7 +37,7 @@ istream& operator>>(istream& is, MyString &str) {
 
         if(utils.isCharacter(inputChar)) {
             is.get(inputChar);
-            str.appendChar(inputChar);
+            str.setChar(inputChar, index);
             isStart = true;
             index++;
         }
@@ -48,6 +48,8 @@ istream& operator>>(istream& is, MyString &str) {
             is.get();
         }
     }
+    str.setChar('\0', index);
+    str.setLength(index);
 
     return is;
 }
@@ -59,14 +61,18 @@ istream& getline(istream& is, MyString &str, char delim='\n') {
     char inputChar{'\0'};
 
     while (index < 15 && is.get(inputChar) && inputChar != delim) {
-        str.appendChar(inputChar);
+        str.setChar(inputChar, index);
         index++;
     }
+
+    str.setChar('\0', index);
+    str.setLength(index);
 
     if(index == 15) {
         while (is.get(inputChar) && inputChar != delim) {
 
         }
     }
+
     return is;
 }

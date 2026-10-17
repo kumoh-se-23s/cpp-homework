@@ -13,6 +13,7 @@ MyString::MyString(char inputCharArr[]) {
         appendChar(inputCharArr[index]);
         index++;
     }
+    charArr[arrLength] = '\0';
 }
 
 
@@ -21,6 +22,7 @@ MyString::MyString(const MyString &srcStr) {
         charArr[index] = srcStr.at(index);
         arrLength++;
     }
+    charArr[arrLength] = '\0';
 }
 
 int MyString::length() const {
@@ -43,7 +45,7 @@ int MyString::find(const MyString &subStr, int pos) const {
     return CharSequence::find(subStr, pos);
 }
 
-MyString MyString::substr(int pos, int len) {
+MyString MyString::substr(int pos, int len) const {
     MyString myString = MyString();
 
     pos = pos >= 0 ? pos : 0;
@@ -90,17 +92,24 @@ MyString& MyString::operator=(const char str2nd[]) {
     int index{0};
     arrLength = 0;
 
-    while(arrLength < 15 && str2nd[index] != '\0') {
+    while(arrLength < CAPACITY && str2nd[index] != '\0') {
         charArr[index] = str2nd[index];
         arrLength++;
         index++;
     }
+
+    charArr[arrLength] = '\0';
     
     return *this;
 }
 
 char MyString::operator[](int pos) {
-    return charArr[pos];
+    if(pos >= arrLength || pos < 0) {
+        return '\0';
+    }
+    else {
+        return charArr[pos];
+    }
 }
 
 bool MyString::operator==(const MyString &str) {
