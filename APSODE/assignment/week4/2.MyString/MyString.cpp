@@ -94,7 +94,7 @@ std::istream& operator>>(std::istream &input_stream, MyString &string) {
     return input_stream;
 }
 
-std::istream& getline(std::istream &input_stream, MyString &string, const char delim) {
+std::istream& getline(std::istream &input_stream, MyString &string, char delim) {
     MyString temp;
     int char_code = input_stream.get();
 
