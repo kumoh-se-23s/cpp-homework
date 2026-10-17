@@ -5,7 +5,7 @@
 #include "CharacterUtils.h"
 
 
-bool char_utils::is_numeric_character(const char maybe_numeric) {
+bool char_utils::is_numeric_character(char maybe_numeric) {
     return '0' <= maybe_numeric && maybe_numeric <= '9';
 }
 
@@ -43,22 +43,22 @@ bool char_utils::is_signed_numeric(const char maybe_signed_numeric[]) {
 }
 
 
-bool char_utils::is_correct_range(const int start, const int end, const int size) {
-    const bool start_range_check = 0 <= start && start < size && start <= end;
-    const bool end_range_check = 0 <= end && end < size && end >= start;
+bool char_utils::is_correct_range(int start, int end, int size) {
+    bool start_range_check = 0 <= start && start < size && start <= end;
+    bool end_range_check = 0 <= end && end < size && end >= start;
 
     return start_range_check && end_range_check;
 }
 
-bool char_utils::is_lower_alphabet(const char maybe_lower_alphabet) {
+bool char_utils::is_lower_alphabet(char maybe_lower_alphabet) {
     return 'a' <= maybe_lower_alphabet && maybe_lower_alphabet <= 'z';
 }
 
-bool char_utils::is_upper_alphabet(const char maybe_upper_alphabet) {
+bool char_utils::is_upper_alphabet(char maybe_upper_alphabet) {
     return 'A' <= maybe_upper_alphabet && maybe_upper_alphabet <= 'Z';
 }
 
-bool char_utils::is_alphabet_character(const char maybe_alphabet) {
+bool char_utils::is_alphabet_character(char maybe_alphabet) {
     return is_lower_alphabet(maybe_alphabet) || is_upper_alphabet(maybe_alphabet);
 }
 
@@ -72,7 +72,7 @@ bool char_utils::is_alphabet_only(const char maybe_alphabet_only[]) {
     return true;
 }
 
-int char_utils::parse_integer(const char integer_text[], const int start, const int end) {
+int char_utils::parse_integer(const char integer_text[], int start, int end) {
     int text_index = start;
     bool is_negative = false;
 
@@ -90,7 +90,7 @@ int char_utils::parse_integer(const char integer_text[], const int start, const 
     return is_negative ? -result : result;
 }
 
-int char_utils::to_integer(const char integer_text[], const int start, const int end, const int size) {
+int char_utils::to_integer(const char integer_text[], int start, int end, int size) {
     if (!is_correct_range(start, end, size)) {
         return -1;
     }
@@ -142,7 +142,7 @@ void char_utils::count_alphabet_by_array(const char text[], int count_array[26])
     }
 }
 
-char char_utils::to_lower(const char maybe_alphabet) {
+char char_utils::to_lower(char maybe_alphabet) {
     if (!is_alphabet_character(maybe_alphabet) || is_lower_alphabet(maybe_alphabet)) {
         return maybe_alphabet;
     }
@@ -162,7 +162,7 @@ bool char_utils::to_lower(char text[]) {
     return true;
 }
 
-char char_utils::to_upper(const char alphabet_char) {
+char char_utils::to_upper(char alphabet_char) {
     if (!is_alphabet_character(alphabet_char) || is_upper_alphabet(alphabet_char)) {
         return alphabet_char;
     }
@@ -182,7 +182,7 @@ bool char_utils::to_upper(char text[]) {
     return true;
 }
 
-char char_utils::offset(const char processable_character, const int gap) {
+char char_utils::offset(char processable_character, int gap) {
     if (is_alphabet_character(processable_character)) {
         return offset_alphabet(processable_character, gap);
     }
@@ -194,12 +194,12 @@ char char_utils::offset(const char processable_character, const int gap) {
     return processable_character;
 }
 
-char char_utils::offset_numeric(const char numeric_character, const int gap) {
+char char_utils::offset_numeric(char numeric_character, int gap) {
     const int after_offset = ((numeric_character - '0' + gap) % 10 + 10) % 10;
     return static_cast<char>('0' + after_offset);
 }
 
-char char_utils::offset_alphabet(const char alphabet_character, const int gap) {
+char char_utils::offset_alphabet(char alphabet_character, int gap) {
     const char base_character = is_lower_alphabet(alphabet_character) ? 'a' : 'A';
     const int after_offset = ((alphabet_character - base_character + gap) % 26 + 26) % 26;
     return static_cast<char>(base_character + after_offset);

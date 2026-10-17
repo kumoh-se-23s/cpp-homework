@@ -15,7 +15,7 @@ TextFormatter::TextFormatter(const char target_text[])
     this->fill_container(target_text);
 }
 
-bool TextFormatter::is_valid_gap_range(const int gap) {
+bool TextFormatter::is_valid_gap_range(int gap) {
     return MIN_GAP <= gap && gap <= MAX_GAP;
 }
 
@@ -36,7 +36,7 @@ int TextFormatter::get_first_not_blank_index() const {
 }
 
 TextFormatter& TextFormatter::capitalize() {
-    const int first_alphabet_index = this->get_first_not_blank_index();
+    int first_alphabet_index = this->get_first_not_blank_index();
     char_utils::to_lower(this->container);
 
     this->container[first_alphabet_index] = char_utils::to_upper(this->container[first_alphabet_index]);
@@ -45,7 +45,7 @@ TextFormatter& TextFormatter::capitalize() {
     return *this;
 }
 
-TextFormatter& TextFormatter::encrypt(const int gap) {
+TextFormatter& TextFormatter::encrypt(int gap) {
     if (!is_valid_gap_range(gap)) {
         return *this;
     }
