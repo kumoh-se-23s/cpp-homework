@@ -74,22 +74,24 @@ ostream& operator<<(ostream & out, const MyString& str) {
     return out;
 }
 
+//whitespace 판별
+static bool isWhiteSpace(int chCode) {
+    return chCode == ' ' || chCode == '\n' || chCode == '\t' || chCode == '\r';
+}
+
 //입력
 istream& operator>>(istream& in, MyString& str) {
     str = MyString(); //초기화
 
     //stream 앞부분 정리
     int inputCode = in.peek();
-    for (;!in.fail() && (inputCode == ' ' || inputCode == '\n' || inputCode == '\t' || inputCode == '\r'); inputCode = in.peek()) {
+    for (;!in.fail() && isWhiteSpace(inputCode); inputCode = in.peek()) {
         in.ignore();
     }
 
     //이후 append
     char ch;
-    for (int idx = 0;
-        idx < MyString::MAX_INPUT_SIZE && inputCode != ' ' && inputCode != '\n' && inputCode != '\t' && inputCode == '\r';
-        idx++, inputCode = in.peek())
-    {
+    for (int idx = 0; idx < MyString::MAX_INPUT_SIZE && !isWhiteSpace(inputCode); idx++, inputCode = in.peek()) {
         in.get(ch);
         str.append(ch);
     }
@@ -143,7 +145,7 @@ int MyString::find(const MyString &subStr, int pos) const {
 
 int MyString::find(const char subStr[], int pos) const {
     for (int idx = 0; subStr[idx] != '\0'; idx++) {
-        if (idx == 15) //찾고자 하는 것이 16글자를 넘어가면 무조건 없음
+        if (idx == MAX_INPUT_SIZE) //찾고자 하는 것이 상한선을 넘어가면 무조건 없음
             return -1;
     }
 
@@ -171,7 +173,7 @@ MyString MyString::substr(int pos, int len) const {
         resultStr.str[idx] = str[idx + pos];
     }
     resultStr.usingSize = len;
-    resultStr.str[usingSize] = '\0';
+    resultStr.str[resultStr.usingSize] = '\0';
 
     return resultStr;
 }
