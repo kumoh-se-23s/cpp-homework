@@ -13,7 +13,7 @@ class StringApp {
         void run();
 
     private:
-        char input_container[TextFormatter::MAX_INPUT_LENGTH];
+        char input_container[TextFormatter::MAX_INPUT_LENGTH + 1];
 
         int gap;
 

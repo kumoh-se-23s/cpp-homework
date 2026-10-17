@@ -37,10 +37,11 @@ int TextFormatter::get_first_not_blank_index() const {
 
 TextFormatter& TextFormatter::capitalize() {
     int first_alphabet_index = this->get_first_not_blank_index();
-    char_utils::to_lower(this->container);
 
-    this->container[first_alphabet_index] = char_utils::to_upper(this->container[first_alphabet_index]);
-
+    if (first_alphabet_index != -1) {
+        char_utils::to_lower(this->container);
+        this->container[first_alphabet_index] = char_utils::to_upper(this->container[first_alphabet_index]);
+    }
 
     return *this;
 }

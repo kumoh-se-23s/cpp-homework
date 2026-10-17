@@ -130,7 +130,7 @@ int char_utils::count_alphabet(const char text[]) {
     return count;
 }
 
-void char_utils::count_alphabet_by_array(const char text[], int count_array[26]) {
+void char_utils::count_alphabet_by_array(const char text[], int count_array[]) {
     for (int index = 0; index < 26; ++index) {
         count_array[index] = 0;
     }
