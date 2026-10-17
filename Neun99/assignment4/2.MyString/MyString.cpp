@@ -90,7 +90,7 @@ istream& operator>>(istream& in, MyString& str) {
 
     //이후 append
     char ch;
-    for (int idx = 0; in.good() && idx < MyString::MAX_INPUT_SIZE && !isWhiteSpace(inputCode); idx++, inputCode = in.peek()) {
+    for (int idx = 0; idx < MyString::MAX_INPUT_SIZE && !isWhiteSpace(inputCode); idx++, inputCode = in.peek()) {
         in.get(ch);
         str.append(ch);
     }
@@ -102,7 +102,7 @@ istream& getline(istream& in, MyString& str, char delim) {
     str = MyString(); //초기화
 
     int inputCode = in.peek();
-    for (int idx = 0; in.good() && idx < MyString::MAX_INPUT_SIZE && inputCode != delim; idx++, inputCode = in.peek()) {
+    for (int idx = 0; idx < MyString::MAX_INPUT_SIZE && inputCode != delim; idx++, inputCode = in.peek()) {
         char ch;
         in.get(ch);
         str.append(ch);
