@@ -90,7 +90,7 @@ MyString& MyString::operator=(const char str2nd[]) {
     int index{0};
     arrLength = 0;
 
-    while(str2nd[index] != '\0') {
+    while(arrLength < 15 && str2nd[index] != '\0') {
         charArr[index] = str2nd[index];
         arrLength++;
         index++;

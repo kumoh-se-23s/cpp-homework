@@ -69,7 +69,7 @@ int CharSequence::find(const char subStr[], int pos) const {
                 subStrIndex++;
             }
             else {
-                startIndex = subStrIndex == 0 ? index + 1: index;
+                startIndex++;
                 break;
             }
         }
@@ -96,7 +96,7 @@ int CharSequence::find(const CharSequence &sequence, int pos) const {
                 subStrIndex++;
             }
             else {
-                startIndex = subStrIndex == 0 ? index + 1: index;
+                startIndex++;
                 break;
             }
         }

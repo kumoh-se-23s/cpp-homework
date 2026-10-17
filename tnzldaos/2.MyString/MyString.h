@@ -18,7 +18,7 @@ class MyString : public CharSequence {
         int find(const MyString &subStr, int pos=0) const;
 
         MyString substr(int pos, int len);
-
+        
         const MyString operator+(const char str2nd[]);
         const MyString operator+(const MyString& str2nd);
         MyString& operator=(const char str2nd[]);

@@ -28,12 +28,25 @@ ostream& operator<<(ostream& os, const MyString &str) {
 istream& operator>>(istream& is, MyString &str) {
     Utils utils;
 
+    bool isStart{false};
     int index{0};
-    char inputChar{};
+    char inputChar{'\0'};
 
-    while (is.get(inputChar) && utils.isCharacter(inputChar) && index < 15) {
-        str.appendChar(inputChar);
-        index++;
+    while (index < 15) {
+        inputChar = is.peek();
+
+        if(utils.isCharacter(inputChar)) {
+            is.get(inputChar);
+            str.appendChar(inputChar);
+            isStart = true;
+            index++;
+        }
+        else if (isStart) {
+            break;
+        }
+        else {
+            is.get();
+        }
     }
 
     return is;
@@ -43,11 +56,17 @@ istream& getline(istream& is, MyString &str, char delim='\n') {
     Utils utils;
 
     int index{0};
-    char inputChar{};
+    char inputChar{'\0'};
 
-    while (is.get(inputChar) && inputChar != delim && index < 15) {
+    while (index < 15 && is.get(inputChar) && inputChar != delim) {
         str.appendChar(inputChar);
         index++;
+    }
+
+    if(index == 15) {
+        while (is.get(inputChar) && inputChar != delim) {
+
+        }
     }
     return is;
 }
