@@ -2,7 +2,7 @@
 #include <iostream>
 
 // =================================================================
-// PUBLIC SECTION
+// PUBLIC
 // =================================================================
 
 MyString::MyString() {
@@ -33,7 +33,7 @@ bool MyString::empty() const{
     return str[0] == '\0';
 }
 
-char MyString::at(int pos) const {
+char MyString::at(const int pos) const {
     if (0 <= pos && pos < length()) {
         return str[pos];
     }
@@ -67,7 +67,7 @@ int MyString::find(const char subStr[], int pos) const {
 }
 
 
-int MyString::find(const MyString& subStr, int pos) const {
+int MyString::find(const MyString& subStr, const int pos) const {
     return find(subStr.str, pos);
 }
 
@@ -93,7 +93,7 @@ MyString MyString::substr(int pos, int len) const {
 }
 
 // =================================================================
-// OPERATOR OVERLOADING SECTION
+// OPERATOR OVERLOADING
 // =================================================================
 
 char MyString::operator[](int pos) const {
@@ -175,9 +175,8 @@ std::istream &operator>>(std::istream &is, MyString &str) {
     int i = 0;
 
     while (is.get(c)) {
-
-        //엔터치면 컷
-        if (c == '\n' || c == '\r') {
+        //엔터, 공백 기준 짜르기
+        if (c == '\n' || c == '\r' || c == ' '){
             break;
         }
 
@@ -195,7 +194,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
     return is;;
 }
 
-std::istream &getline(std::istream &is, MyString &str, char delimiter) {
+std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
     char temp[16];
     char c;
     int i = 0;
@@ -216,7 +215,7 @@ std::istream &getline(std::istream &is, MyString &str, char delimiter) {
 }
 
 // =================================================================
-// PRIVATE SECTION
+// PRIVATE
 // =================================================================
 
 int MyString::cstrlen(const char str[]) const {

@@ -21,13 +21,11 @@ class MySet {
         int capacity = 4;
         int *array = new int[capacity];
         void resize();
-
         MySet unionSet(const MySet &set) const;
-
         MySet intersectionSet(const MySet &set) const;
-
         MySet differenceSet(const MySet &set) const;
 
+        void append(const MySet &set);
 };
 
 std::ostream& operator <<(std::ostream& out, const MySet& set);

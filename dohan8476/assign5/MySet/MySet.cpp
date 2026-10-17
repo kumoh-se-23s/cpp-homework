@@ -189,3 +189,9 @@ MySet MySet::differenceSet(const MySet &set) const{
     }
     return result;
 }
+
+void MySet::append(const MySet &set) {
+    for (int i = 0; i < this->size; i++) {
+        this->array[i] = set.array[i];
+    }
+}
