@@ -14,7 +14,7 @@ MyString::MyString(const MyString &srcStr) {
 
 //연산자 오버로딩---------------------
 //대입
-MyString& MyString::operator=(const MyString &srcStr) {
+MyString& MyString::operator=(const MyString& srcStr) {
     *this = srcStr.str;
     return *this;
 }
@@ -39,12 +39,12 @@ const MyString MyString::operator+(const char str2nd[]) const {
     resultStr.str[resultStr.usingSize] = '\0';
     return resultStr;
 }
-const MyString MyString::operator+(const MyString &str2nd) const {
+const MyString MyString::operator+(const MyString& str2nd) const {
     return *this + str2nd.str;
 }
 
 //==
-bool MyString::operator==(const MyString &str2nd) const {
+bool MyString::operator==(const MyString& str2nd) const {
     if (usingSize != str2nd.usingSize) //길이 다르면 바로 false
         return false;
     for (int idx = 0; idx < usingSize; idx++) {
@@ -55,7 +55,7 @@ bool MyString::operator==(const MyString &str2nd) const {
 }
 
 //!=
-bool MyString::operator!=(const MyString &str2nd) const {
+bool MyString::operator!=(const MyString& str2nd) const {
     return !(*this == str2nd);
 }
 
@@ -67,31 +67,36 @@ char MyString::operator[](int pos) const {
 }
 
 //출력
-ostream& operator<<(ostream & out, const MyString &str) {
+ostream& operator<<(ostream & out, const MyString& str) {
     for (int idx = 0; idx < str.length(); idx++) {
         out << str.at(idx);
     }
     return out;
 }
 
+//입력
 istream& operator>>(istream& in, MyString& str) {
     str = MyString(); //초기화
 
     //stream 앞부분 정리
     int inputCode = in.peek();
-    for (;!in.fail() && (inputCode == ' ' || inputCode == '\n'); inputCode = in.peek()) {
+    for (;!in.fail() && (inputCode == ' ' || inputCode == '\n' || inputCode == '\t' || inputCode == '\r'); inputCode = in.peek()) {
         in.ignore();
     }
 
     //이후 append
     char ch;
-    for (int idx = 0; idx < MyString::MAX_INPUT_SIZE && inputCode != ' ' && inputCode != '\n'; idx++, inputCode = in.peek()) {
+    for (int idx = 0;
+        idx < MyString::MAX_INPUT_SIZE && inputCode != ' ' && inputCode != '\n' && inputCode != '\t' && inputCode == '\r';
+        idx++, inputCode = in.peek())
+    {
         in.get(ch);
         str.append(ch);
     }
     return in;
 }
 
+//getline
 istream& getline(istream& in, MyString& str, char delim) {
     str = MyString(); //초기화
 
@@ -137,6 +142,11 @@ int MyString::find(const MyString &subStr, int pos) const {
 }
 
 int MyString::find(const char subStr[], int pos) const {
+    for (int idx = 0; subStr[idx] != '\0'; idx++) {
+        if (idx == 15) //찾고자 하는 것이 16글자를 넘어가면 무조건 없음
+            return -1;
+    }
+
     MyString target;
     target = subStr;
     return find(target, pos);
