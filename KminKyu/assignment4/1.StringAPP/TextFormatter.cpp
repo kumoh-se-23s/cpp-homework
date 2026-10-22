@@ -1,3 +1,4 @@
+#include<iostream>
 #include "TextFormatter.h"
 
 void TextFormatter::countAlphabet(const char base[], int result[MAX_OF_ALPHABETS]) {
@@ -64,7 +65,7 @@ bool TextFormatter::isDigit(char chr) {
 
 int TextFormatter::getFirstLetterIndex(const char str[]) {
     int index;
-    for (index = 0; str[index] != '\0' && str[index] == ' '; ++index) {}
+    for (index = 0; str[index] != '\0' && std::isspace(str[index]); ++index) {}
     return index;
 }
 

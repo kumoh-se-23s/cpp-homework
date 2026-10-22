@@ -18,4 +18,5 @@ int main(){
     cout << str1 + str2 << endl;
     cout << str2 + "dgfg" << endl;
     cout << (str2 == str1) << endl;
+    str1 = str2 + str3 + str4;
 }
