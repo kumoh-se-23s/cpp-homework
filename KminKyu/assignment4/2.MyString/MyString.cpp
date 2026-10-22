@@ -61,20 +61,20 @@ const MyString MyString::operator+(const MyString& str2nd) const {
     return *this + str2nd.charArray;
 }
 
-bool MyString::operator==(const MyString& str) const {
-    return !(*this != str);
+bool MyString::operator!=(const MyString& str) const {
+    return !(*this == str);
 }
 
-bool MyString::operator!=(const MyString& str) const {
+bool MyString::operator==(const MyString& str) const {
     if (str.size != this->size) {
-        return true;
+        return false;
     }
     for (int index = 0; charArray[index] != '\0'; ++index) {
         if (charArray[index] != str.charArray[index]) {
-            return true;
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 int MyString::find(const char subStr[], int pos) const {
@@ -182,22 +182,27 @@ ostream& operator<<(ostream& os, const MyString& str){
 istream& operator>>(istream& is, MyString& str) {
     str.clear();
     char input;
-
-    while (is.get(input) && input != '\n' && input != ' ' && input != '\r' && input != '\t') {
-        str.append(input);
-        if (str.length() == str.getCapacity()) {
-            return is;
-        }
+    is.get(input);
+    
+    while (!is.fail() && isspace(input)) {
+        is.get(input);
     }
+    is.putback(input);
 
+    while (is.get(input) && !isspace(input) && (str.length() < str.getCapacity())) {
+        str.append(input);
+    }
+    is.putback(input);
     return is;
 }
 
 istream& getline(istream& is, MyString& str, char delim) {
     str.clear();
     char input;
-    while (is.get(input) && input != delim) {
-        str.append(input);
+    while (is.get(input) && input != delim && input != EOF) {
+        if (str.length() < str.getCapacity()) {
+            str.append(input);
+        }
     }
 
     return is;
