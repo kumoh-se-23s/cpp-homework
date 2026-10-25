@@ -32,5 +32,8 @@ add_executable(assignment0 assignment0/main.cpp)
 #add_executable(assignment3_3 assignment3/3.Money/main.cpp assignment3/3.Money/Money.cpp)
 #add_executable(assignment3_4 assignment3/4.DDay/main.cpp assignment3/4.DDay/Day.cpp assignment3/4.DDay/DDay.cpp assignment3/4.DDay/CharUtil.cpp)
 
-add_executable(assignment4_1 assignment4/1.StringAPP/main.cpp)
-add_executable(assignment4_2 assignment4/2.MyString/main.cpp assignment4/2.MyString/MyString.cpp)
+#add_executable(assignment4_1 assignment4/1.StringAPP/main.cpp)
+#add_executable(assignment4_2 assignment4/2.MyString/main.cpp assignment4/2.MyString/MyString.cpp)
+
+add_executable(assignment5_1 assignment5/prob1.cpp)
+add_executable(assignment5_2 assignment5/prob2.cpp)

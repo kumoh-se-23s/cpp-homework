@@ -4,8 +4,9 @@
 using namespace std;
 
 void countAlphabet(const char str[], int usingSize);
-void normalize(const char str[],int usingSize);
-void encryption(const char str[], int usingSize, int gap);
+void capitalize(const char str[],int usingSize);
+void encrypt(const char str[], int usingSize, int gap);
+static constexpr int NUMBER_OF_ALPHABET = 26;
 
 static constexpr int MAX_INPUT_LENGTH = 127;
 int main() {
@@ -13,14 +14,14 @@ int main() {
     int usingSize;
     int gap;
 
-    cin.getline(str, MAX_INPUT_LENGTH);
+    cin.getline(str, MAX_INPUT_LENGTH + 1);
     usingSize = strlen(str);
 
     cin >> gap;
 
     countAlphabet(str, usingSize);
-    normalize(str, usingSize);
-    encryption(str, usingSize, gap);
+    capitalize(str, usingSize);
+    encrypt(str, usingSize, gap);
 }
 
 //기능 -----------------------------------------------------------
@@ -36,7 +37,6 @@ static char moveDigit(char ch, int gap);
 
 //알파벳 개수
 void countAlphabet(const char str[], int usingSize) {
-    constexpr int NUMBER_OF_ALPHABET = 26;
     int alphabetCount[NUMBER_OF_ALPHABET] = {};
 
     //알파벳 담기
@@ -58,7 +58,7 @@ void countAlphabet(const char str[], int usingSize) {
 }
 
 //첫 글자 대문자, 나머지 소문자 변환
-void normalize(const char str[], int usingSize) {
+void capitalize(const char str[], int usingSize) {
     char lowerStr[MAX_INPUT_LENGTH + 1];
     int startIdx = findFirstLetterIdx(str, usingSize);
     if (startIdx == -1) { //빈 문자열 관리
@@ -78,7 +78,7 @@ void normalize(const char str[], int usingSize) {
 }
 
 //gap만큼 이동 암호화
-void encryption(const char str[], int usingSize, int gap) {
+void encrypt(const char str[], int usingSize, int gap) {
     //결과 배열
     char resultStr[MAX_INPUT_LENGTH + 1];
     strcpy(resultStr, str);
@@ -137,12 +137,12 @@ static char moveAlphabet(char ch, int gap) {
     //동작상 편의 위해 소문자로 돌린 뒤 계산 후 원복
     int ascii= toLower(ch) + gap;
     if (ascii < 'a')
-        ascii += 26;
+        ascii += NUMBER_OF_ALPHABET;
     else if (ascii > 'z')
-        ascii -= 26;
+        ascii -= NUMBER_OF_ALPHABET;
 
     //대문자였으면 다시 올려서 리턴
-    char result = (char)ascii;
+    char result = static_cast<char>(ascii);
     if (isUpper(ch))
         return toUpper(result);
     return result;
