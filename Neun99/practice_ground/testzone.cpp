@@ -1,12 +1,14 @@
 #include <iostream>
+#include <string>
 
 using namespace std;
 
 int main() {
-    char a[3];
+    string a, b, c;
     cin >> a;
-    for (int i = 0; i < 6; i++) {
-        cout <<a[i];
-    }
-    return 0;
+    cin >> c;
+    getline(cin, b);
+    cout << a << endl;
+    cout << b << endl;
+    cout << c << endl;
 }

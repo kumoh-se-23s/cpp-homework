@@ -9,18 +9,18 @@ int main() {
     MyString str3;
     cin >> str1;
     cin >> str2;
-    //cin.getline(str3);
-    cout << str1 << endl;
-    cout << str2 << endl;
-    cout << str3 << endl;
+    getline(cin, str3);
+    cout << "1: " << str1 << endl;
+    cout << "2: " << str2 << endl;
+    cout << "3: " << str3 << endl << endl;
 
-    MyString str4;
-    str4 = str1;
-    cout << str4 << endl;
-    str4 = str1 + str2;
-    cout << str4 << endl;
-    cout << (str1 == str2) << endl;
-    cout << str1[3] << endl;
+    // MyString str4;
+    // str4 = str1;
+    // cout << str4 << endl;
+    // str4 = str1 + str2;
+    // cout << str4 << endl;
+    // cout << (str1 == str2) << endl;
+    // cout << str1[3] << endl;
 
     return 0;
 }
