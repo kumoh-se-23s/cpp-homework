@@ -8,16 +8,16 @@ class MyMatrix {
         MyMatrix(const MyMatrix& m);
         ~MyMatrix();
 
+        void init(const int *arr) const;
+
         int getMatrix(int row, int col) const;
-        void setMatrix(int row, int col, int val);
+        void setMatrix(int row, int col, int val) const;
 
         int getMaxWidth() const;
-        int getDigitWidth(int num) const;
 
         int getRow() const;
         int getCol() const;
 
-        void init(int* arr);
 
         MyMatrix operator +(const MyMatrix & matrix) const;
         MyMatrix operator *(const MyMatrix & matrix) const;
@@ -31,6 +31,8 @@ class MyMatrix {
         MyMatrix add(const MyMatrix& m) const;
         MyMatrix multi(const MyMatrix& m) const;
 
+        static int getDigitWidth(int num);
 };
 
 std::ostream& operator<<(std::ostream& os, const MyMatrix& m);
+std::istream& operator>>(std::istream& is, MyMatrix& m);

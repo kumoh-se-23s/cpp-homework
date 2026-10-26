@@ -7,6 +7,17 @@
 
 MySet::MySet() = default;
 
+MySet::MySet(const MySet &set) {
+    this->capacity = set.capacity;
+    this->size = set.size;
+
+    this->array = new int[this->capacity];
+    for (int i = 0 ; i < this->size ; i++) {
+        this->array[i] = set.array[i];
+    }
+}
+
+
 MySet::~MySet() {
     delete [] array;
     array = nullptr;
@@ -133,65 +144,85 @@ void MySet::resize() {
 
 MySet MySet::unionSet(const MySet &set) const{
     MySet result;
+    int i = 0; int j = 0;
 
-    //현재 먼저 넣기
-    for (int i = 0; i < this->size; i++) {
-        result.insert(this->array[i]);
+    //A, B를 정렬으로 받음 >> merge로 Union 구현
+    while (i < this->size && j < set.size) {
+        if (this->array[i] < set.array[j]) {
+            //A append
+            result.append(this->array[i++]);
+        } else if (this->array[i] > set.array[j]) {
+            //B append
+            result.append(set.array[j++]);
+        }
+        //A교집합B 넣어야함
+        else {
+            result.append(this->array[i]);
+            i++;
+            j++;
+        }
     }
-    //나머지 붙히기
-    for (int i = 0; i < set.size; i++) {
-        result.insert(set.array[i]);
+    //나머지 append
+    while (i < this->size) {
+        result.append(this->array[i++]);
     }
+    while (j < set.size) {
+        result.append(set.array[j++]);
+    }
+
     return result;
 }
 
 MySet MySet::intersectionSet(const MySet &set) const{
     MySet result;
+    int i = 0; int j = 0;
 
-    for (int i = 0; i < this->size; i++) {
-        int target = this->array[i];
-        for (int j = 0; j < set.size; j++) {
-            if (target == set.array[j]) {
-                result.insert(target);
-                break;
-            }
-            //이미 정렬되어 있으니 타겟보다 큰 숫자면 없음
-            if (set.array[j] > target) {
-                break;
-            }
+    while (i < this->size && j < set.size) {
+        if (this->array[i] < set.array[j]) {
+            //A 넣으면 안됨
+            i++;
+        } else if (this->array[i] > set.array[j]) {
+            //B 넣으면 안됨
+            j++;
+        }
+        else {
+            //A교집합B 넣어야함
+            result.append(this->array[i]);
+            i++;
+            j++;
         }
     }
-
     return result;
 }
 
 MySet MySet::differenceSet(const MySet &set) const{
     MySet result;
+    int i = 0, j = 0;
 
-    for (int i = 0; i < this->size; i++) {
-        bool isExist = false;
-        int target = this->array[i];
-
-        for (int j = 0; j < set.size; j++) {
-            //교집합과 반대로 못찾았을 때 값 넣어야함
-            if (target == set.array[j]) {
-                isExist = true;
-                break;
-            }
-            if (set.array[j] > target) {
-                break;
-            }
-        }
-        //다 돌아도 false면 값을 채워야함
-        if (!isExist) {
-            result.insert(target);
+    while (i < this->size && j < set.size) {
+        if (this->array[i] < set.array[j]) {
+            //A append
+            result.append(this->array[i++]);
+        } else if (this->array[i] > set.array[j]) {
+            //B는 넣으면 안됨
+            j++;
+        } else {
+            //A교집합B 넣으면 안됨
+            i++;
+            j++;
         }
     }
+    //A 나머지 append
+    while (i < this->size) {
+        result.append(this->array[i++]);
+    }
+
     return result;
 }
 
-void MySet::append(const MySet &set) {
-    for (int i = 0; i < this->size; i++) {
-        this->array[i] = set.array[i];
+void MySet::append(const int val) {
+    if (size >= capacity) {
+        resize();
     }
+    array[size++] = val;
 }

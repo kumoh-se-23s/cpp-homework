@@ -4,6 +4,7 @@
 class MySet {
     public:
         MySet();
+        MySet(const MySet& set);
         ~MySet();
 
         int getSize() const;
@@ -25,7 +26,8 @@ class MySet {
         MySet intersectionSet(const MySet &set) const;
         MySet differenceSet(const MySet &set) const;
 
-        void append(const MySet &set);
+        void append(int val);
+
 };
 
 std::ostream& operator <<(std::ostream& out, const MySet& set);

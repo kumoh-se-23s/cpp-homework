@@ -55,7 +55,7 @@ MyMatrix::~MyMatrix() {
     matrix = nullptr;
 }
 
-void MyMatrix::init(int *arr) {
+void MyMatrix::init(const int *arr) const {
     int index = 0;
     for (int row = 0; row < this->row; row++) {
         for (int col = 0; col < this->col; col++) {
@@ -69,7 +69,7 @@ int MyMatrix::getMaxWidth() const {
     int maxWidth = 0;
     for (int row = 0; row < this->row; row++) {
         for (int col = 0; col < this->col ; col++) {
-            int currentWidth = getDigitWidth(getMatrix(row, col));
+            int currentWidth = getDigitWidth(.matrix[row][col]);
 
             maxWidth = currentWidth > maxWidth ? currentWidth : maxWidth;
         }
@@ -77,7 +77,7 @@ int MyMatrix::getMaxWidth() const {
     return maxWidth;
 }
 
-int MyMatrix::getDigitWidth(int num) const{
+int MyMatrix::getDigitWidth(int num) {
     int width = (num <= 0) ? 1 : 0;
 
     for (; num != 0; num /= 10, width++) {}
@@ -94,7 +94,7 @@ int MyMatrix::getMatrix(const int row, const int col) const {
     return -999;
 }
 
-void MyMatrix::setMatrix(const int row, const int col, const int val) {
+void MyMatrix::setMatrix(const int row, const int col, const int val) const {
     if (0 <= row && row < this->row && 0 <= col && col < this->col) {
         this->matrix[row][col] = val;
     }
@@ -153,6 +153,17 @@ std::ostream& operator<<(std::ostream& os, const MyMatrix& m) {
         os << "|" << std::endl;
     }
     return os;
+}
+
+std::istream& operator>>(std::istream& is, MyMatrix& m) {
+    int val;
+    for (int row = 0; row < m.getRow(); row++) {
+        for (int col = 0; col < m.getCol(); col++) {
+            is >> val;
+            m.setMatrix(row, col, val);
+        }
+    }
+    return is;
 }
 
 // =================================================================
