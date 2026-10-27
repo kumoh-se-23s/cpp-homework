@@ -37,3 +37,4 @@ add_executable(assignment0 assignment0/main.cpp)
 
 add_executable(assignment5_1 assignment5/prob1.cpp)
 add_executable(assignment5_2 assignment5/prob2.cpp)
+add_executable(assignment5_3 assignment5/MySet/main.cpp assignment5/MySet/MySet.cpp)
