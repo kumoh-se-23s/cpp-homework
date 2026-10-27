@@ -11,6 +11,7 @@ class MySet {
 
     public:
         MySet();
+        MySet(const MySet& mySet);
 
         optional<int> findInsertIndex(int inputNum);
         void insertElement(int insertIndex, int insertNum);
@@ -23,7 +24,7 @@ class MySet {
         MySet operator+(const MySet inputMySet);
         MySet operator&(const MySet inputMySet);
         MySet operator-(const MySet inputMySet);
-        void operator=(MySet mySet);
+        void operator=(const MySet mySet);
 
 };
 

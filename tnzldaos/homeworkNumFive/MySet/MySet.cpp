@@ -9,6 +9,12 @@ MySet::MySet() {
     arr = new int[capacity];
 }
 
+MySet::MySet(const MySet& mySet) {
+    for(int index = 0 ; index < mySet.length() ; index++) {
+        appendElement(mySet.getElement(index));
+    }
+}
+
 optional<int> MySet::findInsertIndex(int inputNum) {
     int arrNum = 0;
 
@@ -102,7 +108,7 @@ MySet MySet::operator+(const MySet inputMySet) {
             resultSet.appendElement(inputMySet.getElement(index2));
         }
     } 
-    else if (index2 == size && index1 < size) {
+    else if (index2 == inputMySet.length() && index1 < size) {
         for(index1 ; index1 < size ; index1++) {
             resultSet.appendElement(arr[index1]);
         }
@@ -146,7 +152,6 @@ MySet MySet::operator-(const MySet inputMySet) {
         int otherValue = inputMySet.getElement(index2);
 
         if(myValue > otherValue) {
-            resultSet.appendElement(otherValue);
             index2++;
         }
         else if (myValue < otherValue) {
@@ -159,12 +164,7 @@ MySet MySet::operator-(const MySet inputMySet) {
         }
     }
 
-    if(index1 == size && index2 < inputMySet.length()) {
-        for(index2 ; index2 < inputMySet.length() ; index2++) {
-            resultSet.appendElement(inputMySet.getElement(index2));
-        }
-    } 
-    else if (index2 == size && index1 < size) {
+    if (index2 == inputMySet.length() && index1 < size) {
         for(index1 ; index1 < size ; index1++) {
             resultSet.appendElement(arr[index1]);
         }
@@ -174,6 +174,7 @@ MySet MySet::operator-(const MySet inputMySet) {
 }
 
 void MySet::operator=(MySet mySet) {
+    size = 0;
     for(int index = 0 ; index < mySet.length() ; index++) {
         appendElement(mySet.getElement(index));
     }
