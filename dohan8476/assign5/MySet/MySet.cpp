@@ -24,7 +24,7 @@ MySet::~MySet() {
 }
 
 
-void MySet::insert(int value) {
+void MySet::insert(const int value) {
     bool isExist = false;
     int pos = 0;
 
@@ -132,7 +132,8 @@ void MySet::resize() {
     if (size >= capacity) {
         capacity *= 2;
     }
-
+    //const auto newArray = new int[capacity]; 이거랑 같다는데 머지
+    //auto << 옆의 값보고 type 추론해서 하는 놈?
     int *newArray = new int[capacity];
 
     for (int i = 0 ; i < size ; i++) {

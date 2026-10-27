@@ -69,7 +69,7 @@ int MyMatrix::getMaxWidth() const {
     int maxWidth = 0;
     for (int row = 0; row < this->row; row++) {
         for (int col = 0; col < this->col ; col++) {
-            int currentWidth = getDigitWidth(.matrix[row][col]);
+            int currentWidth = getDigitWidth(matrix[row][col]);
 
             maxWidth = currentWidth > maxWidth ? currentWidth : maxWidth;
         }

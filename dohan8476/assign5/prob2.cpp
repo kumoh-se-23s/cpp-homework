@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-void print1DArr(const int *arr1, int MAX);
+void print1DArr(const int *arr, int MAX);
 void myCopy(int *, const int *, int size);
 
 int main()
