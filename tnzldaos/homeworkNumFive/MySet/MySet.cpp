@@ -51,6 +51,8 @@ void MySet::resize() {
         arrIndex++;
     }
 
+    capacity = capacity * 2;
+
     delete[] arr;
     arr = newArr;
 }
@@ -77,16 +79,19 @@ MySet MySet::operator+(const MySet inputMySet) {
    int index1 = 0;
    int index2 = 0;
     while (index1 < size && index2 < inputMySet.length()) {
-        if(arr[index1] > inputMySet.getElement(index2)) {
-            resultSet.appendElement(inputMySet.getElement(index2));
+        int myValue = arr[index1];
+        int otherValue = inputMySet.getElement(index2);
+
+        if(myValue > otherValue) {
+            resultSet.appendElement(otherValue);
             index2++;
-        } 
-        else if (arr[index1] < inputMySet.getElement(index2)) {
-            resultSet.appendElement(arr[index1]);
+        }
+        else if (myValue < otherValue) {
+            resultSet.appendElement(myValue);
             index1++;
         }
         else {
-            resultSet.appendElement(arr[index1]);
+            resultSet.appendElement(myValue);
             index1++;
             index2++;
         }
@@ -112,14 +117,17 @@ MySet MySet::operator&(const MySet inputMySet) {
    int index1 = 0;
    int index2 = 0;
     while (index1 < size && index2 < inputMySet.length()) {
-        if(arr[index1] > inputMySet.getElement(index2)) {
+        int myValue = arr[index1];
+        int otherValue = inputMySet.getElement(index2);
+
+        if(myValue > otherValue) {
             index2++;
-        } 
-        else if (arr[index1] < inputMySet.getElement(index2)) {
+        }
+        else if (myValue < otherValue) {
             index1++;
         }
         else {
-            resultSet.appendElement(arr[index1]);
+            resultSet.appendElement(myValue);
             index1++;
             index2++;
         }
@@ -132,12 +140,15 @@ MySet MySet::operator-(const MySet inputMySet) {
    int index1 = 0;
    int index2 = 0;
     while (index1 < size && index2 < inputMySet.length()) {
-        if(arr[index1] > inputMySet.getElement(index2)) {
-            resultSet.appendElement(inputMySet.getElement(index2));
+        int myValue = arr[index1];
+        int otherValue = inputMySet.getElement(index2);
+
+        if(myValue > otherValue) {
+            resultSet.appendElement(otherValue);
             index2++;
-        } 
-        else if (arr[index1] < inputMySet.getElement(index2)) {
-            resultSet.appendElement(arr[index1]);
+        }
+        else if (myValue < otherValue) {
+            resultSet.appendElement(myValue);
             index1++;
         }
         else {
