@@ -66,7 +66,7 @@ int MySet::getElement(int index) const {
 }
 
 void MySet::appendElement(int element) {
-    if(size - 1 == capacity) {
+    if(size == capacity) {
         resize();
     }
     arr[size] = element;
@@ -132,6 +132,8 @@ MySet MySet::operator&(const MySet inputMySet) {
             index2++;
         }
     }
+
+    return resultSet;
 }
 
 MySet MySet::operator-(const MySet inputMySet) {
