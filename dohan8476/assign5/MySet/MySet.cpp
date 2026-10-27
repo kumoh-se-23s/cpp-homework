@@ -58,7 +58,7 @@ int MySet::getSize() const {
     return this->size;
 }
 
-int MySet::getArray(int index) const {
+int MySet::getArray(const int index) const {
     if (0 <= index && index < this->size) {
         return this->array[index];
     }

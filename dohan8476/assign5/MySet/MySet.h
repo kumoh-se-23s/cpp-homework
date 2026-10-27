@@ -30,6 +30,6 @@ class MySet {
 
 };
 
-std::ostream& operator <<(std::ostream& out, const MySet& set);
-std::istream& operator >>(std::istream& in, MySet& set);
+std::ostream& operator <<(std::ostream& os, const MySet& set);
+std::istream& operator >>(std::istream& is, MySet& set);
 
