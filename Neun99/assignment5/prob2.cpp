@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void myCopy(int* copy, int* src, int size);
+static void myCopy(int* copy, const int* src, int size);
 static void print1DArr(int* arr, int size);
 
 int main() {
@@ -27,7 +27,7 @@ int main() {
     return 0;
 }
 
-void myCopy(int* copy, const int* src, int size) {
+static void myCopy(int* copy, const int* src, int size) {
     for (int idx = 0; idx < size; idx++) {
         copy[idx] = src[idx];
     }
