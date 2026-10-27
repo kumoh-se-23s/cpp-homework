@@ -1,6 +1,7 @@
 #pragma once
 #include <iosfwd>
 
+
 class MyMatrix {
     public:
         MyMatrix();
@@ -8,10 +9,10 @@ class MyMatrix {
         MyMatrix(const MyMatrix& m);
         ~MyMatrix();
 
-        void init(const int *arr) const;
+        void init(const int *arr);
 
         int getMatrix(int row, int col) const;
-        void setMatrix(int row, int col, int val) const;
+        void setMatrix(int row, int col, int val);
 
         int getMaxWidth() const;
 

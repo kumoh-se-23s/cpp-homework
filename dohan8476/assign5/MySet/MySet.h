@@ -20,13 +20,15 @@ class MySet {
     private:
         int size = 0;
         int capacity = 4;
-        int *array = new int[capacity];
+        int *array = nullptr;
         void resize();
         MySet unionSet(const MySet &set) const;
         MySet intersectionSet(const MySet &set) const;
         MySet differenceSet(const MySet &set) const;
 
         void append(int val);
+        int findPos(int val) const;
+        void insertAtPos(int val, int pos);
 
 };
 

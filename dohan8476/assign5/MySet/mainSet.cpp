@@ -61,6 +61,16 @@ void runTestCase(const string& testName, const string& input1, const string& inp
 }
 
 int main() {
+    MySet s1, s2, resultSet;
+    cin >> s1 >> s2;     // 음수가 들어올 때까지 입력
+    resultSet = s1 + s2;  // 합집합
+    cout << "Union : " << resultSet << endl;
+    resultSet = s1 & s2; // 교집합
+    cout << "Intersection : " << resultSet << endl;
+    resultSet = s1 - s2;   // 차집합
+    cout << "Difference : " << resultSet << " or " ;
+    resultSet = s2 - s1;
+    cout << resultSet << endl;
     // 1. 소수와 짝수의 만남 (음수 완전 제거)
     runTestCase("테스트 1: 소수와 짝수 집합",
                 "19 2 17 3 13 5 11 7",

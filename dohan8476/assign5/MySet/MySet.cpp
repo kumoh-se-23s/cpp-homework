@@ -5,7 +5,11 @@
 // PUBLIC SECTION
 // =================================================================
 
-MySet::MySet() = default;
+MySet::MySet(){
+    this->size = 0;
+    this->capacity = 4;
+    this->array = new int[this->capacity];
+}
 
 MySet::MySet(const MySet &set) {
     this->capacity = set.capacity;
@@ -17,41 +21,18 @@ MySet::MySet(const MySet &set) {
     }
 }
 
-
 MySet::~MySet() {
     delete [] array;
     array = nullptr;
 }
 
-
 void MySet::insert(const int value) {
-    bool isExist = false;
-    int pos = 0;
-
-    for (pos = 0; pos < this->size; pos++) {
-        //중복 검사
-        if (this->array[pos] == value) {
-            isExist = true;
-            break;
-        }
-        //위치 검사
-        if (this->array[pos] > value) {
-            break;
-        }
+    const int pos = findPos(value);
+    //중복 제거
+    if (pos < size && array[pos] == value) {
+        return;
     }
-
-    if (!isExist) {
-        //값 삽입 전 size 검사
-        if (this->size >= this->capacity) {
-            this->resize();
-        }
-        // 정렬 된 덩어리 뒤로 Shift
-        for (int k = this->size; k > pos; k--) {
-            this->array[k] = this->array[k - 1];
-        }
-        this->array[pos] = value;
-        this->size++;
-    }
+    insertAtPos(value, pos);
 }
 
 int MySet::getSize() const {
@@ -132,8 +113,7 @@ void MySet::resize() {
     if (size >= capacity) {
         capacity *= 2;
     }
-    //const auto newArray = new int[capacity]; 이거랑 같다는데 머지
-    //auto << 옆의 값보고 type 추론해서 하는 놈?
+
     int *newArray = new int[capacity];
 
     for (int i = 0 ; i < size ; i++) {
@@ -147,13 +127,13 @@ MySet MySet::unionSet(const MySet &set) const{
     MySet result;
     int i = 0; int j = 0;
 
-    //A, B를 정렬으로 받음 >> merge로 Union 구현
+    //A, B를 정렬으로 받음 >> merge와 비슷하게 Union 구현
     while (i < this->size && j < set.size) {
         if (this->array[i] < set.array[j]) {
-            //A append
+            //A - B append
             result.append(this->array[i++]);
         } else if (this->array[i] > set.array[j]) {
-            //B append
+            //B - A append
             result.append(set.array[j++]);
         }
         //A교집합B 넣어야함
@@ -180,10 +160,10 @@ MySet MySet::intersectionSet(const MySet &set) const{
 
     while (i < this->size && j < set.size) {
         if (this->array[i] < set.array[j]) {
-            //A 넣으면 안됨
+            //A - B 넣으면 안됨
             i++;
         } else if (this->array[i] > set.array[j]) {
-            //B 넣으면 안됨
+            //B - A 넣으면 안됨
             j++;
         }
         else {
@@ -202,13 +182,13 @@ MySet MySet::differenceSet(const MySet &set) const{
 
     while (i < this->size && j < set.size) {
         if (this->array[i] < set.array[j]) {
-            //A append
+            //A - B append
             result.append(this->array[i++]);
         } else if (this->array[i] > set.array[j]) {
-            //B는 넣으면 안됨
+            //B - A 는 넣으면 안됨
             j++;
         } else {
-            //A교집합B 넣으면 안됨
+            //A교집합B도 넣으면 안됨
             i++;
             j++;
         }
@@ -226,4 +206,23 @@ void MySet::append(const int val) {
         resize();
     }
     array[size++] = val;
+}
+
+int MySet::findPos(const int val) const {
+    int pos = 0;
+    while (pos < size && array[pos] < val) {
+        pos++;
+    }
+    return pos;
+}
+
+void MySet::insertAtPos(const int val, const int pos) {
+    if (size >= capacity) {
+        resize();
+    }
+    for (int k = size; k > pos; k--) {
+        array[k] = array[k - 1];
+    }
+    array[pos] = val;
+    size++;
 }

@@ -36,6 +36,7 @@ void assertTest(const string& testName, const MyMatrix& actual, int expRow, int 
 }
 
 int main() {
+
     cout << "====================================================\n";
     cout << "          MyMatrix 통합 자동화 테스트 (확장판)\n";
     cout << "====================================================\n\n";

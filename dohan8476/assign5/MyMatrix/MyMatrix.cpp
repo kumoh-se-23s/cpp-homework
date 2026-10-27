@@ -1,6 +1,7 @@
 #include "MyMatrix.h"
 #include <iomanip>
 
+
 // =================================================================
 // PUBLIC SECTION
 // =================================================================
@@ -15,14 +16,14 @@ MyMatrix::MyMatrix() {
     this->matrix[0][0] = -999;
 }
 
-MyMatrix::MyMatrix(int row, int col) {
+MyMatrix::MyMatrix(const int row, const int col) {
     this->row = row;
     this->col = col;
 
     this->matrix = new int*[row];
 
     for (int i = 0; i < row; i++) {
-        this->matrix[i] = new int[col];
+        this->matrix[i] = new int[col](); // 0 초기화
     }
 
 }
@@ -55,7 +56,7 @@ MyMatrix::~MyMatrix() {
     matrix = nullptr;
 }
 
-void MyMatrix::init(const int *arr) const {
+void MyMatrix::init(const int *arr){
     int index = 0;
     for (int row = 0; row < this->row; row++) {
         for (int col = 0; col < this->col; col++) {
@@ -94,7 +95,7 @@ int MyMatrix::getMatrix(const int row, const int col) const {
     return -999;
 }
 
-void MyMatrix::setMatrix(const int row, const int col, const int val) const {
+void MyMatrix::setMatrix(const int row, const int col, const int val){
     if (0 <= row && row < this->row && 0 <= col && col < this->col) {
         this->matrix[row][col] = val;
     }
