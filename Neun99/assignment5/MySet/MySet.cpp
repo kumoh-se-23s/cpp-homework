@@ -67,14 +67,13 @@ void MySet::clear() {
 //합집합 (merge)
 const MySet MySet::operator+(const MySet &set2) const {
     MySet result;
-
     //오름차순임을 전제로, 작은 숫자부터 점점 올려가며 비교
     int set1Idx = 0, set2Idx = 0;
     while (set1Idx < size && set2Idx < set2.size) {
         int set1Val = arr[set1Idx];
         int set2Val = set2.arr[set2Idx];
 
-        if (set1Val == set2Val) { //같으면 한번만 더하고 둘 다 ++
+        if (set1Val == set2Val) { //같으면 한번만 append, 둘 다 ++
             result.append(set1Val);
             set1Idx++;
             set2Idx++;
@@ -102,15 +101,16 @@ const MySet MySet::operator+(const MySet &set2) const {
 const MySet MySet::operator&(const MySet &set2) const {
     MySet result;
 
+    //+와 같은 구조로 전진, append 조건만 다름
     for (int set1Idx = 0, set2Idx = 0; set1Idx < size && set2Idx < set2.size;) {
         int set1Val = arr[set1Idx];
         int set2Val = set2.arr[set2Idx];
 
-        if (set1Val == set2Val) { //같은값이면 result에 append
+        if (set1Val == set2Val) { //같은값이면 append
             result.append(arr[set1Idx]);
             set1Idx++;
             set2Idx++;
-        } else if (set1Val > set2Val) { //다르면 값이 작은 쪽의 idx를 ++
+        } else if (set1Val > set2Val) { //다르면 그냥 지나감
             set2Idx++;
         } else {
             set1Idx++;
@@ -175,7 +175,6 @@ ostream &operator<<(ostream &out, const MySet &set) {
 //>>
 istream &operator>>(istream &in, MySet &set) {
     set.clear();
-
     int value;
     for (in >> value; value >= 0; in >> value) {
         set.insert(value);
