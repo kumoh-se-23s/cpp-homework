@@ -130,12 +130,10 @@ MyMatrix &MyMatrix::operator=(const MyMatrix &mat2) {
     if (this == &mat2)
         return *this;
 
-    if (matrix != nullptr) {
-        for (int idx = 0; idx < rowSize; idx++) {
-            delete[] matrix[idx];
-        }
-        delete[] matrix;
+    for (int idx = 0; idx < rowSize; idx++) {
+        delete[] matrix[idx];
     }
+    delete[] matrix;
 
     rowSize = mat2.rowSize;
     colSize = mat2.colSize;
