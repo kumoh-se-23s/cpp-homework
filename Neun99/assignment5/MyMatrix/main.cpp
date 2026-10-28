@@ -21,7 +21,7 @@ int main() {
     matArr[7] = matArr[0] * matArr[2] ;
 
     for (int i = 0 ; i < MAX_CNT ; i++) { // 출력
-        cout << "-- Matirx " << i << " --\n " ;
+        cout << "-- Matrix " << i << " --\n" ;
         cout << matArr[i] << endl;
     }
 
