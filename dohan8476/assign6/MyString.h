@@ -73,14 +73,11 @@ class MyString {
         void resize();
 
         int cstrlen(const char str[]) const;
-        int compareTo(const MyString& srcStr) const;
+        int compareTo(const char srcStr[], int strLen) const;
 
         int findHelper(const char subStr[], int subLen, int pos) const;
-
         bool compareHelper(const char srcStr[], int strLen) const;
-
         MyString plusHelper(const char srcStr[], int strLen) const;
-
         MyString& appendHelper(const char srcStr[], int strLen);
         MyString& insertHelper(int pos, int len, const char srcStr[]);
         MyString& replaceHelper(int pos, int len, const char srcStr[]);

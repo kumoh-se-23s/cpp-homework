@@ -295,39 +295,48 @@ MyString &MyString::appendHelper(const char srcStr[], const int strLen) {
 //3-2. 문자열 비교연산자류
 //------------------------------------------------------------
 bool MyString::operator<(const MyString& srcStr) const {
-
+    return compareTo(srcStr.str, srcStr.length()) < 0;
 }
 
 bool MyString::operator<(const char cstr2nd[]) const {
-
+    return compareTo(cstr2nd, strlen(cstr2nd)) < 0;
 }
 
 bool MyString::operator>(const MyString &srcStr) const {
-
+    return compareTo(srcStr.str, srcStr.length()) > 0;
 }
 
 bool MyString::operator>(const char cstr2nd[]) const {
-
+    return compareTo(cstr2nd, strlen(cstr2nd)) > 0;
 }
 
 bool MyString::operator<=(const MyString &srcStr) const {
-
+    return compareTo(srcStr.str, srcStr.length()) <= 0;
 }
 
 bool MyString::operator<=(const char cstr2nd[]) const {
-
+    return compareTo(cstr2nd, strlen(cstr2nd)) <= 0;
 }
 
 bool MyString::operator>=(const MyString &srcStr) const {
-
+    return compareTo(srcStr.str, srcStr.length()) >= 0;
 }
 
 bool MyString::operator>=(const char cstr2nd[]) const {
-
+    return compareTo(cstr2nd, strlen(cstr2nd)) >= 0;
 }
 
-int MyString::compareTo(const MyString &srcStr) const {
-
+int MyString::compareTo(const char srcStr[], const int strLen) const {
+    for (int i = 0; i < strLen; i++) {
+        if (this->str[i] != srcStr[i] || this->str[i] == '\0') {
+            if (this->str[i] == srcStr[i]) {
+                return 0;
+            }
+            return (this->str[i] > srcStr[i] ? 1 : -1);
+        }
+    }
+    // this : abcd / src : abc 면 this가 더 길다고 판단
+    return 1;
 }
 
 //------------------------------------------------------------
