@@ -11,7 +11,7 @@ MyString::MyString() {
 
 MyString::MyString(const MyString& srcStr){
     int i = 0;
-    for (; srcStr.str[i] != '\0' && i < CAPACITY; i++){
+    for (; srcStr.str[i] != '\0' && i < DEFAULT_CAPACITY; i++){
         str[i] = srcStr.str[i];
     }
     str[i] = '\0';
@@ -19,7 +19,7 @@ MyString::MyString(const MyString& srcStr){
 
 MyString::MyString(const char srcStr[]) {
     int i = 0;
-    for (; srcStr[i] != '\0' && i < CAPACITY ; i++){
+    for (; srcStr[i] != '\0' && i < DEFAULT_CAPACITY ; i++){
         str[i] = srcStr[i];
     }
     str[i] = '\0';
@@ -84,7 +84,7 @@ MyString MyString::substr(int pos, int len) const {
     }
 
     int i = 0;
-    for(;i < len && pos + i < currentLen && i < CAPACITY; i++) {
+    for(;i < len && pos + i < currentLen && i < DEFAULT_CAPACITY; i++) {
         result.str[i] = str[pos + i];
     }
     result.str[i] = '\0';
@@ -105,12 +105,12 @@ MyString MyString::operator+(const char str2nd[]) const {
     int i = 0;
 
     //앞배열 result로 복사
-    for(;this->str[i] != '\0' && i < CAPACITY; i++) {
+    for(;this->str[i] != '\0' && i < DEFAULT_CAPACITY; i++) {
         result.str[i] = this->str[i];
     }
 
     //뒷 배열 result로 붙히기
-    for (int j = 0 ;str2nd[j] != '\0' && i < CAPACITY; i++, j++) {
+    for (int j = 0 ;str2nd[j] != '\0' && i < DEFAULT_CAPACITY; i++, j++) {
         result.str[i] = str2nd[j];
     }
     result.str[i] = '\0';
@@ -124,7 +124,7 @@ MyString MyString::operator+(const MyString& str2nd) const {
 
 MyString &MyString::operator=(const char str2nd[]) {
     int i = 0;
-    for (; str2nd[i] != '\0' && i < CAPACITY; i++) {
+    for (; str2nd[i] != '\0' && i < DEFAULT_CAPACITY; i++) {
         str[i] = str2nd[i];
     }
     str[i] = '\0';
@@ -170,7 +170,7 @@ std::ostream &operator<<(std::ostream &os, const MyString& str) {
 }
 
 std::istream &operator>>(std::istream &is, MyString &str) {
-    char temp[MyString::CAPACITY + 1];
+    char temp[MyString::DEFAULT_CAPACITY + 1];
     char c;
     int i = 0;
 
@@ -180,7 +180,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
             break;
         }
 
-        if (i < MyString::CAPACITY) {
+        if (i < MyString::DEFAULT_CAPACITY) {
             temp[i++] = c;
         } else {
             //버퍼에 남기는 메소드

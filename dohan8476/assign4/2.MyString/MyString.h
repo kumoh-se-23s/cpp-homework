@@ -3,7 +3,7 @@
 
 class MyString {
     public:
-        static constexpr int CAPACITY = 15;
+        static constexpr int DEFAULT_CAPACITY = 15;
 
         MyString();
         MyString(const MyString& srcStr);
@@ -30,7 +30,7 @@ class MyString {
         bool operator !=(const MyString& srcStr) const;
 
     private:
-        char str[CAPACITY + 1];
+        char str[DEFAULT_CAPACITY + 1];
         int cstrlen(const char str[]) const;
 
 };

@@ -6,9 +6,7 @@
 // =================================================================
 
 MySet::MySet(){
-    this->size = 0;
-    this->capacity = 4;
-    this->array = new int[this->capacity];
+    this->array = new int[DEFAULT_CAPACITY];
 }
 
 MySet::MySet(const MySet &set) {

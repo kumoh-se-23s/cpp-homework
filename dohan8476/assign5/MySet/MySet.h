@@ -3,6 +3,7 @@
 
 class MySet {
     public:
+        static constexpr int DEFAULT_CAPACITY = 4;
         MySet();
         MySet(const MySet& set);
         ~MySet();
@@ -19,8 +20,9 @@ class MySet {
 
     private:
         int size = 0;
-        int capacity = 4;
+        int capacity = DEFAULT_CAPACITY;
         int *array = nullptr;
+
         void resize();
         MySet unionSet(const MySet &set) const;
         MySet intersectionSet(const MySet &set) const;

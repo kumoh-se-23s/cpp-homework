@@ -3,7 +3,7 @@
 
 class MyString {
     public:
-        static constexpr int CAPACITY = 8;
+        static constexpr int DEFAULT_CAPACITY = 8;
         //기본 기능 난이도 하
         MyString(); // 초기 크기 8!!byte의 문자열 공간을 생성하고 빈 문자열로 초기화
         MyString(const MyString& srcStr);
@@ -65,17 +65,25 @@ class MyString {
 
         MyString& erase(int pos, int len);
 
-        //baseConverter 만들어야함
-        int stoi(const MyString& str, int pos = 0, int base = 10) const;
-
     private:
         int size = 0;
-        char str[CAPACITY + 1];
+        int capacity = DEFAULT_CAPACITY;
+        char *str = nullptr;
+
+        void resize();
 
         int cstrlen(const char str[]) const;
         int compareTo(const MyString& srcStr) const;
 
+        int findHelper(const char subStr[], int subLen, int pos) const;
 
+        bool compareHelper(const char srcStr[], int strLen) const;
+
+        MyString plusHelper(const char srcStr[], int strLen) const;
+
+        MyString& appendHelper(const char srcStr[], int strLen);
+        MyString& insertHelper(int pos, int len, const char srcStr[]);
+        MyString& replaceHelper(int pos, int len, const char srcStr[]);
 };
 
 
@@ -83,3 +91,6 @@ class MyString {
 std::ostream& operator<<(std::ostream& os, const MyString& str);
 std::istream& operator>>(std::istream& is, MyString& str);
 std::istream& getline(std::istream& is, MyString& str, char delimiter = '\n');
+
+//baseConverter 만들어야함
+int stoi(const MyString& str, int pos = 0, int base = 10) const;
