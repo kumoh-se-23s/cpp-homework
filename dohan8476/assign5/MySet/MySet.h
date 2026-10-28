@@ -28,7 +28,7 @@ class MySet {
 
         void append(int val);
         int findPos(int val) const;
-        void insertAtPos(int val, int pos);
+        void insertAt(int pos, int val);
 
 };
 

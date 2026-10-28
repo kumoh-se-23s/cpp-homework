@@ -20,9 +20,9 @@ class MyMatrix {
         int getCol() const;
 
 
-        MyMatrix operator +(const MyMatrix & matrix) const;
-        MyMatrix operator *(const MyMatrix & matrix) const;
-        MyMatrix& operator =(const MyMatrix & matrix);
+        MyMatrix operator +(const MyMatrix& matrix) const;
+        MyMatrix operator *(const MyMatrix& matrix) const;
+        MyMatrix& operator =(const MyMatrix& matrix);
 
     private:
         int row = 0;

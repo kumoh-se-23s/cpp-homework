@@ -26,13 +26,14 @@ MySet::~MySet() {
     array = nullptr;
 }
 
+//insert면 val, pos 받아야할 거 같은 뭔가 그런 느낌인데 흠,,
 void MySet::insert(const int value) {
     const int pos = findPos(value);
     //중복 제거
     if (pos < size && array[pos] == value) {
         return;
     }
-    insertAtPos(value, pos);
+    insertAt(pos, value);
 }
 
 int MySet::getSize() const {
@@ -216,7 +217,7 @@ int MySet::findPos(const int val) const {
     return pos;
 }
 
-void MySet::insertAtPos(const int val, const int pos) {
+void MySet::insertAt(const int pos, const int val) {
     if (size >= capacity) {
         resize();
     }
