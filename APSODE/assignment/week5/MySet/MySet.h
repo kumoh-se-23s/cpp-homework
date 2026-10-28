@@ -4,32 +4,23 @@
 
 #ifndef CPP_HOMEWORK_MYSET_H
 #define CPP_HOMEWORK_MYSET_H
-#include "arrays.h"
+#include "collections.h"
+#include "lists.h"
 
-using namespace arrays;
 using namespace collections;
 
-template
-<typename E = int>
-class MySet : public Collection<E> {
-    DynamicArray<E> container;
+template<typename E = int>
+class MySet : public List<E>{
+    List<E> container;
 
     public:
-        MySet() = default;
+        E * begin() override;
 
-        MySet(const E *array);
+        E * end() override;
 
-        MySet(const MySet &set);
+        const E * begin() const override;
 
-        ~MySet() override;
-
-        E* begin() override;
-
-        E* end() override;
-
-        const E* begin() const override;
-
-        const E* end() const override;
+        const E * end() const override;
 
         int get_size() const override;
 
@@ -45,7 +36,20 @@ class MySet : public Collection<E> {
 
         bool is_contains(const E &value) override;
 
-    private:
+        const E & get(int index) override;
+
+        int set(int index, const E &value) override;
+
+        int append(const E &value) override;
+
+        int add_first(const E &value) override;
+
+        int add_last(const E &value) override;
+
+        ~MySet() override;
 };
+
+
+
 
 #endif //CPP_HOMEWORK_MYSET_H
