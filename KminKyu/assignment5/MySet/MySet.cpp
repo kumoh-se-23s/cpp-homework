@@ -35,7 +35,7 @@ MySet & MySet::operator=(const MySet &mySet) {
         return *this;
     }
     this->capacity = mySet.capacity;
-    this->size = mySet.capacity;
+    this->size = mySet.size;
 
     int *resultArray = new int[mySet.capacity];
 
@@ -75,7 +75,7 @@ int MySet::get(int index) const {
     if (0 <= index && index < size) {
         return array[index];
     } else {
-        return -1;
+        return INT_MIN;
     }
 }
 
@@ -96,6 +96,7 @@ MySet MySet::unionSet(const MySet &mySet) const {
     while (idx1st < this->size) {
         result.append(array[idx1st++]);
     }
+
     while (idx2nd < mySet.size) {
         result.append(mySet.array[idx2nd++]);
     }
@@ -155,39 +156,36 @@ void MySet::append(const MySet &mySet) {
     }
 }
 
-void MySet::nomarlize() {
-}
+void MySet::insert(int insertValue) {
+    int index = binarySearch(0, this->size, insertValue);
 
-void MySet::timSort() {
-}
-
-void MySet::mergeSort(int left, int mid, int right) {
-}
-
-void MySet::insertionSort(int left, int right) {
-    for (int index = left; index < right; ++index) {
-        int key = array[index];
-        int checkIndex = index - 1;
-        int goalIndex = binarySearch(0, checkIndex, key);
-        while (checkIndex >= goalIndex) {
-            array[checkIndex + 1] = array[checkIndex--];
-        }
-        array[checkIndex + 1] = key;
+    if (insertValue == array[index]) {
+        return;
     }
+
+    if (this->size + 1 > this->capacity) {
+        resize(this->capacity * 2);
+    }
+
+    for (int nowIdx = this->size++; nowIdx > index; nowIdx--) {
+        array[nowIdx] = array[nowIdx - 1];
+    }
+    array[index] = insertValue;
 }
 
 int MySet::binarySearch(int left, int right, int value) {
-    if (left > right) {
-        return -1;
+    if (left >= right) {
+        return min(left, right);
     }
     int mid = (left + right) / 2;
     if (array[mid] < value) {
         return binarySearch(mid + 1, right, value);
     } else if (array[mid] > value) {
-        return binarySearch(left, mid - 1, value);
+        return binarySearch(left, mid, value);
     } else {
         return mid;
     }
+
 }
 
 istream & operator>>(istream &in, MySet &mySet) {
@@ -196,7 +194,7 @@ istream & operator>>(istream &in, MySet &mySet) {
     do {
         in >> input;
         if (input != -1) {
-            mySet.append(input);
+            mySet.insert(input);
         }
     } while(input != -1);
 
@@ -206,9 +204,12 @@ istream & operator>>(istream &in, MySet &mySet) {
 ostream & operator<<(ostream &out, const MySet &mySet) {
     out << "{";
     int index;
-    for (index = 0; index < mySet.getLength() - 1; ++index) {
-        out << mySet.get(index) << ", ";
+    for (index = 0; index < mySet.getLength(); ++index) {
+        out << mySet.get(index);
+        if (index != mySet.getLength() - 1) {
+            out << ", ";
+        }
     }
-    out << mySet.get(index) << "}";
+    out << "}";
     return out;
 }

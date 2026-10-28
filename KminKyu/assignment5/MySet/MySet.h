@@ -18,15 +18,10 @@ public:
     MySet unionSet(const MySet &mySet) const;
     MySet intersectionSet(const MySet &mySet) const;
     MySet differenceSet(const MySet &mySet) const;
-    void append(int appendValue);
-    void append(const MySet &mySet);
     void clear();
 
-    void timSort();
-    void mergeSort(int left, int mid, int right);
-    void insertionSort(int left, int right);
+    void insert(int insertValue);
     int binarySearch(int left, int right, int value);
-    void nomarlize();
     void resize(int capacity);
 
 private:
@@ -34,6 +29,9 @@ private:
     int capacity;
     int size;
     constexpr static int MIN_RUN= 32;
+
+    void append(int appendValue);
+    void append(const MySet &mySet);
 
 };
 
