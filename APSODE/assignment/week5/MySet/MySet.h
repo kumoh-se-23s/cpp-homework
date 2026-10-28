@@ -4,52 +4,54 @@
 
 #ifndef CPP_HOMEWORK_MYSET_H
 #define CPP_HOMEWORK_MYSET_H
-#include "collections.h"
-#include "lists.h"
+#include "array_list.h"
+#include "collection.h"
 
-using namespace collections;
-
-template<typename E = int>
-class MySet : public List<E>{
-    List<E> container;
+class MySet : public Collection<int> {
+    ArrayList<int> container;
 
     public:
-        E * begin() override;
-
-        E * end() override;
-
-        const E * begin() const override;
-
-        const E * end() const override;
-
-        int get_size() const override;
-
-        int get_capacity() const override;
-
-        int add(const E &value) override;
-
-        int insert(int index, const E &value) override;
-
-        int remove_at(int index) override;
-
-        bool is_empty() override;
-
-        bool is_contains(const E &value) override;
-
-        const E & get(int index) override;
-
-        int set(int index, const E &value) override;
-
-        int append(const E &value) override;
-
-        int add_first(const E &value) override;
-
-        int add_last(const E &value) override;
-
         ~MySet() override;
+
+        int get(int index) override;
+
+        void set(int index, const int &other) override;
+
+        void add(const int &other) override;
+
+        void add_all(const int *others, int count) override;
+
+        int remove(int index) override;
+
+        int size() override;
+
+        bool empty() override;
+
+        bool contains(const int &object) override;
+
+
+        MySet operator+(const MySet &mySet) const;
+
+        MySet operator&(const MySet &mySet) const;
+
+        MySet operator-(const MySet &mySet) const;
+
+        MySet& operator=(const MySet &mySet);
+
+    private:
+        void require_unique(const int &element);
+
+
+        MySet unionSet(const MySet &mySet) const;
+
+        MySet intersectionSet(const MySet &mySet) const;
+
+        MySet differenceSet(const MySet &mySet) const;
+
 };
 
+std::istream& operator>>(std::istream& input_stream, MySet& set);
 
-
+std::ostream& operator<<(std::ostream& input_stream, const MySet& set);
 
 #endif //CPP_HOMEWORK_MYSET_H
