@@ -12,13 +12,13 @@ public:
     ~MyString(); //소멸자
 
     //기능----------------------
-    int length();
-    bool isEmpty();
-    int getCapacity();
-    char& at(int pos); //범위 외 예외처리
-    int find(const char *cSubStr, int pos = 0); //pos 음수 시 0, 범위 밖이면 마지막 위치
-    int find(const MyString &subStr, int pos = 0);
-    MyString subStr(int pos, int len); //pos 음수시 뒷글자부터 앞으로, 범위 밖이면 find와 동일, len이 이상하면 최대길이
+    int length() const;
+    bool isEmpty() const;
+    int getCapacity() const;
+    char& at(int pos) const; //범위 외 예외처리
+    int find(const char *cSubStr, int pos = 0) const; //pos 음수 시 0, 범위 밖이면 마지막 위치
+    int find(const MyString &subStr, int pos = 0) const;
+    MyString subStr(int pos, int len) const; //pos 음수시 뒷글자부터 앞으로, 범위 밖이면 find와 동일, len이 이상하면 최대길이
     MyString& append(const char *cSubStr);
     MyString& append(const MyString &subStr);
 
@@ -27,11 +27,10 @@ public:
     MyString& replace(int pos, const char *csubStr); //pos부터 앞으로 교체
     MyString& replace(int pos, const MyString &subStr);
     MyString& erase(int pos, int cnt); //pos부터 cnt까지 삭제
-    MyString& erase(int pos, int cnt);
 
     //연산자 오버로딩-------------
-    const MyString operator+(const char *cstr2nd);
-    const MyString operator+(const MyString &str2nd);
+    const MyString operator+(const char *cstr2nd) const;
+    const MyString operator+(const MyString &str2nd) const;
     MyString& operator+=(const char *cstr2nd);
     MyString& operator+=(const MyString &str2nd);
     MyString& operator=(const char *cstr2nd);
@@ -60,12 +59,22 @@ private:
     int size;
 
     void resize();
-    void copyArr(char *copy, char *src, int size);
+    static void copyArr(char *copy, const char *src, int srcSize);
+    static int getLengthOfChArr(const char *chArr);
+    static int getEnoughCapacity(int size);
+    void substitute(const char *chArr, int newCapacity, int newSize);
+    int findChArr(const char *chArr, int arrSize, int pos) const;
+    const MyString subStrImpl(int pos, int len) const;
+    void appendCh(char ch);
+    void appendChArr(const char *chArr, int chArrSize);
+    void insertChArr(const char *chArr, int chArrSize);
+    void replaceChArr(const char *chArr, int chArrSize);
+    int compareTo(const char *chArr, int chArrSize);
 };
 
 ostream& operator<<(ostream& out, const MyString &str);
 istream& operator>>(istream& in, MyString &str);
 istream& getline(istream& in, MyString &str, char delim = '\n');
 //str[pos]부터의 숫자부분을 정수로 변환해 return
-//음수처리x 적절한 내용 아닌 글자면 0
+//음수처리x, 적절한 내용 아닌 글자면 0
 int stoi(const MyString &str, int pos = 0, int base = 10);
