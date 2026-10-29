@@ -25,9 +25,11 @@ private:
     int colSize;
     int **matrix;
 
+    void deleteMat();
+    void makeNewMat(int newRowSize, int newColSize);
     static MyMatrix getFailMatrix();
     static void copyMat(int **copy, const int * const*src, int rowSize, int colSize);
-    static void copyArr(int *copy, const int *src, int srcSize);
 };
 
 ostream& operator<<(ostream &out, const MyMatrix &mat);
+istream& operator>>(istream &in, MyMatrix &mat);

@@ -14,34 +14,24 @@ MyMatrix::MyMatrix() {
 
 //크기 받는 생성자
 MyMatrix::MyMatrix(int row, int col) {
-    rowSize = row;
-    colSize = col;
-
-    matrix = new int*[rowSize];
-    for (int idx = 0; idx < rowSize; idx++) {
-        matrix[idx] = new int[colSize];
+    if (row >= 0 && col >= 0) {
+        makeNewMat(row, col);
+    } else {
+        matrix = nullptr;
+        rowSize = 0;
+        colSize = 0;
     }
 }
 
 //복사생성자
 MyMatrix::MyMatrix(const MyMatrix &mat) {
-    rowSize = mat.rowSize;
-    colSize = mat.colSize;
-
-    matrix = new int*[rowSize];
-    for (int idx = 0; idx < rowSize; idx++) {
-        matrix[idx] = new int[colSize];
-    }
-
+    makeNewMat(mat.rowSize, mat.colSize);
     copyMat(matrix, mat.matrix, rowSize, colSize);
 }
 
 //소멸
 MyMatrix::~MyMatrix() {
-    for (int idx = 0; idx < rowSize; idx++) {
-        delete[] matrix[idx];
-    }
-    delete[] matrix;
+    deleteMat();
 }
 //getter---------------------------------------------
 int MyMatrix::getRowSize() const {
@@ -130,19 +120,8 @@ MyMatrix &MyMatrix::operator=(const MyMatrix &mat2) {
     if (this == &mat2)
         return *this;
 
-    for (int idx = 0; idx < rowSize; idx++) {
-        delete[] matrix[idx];
-    }
-    delete[] matrix;
-
-    rowSize = mat2.rowSize;
-    colSize = mat2.colSize;
-
-    matrix = new int*[rowSize];
-    for (int idx = 0; idx < rowSize; idx++) {
-        matrix[idx] = new int[colSize];
-    }
-
+    deleteMat();
+    makeNewMat(mat2.rowSize, mat2.colSize);
     copyMat(matrix, mat2.matrix, rowSize, colSize);
     return *this;
 }
@@ -159,7 +138,37 @@ ostream &operator<<(ostream &out, const MyMatrix &mat) {
     return out;
 }
 
+istream &operator>>(istream &in, MyMatrix &mat) {
+    int inputSize = mat.getRowSize() * mat.getColSize();
+    int *inputArr = new int[inputSize];
+    for (int idx = 0; idx < inputSize; idx++) {
+        in >> inputArr[idx];
+    }
+    mat.init(inputArr);
+    delete[] inputArr;
+    return in;
+}
+
 //private--------------------------------------------
+//matrix 삭제
+void MyMatrix::deleteMat() {
+    for (int idx = 0; idx < rowSize; idx++) {
+        delete[] matrix[idx];
+    }
+    delete[] matrix;
+}
+
+//새 matrix 할당
+void MyMatrix::makeNewMat(int newRowSize, int newColSize) {
+    rowSize = newRowSize;
+    colSize = newColSize;
+
+    matrix = new int*[rowSize];
+    for (int idx = 0; idx < rowSize; idx++) {
+        matrix[idx] = new int[colSize];
+    }
+}
+
 //1x1짜리 -999 행렬 리턴
 MyMatrix MyMatrix::getFailMatrix() {
     MyMatrix resultMatrix = MyMatrix(1,1);
@@ -173,12 +182,5 @@ void MyMatrix::copyMat(int **copy, const int* const* src, int rowSize, int colSi
         for (int colIdx = 0; colIdx < colSize; colIdx++) {
             copy[rowIdx][colIdx] = src[rowIdx][colIdx];
         }
-    }
-}
-
-//배열 복사
-void MyMatrix::copyArr(int *copy, const int *src, int srcSize) {
-    for (int idx = 0; idx < srcSize; idx++) {
-        copy[idx] = src[idx];
     }
 }
