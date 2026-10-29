@@ -36,7 +36,7 @@ class MyMatrix {
         //문제 조건 가정으로 항상 맞는 사이즈의 배열이 들어옴.
         void init(const int *source);
 
-        MyMatrix operator=(const MyMatrix &matrix);
+        MyMatrix& operator=(const MyMatrix &matrix);
 
         MyMatrix operator+(const MyMatrix &other) const;
 
@@ -46,6 +46,8 @@ class MyMatrix {
         int get_max_element_length() const;
 
     private:
+        static void swap(MyMatrix& matrix1, MyMatrix& matrix2);
+
         static bool can_add(const MyMatrix &left_operand, const MyMatrix &right_operand);
 
         static bool can_multiply(const MyMatrix &left_operand, const MyMatrix &right_operand);

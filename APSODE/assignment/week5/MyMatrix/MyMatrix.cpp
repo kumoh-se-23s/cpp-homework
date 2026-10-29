@@ -61,18 +61,13 @@ void MyMatrix::init(const int *source) {
     }
 }
 
-MyMatrix MyMatrix::operator=(const MyMatrix &matrix) {
+MyMatrix& MyMatrix::operator=(const MyMatrix &matrix) {
     if (this == &matrix) {
         return *this;
     }
 
-
-    this->m_row = matrix.m_row;
-    this->m_column = matrix.m_column;
-    this->container = create_empty_container(this->m_row, this->m_column);
-    this->copy_from_other(matrix);
-    this->free_container();
-
+    MyMatrix temp_matrix = MyMatrix(matrix);
+    swap(*this, temp_matrix);
     return *this;
 }
 
@@ -130,6 +125,20 @@ void MyMatrix::copy_from_other(const MyMatrix &other) {
     }
 }
 
+void MyMatrix::swap(MyMatrix &matrix1, MyMatrix &matrix2) {
+    int **temp_container = matrix1.container;
+    matrix1.container = matrix2.container;
+    matrix2.container = temp_container;
+
+    int temp_row = matrix1.m_row;
+    matrix1.m_row = matrix2.m_row;
+    matrix2.m_row = temp_row;
+
+    int temp_column = matrix1.m_column;
+    matrix1.m_column = matrix2.m_column;
+    matrix2.m_column = temp_column;
+}
+
 void MyMatrix::free_container() {
     for (int row_index = 0; row_index < this->m_row; ++row_index) {
         delete[] this->container[row_index];
@@ -182,19 +191,19 @@ MyMatrix MyMatrix::multi(const MyMatrix &other_matrix) const {
 }
 
 
- std::ostream& operator<<(std::ostream &output_stream, const MyMatrix &matrix) {
-      int max_element_length = matrix.get_max_element_length();
+std::ostream& operator<<(std::ostream &output_stream, const MyMatrix &matrix) {
+    int max_element_length = matrix.get_max_element_length();
 
-      for (int row = 0; row < matrix.row(); ++row) {
-          output_stream << "|";
-          for (int col = 0; col < matrix.column(); ++col) {
-              output_stream << " " << std::setw(max_element_length) << matrix.get(row, col);
-          }
-          output_stream << " |\n";
-      }
+    for (int row = 0; row < matrix.row(); ++row) {
+        output_stream << "|";
+        for (int col = 0; col < matrix.column(); ++col) {
+            output_stream << " " << std::setw(max_element_length) << matrix.get(row, col);
+        }
+        output_stream << " |\n";
+    }
 
-      return output_stream;
-  }
+    return output_stream;
+}
 
 std::istream& operator>>(std::istream &input_stream, MyMatrix &matrix) {
     for (int row = 0; row < matrix.row(); ++row) {
