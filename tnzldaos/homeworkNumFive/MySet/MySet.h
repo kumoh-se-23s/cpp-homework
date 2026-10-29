@@ -12,8 +12,9 @@ class MySet {
     public:
         MySet();
         MySet(const MySet& mySet);
+        ~MySet();
 
-        optional<int> findInsertIndex(int inputNum);
+        optional<int> findInsertIndex(int inputNum) const;
         void insertElement(int insertIndex, int insertNum);
 
         void resize();
@@ -21,10 +22,10 @@ class MySet {
         int getElement(int index) const;
         void appendElement(int element);
 
-        MySet operator+(const MySet inputMySet);
-        MySet operator&(const MySet inputMySet);
-        MySet operator-(const MySet inputMySet);
-        void operator=(const MySet mySet);
+        MySet operator+(const MySet& inputMySet) const;
+        MySet operator&(const MySet& inputMySet) const;
+        MySet operator-(const MySet& inputMySet) const;
+        void operator=(const MySet& mySet);
 
 };
 

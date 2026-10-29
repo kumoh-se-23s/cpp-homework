@@ -10,12 +10,20 @@ MySet::MySet() {
 }
 
 MySet::MySet(const MySet& mySet) {
+    size = 0;
+    capacity = 4;
+    arr = new int[capacity];
+
     for(int index = 0 ; index < mySet.length() ; index++) {
         appendElement(mySet.getElement(index));
     }
 }
 
-optional<int> MySet::findInsertIndex(int inputNum) {
+MySet::~MySet() {
+    delete[] arr;
+}
+
+optional<int> MySet::findInsertIndex(int inputNum) const {
     int arrNum = 0;
 
     if(size == 0) {
@@ -79,7 +87,7 @@ void MySet::appendElement(int element) {
     size++;
 }
 
-MySet MySet::operator+(const MySet inputMySet) {
+MySet MySet::operator+(const MySet& inputMySet) const {
    MySet resultSet = MySet();
    
    int index1 = 0;
@@ -117,7 +125,7 @@ MySet MySet::operator+(const MySet inputMySet) {
     return resultSet;
 }
 
-MySet MySet::operator&(const MySet inputMySet) {
+MySet MySet::operator&(const MySet& inputMySet) const {
     MySet resultSet = MySet();
    
    int index1 = 0;
@@ -142,7 +150,7 @@ MySet MySet::operator&(const MySet inputMySet) {
     return resultSet;
 }
 
-MySet MySet::operator-(const MySet inputMySet) {
+MySet MySet::operator-(const MySet& inputMySet) const {
     MySet resultSet = MySet();
    
    int index1 = 0;
@@ -173,7 +181,11 @@ MySet MySet::operator-(const MySet inputMySet) {
     return resultSet;
 }
 
-void MySet::operator=(MySet mySet) {
+void MySet::operator=(const MySet& mySet) {
+    delete[] arr;
+
+    arr = new int[capacity];
+
     size = 0;
     for(int index = 0 ; index < mySet.length() ; index++) {
         appendElement(mySet.getElement(index));
@@ -198,10 +210,16 @@ istream& operator>>(istream& inputStream, MySet& mySet) {
 }
 
 ostream& operator<<(ostream& outputStream, MySet& mySet) {
+    outputStream << "{";
+
     for(int index = 0 ; index < mySet.length() ; index++) {
-        outputStream << mySet.getElement(index) << " ";
+        outputStream << mySet.getElement(index);
+
+        if(index != mySet.length() - 1) {
+            outputStream << ", ";
+        }
     }
-    outputStream << endl;
+    outputStream << "}";
 
     return outputStream;
 }
