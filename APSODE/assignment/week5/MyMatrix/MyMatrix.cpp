@@ -54,10 +54,9 @@ int MyMatrix::get(int row, int column) const {
 }
 
 void MyMatrix::init(const int *source) {
-    int source_index = 0;
     for (int row_index = 0; row_index < this->m_row; ++row_index) {
         for (int column_index = 0; column_index < this->m_column; ++column_index) {
-            this->container[row_index][column_index] = source[source_index++];
+            this->container[row_index][column_index] = source[row_index * this->m_column + column_index];
         }
     }
 }
@@ -67,12 +66,12 @@ MyMatrix MyMatrix::operator=(const MyMatrix &matrix) {
         return *this;
     }
 
-    this->free_container();
 
     this->m_row = matrix.m_row;
     this->m_column = matrix.m_column;
     this->container = create_empty_container(this->m_row, this->m_column);
     this->copy_from_other(matrix);
+    this->free_container();
 
     return *this;
 }

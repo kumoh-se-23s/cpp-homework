@@ -56,13 +56,13 @@ class MyMatrix {
 
         void copy_from_other(const MyMatrix& other);
 
+        void free_container();
+
         bool is_valid_pos(int row, int column) const;
 
         MyMatrix add(const MyMatrix &other) const;
 
         MyMatrix multi(const MyMatrix &other) const;
-
-        void free_container();
 };
 
 std::ostream& operator <<(std::ostream &output_stream, const MyMatrix &matrix);
