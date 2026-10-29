@@ -49,8 +49,8 @@ MySet & MySet::operator=(const MySet &mySet) {
     return *this;
 }
 
-void MySet::resize(int capacity) {
-    this->capacity = capacity;
+void MySet::resize() {
+    this->capacity *= 2;
     int *result = new int[capacity];
     for (int index = 0; index < size; ++index) {
         result[index] = array[index];
@@ -142,7 +142,7 @@ MySet MySet::differenceSet(const MySet &mySet) const {
 
 void MySet::append(int appendValue) {
     if (size >= capacity) {
-        resize(capacity * 2);
+        resize();
     }
     this->array[size++] = appendValue;
 }
@@ -150,7 +150,7 @@ void MySet::append(int appendValue) {
 void MySet::append(const MySet &mySet) {
     for (int index = 0; index < mySet.size; ++index) {
         if (this->size >= this->capacity) {
-            resize(this->capacity * 2);
+            resize();
         }
         array[size++] = mySet.array[index];
     }
@@ -164,7 +164,7 @@ void MySet::insert(int insertValue) {
     }
 
     if (this->size + 1 > this->capacity) {
-        resize(this->capacity * 2);
+        resize();
     }
 
     for (int nowIdx = this->size++; nowIdx > index; nowIdx--) {

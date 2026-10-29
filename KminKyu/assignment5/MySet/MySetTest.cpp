@@ -137,23 +137,26 @@ TEST(MySetBinarySearchTest, MatchesStdBinarySearchOnRandomData) {
 
 TEST(MySetResizeTest, GrowKeepsContent) {
     MySet s = make_raw({1, 2, 3, 4});
-    s.resize(100);
-    EXPECT_EQ(100, s.capacity);
+    s.resize();
+    s.resize();
+    EXPECT_EQ(16, s.capacity);
     EXPECT_EQ(4, s.size);
     EXPECT_EQ((Vec{1, 2, 3, 4}), raw(s));
 }
 
 TEST(MySetResizeTest, ResizedArrayIsUsable) {
     MySet s = make_raw({1, 2, 3, 4});
-    s.resize(1000);
-    for (int i = 4; i < 1000; ++i) s.array[i] = i + 1; // 새 공간 전체 접근 (ASan 으로 범위 검사)
-    s.size = 1000;
-    for (int i = 0; i < 1000; ++i) EXPECT_EQ(i + 1, s.array[i]);
+    s.resize();
+    s.resize();
+    s.resize();
+    for (int i = 4; i < 32; ++i) s.array[i] = i + 1; // 새 공간 전체 접근 (ASan 으로 범위 검사)
+    s.size = 32;
+    for (int i = 0; i < 32; ++i) EXPECT_EQ(i + 1, s.array[i]);
 }
 
 TEST(MySetResizeTest, SameCapacityKeepsContent) {
     MySet s = make_raw({4, 3, 2, 1});
-    s.resize(s.capacity);
+    s.resize();
     EXPECT_EQ((Vec{4, 3, 2, 1}), raw(s));
 }
 
@@ -161,22 +164,22 @@ TEST(MySetResizeTest, ShrinkToSizeKeepsContent) {
     MySet s(0, 100);
     for (int i = 0; i < 10; ++i) s.array[i] = i + 1;
     s.size = 10;
-    s.resize(10);
-    EXPECT_EQ(10, s.capacity);
+    s.resize();
+    EXPECT_EQ(200, s.capacity);
     EXPECT_EQ(10, s.size);
     EXPECT_EQ((Vec{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}), raw(s));
 }
 
 TEST(MySetResizeTest, RepeatedResizeKeepsContent) {
     MySet s = make_raw({1, 2, 3});
-    for (int cap = 8; cap <= 4096; cap *= 2) s.resize(cap);
+    for (int cap = 0; cap <= 10; cap++) s.resize();
     EXPECT_EQ((Vec{1, 2, 3}), raw(s));
 }
 
 TEST(MySetResizeTest, EmptySetResize) {
     MySet s;
-    s.resize(50);
-    EXPECT_EQ(50, s.capacity);
+    s.resize();
+    EXPECT_EQ(8, s.capacity);
     EXPECT_EQ(0, s.size);
 }
 

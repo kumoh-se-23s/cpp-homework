@@ -22,7 +22,7 @@ public:
 
     void insert(int insertValue);
     int binarySearch(int left, int right, int value);
-    void resize(int capacity);
+    void resize();
 
 private:
     int *array;
