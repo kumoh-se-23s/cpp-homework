@@ -80,6 +80,7 @@ class MyString {
         MyString plusHelper(const char srcStr[], int strLen) const;
         MyString& appendHelper(const char srcStr[], int strLen);
         MyString& insertHelper(int pos, int len, const char srcStr[]);
+        void insertChar(int pos, char subStr);
         MyString& replaceHelper(int pos, int len, const char srcStr[]);
 };
 
@@ -90,4 +91,4 @@ std::istream& operator>>(std::istream& is, MyString& str);
 std::istream& getline(std::istream& is, MyString& str, char delimiter = '\n');
 
 //baseConverter 만들어야함
-int stoi(const MyString& str, int pos = 0, int base = 10) const;
+int stoi(const MyString& str, int pos = 0, int base = 10);
