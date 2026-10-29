@@ -342,42 +342,77 @@ int MyString::compareTo(const char srcStr[], const int strLen) const {
 //------------------------------------------------------------
 //3-3. 문자열 수정 함수류(insert, replace, erase)
 //------------------------------------------------------------
-MyString &MyString::insert(int pos, const MyString &srcStr) {
-
+MyString &MyString::insert(const int pos, const MyString &srcStr) {
+    return insertHelper(pos, srcStr.length(), srcStr.str);
 }
 
-MyString &MyString::insert(int pos, const char subStr[]) {
-
+MyString &MyString::insert(const int pos, const char subStr[]) {
+    return insertHelper(pos, strlen(subStr), subStr);
 }
 
 // insertPrivate
-MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
+//얘는 len이 범위 밖의 개념X
+//한칸씩 미루면 n^2급 비효율인디 바로 미루면
+//this 4 len 6 일때 resize 8 but 총 capa = 10보다 커야함(16) 흠
+// size + len < capa * 2 이 만족할떄까지 loop and resize(capacity)를 만들까
+MyString &MyString::insertHelper(int pos, const int len, const char srcStr[]) {
+    //pos가 음수면 0 범위 밖이면 마지막 위치
+    pos = pos < 0 ? 0 : pos;
+    pos = pos > size ? size : pos;
 
+    for (int i = 0; i < len; i++) {
+        insertChar(pos++, srcStr[i]);
+    }
+
+    return *this;
 }
 
-MyString &MyString::replace(int pos, int len, const MyString &subStr) {
+void MyString::insertChar(const int pos, const char subStr){
+    //범위 밖이면 size를 가져오니까 뭔가 터질거 같아서 +1
+    if (size + 1 >= capacity) {
+        resize();
+    }
+    for (int i = size; i > pos; i--) {
+        this->str[i] = this->str[i - 1];
+    }
+    this->str[pos] = subStr;
+    size++;
+}
 
+
+MyString &MyString::replace(const int pos, const int len, const MyString &subStr) {
+    return replace(pos, len, subStr.str);
 }
 
 MyString &MyString::replace(int pos, int len, const char subStr[]) {
+    //pos가 음수면 0 범위 밖이면 마지막 위치
+    pos = pos < 0 ? 0 : pos;
+    pos = pos > size ? size : pos;
+    //len이 문자열 길이보다 길면 최대 길이로 취급
+    len = len > size ? size : len;
 
+    for (int i = pos; i < len; i++) {
+        this->str[i] = subStr[i];
+    }
+    return *this;
 }
 
-// replacePrivate
-MyString &MyString::replaceHelper(int pos, int len, const char srcStr[]) {
-
-}
 
 MyString &MyString::erase(int pos, int len) {
-
+    //pos가 음수면 0 범위 밖이면 마지막 위치
+    pos = pos < 0 ? 0 : pos;
+    pos = pos > size ? size : pos;
+    //len이 문자열 길이보다 길면 최대 길이로 취급
+    len = len > size ? size : len;
+    
 }
 
 //------------------------------------------------------------
 // 3-4.  문자열을 숫자로 변환하는 stoi(일반 함수)
 //------------------------------------------------------------
 
-int MyString::stoi(const MyString &str, int pos, int base) const {
-
+int stoi(const MyString &str, int pos, int base) {
+    return -1;
 }
 
 
