@@ -52,34 +52,6 @@ bool Day::setValue(int newYear, int newMonth, int newDay) {
     return true;
 }
 
-//util---------------------
-//해당 달에 며칠까지 있는지 반환
-int Day::getDaysInMonth(int year, int month) {
-    static constexpr int DAYS[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    if (isLeapYear(year) && month == 2)
-        return 29;
-    return DAYS[month - 1];
-}
-
-//윤년인지 반환
-bool Day::isLeapYear(int year){
-    if (year % 400 == 0)
-        return true;
-    if (year % 100 == 0)
-        return false;
-    if (year % 4 == 0)
-        return true;
-    return false;
-}
-
-//인자로부터 앞으로 1년이 며칠인지 반환
-int Day::getDaysOfAnYear(int startYear, int startMonth) {
-    //올해가 윤년인데 2월이 안 지남 or 2월 이후부터인데 내년이 윤년임: 366일
-    if ((isLeapYear(startYear) && startMonth <= 2) || (startMonth >= 3 && isLeapYear(startYear + 1)))
-        return 366;
-    return 365; //그 외 365일
-}
-
 //연산자 오버로딩----------------------------
 //전위++
 Day Day::operator++() {
@@ -221,4 +193,32 @@ ostream& operator<<(ostream& out, const Day& day) {
     out << setw(2) << day.getDay();
     out << setfill(' ');
     return out;
+}
+
+//util---------------------
+//해당 달에 며칠까지 있는지 반환
+int Day::getDaysInMonth(int year, int month) {
+    static constexpr int DAYS[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if (isLeapYear(year) && month == 2)
+        return 29;
+    return DAYS[month - 1];
+}
+
+//윤년인지 반환
+bool Day::isLeapYear(int year){
+    if (year % 400 == 0)
+        return true;
+    if (year % 100 == 0)
+        return false;
+    if (year % 4 == 0)
+        return true;
+    return false;
+}
+
+//인자로부터 앞으로 1년이 며칠인지 반환
+int Day::getDaysOfAnYear(int startYear, int startMonth) {
+    //올해가 윤년인데 2월이 안 지남 or 2월 이후부터인데 내년이 윤년임: 366일
+    if ((isLeapYear(startYear) && startMonth <= 2) || (startMonth >= 3 && isLeapYear(startYear + 1)))
+        return 366;
+    return 365; //그 외 365일
 }
