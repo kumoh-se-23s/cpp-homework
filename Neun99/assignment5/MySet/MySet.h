@@ -32,8 +32,9 @@ private:
 
     void resize();
     static void copyArr(int *copy, const int *src, int srcSize);
+    int findInsertPos(int value) const;
     void append(int value);
-    void appendAt(int pos, int value);
+    void insertAt(int pos, int value);
 };
 
 ostream& operator<<(ostream& out, const MySet& set);

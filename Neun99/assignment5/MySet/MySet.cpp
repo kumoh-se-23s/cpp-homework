@@ -37,22 +37,11 @@ int MySet::getValue(int pos) const {
 }
 
 //기능 --------------------------------------
-//원소 추가: insertion sort 기반 동작
+//원소 추가: 이진 탐색 기반 동작
 void MySet::insert(int value) {
-    bool isDone = false;
-    for (int targetIdx = 0; !isDone && targetIdx < size; targetIdx++) {
-        if (arr[targetIdx] == value) //같은 값 있으면 넣지 않음
-            isDone = true;
-
-        if (arr[targetIdx] > value) { //value보다 큰 값 찾으면 그 자리에 insert
-            appendAt(targetIdx, value);
-            isDone = true;
-        }
-    }
-    //다 돌았는데 자리 못 찾았고 겹치는 거 없으면 맨 뒤
-    if (!isDone) {
-        append(value);
-    }
+    int targetIdx = findInsertPos(value); //이진 탐색 실패 시 lowIdx = 넣을 자리
+    if (targetIdx != -1)
+        insertAt(targetIdx, value);
 }
 
 //청소
@@ -201,21 +190,33 @@ void MySet::copyArr(int *copy, const int *src, int srcSize) {
     }
 }
 
+//이진탐색으로 넣을 위치 판단, 중복 값 있으면 -1
+int MySet::findInsertPos(int value) const {
+    int lowIdx = 0;
+    int highIdx = size - 1;
+    while (lowIdx <= highIdx) {
+        int midIdx = lowIdx + ((highIdx - lowIdx) / 2);
+        if (arr[midIdx] == value)
+            return -1;
+        if (arr[midIdx] < value)
+            lowIdx = midIdx + 1;
+        else
+            highIdx = midIdx - 1;
+    }
+    return lowIdx;
+}
 //원소 추가: 그냥 갖다붙임 (시간복잡도 줄이는용도)
 void MySet::append(int value) {
-    if (size + 1 > capacity)
-        resize();
-    arr[size] = value;
-    size++;
+    insertAt(size, value);
 }
 
 //원소 추가: pos에 넣음
-void MySet::appendAt(int pos, int value) {
+void MySet::insertAt(int pos, int value) {
     //용량 체크
     if (size + 1 > capacity)
         resize();
 
-    //한칸씩 앞으로 밀기
+    //한칸씩 뒤로 밀기
     for (int idx = size; idx >= pos + 1; idx--) {
         arr[idx] = arr[idx - 1];
     }
