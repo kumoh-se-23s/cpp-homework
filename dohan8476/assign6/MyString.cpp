@@ -352,6 +352,9 @@ MyString &MyString::insert(const int pos, const char subStr[]) {
 
 // insertPrivate
 //얘는 len이 범위 밖의 개념X
+//한칸씩 미루면 n^2급 비효율인디 바로 미루면
+//this 4 len 6 일때 resize 8 but 총 capa = 10보다 커야함(16) 흠
+// size + len < capa * 2 이 만족할떄까지 loop and resize(capacity)를 만들까
 MyString &MyString::insertHelper(int pos, const int len, const char srcStr[]) {
     //pos가 음수면 0 범위 밖이면 마지막 위치
     pos = pos < 0 ? 0 : pos;
@@ -377,24 +380,31 @@ void MyString::insertChar(const int pos, const char subStr){
 }
 
 
-MyString &MyString::replace(int pos, int len, const MyString &subStr) {
-
+MyString &MyString::replace(const int pos, const int len, const MyString &subStr) {
+    return replace(pos, len, subStr.str);
 }
 
 MyString &MyString::replace(int pos, int len, const char subStr[]) {
-
-}
-
-// replacePrivate
-MyString &MyString::replaceHelper(int pos, int len, const char srcStr[]) {
     //pos가 음수면 0 범위 밖이면 마지막 위치
     pos = pos < 0 ? 0 : pos;
     pos = pos > size ? size : pos;
+    //len이 문자열 길이보다 길면 최대 길이로 취급
+    len = len > size ? size : len;
+
+    for (int i = pos; i < len; i++) {
+        this->str[i] = subStr[i];
+    }
+    return *this;
 }
 
 
 MyString &MyString::erase(int pos, int len) {
-
+    //pos가 음수면 0 범위 밖이면 마지막 위치
+    pos = pos < 0 ? 0 : pos;
+    pos = pos > size ? size : pos;
+    //len이 문자열 길이보다 길면 최대 길이로 취급
+    len = len > size ? size : len;
+    
 }
 
 //------------------------------------------------------------

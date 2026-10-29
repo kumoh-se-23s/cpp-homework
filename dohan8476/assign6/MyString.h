@@ -81,7 +81,6 @@ class MyString {
         MyString& appendHelper(const char srcStr[], int strLen);
         MyString& insertHelper(int pos, int len, const char srcStr[]);
         void insertChar(int pos, char subStr);
-        MyString& replaceHelper(int pos, int len, const char srcStr[]);
 };
 
 
