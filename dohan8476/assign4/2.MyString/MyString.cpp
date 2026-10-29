@@ -195,7 +195,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
 }
 
 std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
-    char temp[16];
+    char temp[MyString::DEFAULT_CAPACITY + 1];
     char c;
     int i = 0;
 
@@ -203,7 +203,7 @@ std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
         if (c == delimiter) {
             break;
         }
-        if (i < 15) {
+        if (i < MyString::DEFAULT_CAPACITY) {
             temp[i++] = c;
         }
     }
