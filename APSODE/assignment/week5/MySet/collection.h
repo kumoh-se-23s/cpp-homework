@@ -10,7 +10,7 @@ class Collection {
     public:
         virtual ~Collection() = default;
 
-        virtual E get(int index) = 0;
+        virtual E get(int index) const = 0;
 
         virtual void set(int index, const E &other) = 0;
 
@@ -20,11 +20,11 @@ class Collection {
 
         virtual E remove(int index) = 0;
 
-        virtual int size() = 0;
+        virtual int size() const = 0;
 
-        virtual bool empty() = 0;
+        virtual bool empty() const = 0;
 
-        virtual bool contains(const E &object) = 0;
+        virtual bool contains(const E &object) const = 0;
 };
 
 #endif //CPP_HOMEWORK_COLLECTION_H

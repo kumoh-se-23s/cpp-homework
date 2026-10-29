@@ -4,6 +4,9 @@
 
 #ifndef CPP_HOMEWORK_MYSET_H
 #define CPP_HOMEWORK_MYSET_H
+#include <istream>
+#include <ostream>
+
 #include "array_list.h"
 #include "collection.h"
 
@@ -11,9 +14,13 @@ class MySet : public Collection<int> {
     ArrayList<int> container;
 
     public:
+        MySet();
+
+        MySet(const MySet &other);
+
         ~MySet() override;
 
-        int get(int index) override;
+        int get(int index) const override;
 
         void set(int index, const int &other) override;
 
@@ -23,11 +30,11 @@ class MySet : public Collection<int> {
 
         int remove(int index) override;
 
-        int size() override;
+        int size() const override;
 
-        bool empty() override;
+        bool empty() const override;
 
-        bool contains(const int &object) override;
+        bool contains(const int &object) const override;
 
 
         MySet operator+(const MySet &mySet) const;
@@ -39,7 +46,7 @@ class MySet : public Collection<int> {
         MySet& operator=(const MySet &mySet);
 
     private:
-        void require_unique(const int &element);
+        void require_unique(const int &element) const;
 
 
         MySet unionSet(const MySet &mySet) const;
@@ -52,6 +59,6 @@ class MySet : public Collection<int> {
 
 std::istream& operator>>(std::istream& input_stream, MySet& set);
 
-std::ostream& operator<<(std::ostream& input_stream, const MySet& set);
+std::ostream& operator<<(std::ostream& output_stream, const MySet& set);
 
 #endif //CPP_HOMEWORK_MYSET_H

@@ -68,7 +68,7 @@ class ArrayList : public Collection<E> {
             delete[] this->container;
         }
 
-        E get(int index) override {
+        E get(int index) const override {
             this->require_valid_index(index);
 
             return this->container[index];
@@ -132,15 +132,15 @@ class ArrayList : public Collection<E> {
             return element;
         }
 
-        int size() override {
+        int size() const override {
             return this->m_size;
         }
 
-        bool empty() override {
+        bool empty() const override {
             return this->m_size == 0;
         }
 
-        bool contains(const E &object) override {
+        bool contains(const E &object) const override {
             for (int index = 0; index < this->m_size; ++index) {
                 if (this->container[index] == object) {
                     return true;
@@ -165,7 +165,7 @@ class ArrayList : public Collection<E> {
         }
 
     private:
-        int require_valid_index(int index) {
+        int require_valid_index(int index) const {
             if (0 <= index && index < this->m_size) {
                 return index;
             }

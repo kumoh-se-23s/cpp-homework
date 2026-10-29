@@ -1,12 +1,21 @@
 #include "MySet.h"
 
 #include <istream>
+#include <ostream>
 #include <stdexcept>
+
+MySet::MySet()
+    : container() {
+}
+
+MySet::MySet(const MySet &other)
+    : container(other.container) {
+}
 
 MySet::~MySet() {
 }
 
-int MySet::get(int index) {
+int MySet::get(int index) const {
     return this->container.get(index);
 }
 
@@ -40,49 +49,103 @@ int MySet::remove(int index) {
     return this->container.remove(index);
 }
 
-int MySet::size() {
+int MySet::size() const {
     return this->container.size();
 }
 
-bool MySet::empty() {
+bool MySet::empty() const {
     return this->container.empty();
 }
 
-bool MySet::contains(const int &object) {
+bool MySet::contains(const int &object) const {
     return this->container.contains(object);
 }
 
-void MySet::require_unique(const int &element) {
+void MySet::require_unique(const int &element) const {
     if (this->contains(element)) {
         throw std::invalid_argument("duplicate element");
     }
 }
 
 MySet MySet::unionSet(const MySet &mySet) const {
+    MySet result(*this);
+
+    for (int index = 0; index < mySet.size(); ++index) {
+        result.add(mySet.get(index));
+    }
+
+    return result;
 }
 
 MySet MySet::intersectionSet(const MySet &mySet) const {
+    MySet result;
+
+    for (int index = 0; index < this->size(); ++index) {
+        int element = this->get(index);
+
+        if (mySet.contains(element)) {
+            result.add(element);
+        }
+    }
+
+    return result;
 }
 
 MySet MySet::differenceSet(const MySet &mySet) const {
+    MySet result;
+
+    for (int index = 0; index < this->size(); ++index) {
+        int element = this->get(index);
+
+        if (!mySet.contains(element)) {
+            result.add(element);
+        }
+    }
+
+    return result;
 }
 
 MySet MySet::operator+(const MySet &mySet) const {
+    return this->unionSet(mySet);
 }
 
 MySet MySet::operator&(const MySet &mySet) const {
+    return this->intersectionSet(mySet);
 }
 
 MySet MySet::operator-(const MySet &mySet) const {
+    return this->differenceSet(mySet);
 }
 
-MySet & MySet::operator=(const MySet &mySet) {
+MySet &MySet::operator=(const MySet &mySet) {
+    if (this == &mySet) {
+        return *this;
+    }
+
+    this->container = mySet.container;
+    return *this;
 }
 
-std::istream & operator>>(std::istream &input_stream, MySet &set) {
-    for ( )
+std::istream &operator>>(std::istream &input_stream, MySet &set) {
+    int element;
+
+    while (input_stream >> element && element != EOF) {
+        set.add(element);
+    }
+
+    return input_stream;
 }
 
-std::ostream & operator<<(std::ostream &input_stream, const MySet &set) {
+std::ostream &operator<<(std::ostream &output_stream, const MySet &set) {
+    output_stream << "{";
 
+    for (int index = 0; index < set.size(); ++index) {
+        if (index > 0) {
+            output_stream << ", ";
+        }
+
+        output_stream << set.get(index);
+    }
+
+    return output_stream << "}";
 }
