@@ -1,0 +1,580 @@
+MyString 문제 6가지 해결 방법
+==========================================================
+아래 내용은 작업용 복사본에 그대로 적용해서 직접 검증한 결과예요.
+  - MyString.h + MyString.cpp 두 파일만으로 빌드 성공 (2인자 getline 포함)
+  - 정상 동작 확인 60개 모두 OK
+  - 테스트 전체 CharSequence 50/51, MyString 148/149 통과 (남은 2개는 테스트 쪽 오류)
+  - AddressSanitizer / UndefinedBehaviorSanitizer 메모리 오류 0개
+※ 이 txt 파일과 failed_tests.txt는 제출 대상이 아니에요 (PDF: MyString.cpp, MyString.h만 제출).
+※ 맨 아래 [부록]에 고친 MyString.h / MyString.cpp 전체 코드가 있어요. 고친 곳에는 // [수정] 주석.
+
+
+----------------------------------------------------------
+1. 빈 입력, 공백만 있는 입력, while (cin >> s)의 마지막에서 >>가 멈춤
+----------------------------------------------------------
+위치: utils.cpp:35-52 (operator>>)
+원인:
+  - EOF 검사가 없어서 입력이 끝나 is.get()이 실패해도 반복이 계속 돎
+  - inputChar가 char라서 is.peek()이 돌려주는 EOF(-1)를 정확히 구분하기 어려움
+  - 한 글자도 못 읽어도 스트림을 실패 상태로 만들지 않아서 while (cin >> s)가 끝나지 않음
+해결:
+  ① peek() 결과를 int로 받고, EOF면 반복을 끝냄
+  ② 반복이 끝난 뒤 한 글자도 못 읽었으면(index == 0) failbit를 켬
+
+    while (index < 15) {
+        int next = is.peek();                 // ① int로 받기
+        if (next == EOF) {                    // ① 입력이 끝나면 멈춤
+            break;
+        }
+        char inputChar = static_cast<char>(next);
+
+        if(utils.isCharacter(inputChar)) { ...기존과 같음... }
+        else if (isStart) { break; }
+        else { is.get(); }
+    }
+    str.setChar('\0', index);
+    str.setLength(index);
+
+    if (index == 0) {                         // ② 못 읽었으면 실패 상태로
+        is.setstate(ios::failbit);
+    }
+    return is;
+
+검증: 빈 입력 -> "" + 실패 상태, 공백만 -> "" + 실패 상태, "a b c"를 while (in >> t)로 읽으면 3번 읽고 끝남
+
+
+----------------------------------------------------------
+2. 복사 생성자로 만든 객체에 +나 find를 쓰면 쓰레기 값이 섞이거나 못 찾음
+----------------------------------------------------------
+위치: MyString.cpp:19-24 (복사 생성자), CharSequence.cpp:93 (find(const CharSequence&))
+원인:
+  - 복사 생성자가 글자만 복사하고 끝에 '\0'을 넣지 않음
+  - operator+는 fillArray(charArr)로 '\0'까지 복사하므로 '\0'이 없으면 뒤의 쓰레기 값까지 복사됨
+  - find(const CharSequence&)는 패턴 길이를 getCharArrLength(sequence.charArr)로 '\0'까지 세서 구함
+해결:
+  ① 복사 생성자 반복문 뒤에 '\0' 추가
+
+    MyString::MyString(const MyString &srcStr) {
+        for(int index = 0 ; index < srcStr.length() ; index++) {
+            charArr[index] = srcStr.at(index);
+            arrLength++;
+        }
+        charArr[arrLength] = '\0';            // 추가
+    }
+
+  ② find(const CharSequence&)에서 패턴 길이는 length()로 구하기 (Utils utils; 줄도 필요 없어짐)
+
+    int windowSize = sequence.length();       // 기존: utils.getCharArrLength(sequence.charArr)
+
+검증: 복사본 + "!" -> "hello!", "hello world".find(복사본 "hello") -> 0
+
+
+----------------------------------------------------------
+3. MyString("")으로 만든 뒤 +를 쓰면 쓰레기 값이 섞임
+----------------------------------------------------------
+위치: MyString.cpp:9-16 (MyString(char[]) 생성자), CharSequence.cpp:15-17 (CharSequence() 생성자)
+원인:
+  - 빈 문자열이 들어오면 appendChar가 한 번도 불리지 않아 charArr[0]에 '\0'이 들어가지 않음
+  - 부모 생성자 CharSequence()도 charArr를 초기화하지 않음
+해결: 두 생성자 맨 앞에 charArr[0] = '\0'; 추가
+
+    CharSequence::CharSequence() {
+        charArr[0] = '\0';                    // 추가
+    }
+
+    MyString::MyString(const char inputCharArr[]) {
+        charArr[0] = '\0';                    // 추가
+        int index = 0;
+        while(inputCharArr[index] != '\0') { ...기존과 같음... }
+    }
+
+검증: MyString("") + "ab" -> "ab"
+
+
+----------------------------------------------------------
+4. const MyString에 +, ==, !=, substr, []를 쓰면 컴파일 오류
+----------------------------------------------------------
+위치: MyString.h:20, 22-23, 25, 27-28 / MyString.h:10, CharSequence.h:10, 14
+원인:
+  - 객체를 바꾸지 않는 멤버 함수인데 뒤에 const가 없음
+  - 그래서 const MyString에서 부를 수 없고, a + b + "c"도 안 됨 (a + b의 결과가 const MyString이라서)
+  - 입력 배열을 바꾸지 않는 매개변수에 const가 없어서 MyString s("hello");가 경고
+해결:
+  ① 헤더(.h)와 구현(.cpp) 양쪽 함수 뒤에 const 추가
+
+    MyString substr(int pos, int len) const;
+    const MyString operator+(const char str2nd[]) const;
+    const MyString operator+(const MyString& str2nd) const;
+    char operator[](int pos) const;
+    bool operator==(const MyString &str) const;
+    bool operator!=(const MyString &str) const;
+
+  ② 매개변수를 const char[]로 (헤더와 구현 양쪽)
+
+    MyString(const char inputCharArr[]);       // MyString.h
+    void fillArray(const char inputArr[]);     // CharSequence 쪽
+    CharSequence(const char inputArr[]);       // CharSequence 쪽
+
+  ※ operator+ 안에서 resultMyString.fillArray(charArr)를 부르는데, const 멤버 함수 안에서는
+    charArr가 const이므로 ② fillArray의 const char[] 변경이 꼭 같이 필요해요.
+
+검증: const MyString으로 c[0], c.substr(0, 1), c + "x", c + c, c == d, c != d,
+      a + b + "x", MyString s("hello") 모두 경고 없이 컴파일됨
+
+
+----------------------------------------------------------
+5. getline(cin, s) (2인자)가 원본 헤더로는 컴파일 오류
+----------------------------------------------------------
+위치: utils.h:14 (선언), utils.cpp:57 (정의)
+원인: 기본 인자 delim='\n'이 .cpp의 정의에만 있음. 기본 인자는 호출하는 쪽이 보는 선언(헤더)에 있어야 함.
+해결: 기본 인자를 헤더 선언으로 옮기고, .cpp 정의에서는 지움 (둘 다 쓰면 "redefinition of default argument" 오류)
+
+    // 헤더
+    std::istream& getline(std::istream& is, MyString &str, char delim = '\n');
+    // .cpp
+    istream& getline(istream& is, MyString &str, char delim) { ... }
+
+  ※ getline 안의 쓰지 않는 변수 Utils utils;도 지우면 경고가 사라짐
+
+검증: getline(in, b); (2인자) 컴파일/실행 정상
+
+
+----------------------------------------------------------
+6. MyString.h, MyString.cpp만 제출하면 빌드가 안 됨 (PDF 제출 조건)
+----------------------------------------------------------
+원인:
+  - MyString.h가 CharSequence.h를 include하고, <<, >>, getline 선언은 utils.h에 있음
+  - 채점용 main이 MyString.h만 include하면 CharSequence.h를 못 찾거나 <<, >>, getline을 못 찾음
+해결: 설계(CharSequence, Utils 클래스)는 그대로 두고, 파일만 두 개로 합치기
+  ① MyString.h에 넣을 것 (이 순서대로)
+       #pragma once
+       #include <iostream>
+       class CharSequence { ...CharSequence.h 내용... };
+       class MyString : public CharSequence { ... };
+       class Utils { ... };
+       std::ostream& operator<<(std::ostream& os, const MyString &str);
+       std::istream& operator>>(std::istream& is, MyString &str);
+       std::istream& getline(std::istream& is, MyString &str, char delim = '\n');
+  ② MyString.cpp에 넣을 것
+       #include "MyString.h"
+       using namespace std;
+       + CharSequence.cpp의 함수 구현 전부
+       + MyString.cpp의 함수 구현 전부
+       + utils.cpp의 함수 구현 전부
+  ③ 헤더에는 using namespace std;를 쓰지 않고 std::ostream, std::istream처럼 씀
+     (헤더에 쓰면 그 헤더를 include하는 모든 파일에 퍼져서 이름 충돌 위험)
+  ④ 합친 뒤 CharSequence.h/.cpp, utils.h/.cpp는 제출 폴더에서 빼기
+     (테스트 파일이 "utils.h", "CharSequence.h"를 include하므로 테스트를 계속 돌리려면
+      #pragma once + #include "MyString.h" 한 줄짜리 파일로 바꿔서 제출 폴더 밖에서 쓰면 됨)
+
+검증: MyString.h + MyString.cpp + main(MyString.h만 include) 으로 -Wall -Wextra 빌드 성공,
+      cin >> a, getline(cin, b), cout << a 모두 정상
+      (남는 경고: MyString::find(const MyString&)가 부모 find(const CharSequence&)를 가린다는
+       -Woverloaded-virtual 1개. 동작에는 영향 없음)
+
+
+==========================================================
+[부록 1] 고친 MyString.h 전체
+==========================================================
+#pragma once
+#include <iostream>
+
+class CharSequence {
+    protected:
+        static constexpr int CAPACITY = 15;
+        char charArr[CAPACITY + 1];
+        int arrLength = 0;
+
+        void fillArray(const char inputArr[]);
+
+    public:
+        CharSequence();
+        CharSequence(const char inputArr[]);
+
+        ~CharSequence() = default;
+
+        void setChar(char inputChar, int pos);
+        void setLength(int inputLength);
+        void appendChar(char inputChar);
+
+        virtual int length() const;
+        virtual void incrementLength();
+        virtual bool empty() const;
+        virtual char at(int pos) const;
+
+        virtual int find(const char subStr[], int pos=0) const;
+        virtual int find(const CharSequence &sequence, int pos = 0) const;
+};
+
+class MyString : public CharSequence {
+    public:
+        MyString();
+        MyString(const char inputCharArr[]);
+        MyString(const MyString &srcStr);
+
+        int length() const override;
+        bool empty() const override;
+        char at(int pos) const override;
+
+        int find(const char subStr[], int pos=0) const override;
+        int find(const MyString &subStr, int pos=0) const;
+
+        MyString substr(int pos, int len) const;
+
+        const MyString operator+(const char str2nd[]) const;
+        const MyString operator+(const MyString& str2nd) const;
+        MyString& operator=(const char str2nd[]);
+        char operator[](int pos) const;
+
+        bool operator==(const MyString &str) const;
+        bool operator!=(const MyString &str) const;
+};
+
+class Utils {
+    public:
+        bool isCharacter(char input);
+        int getCharArrLength(const char inputCharArr[]);
+};
+
+std::ostream& operator<<(std::ostream& os, const MyString &str);
+std::istream& operator>>(std::istream& is, MyString &str);
+std::istream& getline(std::istream& is, MyString &str, char delim = '\n');
+
+==========================================================
+[부록 2] 고친 MyString.cpp 전체
+==========================================================
+#include "MyString.h"
+using namespace std;
+
+// ===== CharSequence =====
+
+void CharSequence::fillArray(const char inputArr[]) {   // [수정] const char[]
+    arrLength = 0;
+
+    for (int index = 0; index < CAPACITY && inputArr[index] != '\0'; index++) {
+        charArr[index] = inputArr[index];
+        arrLength++;
+    }
+
+    charArr[arrLength] = '\0';
+}
+
+CharSequence::CharSequence() {
+    charArr[0] = '\0';                                  // [수정] 빈 상태도 '\0'으로 끝나게
+}
+
+CharSequence::CharSequence(const char inputArr[]) {     // [수정] const char[]
+    fillArray(inputArr);
+}
+
+//특정 인덱스에 있는 값 수정
+void CharSequence::setChar(char inputChar, int pos) {
+    charArr[pos] = inputChar;
+}
+
+void CharSequence::setLength(int inputLength) {
+    arrLength = inputLength;
+}
+
+void CharSequence::appendChar(char inputChar) {
+    if(arrLength < 15) {
+        charArr[arrLength] = inputChar;
+        charArr[arrLength + 1] = '\0';
+        arrLength++;
+    }
+}
+
+int CharSequence::length() const {
+    return arrLength;
+}
+
+void CharSequence::incrementLength() {
+    arrLength++;
+}
+
+bool CharSequence::empty() const {
+
+    return arrLength == 0;
+}
+
+char CharSequence::at(int pos) const {
+    if(pos >= arrLength || pos < 0) {
+        return '\0';
+    }
+    else {
+        return charArr[pos];
+    }
+}
+
+int CharSequence::find(const char subStr[], int pos) const {
+    Utils utils;
+
+    int startIndex{pos < 0 ? 0 : pos};
+    int windowSize = utils.getCharArrLength(subStr);
+
+    while(startIndex + windowSize <= arrLength) {
+        int subStrIndex{0};
+
+        for(int index = startIndex ; index < startIndex + windowSize ; index++) {
+            if(charArr[index] == subStr[subStrIndex]) {
+                subStrIndex++;
+            }
+            else {
+                startIndex++;
+                break;
+            }
+        }
+
+        if(subStrIndex == windowSize) {
+            return startIndex;
+        }
+    }
+
+    return -1;
+}
+
+int CharSequence::find(const CharSequence &sequence, int pos) const {
+    int startIndex{pos < 0 ? 0 : pos};
+    int windowSize = sequence.length();                 // [수정] '\0'까지 세지 않고 길이를 바로 사용
+
+    while(startIndex + windowSize <= arrLength) {
+        int subStrIndex{0};
+
+        for(int index = startIndex ; index < startIndex + windowSize ; index++) {
+            if(charArr[index] == sequence.charArr[subStrIndex]) {
+                subStrIndex++;
+            }
+            else {
+                startIndex++;
+                break;
+            }
+        }
+
+        if(subStrIndex == windowSize) {
+            return startIndex;
+        }
+    }
+
+    return -1;
+}
+
+// ===== MyString =====
+
+//배열 초기화
+MyString::MyString() {
+    arrLength = 0;
+    charArr[arrLength] = '\0';
+}
+
+MyString::MyString(const char inputCharArr[]) {         // [수정] const char[]
+    charArr[0] = '\0';                                  // [수정] 빈 문자열이 들어와도 '\0'으로 끝나게
+    int index = 0;
+
+    while(inputCharArr[index] != '\0') {
+        appendChar(inputCharArr[index]);
+        index++;
+    }
+}
+
+
+MyString::MyString(const MyString &srcStr) {
+    for(int index = 0 ; index < srcStr.length() ; index++) {
+        charArr[index] = srcStr.at(index);
+        arrLength++;
+    }
+    charArr[arrLength] = '\0';                          // [수정] 복사한 뒤 '\0'으로 끝나게
+}
+
+int MyString::length() const {
+    return CharSequence::length();
+}
+
+bool MyString::empty() const {
+    return CharSequence::empty();
+}
+
+char MyString::at(int pos) const {
+    return CharSequence::at(pos);
+}
+
+int MyString::find(const char subStr[], int pos) const {
+    return CharSequence::find(subStr, pos);
+}
+
+int MyString::find(const MyString &subStr, int pos) const {
+    return CharSequence::find(subStr, pos);
+}
+
+MyString MyString::substr(int pos, int len) const {     // [수정] const 멤버 함수
+    MyString myString = MyString();
+
+    pos = pos >= 0 ? pos : 0;
+
+    if(pos <= arrLength) {
+        for(int index = pos ; index < arrLength && index < pos + len ; index++) {
+            if(charArr[index] != '\0') {
+                myString.appendChar(charArr[index]);
+            }
+        }
+    }
+    return myString;
+}
+
+const MyString MyString::operator+(const char str2nd[]) const {      // [수정] const 멤버 함수
+    MyString resultMyString = MyString();
+    resultMyString.fillArray(charArr);
+
+    int inputIndex{0};
+
+    for(int index = arrLength ; str2nd[inputIndex] != '\0' && index < CAPACITY ; index++) {
+        resultMyString.appendChar(str2nd[inputIndex]);
+        inputIndex++;
+    }
+
+    return resultMyString;
+}
+
+const MyString MyString::operator+(const MyString& str2nd) const {   // [수정] const 멤버 함수
+    MyString resultMyString = MyString();
+    resultMyString.fillArray(charArr);
+
+    int inputIndex{0};
+
+    for(int index = arrLength ; str2nd.at(inputIndex) != '\0' && index < CAPACITY ; index++) {
+        resultMyString.appendChar(str2nd.at(inputIndex));
+        inputIndex++;
+    }
+
+    return resultMyString;
+}
+
+MyString& MyString::operator=(const char str2nd[]) {
+    int index{0};
+    arrLength = 0;
+
+    while(arrLength < 15 && str2nd[index] != '\0') {
+        charArr[index] = str2nd[index];
+        arrLength++;
+        index++;
+    }
+
+    charArr[arrLength] = '\0';
+
+    return *this;
+}
+
+char MyString::operator[](int pos) const {              // [수정] const 멤버 함수
+    if(pos >= arrLength || pos < 0) {
+        return '\0';
+    }
+    else {
+        return charArr[pos];
+    }
+}
+
+bool MyString::operator==(const MyString &str) const {  // [수정] const 멤버 함수
+    if(str.arrLength != arrLength) {
+        return false;
+    }
+
+    for(int index = 0 ; index < arrLength ; index++) {
+        if(charArr[index] != str.at(index)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool MyString::operator!=(const MyString &str) const {  // [수정] const 멤버 함수
+    if(str.arrLength != arrLength) {
+        return true;
+    }
+
+    for(int index = 0 ; index < arrLength ; index++) {
+        if(charArr[index] != str.at(index)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// ===== Utils / 입출력 =====
+
+bool Utils::isCharacter(char input) {
+    return (32 < input) & (input < 127);
+}
+
+int Utils::getCharArrLength(const char inputCharArr[]) {
+    int index{0};
+
+    while (inputCharArr[index] != '\0') {
+        index++;
+    }
+
+    return index;
+}
+
+ostream& operator<<(ostream& os, const MyString &str) {
+    for(int index = 0 ; index < str.length() ; index++) {
+        os << str.at(index);
+    }
+
+    return os;
+}
+
+istream& operator>>(istream& is, MyString &str) {
+    Utils utils;
+
+    bool isStart{false};
+    int index{0};
+
+    while (index < 15) {
+        int next = is.peek();                           // [수정] EOF(-1)를 구분하려고 int로 받음
+        if (next == EOF) {                              // [수정] 입력이 끝나면 멈춤
+            break;
+        }
+        char inputChar = static_cast<char>(next);
+
+        if(utils.isCharacter(inputChar)) {
+            is.get(inputChar);
+            str.setChar(inputChar, index);
+            isStart = true;
+            index++;
+        }
+        else if (isStart) {
+            break;
+        }
+        else {
+            is.get();
+        }
+    }
+    str.setChar('\0', index);
+    str.setLength(index);
+
+    if (index == 0) {                                   // [수정] 한 글자도 못 읽으면 실패 상태로
+        is.setstate(ios::failbit);
+    }
+
+    return is;
+}
+
+istream& getline(istream& is, MyString &str, char delim) {   // [수정] 기본 인자는 헤더 선언에만
+    int index{0};
+    char inputChar{'\0'};
+
+    while (index < 15 && is.get(inputChar) && inputChar != delim) {
+        str.setChar(inputChar, index);
+        index++;
+    }
+
+    str.setChar('\0', index);
+    str.setLength(index);
+
+    if(index == 15) {
+        while (is.get(inputChar) && inputChar != delim) {
+
+        }
+    }
+
+    return is;
+}

@@ -31,5 +31,6 @@ int main()
     print1DArr(arr2,MAX);
     print1DArr(p,MAX);
 
+    delete[] p;
     return 0;
 }
