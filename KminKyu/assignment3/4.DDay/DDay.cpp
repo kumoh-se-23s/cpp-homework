@@ -15,7 +15,7 @@ bool DDay::setStartDay(int year, int month, int day) {
     if (Day::isCorrectDate(year, month, day)) {
         this->startDay.set(year, month, day);
         setDDay(this->dday);
-       return true;
+        return true;
     }
 
     return false;

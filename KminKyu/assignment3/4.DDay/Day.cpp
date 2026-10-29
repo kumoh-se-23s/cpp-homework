@@ -83,6 +83,7 @@ const Day Day::calculateDays(int dday) const {
         dday *= -1;
         dday += getMaxOfYear(resultYear) - getDayOfYear(resultYear, this->month, this->day);
     } else if (dday > 0) {
+
         //현재까지 일수를 전부 더해서 xxxx-1.12.31로 취급, 계산은 xxxx년으로 해야 하므로 year -1 처리 x
         sign = 1;
         dday += getDayOfYear(resultYear, this->month, this->day);
