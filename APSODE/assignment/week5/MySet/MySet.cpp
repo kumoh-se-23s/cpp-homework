@@ -129,7 +129,7 @@ MySet &MySet::operator=(const MySet &mySet) {
 std::istream &operator>>(std::istream &input_stream, MySet &set) {
     int element;
 
-    while (input_stream >> element && element != EOF) {
+    while (input_stream >> element && element >= 0) {
         set.add(element);
     }
 
