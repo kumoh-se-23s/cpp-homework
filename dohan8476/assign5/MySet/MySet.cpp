@@ -206,13 +206,23 @@ void MySet::append(const int val) {
     }
     array[size++] = val;
 }
-
+//based on binary search
 int MySet::findPos(const int val) const {
-    int pos = 0;
-    while (pos < size && array[pos] < val) {
-        pos++;
+    int low = 0, high = size - 1;
+
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (array[mid] > val) {
+            high = mid - 1;
+        }
+        else if (array[mid] < val) {
+            low = mid + 1;
+        }
+        else {
+            return mid;
+        }
     }
-    return pos;
+    return -1;
 }
 
 void MySet::insertAt(const int pos, const int val) {
