@@ -1,6 +1,5 @@
 #include "MyString.h"
 
-#include <cstring>
 #include <iostream>
 
 // =================================================================
@@ -171,7 +170,7 @@ bool MyString::operator==(const MyString& srcStr) const {
 }
 
 bool MyString::operator==(const char cstr2nd[]) const {
-    return compareHelper(cstr2nd, strlen(cstr2nd));
+    return compareHelper(cstr2nd, cstrlen(cstr2nd));
 }
 
 bool MyString::operator!=(const MyString& srcStr) const {
@@ -204,7 +203,7 @@ int MyString::find(const MyString& subStr, const int pos) const {
 }
 
 int MyString::find(const char subStr[], int pos) const {
-    return findHelper(subStr, strlen(str), pos);
+    return findHelper(subStr, cstrlen(str), pos);
 }
 
 //private sector
@@ -300,7 +299,7 @@ bool MyString::operator<(const MyString& srcStr) const {
 }
 
 bool MyString::operator<(const char cstr2nd[]) const {
-    return compareTo(cstr2nd, strlen(cstr2nd)) < 0;
+    return compareTo(cstr2nd, cstrlen(cstr2nd)) < 0;
 }
 
 bool MyString::operator>(const MyString &srcStr) const {
@@ -308,7 +307,7 @@ bool MyString::operator>(const MyString &srcStr) const {
 }
 
 bool MyString::operator>(const char cstr2nd[]) const {
-    return compareTo(cstr2nd, strlen(cstr2nd)) > 0;
+    return compareTo(cstr2nd, cstrlen(cstr2nd)) > 0;
 }
 
 bool MyString::operator<=(const MyString &srcStr) const {
@@ -316,7 +315,7 @@ bool MyString::operator<=(const MyString &srcStr) const {
 }
 
 bool MyString::operator<=(const char cstr2nd[]) const {
-    return compareTo(cstr2nd, strlen(cstr2nd)) <= 0;
+    return compareTo(cstr2nd, cstrlen(cstr2nd)) <= 0;
 }
 
 bool MyString::operator>=(const MyString &srcStr) const {
@@ -324,9 +323,10 @@ bool MyString::operator>=(const MyString &srcStr) const {
 }
 
 bool MyString::operator>=(const char cstr2nd[]) const {
-    return compareTo(cstr2nd, strlen(cstr2nd)) >= 0;
+    return compareTo(cstr2nd, cstrlen(cstr2nd)) >= 0;
 }
 
+// private
 int MyString::compareTo(const char srcStr[], const int strLen) const {
     for (int i = 0; i < strLen; i++) {
         if (this->str[i] != srcStr[i] || this->str[i] == '\0') {
@@ -348,12 +348,12 @@ MyString &MyString::insert(const int pos, const MyString &srcStr) {
 }
 
 MyString &MyString::insert(const int pos, const char subStr[]) {
-    return insertHelper(pos, strlen(subStr), subStr);
+    return insertHelper(pos, cstrlen(subStr), subStr);
 }
 
 // insertPrivate
-//한칸씩 미루면 n^2급 비효율인디 바로 미루면
-//this 4 len 6 일때 resize 8 but 총 capa = 10보다 커야함(16) 흠
+// insertChar로 한칸씩 미루면 n^2급 비효율인디 바로 미루면
+// this 4 len 6 일때 resize 8 but 총 capa = 10보다 커야함(16) 흠
 // size + len < capa * 2 이 만족할떄까지 loop and resize(capacity)를 만들까
 MyString &MyString::insertHelper(int pos, const int len, const char srcStr[]) {
     //len이 0이면 삽입X로 판단
@@ -392,7 +392,7 @@ MyString &MyString::replace(const int pos, const int len, const char subStr[]) {
 
 // abcdefg 에서 cd를 지운다고하면
 // abefg가 되어야함 pos + len 을 pos로 덮어쓰기하고 pos + len 을 널문자
-// abefg(널)g가 되는데 뒤에 g로 지워줘야하려나
+// abefg(널)g가 되는데 뒤에 g로 지워줘야하려나 덮어져서 상관없으려나
 // 만약 abcdef를 지우면 g하나만 남는데 그럼 7칸 텅텅 비게됨 역resize? 같은거도 고려 해야할듯
 MyString &MyString::erase(int pos, int len) {
     pos = pos < 0 ? 0 : pos;
@@ -409,6 +409,9 @@ MyString &MyString::erase(int pos, int len) {
     size -= len;
     this->str[size] = '\0';
 
+    //지웟으니 역resize 확인
+    resize(size);
+
     return *this;
     
 }
@@ -421,9 +424,21 @@ int stoi(const MyString &str, int pos, int base) {
     return -1;
 }
 
+static bool isDigit(char c) {
+    return '0' <= c && c <= '9';
+}
 
+static bool isAllDigit(const char c[]) {
+    for (int i = 0; c[i] != '\0'; i++) {
+        if (!isDigit(c[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+// isdigit, isAllDigit, baseConverter,,,, something more need implement
 //private 영역
-int MyString::cstrlen(const char str[]) const {
+int MyString::cstrlen(const char str[]) {
     int len = 0;
     while (str[len] != '\0') {
         len++;

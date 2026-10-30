@@ -72,7 +72,7 @@ class MyString {
 
         void resize(int newCapacity);
 
-        int cstrlen(const char str[]) const;
+        static int cstrlen(const char str[]) ;
         int compareTo(const char srcStr[], int strLen) const;
 
         int findHelper(const char subStr[], int subLen, int pos) const;
