@@ -27,7 +27,7 @@ class ArrayList : public Collection<E> {
         }
 
         explicit ArrayList(int manual_capacity)
-            : container(nullptr), m_size(0), capacity(manual_capacity) {
+            : m_size(0), capacity(manual_capacity) {
             if (manual_capacity < 1) {
                 throw std::invalid_argument("capacity must be positive");
             }
@@ -99,16 +99,7 @@ class ArrayList : public Collection<E> {
         }
 
         void add_first(const E &other) {
-            if (this->need_expansion()) {
-                this->expand();
-            }
-
-            for (int index = this->m_size - 1; index >= 0; --index) {
-                this->container[index + 1] = this->container[index];
-            }
-
-            this->container[0] = other;
-            ++this->m_size;
+            this->insert(0, other);
         }
 
         void add_last(const E &other) {
@@ -182,12 +173,10 @@ class ArrayList : public Collection<E> {
         }
 
     private:
-        int require_valid_index(int index) const {
-            if (0 <= index && index < this->m_size) {
-                return index;
+        void require_valid_index(int index) const {
+            if (!(0 <= index && index < this->m_size)) {
+                throw std::out_of_range("index out of range");
             }
-
-            throw std::out_of_range("index out of range");
         }
 
         bool need_expansion(int add_amount = 1) {
