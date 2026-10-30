@@ -38,6 +38,7 @@ int main() {
     myCopy(arr1, arr2, MAX);
 
     // p = arr1; // p는 arr1의 복사본이 되도록, 동적 할당 후 myCopy() 호출
+    p = new int[MAX];
     myCopy(arr1, p, MAX);
 
 
@@ -45,6 +46,8 @@ int main() {
     print1DArr(arr1, MAX); // print1DArr(int *, int)를 추가 구현할 것
     print1DArr(arr2, MAX);
     print1DArr(p, MAX);
+
+    delete[] p;
     return 0;
 }
 
