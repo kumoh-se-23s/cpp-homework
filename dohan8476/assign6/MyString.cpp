@@ -9,7 +9,7 @@
 
 //1-1. default 생성자
 MyString::MyString() {
-    this->str = new char[capacity + 1];
+    this->str = new char[capacity];
     str[0] = '\0';
 }
 //1-2. 복사 생성자
@@ -75,7 +75,7 @@ std::ostream &operator<<(std::ostream &os, const MyString& str) {
 }
 
 std::istream &operator>>(std::istream &is, MyString &str) {
-    char temp[MyString::DEFAULT_CAPACITY + 1];
+    char temp[MyString::DEFAULT_CAPACITY];
     char c;
     int i = 0;
 
@@ -100,7 +100,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
 }
 
 std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
-    char temp[16];
+    char temp[MyString::DEFAULT_CAPACITY];
     char c;
     int i = 0;
 
@@ -109,7 +109,7 @@ std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
             break;
         }
         //상수값 드러나는거 고치기
-        if (i < 15) {
+        if (i < MyString::DEFAULT_CAPACITY - 1) {
             temp[i++] = c;
         }
     }
@@ -183,7 +183,7 @@ bool MyString::operator!=(const char cstr2nd[]) const {
 }
 
 //private
-bool MyString::compareHelper(const char srcStr[], int strLen) const {
+bool MyString::compareHelper(const char srcStr[], const int strLen) const {
     if (this->length() != strLen) {
         return false;
     }
@@ -279,8 +279,9 @@ MyString &MyString::append(const char cstr2nd[]) {
 }
 // private method
 MyString &MyString::appendHelper(const char srcStr[], const int strLen) {
-    if (size + strLen >= capacity) {
-        resize();
+    int newCapacity = size + strLen;
+    if (newCapacity >= capacity) {
+        resize(newCapacity);
     }
     //추가로 붙히기
     for (int i = 0; i < strLen; i++) {
@@ -351,59 +352,64 @@ MyString &MyString::insert(const int pos, const char subStr[]) {
 }
 
 // insertPrivate
-//얘는 len이 범위 밖의 개념X
 //한칸씩 미루면 n^2급 비효율인디 바로 미루면
 //this 4 len 6 일때 resize 8 but 총 capa = 10보다 커야함(16) 흠
 // size + len < capa * 2 이 만족할떄까지 loop and resize(capacity)를 만들까
 MyString &MyString::insertHelper(int pos, const int len, const char srcStr[]) {
+    //len이 0이면 삽입X로 판단
+    if (len == 0) return *this;
     //pos가 음수면 0 범위 밖이면 마지막 위치
     pos = pos < 0 ? 0 : pos;
     pos = pos > size ? size : pos;
 
-    for (int i = 0; i < len; i++) {
-        insertChar(pos++, srcStr[i]);
+    if (size + len >= capacity) {
+        resize(size + len);
     }
+
+    //shift 먼저 해주고
+    for (int i = size - 1; i >= pos; i--) {
+        this->str[i + len] = this->str[i];
+    }
+    //값 채우기
+    for (int i = 0; i < len; i++) {
+        this->str[pos + i] = srcStr[i];
+    }
+    size += len;
+    this->str[size] = '\0'; // 이거 생각도 안하고 있었네;;;
 
     return *this;
 }
-
-void MyString::insertChar(const int pos, const char subStr){
-    //범위 밖이면 size를 가져오니까 뭔가 터질거 같아서 +1
-    if (size + 1 >= capacity) {
-        resize();
-    }
-    for (int i = size; i > pos; i--) {
-        this->str[i] = this->str[i - 1];
-    }
-    this->str[pos] = subStr;
-    size++;
-}
-
 
 MyString &MyString::replace(const int pos, const int len, const MyString &subStr) {
-    return replace(pos, len, subStr.str);
+    //const와 len은 erase, insertHelper 내부에서 보정
+    //직접 내부 로직 구현과 O(N+M)으로 동일한데 shift 1회, 2회 차이 정도 발생할듯?
+    return erase(pos, len).insert(pos, subStr);
 }
 
-MyString &MyString::replace(int pos, int len, const char subStr[]) {
-    //pos가 음수면 0 범위 밖이면 마지막 위치
-    pos = pos < 0 ? 0 : pos;
-    pos = pos > size ? size : pos;
-    //len이 문자열 길이보다 길면 최대 길이로 취급
-    len = len > size ? size : len;
-
-    for (int i = pos; i < len; i++) {
-        this->str[i] = subStr[i];
-    }
-    return *this;
+MyString &MyString::replace(const int pos, const int len, const char subStr[]) {
+    return erase(pos, len).insert(pos, subStr);
 }
 
-
+// abcdefg 에서 cd를 지운다고하면
+// abefg가 되어야함 pos + len 을 pos로 덮어쓰기하고 pos + len 을 널문자
+// abefg(널)g가 되는데 뒤에 g로 지워줘야하려나
+// 만약 abcdef를 지우면 g하나만 남는데 그럼 7칸 텅텅 비게됨 역resize? 같은거도 고려 해야할듯
 MyString &MyString::erase(int pos, int len) {
-    //pos가 음수면 0 범위 밖이면 마지막 위치
     pos = pos < 0 ? 0 : pos;
     pos = pos > size ? size : pos;
-    //len이 문자열 길이보다 길면 최대 길이로 취급
-    len = len > size ? size : len;
+
+    if (len < 0 || pos + len > size) {
+        len = size - pos;
+    }
+
+    for (int i = pos + len; i < size; i++) {
+        this->str[i - len] = this->str[i];
+    }
+
+    size -= len;
+    this->str[size] = '\0';
+
+    return *this;
     
 }
 
@@ -425,17 +431,21 @@ int MyString::cstrlen(const char str[]) const {
     return len;
 }
 
-void MyString::resize() {
-    if (size >= capacity) {
+void MyString::resize(const int newCapacity) {
+    //담기는 크기가 잡힐때까지 capacity 2배씩
+    //원래 8인데 한 20 들어오면 32 자동으로 잡히게
+    while (capacity <= newCapacity) {
         capacity *= 2;
     }
-
-    char *newStr = new char[capacity];
+    // auto는 옆의 값을보고 자신의 타입을 추론함 포인터의 경우 옆에 * 붙혀서 포인터 명시(안붙혀도 되긴함)
+    // auto a = num; (num이 10이면 int, 3.14면 double의 형식으로 추론)
+    // auto* newStr = new char[capacity]; 가독성은 잘 모르겟네 흠 별로 같은데
+    char* newStr = new char[capacity];
 
     for (int i = 0 ; i < size ; i++) {
         newStr[i] = str[i];
     }
     delete [] str;
-    str Str;
+    str = newStr;
 }
 

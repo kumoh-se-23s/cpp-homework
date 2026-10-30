@@ -5,7 +5,7 @@ class MyString {
     public:
         static constexpr int DEFAULT_CAPACITY = 8;
         //기본 기능 난이도 하
-        MyString(); // 초기 크기 8!!byte의 문자열 공간을 생성하고 빈 문자열로 초기화
+        MyString(); // 초기 크기 8byte의 문자열 공간을 생성하고 빈 문자열로 초기화
         MyString(const MyString& srcStr);
         ~MyString();
 
@@ -70,7 +70,7 @@ class MyString {
         int capacity = DEFAULT_CAPACITY;
         char *str = nullptr;
 
-        void resize();
+        void resize(int newCapacity);
 
         int cstrlen(const char str[]) const;
         int compareTo(const char srcStr[], int strLen) const;
@@ -80,7 +80,6 @@ class MyString {
         MyString plusHelper(const char srcStr[], int strLen) const;
         MyString& appendHelper(const char srcStr[], int strLen);
         MyString& insertHelper(int pos, int len, const char srcStr[]);
-        void insertChar(int pos, char subStr);
 };
 
 
