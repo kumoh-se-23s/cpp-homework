@@ -205,16 +205,6 @@ MyString &MyString::erase(const int pos, const int len) {
     return *this;
 }
 
-int MyString::stoi(const MyString &str, const int pos, const int base) {
-    int num = 0;
-    for (int i = pos; i < str.size; ++i) {
-        num *= base;
-        const int add = charToInt(str[pos + i], base);
-        if (add == -1) break;
-        num += add;
-    }
-    return num;
-}
 
 int MyString::compare(const MyString &lhs, const MyString &rhs) {
     for (int i = 0; i < std::min(lhs.size, rhs.size); i++) {
@@ -265,15 +255,6 @@ char MyString::operator[](const int pos) const {
     return data[pos];
 }
 
-std::istream &MyString::getline(std::istream &in, MyString &str, const char delim) {
-    char ch;
-    MyString temp;
-    while ((ch = in.get()) != delim && ch != EOF) {
-        temp.append(ch);
-    }
-    str = temp;
-    return in;
-}
 
 void MyString::resize(const int newCapacity) {
     assert(newCapacity >= 0);

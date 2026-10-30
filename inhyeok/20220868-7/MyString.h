@@ -1,5 +1,6 @@
 
 #pragma once
+#include <assert.h>
 #include <iostream>
 #include <compare>
 
@@ -49,9 +50,6 @@ public:
 
     MyString &erase(int pos, int len);
 
-
-    static int stoi(const MyString &str, int pos = 0, int base = 10);
-
     template<typename T> requires std::is_arithmetic_v<T>
     static MyString toString(T num);
 
@@ -82,8 +80,6 @@ public:
         return capacity;
     }
 
-    static std::istream &getline(std::istream &in, MyString &str, char delim = '\n');
-
     void resize(int newCapacity);
 
     static bool isWhitespace(char ch) {
@@ -110,7 +106,43 @@ MyString MyString::toString(T num) {
     }
     return result;
 }
+inline int charToInt(const char c, const int base) {
+    assert(base >= 2 && base <= 36);
+    int num = 0;
+    if (c >= '0' && c <= '9') {
+        num = c - '0';
+    }
+    if (c >= 'A' && c <= 'Z') {
+        num = c - 'A' + 10;
+    }
+    if (c >= 'a' && c <= 'z') {
+        num = c - 'a' + 10;
+    }
+    return num >= base ? -1 : num;
+}
 
+inline int stoi(const MyString &str, const int pos = 0, const int base = 10) {
+    int num = 0;
+    for (int i = pos; i < str.length(); ++i) {
+        num *= base;
+        const int add = charToInt(str[pos + i], base);
+        if (add == -1) break;
+        num += add;
+    }
+    return num;
+}
+
+
+
+inline std::istream &getline(std::istream &in, MyString &str, const char delim = '\n') {
+    char ch;
+    MyString temp;
+    while ((ch = in.get()) != delim && ch != EOF) {
+        temp.append(ch);
+    }
+    str = temp;
+    return in;
+}
 
 inline std::ostream &operator<<(std::ostream &out, const MyString &string) {
     out << string.getData();
