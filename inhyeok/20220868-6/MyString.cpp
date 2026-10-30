@@ -56,6 +56,8 @@ MyString::MyString(MyString &&other) noexcept {
 }
 
 MyString &MyString::operator=(MyString &&other) noexcept {
+    if (this == &other) return *this;
+
     std::swap(size, other.size);
     std::swap(data, other.data);
     std::swap(capacity, other.capacity);
@@ -149,6 +151,9 @@ MyString &MyString::operator+=(const char *v) {
     return append(v);
 }
 
+MyString &MyString::append(const MyString &v) {
+    return append(v.getData());
+}
 MyString &MyString::append(const char *v) {
     const int prevSize = size;
     for (; v[size - prevSize] != '\0'; ++size) {
@@ -200,16 +205,6 @@ MyString &MyString::erase(const int pos, const int len) {
     return *this;
 }
 
-int MyString::stoi(const MyString &str, const int pos, const int base) {
-    int num = 0;
-    for (int i = pos; i < str.size; ++i) {
-        num *= base;
-        const int add = charToInt(str[pos + i], base);
-        if (add == -1) break;
-        num += add;
-    }
-    return num;
-}
 
 int MyString::compare(const MyString &lhs, const MyString &rhs) {
     for (int i = 0; i < std::min(lhs.size, rhs.size); i++) {
@@ -221,13 +216,17 @@ int MyString::compare(const MyString &lhs, const MyString &rhs) {
     return (lhs.size > rhs.size) - (lhs.size < rhs.size);
 }
 
+MyString MyString::substr(const int pos) const {
+    return substr(pos, size - pos);
+}
+
 MyString MyString::substr(int pos, const int len) const {
 
     if (pos < 0) pos = size + pos - len + 1;
     const int endPos = std::max(0, pos + len);
     pos = std::max(0, pos);
 
-    const int actualLen = std::min(endPos - pos, std::max(0, capacity - pos));
+    const int actualLen = std::min(endPos - pos, std::max(0, size - pos));
     const auto temp = new char[actualLen + 1];
     for (int i = 0; i < actualLen; ++i) {
         temp[i] = data[pos + i];
@@ -247,7 +246,7 @@ bool MyString::isEmpty() const {
 }
 
 char MyString::at(const int pos) const {
-    if (pos >= size) throw std::invalid_argument("invalid pos");
+    if (pos >= size) return '\0';
     return data[pos];
 }
 
@@ -256,15 +255,6 @@ char MyString::operator[](const int pos) const {
     return data[pos];
 }
 
-std::istream &MyString::getline(std::istream &in, MyString &str, const char delim) {
-    char ch;
-    MyString temp;
-    while ((ch = in.get()) != delim && ch != EOF) {
-        temp.append(ch);
-    }
-    str = temp;
-    return in;
-}
 
 void MyString::resize(const int newCapacity) {
     assert(newCapacity >= 0);

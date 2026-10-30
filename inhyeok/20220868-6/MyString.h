@@ -1,5 +1,6 @@
 
 #pragma once
+#include <assert.h>
 #include <iostream>
 #include <compare>
 
@@ -37,6 +38,8 @@ public:
 
     MyString &operator+=(const char* v);
 
+    MyString &append(const MyString &v);
+
     MyString &append(const char *v);
 
     MyString &insert(int pos, const char *v);
@@ -47,14 +50,16 @@ public:
 
     MyString &erase(int pos, int len);
 
-
-    static int stoi(const MyString &str, int pos = 0, int base = 10);
+    template<typename T> requires std::is_arithmetic_v<T>
+    static MyString toString(T num);
 
     std::partial_ordering operator<=>(const MyString &other) const {
         return compare(*this , other) <=> 0;
     }
 
     static int compare(const MyString &lhs, const MyString &rhs);
+
+    [[nodiscard]] MyString substr(int pos) const;
 
     [[nodiscard]] MyString substr(int pos, int len) const;
 
@@ -66,7 +71,7 @@ public:
     [[nodiscard]] const char * getData() const{
         return data;
     }
-    
+
     [[nodiscard]] char * getData(){
         return data;
     }
@@ -74,8 +79,6 @@ public:
     [[nodiscard]] int getCapacity() const {
         return capacity;
     }
-
-    static std::istream &getline(std::istream &in, MyString &str, char delim = '\n');
 
     void resize(int newCapacity);
 
@@ -88,6 +91,58 @@ private:
 
 };
 
+template<typename T> requires std::is_arithmetic_v<T>
+MyString MyString::toString(T num) {
+    if (num == 0) return "0";
+
+    MyString result;
+    MyString tmp;
+    while (num != 0) {
+        tmp.append(num % 10 + '0');
+        num /= 10;
+    }
+    for (int i = tmp.length() - 1; i >= 0; --i) {
+        result.append(tmp.at(i));
+    }
+    return result;
+}
+inline int charToInt(const char c, const int base) {
+    assert(base >= 2 && base <= 36);
+    int num = 0;
+    if (c >= '0' && c <= '9') {
+        num = c - '0';
+    }
+    if (c >= 'A' && c <= 'Z') {
+        num = c - 'A' + 10;
+    }
+    if (c >= 'a' && c <= 'z') {
+        num = c - 'a' + 10;
+    }
+    return num >= base ? -1 : num;
+}
+
+inline int stoi(const MyString &str, const int pos = 0, const int base = 10) {
+    int num = 0;
+    for (int i = pos; i < str.length(); ++i) {
+        num *= base;
+        const int add = charToInt(str[pos + i], base);
+        if (add == -1) break;
+        num += add;
+    }
+    return num;
+}
+
+
+
+inline std::istream &getline(std::istream &in, MyString &str, const char delim = '\n') {
+    char ch;
+    MyString temp;
+    while ((ch = in.get()) != delim && ch != EOF) {
+        temp.append(ch);
+    }
+    str = temp;
+    return in;
+}
 
 inline std::ostream &operator<<(std::ostream &out, const MyString &string) {
     out << string.getData();
