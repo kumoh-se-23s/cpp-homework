@@ -13,6 +13,7 @@ MyString::MyString() {
 }
 //1-2. 복사 생성자
 MyString::MyString(const MyString& srcStr){
+    str = new char[capacity];
     int i = 0;
     for (; srcStr.str[i] != '\0' && i < capacity; i++, size++){
         str[i] = srcStr.str[i];
@@ -32,6 +33,8 @@ MyString &MyString::operator=(const MyString& srcStr) {
         return *this;
     }
     *this = srcStr.str;
+
+    this->size = srcStr.size;
 
     return *this;
 }
@@ -129,7 +132,7 @@ std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
 //------------------------------------------------------------
 MyString::MyString(const char srcStr[]) {
     int i = 0;
-    for (; srcStr[i] != '\0' && i < capacity ; i++){
+    for (; srcStr[i] != '\0' && i < capacity ; i++, size++){
         str[i] = srcStr[i];
     }
     str[i] = '\0';
@@ -287,6 +290,7 @@ MyString &MyString::appendHelper(const char srcStr[], const int strLen) {
         str[size + i] = srcStr[i];
     }
     size += strLen;
+    str[size] = '\0';
 
     return *this;
 }
@@ -419,24 +423,53 @@ MyString &MyString::erase(int pos, int len) {
 //------------------------------------------------------------
 // 3-4.  문자열을 숫자로 변환하는 stoi(일반 함수)
 //------------------------------------------------------------
-
-int stoi(const MyString &str, int pos, int base) {
-    return -1;
-}
-
-static bool isDigit(char c) {
+static bool isDigit(const char c) {
     return '0' <= c && c <= '9';
 }
 
-static bool isAllDigit(const char c[]) {
-    for (int i = 0; c[i] != '\0'; i++) {
-        if (!isDigit(c[i])) {
-            return false;
-        }
+static char toLower(const char c) {
+    if ('A' <= c && c <= 'Z') {
+        return c - 'A' + 'a';
     }
-    return true;
+    return c;
 }
-// isdigit, isAllDigit, baseConverter,,,, something more need implement
+
+static bool isAlpha(char c) {
+    c = toLower(c);
+    return 'a' <= c && c <= 'z';
+}
+
+static int baseConverter(char c) {
+    c = toLower(c);
+
+    if (isDigit(c)) {
+        return c - '0';
+    }
+    if (isAlpha(c)) {
+        return c - 'a' + 10;
+    }
+    return -1;
+}
+
+static bool isConvertible(const char c, const int base) {
+    int val = baseConverter(c);
+    return (0 <= val && val < base);
+}
+
+int stoi(const MyString &str, const int pos, const int base) {
+    if (base < 2 || base > 36) {
+        return -1;
+    }
+
+    int res = 0;
+    for (int i = pos; isConvertible(str[i], base); i++) {
+        res *= base;
+        res += baseConverter(str[i]);
+    }
+    return res;
+}
+
+// isdigit, isAllDigit, baseConverter,,,, maybe need to implement more,,nn
 //private 영역
 int MyString::cstrlen(const char str[]) {
     int len = 0;
@@ -453,9 +486,9 @@ void MyString::resize(const int newCapacity) {
     while (capacity <= newCapacity) {
         capacity *= 2;
     }
-    //역resize, 최소 크기 8(DEFAULT_capa)
+    //역resize, 최소 크기 8(DEFAULT_capa) 16 12 24 18 36 27(8배수 위반인데 흠)
     while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 2) {
-        capacity /= 2;
+        capacity = capacity * 3 / 4;
     }
     //같으면 복사 안되게 만들기
     if (capacity == oldCapacity) {

@@ -222,7 +222,7 @@ int MySet::findPos(const int val) const {
             return mid;
         }
     }
-    return -1;
+    return low;
 }
 
 void MySet::insertAt(const int pos, const int val) {
