@@ -432,10 +432,19 @@ int MyString::cstrlen(const char str[]) const {
 }
 
 void MyString::resize(const int newCapacity) {
+    const int oldCapacity = capacity;
     //담기는 크기가 잡힐때까지 capacity 2배씩
     //원래 8인데 한 20 들어오면 32 자동으로 잡히게
     while (capacity <= newCapacity) {
         capacity *= 2;
+    }
+    //역resize, 최소 크기 8(DEFAULT_capa)
+    while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 2) {
+        capacity /= 2;
+    }
+    //같으면 복사 안되게 만들기
+    if (capacity == oldCapacity) {
+        return;
     }
     // auto는 옆의 값을보고 자신의 타입을 추론함 포인터의 경우 옆에 * 붙혀서 포인터 명시(안붙혀도 되긴함)
     // auto a = num; (num이 10이면 int, 3.14면 double의 형식으로 추론)
