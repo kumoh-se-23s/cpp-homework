@@ -55,6 +55,10 @@ class MySet : public Collection<int> {
 
         MySet differenceSet(const MySet &mySet) const;
 
+        int binary_search(const int &target) const;
+
+        int binary_search(const int &target, int low, int high) const;
+
 };
 
 std::istream& operator>>(std::istream& input_stream, MySet& set);

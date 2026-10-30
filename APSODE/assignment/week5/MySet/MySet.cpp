@@ -26,13 +26,18 @@ void MySet::set(int index, const int &other) {
 
     this->require_unique(other);
 
-    this->container.set(index, other);
+    this->container.remove(index);
+    this->add(other);
 }
 
 void MySet::add(const int &other) {
-    if (!this->container.contains(other)) {
-        this->container.add(other);
+    int index = this->binary_search(other);
+
+    if (index < this->size() && this->container.get(index) == other) {
+        return;
     }
+
+    this->container.insert(index, other);
 }
 
 void MySet::add_all(const int *others, int count) {
@@ -58,7 +63,9 @@ bool MySet::empty() const {
 }
 
 bool MySet::contains(const int &object) const {
-    return this->container.contains(object);
+    int index = this->binary_search(object);
+
+    return index < this->size() && this->container.get(index) == object;
 }
 
 void MySet::require_unique(const int &element) const {
@@ -67,11 +74,47 @@ void MySet::require_unique(const int &element) const {
     }
 }
 
-MySet MySet::unionSet(const MySet &mySet) const {
-    MySet result(*this);
+int MySet::binary_search(const int &target) const {
+    return this->binary_search(target, 0, this->size());
+}
 
-    for (int index = 0; index < mySet.size(); ++index) {
-        result.add(mySet.get(index));
+int MySet::binary_search(const int &target, int low, int high) const {
+    if (low >= high) {
+        return low;
+    }
+
+    int mid = low + (high - low) / 2;
+
+    if (this->container.get(mid) < target) {
+        return this->binary_search(target, mid + 1, high);
+    }
+    return this->binary_search(target, low, mid);
+}
+
+MySet MySet::unionSet(const MySet &mySet) const {
+    MySet result;
+    int this_index = 0;
+    int other_index = 0;
+
+    for (; this_index < this->size() && other_index < mySet.size();) {
+        int this_value = this->get(this_index);
+        int other_value = mySet.get(other_index);
+
+        result.container.add(this_value < other_value ? this_value : other_value);
+
+        if (this_value <= other_value) {
+            ++this_index;
+        }
+        if (other_value <= this_value) {
+            ++other_index;
+        }
+    }
+
+    for (; this_index < this->size(); ++this_index) {
+        result.container.add(this->get(this_index));
+    }
+    for (; other_index < mySet.size(); ++other_index) {
+        result.container.add(mySet.get(other_index));
     }
 
     return result;
@@ -80,11 +123,18 @@ MySet MySet::unionSet(const MySet &mySet) const {
 MySet MySet::intersectionSet(const MySet &mySet) const {
     MySet result;
 
-    for (int index = 0; index < this->size(); ++index) {
-        int element = this->get(index);
+    for (int this_index = 0, other_index = 0; this_index < this->size() && other_index < mySet.size();) {
+        int this_value = this->get(this_index);
+        int other_value = mySet.get(other_index);
 
-        if (mySet.contains(element)) {
-            result.add(element);
+        if (this_value == other_value) {
+            result.container.add(this_value);
+        }
+        if (this_value <= other_value) {
+            ++this_index;
+        }
+        if (other_value <= this_value) {
+            ++other_index;
         }
     }
 
@@ -93,13 +143,26 @@ MySet MySet::intersectionSet(const MySet &mySet) const {
 
 MySet MySet::differenceSet(const MySet &mySet) const {
     MySet result;
+    int this_index = 0;
+    int other_index = 0;
 
-    for (int index = 0; index < this->size(); ++index) {
-        int element = this->get(index);
+    for (; this_index < this->size() && other_index < mySet.size();) {
+        int this_value = this->get(this_index);
+        int other_value = mySet.get(other_index);
 
-        if (!mySet.contains(element)) {
-            result.add(element);
+        if (this_value < other_value) {
+            result.container.add(this_value);
         }
+        if (this_value <= other_value) {
+            ++this_index;
+        }
+        if (other_value <= this_value) {
+            ++other_index;
+        }
+    }
+
+    for (; this_index < this->size(); ++this_index) {
+        result.container.add(this->get(this_index));
     }
 
     return result;

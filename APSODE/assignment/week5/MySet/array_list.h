@@ -115,6 +115,23 @@ class ArrayList : public Collection<E> {
             this->add(other);
         }
 
+        void insert(int index, const E &other) {
+            if (index < 0 || index > this->m_size) {
+                throw std::out_of_range("index out of range");
+            }
+
+            if (this->need_expansion()) {
+                this->expand();
+            }
+
+            for (int container_index = this->m_size; container_index > index; --container_index) {
+                this->container[container_index] = this->container[container_index - 1];
+            }
+
+            this->container[index] = other;
+            ++this->m_size;
+        }
+
         E remove(int index) override {
             this->require_valid_index(index);
 
