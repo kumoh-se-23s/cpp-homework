@@ -11,28 +11,28 @@
 #include "StudentCircularLinkedList.h"
 #include "TeamMemberCircularLinkedList.h"
 
-class StudentHashTable {
+class StudentTable {
     GenericCircularLinkedList<KeyValuePair<int, StudentCircularLinkedList>> studentTable;
     GenericCircularLinkedList<KeyValuePair<int, TeamMemberCircularLinkedList>> teamTable;
 
     constexpr static int INITIAL_CAPACITY = 16;
 
 public:
-    explicit StudentHashTable();
+    explicit StudentTable();
 
-    ~StudentHashTable();
+    ~StudentTable();
 
-    StudentHashTable(const StudentHashTable &) = delete;
+    StudentTable(const StudentTable &) = delete;
 
-    StudentHashTable &operator=(const StudentHashTable &) = delete;
+    StudentTable &operator=(const StudentTable &) = delete;
 
-    StudentHashTable(StudentHashTable &&) = delete;
+    StudentTable(StudentTable &&) = delete;
 
-    StudentHashTable &operator=(StudentHashTable &&) = delete;
+    StudentTable &operator=(StudentTable &&) = delete;
 
     void addStudent(Student student);
 
-    void removeStudent(const Student &student) const;
+    void removeStudent(int num);
 
     [[nodiscard]] MyString toString() const;
 
@@ -41,6 +41,6 @@ public:
 };
 
 
-inline std::ostream &operator<<(std::ostream &os, const StudentHashTable &table) {
+inline std::ostream &operator<<(std::ostream &os, const StudentTable &table) {
     return os << table.toString();
 }

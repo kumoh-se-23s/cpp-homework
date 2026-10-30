@@ -53,18 +53,7 @@ public:
     static int stoi(const MyString &str, int pos = 0, int base = 10);
 
     template<typename T> requires std::is_arithmetic_v<T>
-    static MyString toString(T num) {
-        MyString result;
-        MyString tmp;
-        while (num != 0) {
-            tmp.append(num % 10 + '0');
-            num /= 10;
-        }
-        for (int i = tmp.length() - 1; i >= 0; --i) {
-            result.append(tmp.at(i));
-        }
-        return result;
-    }
+    static MyString toString(T num);
 
     std::partial_ordering operator<=>(const MyString &other) const {
         return compare(*this , other) <=> 0;
@@ -72,7 +61,7 @@ public:
 
     static int compare(const MyString &lhs, const MyString &rhs);
 
-    MyString substr(int pos) const;
+    [[nodiscard]] MyString substr(int pos) const;
 
     [[nodiscard]] MyString substr(int pos, int len) const;
 
@@ -105,6 +94,22 @@ private:
     static int charToInt(char c, int base);
 
 };
+
+template<typename T> requires std::is_arithmetic_v<T>
+MyString MyString::toString(T num) {
+    if (num == 0) return "0";
+
+    MyString result;
+    MyString tmp;
+    while (num != 0) {
+        tmp.append(num % 10 + '0');
+        num /= 10;
+    }
+    for (int i = tmp.length() - 1; i >= 0; --i) {
+        result.append(tmp.at(i));
+    }
+    return result;
+}
 
 
 inline std::ostream &operator<<(std::ostream &out, const MyString &string) {

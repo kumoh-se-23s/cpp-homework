@@ -17,14 +17,13 @@ public:
 
     [[nodiscard]] bool operator==(const Student& student) const;
 
+    int getNum() const;
+
     [[nodiscard]] int getYear() const;
 
     [[nodiscard]] int getTeamId() const;
 
     [[nodiscard]] const MyString &getName() const;
-
-    [[nodiscard]] int makeYearHash() const;
-    [[nodiscard]] int makeTeamHash() const;
 
     [[nodiscard]] MyString toString() const;
 };

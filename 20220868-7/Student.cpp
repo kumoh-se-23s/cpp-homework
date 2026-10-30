@@ -8,11 +8,15 @@ Student::Student(const int num, MyString string, const int teamId): num(num), na
 }
 
 bool Student::operator==(const Student &student) const {
-    return student.num == num && student.teamId == teamId && student.name == name;
+    return student.num == num;
+}
+
+int Student::getNum() const {
+    return num;
 }
 
 int Student::getYear() const {
-    return num / 1000;
+    return num / 10000;
 }
 
 int Student::getTeamId() const {
@@ -23,13 +27,6 @@ const MyString & Student::getName() const {
     return name;
 }
 
-int Student::makeYearHash() const {
-    return getYear();
-}
-
-int Student::makeTeamHash() const {
-    return getTeamId();
-}
 
 MyString Student::toString() const {
     MyString result;

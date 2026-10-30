@@ -56,6 +56,8 @@ MyString::MyString(MyString &&other) noexcept {
 }
 
 MyString &MyString::operator=(MyString &&other) noexcept {
+    if (this == &other) return *this;
+
     std::swap(size, other.size);
     std::swap(data, other.data);
     std::swap(capacity, other.capacity);
@@ -254,7 +256,7 @@ bool MyString::isEmpty() const {
 }
 
 char MyString::at(const int pos) const {
-    if (pos >= size) throw std::invalid_argument("invalid pos");
+    if (pos >= size) return '\0';
     return data[pos];
 }
 
@@ -264,19 +266,12 @@ char MyString::operator[](const int pos) const {
 }
 
 std::istream &MyString::getline(std::istream &in, MyString &str, const char delim) {
-    const auto temp = new char[INITIAL_CAPACITY];
     char ch;
-    int len;
-
-    for (len = 0; (ch = in.get()) != delim && ch != EOF; ++len) {
-        if (len >= str.capacity - 1) {
-            str.resize(str.capacity * 2);
-        }
-        temp[len] = ch;
+    MyString temp;
+    while ((ch = in.get()) != delim && ch != EOF) {
+        temp.append(ch);
     }
-    temp[len] = '\0';
     str = temp;
-    delete[] temp;
     return in;
 }
 

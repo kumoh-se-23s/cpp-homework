@@ -6,59 +6,64 @@
 #include <algorithm>
 #include <cstddef>
 
+#include "DebugAllocator.h"
+#include "DefaultAllocator.h"
 
-template<typename Data>
-class RAIISharedNode {
+
+template<typename Data, typename Alloc = DebugAllocator>
+class RAIISharedPointer {
     Data *target;
     int *refCount;
 public:
 
-    RAIISharedNode() : RAIISharedNode(nullptr){
+    RAIISharedPointer() : RAIISharedPointer(nullptr){
     }
 
-    RAIISharedNode(std::nullptr_t){
+    RAIISharedPointer(std::nullptr_t){
         target = nullptr;
-        refCount = new int(1);
+        refCount = nullptr;
     }
 
-    RAIISharedNode(Data target) {
-        this->target = new Data(std::move(target));
-        this->refCount = new int(1);
+    RAIISharedPointer(Data target) {
+        this->target = Alloc::template allocate<Data>(std::move(target));
+        this->refCount = Alloc::template allocate<int>(1);
     }
 
-    ~RAIISharedNode() {
+    ~RAIISharedPointer() {
+        if (!refCount) return;
         if (--*refCount == 0) {
-            delete target;
-            delete refCount;
+            Alloc::template deallocate<Data>(target);
+            Alloc::template deallocate<int>(refCount);
         }
     }
 
-    RAIISharedNode(const RAIISharedNode &other) {
+    RAIISharedPointer(const RAIISharedPointer &other) {
         target = other.target;
         refCount = other.refCount;
-        ++*refCount;
+        if (refCount) ++*refCount;
     }
 
-    RAIISharedNode & operator=(const RAIISharedNode &other) {
+    RAIISharedPointer & operator=(const RAIISharedPointer &other) {
         if (this == &other) return *this;
-        if (--*refCount == 0) {
-            delete target;
+        if (refCount && --*refCount == 0) {
+            Alloc::template deallocate<Data>(target);
+            Alloc::template deallocate<int>(refCount);
         }
 
         target = other.target;
         refCount = other.refCount;
-        ++*refCount;
+        if (refCount) ++*refCount;
         return *this;
     }
 
-    RAIISharedNode(RAIISharedNode &&other) noexcept {
+    RAIISharedPointer(RAIISharedPointer &&other) noexcept {
         target = nullptr;
-        refCount = new int(1);
+        refCount = nullptr;
         std::swap(target, other.target);
         std::swap(refCount, other.refCount);
     }
 
-    RAIISharedNode &operator=(RAIISharedNode &&other) noexcept {
+    RAIISharedPointer &operator=(RAIISharedPointer &&other) noexcept {
         if (this == &other) return *this;
         std::swap(target, other.target);
         std::swap(refCount, other.refCount);
@@ -69,13 +74,15 @@ public:
         return target != nullptr;
     }
 
-    bool operator==(const RAIISharedNode &other) const {
+    bool operator==(const RAIISharedPointer &other) const {
         return target == other.target;
     }
 
-
     Data & operator*() const {
         return *target;
+    }
+    [[nodiscard]] Data *operator->() const {
+        return target;
     }
 
     Data * get() const {

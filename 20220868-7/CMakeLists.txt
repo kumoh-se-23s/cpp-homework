@@ -7,8 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 add_executable(student
         Main.cpp
-        RAIISharedStudentNode.cpp
-        StudentHashTable.cpp
+        StudentTable.cpp
         Student.cpp
         MyString.cpp
         Student.cpp
