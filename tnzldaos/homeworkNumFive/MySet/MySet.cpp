@@ -182,6 +182,9 @@ MySet MySet::operator-(const MySet& inputMySet) const {
 }
 
 void MySet::operator=(const MySet& mySet) {
+    if(this == &mySet) {
+        return;
+    }
     delete[] arr;
 
     arr = new int[capacity];
@@ -209,7 +212,7 @@ istream& operator>>(istream& inputStream, MySet& mySet) {
     return inputStream;
 }
 
-ostream& operator<<(ostream& outputStream, MySet& mySet) {
+ostream& operator<<(ostream& outputStream,const MySet& mySet) {
     outputStream << "{";
 
     for(int index = 0 ; index < mySet.length() ; index++) {

@@ -90,7 +90,7 @@ void Fraction::set(int numerator, int denominator) {
     }
 }
 
-ostream& operator<<(ostream& outputStream, Fraction f1) {
+ostream& operator<<(ostream& outputStream, const Fraction& f1) {
     if(f1.getDenominator() > 1) {
         outputStream << f1.getNumerator() << "/" << f1.getDenominator(); 
     } else {

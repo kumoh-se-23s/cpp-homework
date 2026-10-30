@@ -2,8 +2,9 @@
 #include <string>
 using namespace std;
 
-Money::Money() : dollar(0), cent(0) {
-
+Money::Money() {
+    dollar = 0;
+    cent = 0;
 }
 
 Money::Money(int inputDollar, int inputCent) {

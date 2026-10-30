@@ -11,7 +11,6 @@ class Fraction {
         int denominator; //분모
 
     public: 
-
         int getNumerator() const;
         void setNumerator(int numerator);
 
@@ -21,8 +20,8 @@ class Fraction {
         const Fraction operator+(const Fraction& f1) const;
 
         void set(int numerator, int denominator);
-        Fraction add(Fraction fraction);
-        void print();
+        // Fraction add(Fraction fraction);
+        // void print();
 };
 
-ostream& operator<<(ostream& outputStream, Fraction f1);
+ostream& operator<<(ostream& outputStream, const Fraction& f1);

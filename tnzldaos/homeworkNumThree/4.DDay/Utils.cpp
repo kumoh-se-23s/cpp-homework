@@ -6,7 +6,7 @@ Utils::Utils() {
 }
 
 bool Utils::isDDay(char inputCharArr[], int length) {
-        for(int i = 0 ; i < length ; i++) {
+    for(int i = 0 ; i < length ; i++) {
         if(inputCharArr[i] == '+' || inputCharArr[i] == '-') {
             return true;
         } 

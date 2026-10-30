@@ -42,7 +42,7 @@ MyMatrix::MyMatrix(int column, int row) {
     }
 }
 
-void MyMatrix::init(int* inputArr) {
+void MyMatrix::init(const int* inputArr) {
     for(int index1 = 0 ; index1 < column ; index1++) {
         for(int index2 = 0 ; index2 < row ; index2++) {
             //실제 값 넣기

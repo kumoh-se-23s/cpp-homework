@@ -30,4 +30,4 @@ class MySet {
 };
 
 istream& operator>>(istream& inputStream , MySet& mySet);
-ostream& operator<<(ostream& outputStream , MySet& mySet);
+ostream& operator<<(ostream& outputStream , const MySet& mySet);

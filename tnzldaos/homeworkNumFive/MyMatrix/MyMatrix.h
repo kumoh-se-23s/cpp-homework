@@ -14,7 +14,7 @@ class MyMatrix {
         MyMatrix(const MyMatrix& myMatrix);
         MyMatrix(int column, int row);
 
-        void init(int* arr);
+        void init(const int* arr);
 
         int getColumn() const;
         void setColumn(int column);
