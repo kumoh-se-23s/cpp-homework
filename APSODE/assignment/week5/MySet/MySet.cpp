@@ -74,11 +74,11 @@ void MySet::require_unique(const int &element) const {
     }
 }
 
-int MySet::binary_search(const int &target) const {
+int MySet::binary_search(int target) const {
     return this->binary_search(target, 0, this->size());
 }
 
-int MySet::binary_search(const int &target, int low, int high) const {
+int MySet::binary_search(int target, int low, int high) const {
     if (low >= high) {
         return low;
     }

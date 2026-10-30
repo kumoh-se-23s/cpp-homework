@@ -20,6 +20,7 @@ class MySet : public Collection<int> {
 
         ~MySet() override;
 
+
         int get(int index) const override;
 
         void set(int index, const int &other) override;
@@ -55,9 +56,9 @@ class MySet : public Collection<int> {
 
         MySet differenceSet(const MySet &mySet) const;
 
-        int binary_search(const int &target) const;
+        int binary_search(int target) const;
 
-        int binary_search(const int &target, int low, int high) const;
+        int binary_search(int target, int low, int high) const;
 
 };
 
