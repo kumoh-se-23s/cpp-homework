@@ -2,22 +2,21 @@
 #include <iomanip>
 #include "MyMatrix.h"
 
-class Matrix;
 using namespace std;
 
 MyMatrix::MyMatrix() {
     this->maxRow = 0 ;
     this->maxColumn = 0 ;
     this->matrixArray = nullptr;
-};
+}
 
 MyMatrix::MyMatrix(int row, int column) {
-    this->maxRow = row;
-    this->maxColumn = column;
-    this->matrixArray = new int*[row];
-    for (int nowRow = 0; nowRow < row; ++nowRow) {
-        this->matrixArray[nowRow] = new int[column];
-        for (int nowColumn = 0; nowColumn < column; ++nowColumn) {
+    this->maxRow = max(row,0 );
+    this->maxColumn = max(column, 0);
+    this->matrixArray = new int*[maxRow];
+    for (int nowRow = 0; nowRow < maxRow; ++nowRow) {
+        this->matrixArray[nowRow] = new int[maxColumn];
+        for (int nowColumn = 0; nowColumn < maxColumn; ++nowColumn) {
             this->matrixArray[nowRow][nowColumn] = 0;
         }
     }
@@ -60,7 +59,7 @@ int MyMatrix::getMaxRow() const {
 }
 
 int MyMatrix::getLength(int number) {
-    int cnt = (number < 0) ? 1 : 0;
+    int cnt = (number <= 0) ? 1 : 0;
     for (; number != 0; number /= 10) {
         ++cnt;
     }
@@ -168,8 +167,8 @@ MyMatrix& MyMatrix::operator =(const MyMatrix& otherMatrix) {
     return *this;
 }
 
-const MyMatrix MyMatrix::operator +(const MyMatrix& MyMatrix) const {
-    return this->add(MyMatrix);
+const MyMatrix MyMatrix::operator +(const MyMatrix& matrix) const {
+    return this->add(matrix);
 }
 const MyMatrix MyMatrix::operator !() const {
     return this->transpose();
@@ -198,7 +197,7 @@ ostream& operator <<(ostream& out, const MyMatrix& matrix) {
 }
 
 istream& operator >>(istream& in, MyMatrix& matrix){
-    if (matrix.getMaxRow() <= 0 && matrix.getMaxColumn() <= 0) {
+    if (matrix.getMaxRow() <= 0 || matrix.getMaxColumn() <= 0) {
         return in;
     }
     int *inputValue = new int[matrix.getMaxRow() * matrix.getMaxColumn()];

@@ -1,46 +1,41 @@
-//
-// Created by KminKyu on 2026-10-12.
-//
-
 #include "MySet.h"
 
 MySet::~MySet() {
     delete[] array;
 }
 
-MySet::MySet(const MySet &mySet) {
-    this->capacity = mySet.capacity;
-    this->size = mySet.capacity;
-    this->array = new int[mySet.capacity];
+MySet::MySet(const MySet &otherSet) {
+    this->array = new int[otherSet.capacity];
+    this->capacity = otherSet.capacity;
+    this->size = otherSet.size;
 
-    for (int index = 0; index < mySet.size; ++index) {
-        array[index] = mySet.array[index];
+
+    for (int index = 0; index < otherSet.size; ++index) {
+        array[index] = otherSet.array[index];
     }
 }
+MySet::MySet(MySet &&otherSet) noexcept {
+    this->size = otherSet.size;
+    this->capacity = otherSet.capacity;
+    this->array = otherSet.array;
 
-MySet MySet::operator+(const MySet &mySet) const {
-    return unionSet(mySet);
+    otherSet.array = nullptr;
+    otherSet.size = 0;
+    otherSet.capacity = 0;
 }
 
-MySet MySet::operator&(const MySet &mySet) const {
-    return intersectionSet(mySet);
-}
-
-MySet MySet::operator-(const MySet &mySet) const {
-    return differenceSet(mySet);
-}
-
-MySet & MySet::operator=(const MySet &mySet) {
-    if (this == &mySet) {
+MySet& MySet::operator=(const MySet &otherSet) {
+    if (this == &otherSet) {
         return *this;
     }
-    this->capacity = mySet.capacity;
-    this->size = mySet.size;
+    int *resultArray = new int[otherSet.capacity];
+    this->capacity = otherSet.capacity;
+    this->size = otherSet.size;
 
-    int *resultArray = new int[mySet.capacity];
 
-    for (int index = 0; index < mySet.size; ++index) {
-        resultArray[index] = mySet.array[index];
+
+    for (int index = 0; index < otherSet.size; ++index) {
+        resultArray[index] = otherSet.array[index];
     }
 
     delete[] this->array;
@@ -49,18 +44,34 @@ MySet & MySet::operator=(const MySet &mySet) {
     return *this;
 }
 
-void MySet::resize() {
-    this->capacity *= 2;
-    int *result = new int[capacity];
-    for (int index = 0; index < size; ++index) {
-        result[index] = array[index];
+MySet& MySet::operator=(MySet &&otherSet) noexcept {
+    if (this == &otherSet) {
+        return *this;
     }
-    delete[] array;
-    array = result;
+    delete[] this->array;
+
+    this->size = otherSet.size;
+    this->capacity = otherSet.capacity;
+    this->array = otherSet.array;
+
+    otherSet.capacity = 0;
+    otherSet.size = 0;
+    otherSet.array = nullptr;
+
+    return *this;
+
 }
 
-void MySet::clear() {
-    size = 0;
+MySet MySet::operator+(const MySet &otherSet) const {
+    return unionSet(otherSet);
+}
+
+MySet MySet::operator&(const MySet &otherSet) const {
+    return intersectionSet(otherSet);
+}
+
+MySet MySet::operator-(const MySet &otherSet) const {
+    return differenceSet(otherSet);
 }
 
 int MySet::getLength() const {
@@ -71,6 +82,20 @@ int MySet::getCapacity() const {
     return capacity;
 }
 
+void MySet::clear() {
+    size = 0;
+}
+
+void MySet::resize() {
+    this->capacity = (capacity == 0) ? 4 : capacity * 2;
+    int *result = new int[capacity];
+    for (int index = 0; index < size; ++index) {
+        result[index] = array[index];
+    }
+    delete[] array;
+    array = result;
+}
+
 int MySet::get(int index) const {
     if (0 <= index && index < size) {
         return array[index];
@@ -79,14 +104,14 @@ int MySet::get(int index) const {
     }
 }
 
-MySet MySet::unionSet(const MySet &mySet) const {
+MySet MySet::unionSet(const MySet &otherSet) const {
     MySet result = MySet();
     int idx1st = 0, idx2nd = 0;
-    while (idx1st < this->size && idx2nd < mySet.size) {
-        if (array[idx1st] < mySet.array[idx2nd]) {
+    while (idx1st < this->size && idx2nd < otherSet.size) {
+        if (array[idx1st] < otherSet.array[idx2nd]) {
             result.append(array[idx1st++]);
-        } else if (array[idx1st] > mySet.array[idx2nd]) {
-            result.append(mySet.array[idx2nd++]);
+        } else if (array[idx1st] > otherSet.array[idx2nd]) {
+            result.append(otherSet.array[idx2nd++]);
         } else {
             result.append(array[idx1st++]);
             ++idx2nd;
@@ -97,36 +122,36 @@ MySet MySet::unionSet(const MySet &mySet) const {
         result.append(array[idx1st++]);
     }
 
-    while (idx2nd < mySet.size) {
-        result.append(mySet.array[idx2nd++]);
+    while (idx2nd < otherSet.size) {
+        result.append(otherSet.array[idx2nd++]);
     }
     return result;
 
 }
 
-MySet MySet::intersectionSet(const MySet &mySet) const {
+MySet MySet::intersectionSet(const MySet &otherSet) const {
     MySet result = MySet();
     int idx1st = 0, idx2nd = 0;
-    while (idx1st < this->size && idx2nd < mySet.size) {
-        if (array[idx1st] == mySet.array[idx2nd]) {
+    while (idx1st < this->size && idx2nd < otherSet.size) {
+        if (array[idx1st] == otherSet.array[idx2nd]) {
             result.append(array[idx1st++]);
             ++idx2nd;
         } else {
-            array[idx1st] < mySet.array[idx2nd] ? ++idx1st : ++idx2nd;
+            array[idx1st] < otherSet.array[idx2nd] ? ++idx1st : ++idx2nd;
         }
     }
 
     return result;
 }
 
-MySet MySet::differenceSet(const MySet &mySet) const {
+MySet MySet::differenceSet(const MySet &otherSet) const {
     MySet result = MySet();
     int idx1st = 0, idx2nd = 0;
-    while (idx1st < this->size && idx2nd < mySet.size) {
-        if (array[idx1st] == mySet.array[idx2nd]) {
+    while (idx1st < this->size && idx2nd < otherSet.size) {
+        if (array[idx1st] == otherSet.array[idx2nd]) {
             ++idx1st;
             ++idx2nd;
-        } else if (array[idx1st] < mySet.array[idx2nd]) {
+        } else if (array[idx1st] < otherSet.array[idx2nd]) {
             result.append(array[idx1st++]);
         } else {
             ++idx2nd;
@@ -147,19 +172,19 @@ void MySet::append(int appendValue) {
     this->array[size++] = appendValue;
 }
 
-void MySet::append(const MySet &mySet) {
-    for (int index = 0; index < mySet.size; ++index) {
+void MySet::append(const MySet &otherSet) {
+    for (int index = 0; index < otherSet.size; ++index) {
         if (this->size >= this->capacity) {
             resize();
         }
-        array[size++] = mySet.array[index];
+        array[size++] = otherSet.array[index];
     }
 }
 
 void MySet::insert(int insertValue) {
     int index = binarySearch(0, this->size, insertValue);
 
-    if (insertValue == array[index]) {
+    if (index == -1) {
         return;
     }
 
@@ -167,10 +192,11 @@ void MySet::insert(int insertValue) {
         resize();
     }
 
-    for (int nowIdx = this->size++; nowIdx > index; nowIdx--) {
+    for (int nowIdx = this->size; nowIdx > index; nowIdx--) {
         array[nowIdx] = array[nowIdx - 1];
     }
     array[index] = insertValue;
+    ++this->size;
 }
 
 int MySet::binarySearch(int left, int right, int value) {
@@ -183,7 +209,7 @@ int MySet::binarySearch(int left, int right, int value) {
     } else if (array[mid] > value) {
         return binarySearch(left, mid, value);
     } else {
-        return mid;
+        return -1;
     }
 
 }

@@ -12,8 +12,8 @@ int main() {
     // p = arr1;
     /**
      * 1. arr2 = arr1
-     * arr1과 arr2의 값은 배열값이 아닌 배열의 주소를 가지고 있다.
-     * 고정된 주소(정적배열)를 가지고있는 arr2의 값에 arr1을 넣으니 컴파일 에러가 발생한다.
+     * arr1과 arr2의 값은 배열값의 주소가 아닌 배열값 자체를 가지고 있다.
+     * 배열값을 가지고있는 arr2에 arr1의 주소값을 대입해서 컴파일 에러가 발생한다.
      *
      * 2. p = arr1;
      * p는 포인터 변수로 선언되어 주소값을 저장할 수 있다
@@ -27,6 +27,8 @@ int main() {
     print1DArr(arr1, MAX);
     print1DArr(arr2, MAX);
     print1DArr(p, MAX);
+
+    delete[] p;
     return 0;
 }
 
