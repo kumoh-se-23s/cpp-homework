@@ -205,7 +205,7 @@ int MySet::findInsertPos(int value) const {
     }
     return lowIdx;
 }
-//원소 추가: 그냥 갖다붙임 (시간복잡도 줄이는용도)
+//원소 추가: 그냥 갖다붙임
 void MySet::append(int value) {
     insertAt(size, value);
 }
