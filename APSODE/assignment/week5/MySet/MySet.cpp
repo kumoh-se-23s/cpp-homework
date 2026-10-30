@@ -105,7 +105,7 @@ MySet MySet::unionSet(const MySet &mySet) const {
         if (this_value <= other_value) {
             ++this_index;
         }
-        if (other_value <= this_value) {
+        if (this_value >= other_value) {
             ++other_index;
         }
     }
@@ -133,7 +133,7 @@ MySet MySet::intersectionSet(const MySet &mySet) const {
         if (this_value <= other_value) {
             ++this_index;
         }
-        if (other_value <= this_value) {
+        if (this_value >= other_value) {
             ++other_index;
         }
     }
@@ -156,7 +156,7 @@ MySet MySet::differenceSet(const MySet &mySet) const {
         if (this_value <= other_value) {
             ++this_index;
         }
-        if (other_value <= this_value) {
+        if (this_value >= other_value) {
             ++other_index;
         }
     }
