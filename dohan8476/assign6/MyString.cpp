@@ -1,5 +1,4 @@
 #include "MyString.h"
-
 #include <iostream>
 
 // =================================================================
@@ -8,20 +7,16 @@
 
 //1-1. default 생성자
 MyString::MyString() {
-    this->str = new char[capacity];
     str[0] = '\0';
 }
 //1-2. 복사 생성자
 MyString::MyString(const MyString& srcStr){
-    str = new char[capacity];
-    int i = 0;
-    for (; srcStr.str[i] != '\0' && i < capacity; i++, size++){
-        str[i] = srcStr.str[i];
-    }
-    str[i] = '\0';
+    //if append nothing
+    str[0] = '\0';
+    //if append something overwriting str[0]
+    appendHelper(srcStr.str, srcStr.size);
 }
 //1-3. 파괴자(구현)
-
 MyString::~MyString() {
     delete[] str;
     str = nullptr;
@@ -55,53 +50,81 @@ int MyString::getCapacity() const {
 }
 
 //1-8. 문자열의 pos 위치에 있는 글자를 return 또는 참조
-char MyString::at(const int pos) const {
+char& MyString::at(const int pos) const {
     if (0 <= pos && pos < length()) {
         return str[pos];
     }
-    return '\0';
+    //return null
+    return str[size];
 }
 
-char MyString::operator[](const int pos) const {
-    return this->at(pos);
+char& MyString::operator[](const int pos) {
+    if (0 <= pos && pos < length()) {
+        return str[pos];
+    }
+    //return null
+    return str[size];
+}
+
+const char& MyString::operator[](const int pos) const {
+    if (0 <= pos && pos < length()) {
+        return str[pos];
+    }
+    return str[size];
 }
 
 //1-9 출력, 입력 관련
+static bool isWhitespace(const char c) {
+    return c == '\n' || c == '\r' || c == ' ' || c == '\t';
+}
 
 std::ostream &operator<<(std::ostream &os, const MyString& str) {
-    int len = str.length();
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < str.length(); i++) {
         os << str[i];
     }
     return os;
 }
 
 std::istream &operator>>(std::istream &is, MyString &str) {
+    // >> s1 >> s1
+    str = "";
     char temp[MyString::DEFAULT_CAPACITY];
     char c;
     int i = 0;
 
+    //앞쪽 공백 지우기
+    while (is.get(c) && isWhitespace(c)) {}
+    // "      "와 같은 입력에서 방어 코드
+    //없으면 putback으로 공백 문자가 들어가 버그 발생
+    if (!is) return is;
+    //공백 다음 첫글자 넣어주기
+    is.putback(c);
+
     while (is.get(c)) {
         //엔터, 공백 기준 짜르기
-        if (c == '\n' || c == '\r' || c == ' ' || c == '\t'){
-            break;
-        }
-
-        if (i < MyString::DEFAULT_CAPACITY) {
-            temp[i++] = c;
-        } else {
-            //버퍼에 남기는 메소드
+        if (isWhitespace(c)) {
             is.putback(c);
             break;
         }
+        temp[i++] = c;
+        //이거도 무한 받기로 수정해야함
+        // i 가 7되면 str로 append하고 다시 반복 돌리게 만들기
+        if (i == MyString::DEFAULT_CAPACITY - 1) {
+            temp[i] = '\0';
+            str.append(temp);
+            i = 0; // i 0으로 다시 뺑글뺑글 돌리기
+        }
     }
-    temp[i] = '\0';
-
-    str = temp;
+    // i가 5 이럴때 종료되면 str에 붙혀서 반환
+    if (i > 0) {
+        temp[i] = '\0';
+        str.append(temp);
+    }
     return is;;
 }
 
 std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
+    str = "";
     char temp[MyString::DEFAULT_CAPACITY];
     char c;
     int i = 0;
@@ -110,18 +133,20 @@ std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
         if (c == delimiter) {
             break;
         }
+        temp[i++] = c;
         //상수값 드러나는거 고치기
-        if (i < MyString::DEFAULT_CAPACITY - 1) {
-            temp[i++] = c;
+        if (i == MyString::DEFAULT_CAPACITY - 1) {
+            temp[i] = '\0';
+            str.append(temp);
+            i = 0;
         }
     }
-    temp[i] = '\0';
-
-    str = temp;
-
+    if (i > 0) {
+        temp[i] = '\0';
+        str.append(temp);
+    }
     return is;
 }
-
 
 // =================================================================
 // 기본 기능 난이도 중
@@ -131,19 +156,22 @@ std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
 //2-1. cstring 관련 생성자 및 대입 연산자
 //------------------------------------------------------------
 MyString::MyString(const char srcStr[]) {
-    int i = 0;
-    for (; srcStr[i] != '\0' && i < capacity ; i++, size++){
+    size = cstrlen(srcStr);
+    resize(size);
+
+    for (int i = 0; srcStr[i] != '\0' && i < capacity ; i++){
         str[i] = srcStr[i];
     }
-    str[i] = '\0';
+    str[size] = '\0';
 }
 
 MyString &MyString::operator=(const char cstr2nd[]) {
-    int i = 0;
-    for (; cstr2nd[i] != '\0' && i < capacity; i++) {
+    size = cstrlen(cstr2nd);
+    resize(size);
+    for (int i = 0; cstr2nd[i] != '\0' && i < capacity; i++) {
         str[i] = cstr2nd[i];
     }
-    str[i] = '\0';
+    str[size] = '\0';
     return *this;
 }
 
@@ -206,7 +234,7 @@ int MyString::find(const MyString& subStr, const int pos) const {
 }
 
 int MyString::find(const char subStr[], int pos) const {
-    return findHelper(subStr, cstrlen(str), pos);
+    return findHelper(subStr, cstrlen(subStr), pos);
 }
 
 //private sector
@@ -238,21 +266,30 @@ int MyString::findHelper(const char subStr[], const int subLen, int pos) const {
 //------------------------------------------------------------
 MyString MyString::substr(int pos, int len) const {
     MyString result;
-
+    if (size == 0 ) return result;
+    //abcde -1 -> e(4) -> pos + size
+    // if) -6 -> -1 -> 4
+    // pso = (pos + size ) % size
+    // -11 % 5 + 5 -> 4 its like a encrypt
     if (pos < 0) {
-        pos = 0;
+        pos = (pos % size + size) % size;
     }
 
-    const int currentLen = length();
-    if (pos >= currentLen) {
-        return result;
+    if (pos > size) {
+        pos = size;
+    }
+    //if len is out of range >> max len(size) len < 0 is also max len
+    if (len < 0 || pos + len > size) {
+        len = size - pos;
     }
 
-    int i = 0;
-    for(;i < len && pos + i < currentLen && i < capacity; i++) {
+    result.resize(len);
+    for(int i = 0;i < len && pos + i < size && i < capacity; i++) {
         result.str[i] = str[pos + i];
     }
-    result.str[i] = '\0';
+    result.str[len] = '\0';
+
+    result.size = len;
 
     return result;
 }
@@ -281,17 +318,25 @@ MyString &MyString::append(const char cstr2nd[]) {
 }
 // private method
 MyString &MyString::appendHelper(const char srcStr[], const int strLen) {
+    if (strLen <= 0) return *this;
+    //resize하면 원본 delete되서 원본 임시 복사
+    char* temp = new char[strLen];
+    for (int i = 0; i < strLen; i++) {
+        temp[i] = srcStr[i];
+    }
+
     int newCapacity = size + strLen;
     if (newCapacity >= capacity) {
         resize(newCapacity);
     }
     //추가로 붙히기
     for (int i = 0; i < strLen; i++) {
-        str[size + i] = srcStr[i];
+        str[size + i] = temp[i];
     }
     size += strLen;
     str[size] = '\0';
 
+    delete[] temp;
     return *this;
 }
 
@@ -332,16 +377,15 @@ bool MyString::operator>=(const char cstr2nd[]) const {
 
 // private
 int MyString::compareTo(const char srcStr[], const int strLen) const {
-    for (int i = 0; i < strLen; i++) {
-        if (this->str[i] != srcStr[i] || this->str[i] == '\0') {
-            if (this->str[i] == srcStr[i]) {
-                return 0;
-            }
-            return (this->str[i] > srcStr[i] ? 1 : -1);
+    const int minLen = (size < strLen) ? size : strLen;
+    for (int i = 0; i < minLen; i++) {
+        if (str[i] != srcStr[i]) {
+            return (str[i] > srcStr[i]) ? 1 : -1;
         }
     }
+    if (size == strLen) return 0;
     // this : abcd / src : abc 면 this가 더 길다고 판단
-    return 1;
+    return (size > strLen) ? 1 : -1;
 }
 
 //------------------------------------------------------------
@@ -362,7 +406,7 @@ MyString &MyString::insert(const int pos, const char subStr[]) {
 MyString &MyString::insertHelper(int pos, const int len, const char srcStr[]) {
     //len이 0이면 삽입X로 판단
     if (len == 0) return *this;
-    //pos가 음수면 0 범위 밖이면 마지막 위치
+    //if pos < 0 -> 0 out of range -> size
     pos = pos < 0 ? 0 : pos;
     pos = pos > size ? size : pos;
 
@@ -438,7 +482,7 @@ static bool isAlpha(char c) {
     c = toLower(c);
     return 'a' <= c && c <= 'z';
 }
-
+// must exist before stoi(cause normal? function is top->down,,,,)
 static int baseConverter(char c) {
     c = toLower(c);
 
@@ -450,17 +494,19 @@ static int baseConverter(char c) {
     }
     return -1;
 }
-
+//next isComvertible?
 static bool isConvertible(const char c, const int base) {
-    int val = baseConverter(c);
+    const int val = baseConverter(c);
     return (0 <= val && val < base);
 }
 
-int stoi(const MyString &str, const int pos, const int base) {
+// isdigit, isAllDigit, baseConverter,,,, maybe need to implement more,,nn
+int stoi(const MyString &str, int pos, const int base) {
     if (base < 2 || base > 36) {
         return -1;
     }
-
+    pos = pos < 0 ? 0 : pos;
+    pos = pos > str.length() ? str.length() : pos;
     int res = 0;
     for (int i = pos; isConvertible(str[i], base); i++) {
         res *= base;
@@ -469,7 +515,6 @@ int stoi(const MyString &str, const int pos, const int base) {
     return res;
 }
 
-// isdigit, isAllDigit, baseConverter,,,, maybe need to implement more,,nn
 //private 영역
 int MyString::cstrlen(const char str[]) {
     int len = 0;
@@ -486,9 +531,9 @@ void MyString::resize(const int newCapacity) {
     while (capacity <= newCapacity) {
         capacity *= 2;
     }
-    //역resize, 최소 크기 8(DEFAULT_capa) 16 12 24 18 36 27(8배수 위반인데 흠)
-    while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 2) {
-        capacity = capacity * 3 / 4;
+    //역resize, 최소 크기 8(DEFAULT_capa)
+    while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 4) {
+        capacity /=  2;
     }
     //같으면 복사 안되게 만들기
     if (capacity == oldCapacity) {
@@ -496,10 +541,10 @@ void MyString::resize(const int newCapacity) {
     }
     // auto는 옆의 값을보고 자신의 타입을 추론함 포인터의 경우 옆에 * 붙혀서 포인터 명시(안붙혀도 되긴함)
     // auto a = num; (num이 10이면 int, 3.14면 double의 형식으로 추론)
-    // auto* newStr = new char[capacity]; 가독성은 잘 모르겟네 흠 별로 같은데
+    // auto* newStr = new char[capacity];
     char* newStr = new char[capacity];
 
-    for (int i = 0 ; i < size ; i++) {
+    for (int i = 0; i < size; i++) {
         newStr[i] = str[i];
     }
     delete [] str;

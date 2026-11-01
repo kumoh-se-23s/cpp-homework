@@ -15,11 +15,9 @@ class MyString {
         [[nodiscard]] bool isEmpty() const;
         [[nodiscard]] int getCapacity() const;
 
-        [[nodiscard]] char at(int pos) const;
-
-        char operator[](int pos) const;
-        // char& operator[](int pos) const;
-        // const char& operator[](int pos) const;
+        char& at(int pos) const;
+        char& operator[](int pos) ;
+        const char& operator[](int pos) const;
 
         //기본 기능 난이도 중
         MyString(const char srcStr[]); // 전달되는 문자열에 대한 깊은 복사로 복사생성자 구현
@@ -68,7 +66,7 @@ class MyString {
     private:
         int size = 0;
         int capacity = DEFAULT_CAPACITY;
-        char *str = nullptr;
+        char *str = new char[DEFAULT_CAPACITY];
 
         void resize(int newCapacity);
 
@@ -80,6 +78,7 @@ class MyString {
         MyString plusHelper(const char srcStr[], int strLen) const;
         MyString& appendHelper(const char srcStr[], int strLen);
         MyString& insertHelper(int pos, int len, const char srcStr[]);
+
 };
 
 
@@ -88,5 +87,4 @@ std::ostream& operator<<(std::ostream& os, const MyString& str);
 std::istream& operator>>(std::istream& is, MyString& str);
 std::istream& getline(std::istream& is, MyString& str, char delimiter = '\n');
 
-//baseConverter 만들어야함
 int stoi(const MyString& str, int pos = 0, int base = 10);
