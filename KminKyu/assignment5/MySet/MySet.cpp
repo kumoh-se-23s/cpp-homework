@@ -1,4 +1,6 @@
+#include<climits>
 #include "MySet.h"
+
 
 MySet::~MySet() {
     delete[] array;
@@ -28,19 +30,22 @@ MySet& MySet::operator=(const MySet &otherSet) {
     if (this == &otherSet) {
         return *this;
     }
-    int *resultArray = new int[otherSet.capacity];
-    this->capacity = otherSet.capacity;
-    this->size = otherSet.size;
-
-
+    int *resultArray;
+    if (otherSet.capacity >= this->capacity) {
+        resultArray = this->array;
+    } else {
+        resultArray = new int[otherSet.capacity];
+    }
 
     for (int index = 0; index < otherSet.size; ++index) {
         resultArray[index] = otherSet.array[index];
     }
-
-    delete[] this->array;
-    array = resultArray;
-
+    if (this->array != resultArray) {
+        delete[] this->array;
+        array = resultArray;
+        this->capacity = otherSet.capacity;
+    }
+    this->size = otherSet.size;
     return *this;
 }
 

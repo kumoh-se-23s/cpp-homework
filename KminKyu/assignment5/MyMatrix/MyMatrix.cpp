@@ -148,19 +148,29 @@ MyMatrix& MyMatrix::operator =(const MyMatrix& otherMatrix) {
     if (&otherMatrix == this) {
         return *this;
     }
+    int **array;
+    if (otherMatrix.maxColumn == this->maxColumn && otherMatrix.maxRow == this->maxRow) {
+        array = this->matrixArray;
+    } else {
+        array = new int*[otherMatrix.maxRow];
+        for (int row = 0; row < otherMatrix.maxRow; ++row) {
+            array[row] = new int[otherMatrix.maxColumn];
+        }
+    }
 
-    int** array = new int*[otherMatrix.maxRow];
     for (int row = 0; row < otherMatrix.maxRow; ++row) {
-        array[row] = new int[otherMatrix.maxColumn];
+
         for (int column = 0; column < otherMatrix.maxColumn; ++column) {
             array[row][column] = otherMatrix.matrixArray[row][column];
         }
     }
-    for (int row = 0; row < maxRow; ++row) {
-        delete[] matrixArray[row];
+    if (array != matrixArray) {
+        for (int row = 0; row < maxRow; ++row) {
+            delete[] matrixArray[row];
+        }
+        delete[] matrixArray;
+        matrixArray = array;
     }
-    delete[] matrixArray;
-    matrixArray = array;
     this->maxRow = otherMatrix.maxRow;
     this->maxColumn = otherMatrix.maxColumn;
 
@@ -179,13 +189,19 @@ const MyMatrix MyMatrix::operator *(const MyMatrix& matrix) const {
 }
 
 ostream& operator <<(ostream& out, const MyMatrix& matrix) {
+    int* lengthArray = new int[matrix.getMaxColumn()];
+
+    for (int column = 0; column < matrix.getMaxColumn(); ++column) {
+        lengthArray[column] = matrix.getColumnLength(column);
+    }
+
     for (int row = 0; row < matrix.getMaxRow(); ++row) {
         for (int column = 0; column < matrix.getMaxColumn(); ++column) {
 
             if (column == 0) {
                 out << "| ";
             }
-            out << setw(matrix.getColumnLength(column)) << matrix.getValue(row, column);
+            out << setw(lengthArray[column]) << matrix.getValue(row, column);
             out << " ";
             if (column == matrix.getMaxColumn() - 1) {
                 out << "|";
@@ -193,6 +209,8 @@ ostream& operator <<(ostream& out, const MyMatrix& matrix) {
         }
         out << "\n";
     }
+
+    delete[] lengthArray;
     return out;
 }
 
