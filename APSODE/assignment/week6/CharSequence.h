@@ -1,0 +1,8 @@
+//
+// Created by apsode on 26. 11. 2..
+//
+
+#ifndef CPP_HOMEWORK_CHARSEQUENCE_H
+#define CPP_HOMEWORK_CHARSEQUENCE_H
+
+#endif //CPP_HOMEWORK_CHARSEQUENCE_H
