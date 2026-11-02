@@ -246,12 +246,15 @@ bool MyString::isEmpty() const {
 }
 
 char MyString::at(const int pos) const {
-    if (pos >= size) return '\0';
+    if (pos >= size || pos < 0) return '\0';
     return data[pos];
 }
 
-char MyString::operator[](const int pos) const {
-    if (pos >= size) return '\0';
+char &MyString::operator[](const int pos) {
+    return data[pos];
+}
+
+const char &MyString::operator[](const int pos) const {
     return data[pos];
 }
 

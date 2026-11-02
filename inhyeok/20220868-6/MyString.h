@@ -66,7 +66,8 @@ public:
     [[nodiscard]] int length() const;
     [[nodiscard]] bool isEmpty() const;
     [[nodiscard]] char at(int pos) const;
-    [[nodiscard]] char operator[](int pos) const;
+    [[nodiscard]] char &operator[](int pos);
+    [[nodiscard]] const char &operator[](int pos) const;
 
     [[nodiscard]] const char * getData() const{
         return data;
