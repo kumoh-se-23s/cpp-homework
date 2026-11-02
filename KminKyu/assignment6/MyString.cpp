@@ -1,25 +1,44 @@
-#include<iostream>
+#include <iostream>
 #include "MyString.h"
 
 using namespace std;
 
+static char FAILED_CHAR = '\0';
+
 MyString::MyString() {
-    this->charArray[0] = '\0';
+    this->charArray = new char[DEFAULT_CAPACITY];
     this->size = 0;
-    this->capacity = MAX_STR_SIZE;
+    this->charArray[size] = '\0';
+    this->capacity = DEFAULT_CAPACITY;
 }
 
 MyString::MyString(const MyString& srcStr) {
-    this->capacity = MAX_STR_SIZE;
+    this->charArray = new char[srcStr.capacity];
+    this->capacity = srcStr.capacity;
+
     setString(srcStr.charArray);
 }
 
-MyString::MyString(const char str2nd[]) {
-    this->capacity = MAX_STR_SIZE;
-    setString(str2nd);
+MyString::MyString(const char *cstr2nd) {
+    this->charArray = new char[DEFAULT_CAPACITY];
+    this->capacity = DEFAULT_CAPACITY;
+    setString(cstr2nd);
 }
 
-MyString& MyString::operator=(const MyString& srcStr) {
+MyString::MyString(MyString &&srcStr) {
+    this->charArray = srcStr.charArray;
+    this->size = srcStr.size;
+    this->capacity = srcStr.capacity;
+
+    srcStr.charArray = nullptr;
+    srcStr.size = 0;
+    srcStr.capacity = 0;
+}
+
+MyString::~MyString() {
+    delete[] charArray;
+}
+MyString& MyString::operator =(const MyString& srcStr) {
     if (this == &srcStr){
         return *this;
     }
@@ -27,7 +46,24 @@ MyString& MyString::operator=(const MyString& srcStr) {
     return *this;
 }
 
-MyString& MyString::operator=(const char str2nd[]) {
+MyString& MyString::operator =(MyString &&srcStr) {
+    if (this == &srcStr) {
+        return *this;
+    }
+    delete[] this->charArray;
+
+    this->size = srcStr.size;
+    this->capacity = srcStr.capacity;
+    this->charArray = srcStr.charArray;
+
+    srcStr.capacity = 0;
+    srcStr.size = 0;
+    srcStr.charArray = nullptr;
+
+    return *this;
+}
+
+MyString& MyString::operator =(const char *str2nd) {
     setString(str2nd);
     return *this;
 }
@@ -40,36 +76,43 @@ bool MyString::empty() const {
     return size == 0;
 }
 
-char MyString::at(int pos) const {
+int MyString::getCapacity() const {
+    return capacity;
+}
+
+char& MyString::at(int pos) {
     if (0 <= pos && pos < size) {
         return charArray[pos];
     }
-    return '\0';
+    return FAILED_CHAR;
 }
 
-char MyString::operator[](int pos) const {
+char& MyString::operator [](int pos) {
     return at(pos);
 }
 
-const MyString MyString::operator+(const char str2nd[]) const {
+const char& MyString::operator [](int pos) const {
+    if (0 <= pos && pos < size) {
+        return charArray[pos];
+    }
+    return charArray[size];
+}
+
+MyString MyString::operator +(const char *cstr2nd) const {
     MyString result = MyString(charArray);
-    result.append(str2nd);
+    result.append(cstr2nd);
     return result;
 }
 
-const MyString MyString::operator+(const MyString& str2nd) const {
+MyString MyString::operator +(const MyString& str2nd) const {
     return *this + str2nd.charArray;
 }
 
-bool MyString::operator!=(const MyString& str) const {
-    return !(*this == str);
-}
-
-bool MyString::operator==(const MyString& str) const {
+bool MyString::operator ==(const MyString& str) const {
     if (str.size != this->size) {
         return false;
     }
-    for (int index = 0; charArray[index] != '\0'; ++index) {
+    for (int index = 0; charArray[index] != '\0' && str[index] != '\0'; ++index) {
         if (charArray[index] != str.charArray[index]) {
             return false;
         }
@@ -77,24 +120,56 @@ bool MyString::operator==(const MyString& str) const {
     return true;
 }
 
-int MyString::find(const char subStr[], int pos) const {
-    int subLength = 0;
-    while (subStr[subLength] != '\0') ++subLength;
-    return rabinKarp(subStr, pos, subLength);
+bool MyString::operator !=(const MyString& str) const {
+    return !(*this == str);
+}
+
+bool MyString::operator ==(const char *cstr2nd) const {
+    for (int index = 0; charArray[index] != '\0' && cstr2nd[index] != '\0'; ++index) {
+        if (charArray[index] != cstr2nd[index]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool MyString::operator !=(const char *cstr2nd) const {
+    return !(*this == cstr2nd);
+}
+
+int MyString::find(const char *subStr, int pos) const {
+    if (pos < 0) {
+        pos = 0;
+    } else if (pos >= size) {
+        pos = size -1;
+    }
+    int subLength;
+    for (subLength = 0; subStr[subLength] != '\0'; ++subLength) {}
+    return boyerMoore(subStr, pos, subLength);
 }
 
 int MyString::find(const MyString& subStr, int pos) const {
-    return rabinKarp(subStr.charArray, pos, subStr.size);
+    if (pos < 0) {
+        pos = 0;
+    } else if (pos >= size) {
+        pos = size -1;
+    }
+    return boyerMoore(subStr.charArray, pos, subStr.size);
 }
 
 MyString MyString::substr(int pos, int len) const {
     MyString result = MyString();
-    pos = pos < 0 ? 0 : pos;
 
-    if (pos >= size){
-        return result;
+    if (pos < 0) {
+        pos = size + pos % size;
+
+    } else if (pos >= size) {
+        pos = size -1;
     }
 
+    if (pos + len >= size) {
+        len = size - pos;
+    }
 
     for (int index = 0; index < len && charArray[index + pos] != '\0'; ++index) {
         result.append(charArray[index + pos]);
@@ -103,22 +178,174 @@ MyString MyString::substr(int pos, int len) const {
     return result;
 }
 
-int MyString::getCapacity() const {
-    return capacity;
+MyString& MyString::operator +=(const char *cstr2nd) {
+    *this = *this + cstr2nd;
+
+    return *this;
 }
 
-void MyString::append(char appendChr) {
-    if (size < capacity) {
-        charArray[size] = appendChr;
-        charArray[++size] = '\0';
+MyString& MyString::operator +=(const MyString &str) {
+    *this = *this + str;
+
+    return *this;
+}
+
+MyString& MyString::append(char appendChr) {
+
+    if (size >= capacity) {
+        resize();
     }
+
+    charArray[size] = appendChr;
+    charArray[++size] = '\0';
+
+    return *this;
 }
 
-void MyString::append(const char appendStr[]) {
-    for (int index = 0; appendStr[index] != '\0' && size < capacity; ++index) {
-        charArray[size++] = appendStr[index];
+MyString &MyString::append(const char *cstr2nd) {
+
+    for (int index = 0; cstr2nd[index] != '\0'; ++index) {
+        if (size >= capacity) {
+            resize();
+        }
+        charArray[size++] = cstr2nd[index];
     }
     charArray[size] = '\0';
+
+    return *this;
+}
+
+MyString& MyString::append(const MyString &str) {
+    return this->append(str.charArray);
+}
+
+
+bool MyString::operator <(const MyString &str) const {
+    return (compare(str.charArray) == -1);
+}
+
+bool MyString::operator >(const MyString &str) const {
+    return (compare(str.charArray) == 1);
+}
+
+bool MyString::operator <=(const MyString &str) const {
+    int result = compare(str.charArray);
+    return (result == -1 || result == 0);
+}
+
+bool MyString::operator >=(const MyString &str) const {
+    int result = compare(str.charArray);
+    return (result == 1 || result == 0);
+}
+
+bool MyString::operator <(const char *cstr2nd) const {
+    return (compare(cstr2nd) == -1);
+}
+
+bool MyString::operator >(const char *cstr2nd) const {
+    return (compare(cstr2nd) == 1);
+}
+
+bool MyString::operator <=(const char *cstr2nd) const {
+    int result = compare(cstr2nd);
+    return (result == -1 || result == 0);
+}
+
+bool MyString::operator >=(const char *cstr2nd) const {
+    int result = compare(cstr2nd);
+    return (result == 1 || result == 0);
+}
+
+int MyString::compare(const char *str2nd) const {
+    int index;
+    for (index = 0; this->charArray[index] != '\0' && str2nd[index] != '\0'; ++index) {
+        if (this->charArray[index] < str2nd[index]) {
+            return -1;
+        } else if (this->charArray[index] > str2nd[index]) {
+            return 1;
+        }
+    }
+
+    if (this->charArray[index] != '\0') {
+        return 1;
+    } else if (str2nd[index] != '\0') {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
+
+MyString& MyString::insert(int pos, const char *subStr) {
+    if (pos < 0) {
+        pos = 0;
+    } else if (pos >= size) {
+        pos = size -1;
+    }
+    MyString resultString = MyString();
+    for (int index = 0; index < size; ++index) {
+        if (index == pos) {
+            for (int subStrIndex = 0; subStr[subStrIndex] != '\0'; ++subStrIndex) {
+                resultString.append(subStr[subStrIndex]);
+            }
+        }
+        resultString.append(charArray[index]);
+    }
+    *this = resultString;
+    return *this;
+}
+
+MyString& MyString::insert(int pos, const MyString &subStr) {
+    return insert(pos, subStr.charArray);
+}
+
+MyString& MyString::replace(int pos, int len, const char *subStr) {
+    if (pos < 0) {
+        pos = 0;
+    } else if (pos >= size) {
+        pos = size -1;
+    }
+
+    if (pos + len >= size) {
+        len = size - pos;
+    }
+    MyString resultString = MyString();
+    for (int index = 0; index < size; ++index) {
+        if (index == pos) {
+            for (; index < pos + len && subStr[index - pos] != '\0'; ++index) {
+                resultString.append(subStr[index - pos]);
+            }
+        }
+        resultString.append(charArray[index]);
+    }
+
+    *this = resultString;
+    return *this;
+}
+
+MyString& MyString::replace(int pos, int len, const MyString &subStr) {
+    return replace(pos, len, subStr.charArray);
+}
+
+MyString& MyString::erase(int pos, int cnt) {
+    if (pos < 0) {
+        pos = 0;
+    } else if (pos >= size) {
+        pos = size -1;
+    }
+
+    if (pos + cnt >= size) {
+        cnt = size - pos;
+    }
+    MyString resultString = MyString();
+    for (int index = 0; index < size; ++index) {
+        if (index < pos || pos + cnt <= index) {
+            resultString.append(charArray[index]);
+        }
+    }
+    *this = resultString;
+    return *this;
+
 }
 
 void MyString::clear() {
@@ -126,42 +353,33 @@ void MyString::clear() {
     charArray[0] = '\0';
 }
 
-void MyString::setString(const char str2nd[]) {
-    for (size = 0; str2nd[size] != '\0' && size < capacity; ++size) {
+void MyString::resize() {
+    this->capacity = (capacity == 0) ? 8 : capacity * 2;
+
+    char *result = new char[capacity];
+
+    for (int index = 0; index < size; ++index) {
+        result[index] = charArray[index];
+    }
+    delete[] charArray;
+    charArray = result;
+}
+
+//생성자, 대입연산자에서만 사용하는 깊은복사
+void MyString::setString(const char *str2nd) {
+    for (size = 0; str2nd[size] != '\0'; ++size) {
+        if (size >= this->capacity) {
+            resize();
+        }
         charArray[size] = str2nd[size];
     }
     charArray[size] = '\0';
 }
 
-int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
-    pos = pos < 0 ? 0 : pos;
-    if (subStrLength == 0 || subStrLength + pos > size) {
-        return -1;
-    }
-    constexpr int HASH_BASE = 257, HASH_MOD = 1e9 + 7;
-    long long int findHash = 0, resultHash = 0, highestPower = 1; //HASH_BASSE ^ (m-1)을 저장할 변수
-    int endPos = size - subStrLength + 1;
-
-    for (int index = 1; index < subStrLength; ++index) { //슬라이딩 할때마다 뺄 값 계산
-        highestPower = highestPower * HASH_BASE % HASH_MOD;
-    }
-    for (int index = 0; index < subStrLength; ++index) { //첫 해시 값 계산 -> index -1이 불가능하므로 따로 계산
-        findHash = (findHash * HASH_BASE + subStr[index]) % HASH_MOD;
-        resultHash = (resultHash * HASH_BASE + charArray[pos + index]) % HASH_MOD;
-    }
-    for (int index = pos; index < endPos; ++index) {
-        if (index != pos) { //해시 값 계산
-            resultHash = (resultHash - charArray[index - 1] * highestPower % HASH_MOD + HASH_MOD) % HASH_MOD;
-            resultHash = (resultHash * HASH_BASE + charArray[index + subStrLength - 1]) % HASH_MOD;
-        }
-        if (findHash == resultHash && isSame(charArray, subStr, index, index + subStrLength - 1)) {
-            //해시 값이 같으면 실제로 같은지 확인 -> 이중 해시 쓰면 확률이 낮아짐
-            return index;
-        }
-    }
+int MyString::boyerMoore(const char subStr[], int pos, int subStrLength) const {
     return -1;
-
 }
+
 
 bool MyString::isSame(const char str1st[], const char str2nd[], int start, int end) {
     for (int index = start; index <= end; ++index) {
@@ -172,9 +390,11 @@ bool MyString::isSame(const char str1st[], const char str2nd[], int start, int e
     return true;
 }
 
+
+
 ostream& operator<<(ostream& os, const MyString& str){
     for (int index = 0; index < str.length(); ++index) {
-        os << str.at(index);
+        os << str[index];
     }
     return os;
 }
@@ -183,7 +403,7 @@ istream& operator>>(istream& is, MyString& str) {
     str.clear();
     char input;
     is.get(input);
-    
+
     while (!is.fail() && isspace(input)) {
         is.get(input);
     }
@@ -199,11 +419,33 @@ istream& operator>>(istream& is, MyString& str) {
 istream& getline(istream& is, MyString& str, char delim) {
     str.clear();
     char input;
-    while (is.get(input) && input != delim && input != EOF) {
+    while (is.get(input) && input != delim) {
         if (str.length() < str.getCapacity()) {
             str.append(input);
         }
     }
 
     return is;
+}
+
+int stoi(const MyString &str, int pos, int base) {
+    int result = 0;
+    for (int index = pos; index < str.length(); ++index) {
+        int changeValue = changeAlphabetToInt(str[index]);
+        if (changeValue != -1 && changeValue < base) {
+            result *= base;
+            result += changeValue;
+        } else {
+            break;
+        }
+    }
+    return result;
+}
+int changeAlphabetToInt(char alphabet) {
+    if ('0' <= alphabet && alphabet <= '9') {
+        return alphabet - '0';
+    } else if ('a' <= alphabet && alphabet <= 'z') {
+        return (alphabet - 'a') + 10;
+    }
+    return -1;
 }
