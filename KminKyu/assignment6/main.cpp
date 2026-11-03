@@ -51,4 +51,12 @@ int main(){
     MyString small = "zZzZZ";
     cout << (big > small) << endl;
 
+    MyString source("hello");
+    MyString destination(std::move(source));
+    source = "again";
+    source.append("!");
+
+    cout << source << endl;
+    cout << destination << endl;
+
 }
