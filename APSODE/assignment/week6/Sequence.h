@@ -55,6 +55,13 @@ class Sequence {
 
         Sequence& operator=(const Sequence &other);
 
+
+        void require_valid_index(int index) const;
+
+        void requre_valid_position(int position) const;
+
+        static void require_valid_range(const E *elements, int amount);
+
     private:
         bool need_shrink() const {
             return this->m_capacity > DEFAULT_CAPACITY && this->m_size <= this->m_capacity / 4;
@@ -69,12 +76,6 @@ class Sequence {
         void extend(int required);
 
         void fill_tail();
-
-        void require_valid_index(int index) const;
-
-        void requre_valid_position(int position) const;
-
-        static void require_valid_range(const E *elements, int amount);
 
         static E* create_empty_container(int new_capacity) {
             return new E[new_capacity + TAIL]();
