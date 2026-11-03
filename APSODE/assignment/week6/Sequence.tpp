@@ -147,7 +147,7 @@ void Sequence<T, TAIL>::clear() {
     this->m_capacity = DEFAULT_CAPACITY;
     this->m_size = 0;
     delete[] this->container; // 굳이 delete를 할까 싶긴한데... 일단은 초기 상태의 컨테이너를 가지는게 맞다고 생각하기에...
-    this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
+    this->container = Sequence::create_empty_container(DEFAULT_CAPACITY);
 }
 
 template<typename T, int TAIL>
