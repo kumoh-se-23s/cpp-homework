@@ -15,7 +15,7 @@ public:
     int length() const;
     bool isEmpty() const;
     int getCapacity() const;
-    char& at(int pos) const; //범위 외 예외처리
+    char& at(int pos); //범위 외 예외처리
     int find(const char *cSubStr, int pos = 0) const; //pos 음수 시 0, 범위 밖이면 마지막 위치
     int find(const MyString &subStr, int pos = 0) const;
     MyString substr(int pos, int len) const; //pos 음수시 뒷글자부터 앞으로, 범위 밖이면 find와 동일, len이 이상하면 최대길이
@@ -28,6 +28,7 @@ public:
     MyString& replace(int pos, int len, const MyString &subStr);
     MyString& erase(int pos, int cnt); //pos부터 cnt까지 삭제
 
+    void clear();
     //연산자 오버로딩-------------
     const MyString operator+(const char *cstr2nd) const;
     const MyString operator+(const MyString &str2nd) const;
@@ -57,15 +58,13 @@ private:
     char *str;
     int capacity;
     int size;
-    static const char null = '\0';
 
-    void resize();
-    void resize(int newCapacity);
+    void resize(int minLength);
     static void copyArr(char *copy, const char *src, int srcSize);
     static int getLengthOfChArr(const char *chArr);
-    static int getEnoughCapacity(int size);
+    int getEnoughCapacity(int minLength) const;
     int normalizePos(int pos) const;
-    void substitute(const char *chArr, int newCapacity, int newSize);
+    void substitute(const char *chArr, int newSize);
     int findChArr(const char *chArr, int arrSize, int pos) const;
     const MyString subStrImpl(int pos, int len) const;
     void appendChArr(const char *chArr, int chArrSize);

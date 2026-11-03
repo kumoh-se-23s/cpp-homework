@@ -1,5 +1,5 @@
 #include "MyString.h"
-#include <stdexcept>
+#include <iostream>
 #include <limits>
 
 //생성자
@@ -12,10 +12,11 @@ MyString::MyString() {
 
 //복사생성자: str
 MyString::MyString(const MyString &srcStr) {
-    str = new char[srcStr.capacity];
-    copyArr(str, srcStr.str, srcStr.size);
-    capacity = srcStr.capacity;
     size = srcStr.size;
+    capacity = DEFAULT_CAPACITY;
+    capacity = getEnoughCapacity(size);
+    str = new char[capacity];
+    copyArr(str, srcStr.str, srcStr.size);
 }
 
 //복사생성자: cArr
@@ -48,7 +49,7 @@ int MyString::getCapacity() const {
 }
 
 //pos위치 주소 반환
-char& MyString::at(int pos) const{
+char& MyString::at(int pos) {
     // if (pos < 0 || pos >= size)
     //     return ?; //TODO: ???
     return str[pos];
@@ -118,7 +119,7 @@ MyString &MyString::replace(int pos, int len, const MyString &subStr) {
 //erase
 MyString &MyString::erase(int pos, int cnt) {
     pos = normalizePos(pos);
-    if (cnt > size - pos)
+    if (cnt > size - pos) //cnt가 범위 넘어가면 마지막 글자까지로 조정
         cnt = size - pos;
     //pos부터 idx + cnt를 idx로 옮김
     for (int idx = pos; idx < size; idx++) {
@@ -129,33 +130,41 @@ MyString &MyString::erase(int pos, int cnt) {
     return *this;
 }
 
-//진수 읽기
-int stoi(const MyString &str, int pos, int base) {
-    if (base < 2 || base > 36)
-        return 0;
-    //TODO: pos normalize
-    bool isValidValue(char, int);
-    int toInt(char);
-
-    int result = 0;
-    for (int idx = pos; idx < str.length() && isValidValue(str[idx], base); idx++) {
-        result = result * base + toInt(str[idx]);
-    }
-    return result;
+//비우기
+void MyString::clear() {
+    size = 0;
 }
 
-//진수에 맞는 값인지 판별 (base 범위 2~36)
+//stoi용: 진수에 맞는 값인지 판별 (base 범위 2~36)
 bool isValidValue(char ch, int base) {
     if (base < 10)
         return ch >= '0' && ch <= '0' + base;
     return (ch >= '0' && ch <= '0' + base) || (ch >= 'a' && ch <= 'a' + base);
 }
 
-//단일문자 숫자화 (범위 0~9, a~z)
+//stoi용: 단일문자 숫자화 (범위 0~9, a~z)
 int toInt(char ch) {
     if (ch >= '0' && ch <= '9')
         return ch - '0';
     return ch - 'a';
+}
+
+//진수 읽기
+int stoi(const MyString &str, int pos, int base) {
+    //인자 정리
+    if (base < 2 || base > 36)
+        return 0;
+
+    if (pos < 0)
+        pos = 0;
+    else if (pos > str.length())
+        pos = str.length();
+
+    int result = 0;
+    for (int idx = pos; idx < str.length() && isValidValue(str[idx], base); idx++) {
+        result = result * base + toInt(str[idx]);
+    }
+    return result;
 }
 
 //연산자 오버로딩--------------------
@@ -175,27 +184,25 @@ const MyString MyString::operator+(const MyString &str2nd) const {
 
 //+= cArr
 MyString &MyString::operator+=(const char *cstr2nd) {
-    appendChArr(cstr2nd, getLengthOfChArr(cstr2nd));
-    return *this;
+    return append(cstr2nd);
 }
 
 //+= str
 MyString &MyString::operator+=(const MyString &str2nd) {
-    appendChArr(str2nd.str, str2nd.size);
-    return *this;
+    return append(str2nd);
 }
 
 //= cArr
 MyString &MyString::operator=(const char *cstr2nd) {
     int cLength = getLengthOfChArr(cstr2nd);
-    substitute(cstr2nd, getEnoughCapacity(cLength), cLength);
+    substitute(cstr2nd, cLength);
     return *this;
 }
 
 //= str
 MyString &MyString::operator=(const MyString &srcStr) {
     if (this != &srcStr) //자신이면 대입x
-        substitute(srcStr.str, srcStr.capacity, srcStr.size);
+        substitute(srcStr.str, srcStr.size);
     return *this;
 }
 
@@ -215,11 +222,16 @@ const char &MyString::operator[](int pos) const {
 
 //== cArr
 bool MyString::operator==(const char *cstr2nd) const {
-    return compareTo(cstr2nd,getLengthOfChArr(cstr2nd)) == 0;
+    int chArrLength = getLengthOfChArr(cstr2nd);
+    if (size != chArrLength)
+        return false;
+    return compareTo(cstr2nd, chArrLength) == 0;
 }
 
 //== str
 bool MyString::operator==(const MyString &str2nd) const {
+    if (size != str2nd.size)
+        return false;
     return compareTo(str2nd.str, str2nd.size) == 0;
 }
 
@@ -275,7 +287,7 @@ bool MyString::operator>=(const MyString &str2nd) const {
 
 ostream &operator<<(ostream &out, const MyString &str) {
     for (int idx = 0; idx < str.length(); idx++) {
-        out << str.at(idx);
+        out << str[idx];
     }
     return out;
 }
@@ -287,7 +299,7 @@ static bool isWhiteSpace(int chCode) {
 
 //입력
 istream& operator>>(istream& in, MyString& str) {
-    str = MyString(); //초기화
+    str.clear(); //초기화
 
     //stream 앞부분 정리
     int inputCode = in.peek();
@@ -297,7 +309,7 @@ istream& operator>>(istream& in, MyString& str) {
 
     //이후 append
     char ch;
-    for (int idx = 0; !isWhiteSpace(inputCode) && inputCode != EOF; idx++, inputCode = in.peek()) {
+    for (;!isWhiteSpace(inputCode); inputCode = in.peek()) {
         in.get(ch);
         str.appendCh(ch);
     }
@@ -309,7 +321,7 @@ istream& getline(istream& in, MyString& str, char delim) {
     str = MyString(); //초기화
 
     int inputCode = in.peek();
-    for (int idx = 0; inputCode != delim && inputCode != EOF; idx++, inputCode = in.peek()) {
+    for (; inputCode != delim && inputCode != EOF; inputCode = in.peek()) {
         char ch;
         in.get(ch);
         str.appendCh(ch);
@@ -320,19 +332,10 @@ istream& getline(istream& in, MyString& str, char delim) {
 }
 
 //private--------------------------
-//용량 2배 증가
-void MyString::resize() {
-    capacity *= 2;
+//인자로 최소 길이 받아서, +1(\0 고려)한 길이 담을 수 있게 2배씩 늘리며 resize
+void MyString::resize(int minLength) {
+    capacity = getEnoughCapacity(minLength);
     char *newArr = new char[capacity];
-
-    copyArr(newArr, str, size);
-    delete[] str;
-    str = newArr;
-}
-
-//용량 받아서 증가
-void MyString::resize(int newCapacity) {
-    char *newArr = new char[newCapacity];
 
     copyArr(newArr, str, size);
     delete[] str;
@@ -355,9 +358,9 @@ int MyString::getLengthOfChArr(const char *chArr) {
 }
 
 //적절한 용량 구하기
-int MyString::getEnoughCapacity(int size) {
+int MyString::getEnoughCapacity(int minLength) const {
     int result;
-    for (result = DEFAULT_CAPACITY; result < size; result *= 2) {}
+    for (result = capacity; result <= minLength; result *= 2) {}
     return result;
 }
 
@@ -371,19 +374,24 @@ int MyString::normalizePos(int pos) const{
 }
 
 //대입 동작부
-void MyString::substitute(const char *chArr, int newCapacity, int newSize) {
-    delete[] str;
-    str = new char[newCapacity];
+void MyString::substitute(const char *chArr, int newSize) {
+    //크기 감당 안 되면 재할당
+    //copyArr 대상이 달라서 resize 호출 안하고 자체 생성
+    if (newSize >= capacity) {
+        capacity = getEnoughCapacity(newSize);
+        delete[] str;
+        str = new char[capacity];
+    }
     copyArr(str, chArr, newSize);
-
-    capacity = newCapacity;
     size = newSize;
 }
 
 //find 동작부
 int MyString::findChArr(const char *chArr, int arrSize, int pos) const{
     pos = normalizePos(pos);
-    if (arrSize == 0 || size - pos < arrSize) //길이 기반 판단했을 때 절대 못 찾는 경우
+    if (arrSize == 0)
+        return pos;
+    if (size - pos < arrSize) //길이 기반 판단했을 때 절대 못 찾는 경우
         return -1;
     for (int idx = pos; idx <= size - arrSize; idx++) {
         if (str[idx] == chArr[0]) { //첫글자 같으면 거기부터 비교
@@ -403,8 +411,8 @@ int MyString::findChArr(const char *chArr, int arrSize, int pos) const{
 //subStr 동작부
 const MyString MyString::subStrImpl(int pos, int len) const {
     MyString result;
-    if (len > DEFAULT_CAPACITY)
-        result.resize(getEnoughCapacity(len));
+    if (len >= DEFAULT_CAPACITY)
+        result.resize(len);
     for (int idx = 0; idx < len; idx++) {
         result.str[idx] = str[idx + pos];
     }
@@ -416,18 +424,16 @@ const MyString MyString::subStrImpl(int pos, int len) const {
 
 //한 글자 붙이기
 void MyString::appendCh(char ch) {
-    if (size + 2 > capacity) //'\0' 한 글자(size에 포함x), 더해질 한 글자
-        resize();
+    if (size + 1>= capacity)
+        resize(size + 1);
     str[size++] = ch;
     str[size] = '\0';
 }
 
 //apeend 동작부
 void MyString::appendChArr(const char *chArr, int chArrSize) {
-    if (size + chArrSize + 1 > capacity) {
-        capacity = getEnoughCapacity(size + chArrSize);
-        resize(capacity);
-    }
+    if (size + chArrSize >= capacity)
+        resize(size + chArrSize);
 
     for (int idx = 0; idx < chArrSize; idx++) {
         str[idx + size] = chArr[idx];
@@ -438,10 +444,9 @@ void MyString::appendChArr(const char *chArr, int chArrSize) {
 
 //insert 동작부
 void MyString::insertChArr(const char *chArr, int chArrSize, int pos) {
-    if (size + chArrSize + 1 > capacity) {
-        capacity = getEnoughCapacity(size + chArrSize);
-        resize(capacity);
-    }
+    if (size + chArrSize >= capacity)
+        resize(size + chArrSize);
+
     //원래 글자를 뒤로 밀기
     for (int idx = size - 1; idx <= pos; idx--) {
         str[idx + chArrSize] = str[idx];
