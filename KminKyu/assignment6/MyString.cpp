@@ -127,7 +127,7 @@ int MyString::find(const char *subStr, int pos) const {
     if (pos < 0) {
         pos = 0;
     } else if (pos >= size) {
-        pos = size -1;
+        pos = std::max(size -1, 0);
     }
     int subLength;
     for (subLength = 0; subStr[subLength] != '\0'; ++subLength) {}
@@ -138,7 +138,7 @@ int MyString::find(const MyString& subStr, int pos) const {
     if (pos < 0) {
         pos = 0;
     } else if (pos >= size) {
-        pos = size -1;
+        pos = std::max(size -1, 0);
     }
     return boyerMoore(subStr.charArray, pos, subStr.size);
 }
@@ -291,7 +291,7 @@ MyString& MyString::insert(int pos, const char *subStr) {
     if (pos < 0) {
         pos = 0;
     } else if (pos >= size) {
-        pos = size -1;
+        pos = std::max(size -1, 0);
     }
     MyString resultString = MyString();
     for (int index = 0; index < size; ++index) {
@@ -314,7 +314,7 @@ MyString& MyString::replace(int pos, int len, const char *subStr) {
     if (pos < 0) {
         pos = 0;
     } else if (pos >= size) {
-        pos = size -1;
+        pos = std::max(size -1, 0);
     }
 
     if (pos + len >= size) {
@@ -344,7 +344,7 @@ MyString& MyString::erase(int pos, int cnt) {
     if (pos < 0) {
         pos = 0;
     } else if (pos >= size) {
-        pos = size -1;
+        pos = std::max(size -1, 0);
     }
 
     if (pos + cnt >= size) {
@@ -383,7 +383,7 @@ void MyString::resize() {
 //생성자, 대입연산자에서만 사용하는 깊은복사
 void MyString::setString(const char *str2nd) {
     for (size = 0; str2nd[size] != '\0'; ++size) {
-        if (size > this->capacity) {
+        if (size >= this->capacity) {
             resize();
         }
         charArray[size] = str2nd[size];
