@@ -18,14 +18,14 @@ public:
     char& at(int pos) const; //범위 외 예외처리
     int find(const char *cSubStr, int pos = 0) const; //pos 음수 시 0, 범위 밖이면 마지막 위치
     int find(const MyString &subStr, int pos = 0) const;
-    MyString subStr(int pos, int len) const; //pos 음수시 뒷글자부터 앞으로, 범위 밖이면 find와 동일, len이 이상하면 최대길이
+    MyString substr(int pos, int len) const; //pos 음수시 뒷글자부터 앞으로, 범위 밖이면 find와 동일, len이 이상하면 최대길이
     MyString& append(const char *cSubStr);
     MyString& append(const MyString &subStr);
 
     MyString& insert(int pos, const char *csubStr); //pos에 낑가넣기
     MyString& insert(int pos, const MyString &subStr);
-    MyString& replace(int pos, const char *csubStr); //pos부터 앞으로 교체
-    MyString& replace(int pos, const MyString &subStr);
+    MyString& replace(int pos, int len, const char *csubStr); //pos부터 앞으로 교체
+    MyString& replace(int pos, int len, const MyString &subStr);
     MyString& erase(int pos, int cnt); //pos부터 cnt까지 삭제
 
     //연산자 오버로딩-------------
@@ -38,38 +38,40 @@ public:
     char& operator[](int pos); //범위 외 \0 리턴
     const char& operator[](int pos) const;
 
-    bool operator==(const char *cstr2nd);
-    bool operator==(const MyString &str2nd);
-    bool operator!=(const char *cstr2nd);
-    bool operator!=(const MyString &str2nd);
-    bool operator<(const char *cstr2nd); //사전순 비교
-    bool operator<(const MyString &str2nd);
-    bool operator>(const char *cstr2nd);
-    bool operator>(const MyString &str2nd);
-    bool operator<=(const char *cstr2nd);
-    bool operator<=(const MyString &str2nd);
-    bool operator>=(const char *str2nd);
-    bool operator>=(const MyString &str2nd);
+    bool operator==(const char *cstr2nd) const;
+    bool operator==(const MyString &str2nd) const;
+    bool operator!=(const char *cstr2nd) const;
+    bool operator!=(const MyString &str2nd) const;
+    bool operator<(const char *cstr2nd) const; //사전순 비교
+    bool operator<(const MyString &str2nd) const;
+    bool operator>(const char *cstr2nd) const;
+    bool operator>(const MyString &str2nd) const;
+    bool operator<=(const char *cstr2nd) const;
+    bool operator<=(const MyString &str2nd) const;
+    bool operator>=(const char *cstr2nd) const;
+    bool operator>=(const MyString &str2nd) const;
 
-
+    void appendCh(char ch);
 private:
     static constexpr int DEFAULT_CAPACITY = 8;
     char *str;
     int capacity;
     int size;
+    static const char null = '\0';
 
     void resize();
+    void resize(int newCapacity);
     static void copyArr(char *copy, const char *src, int srcSize);
     static int getLengthOfChArr(const char *chArr);
     static int getEnoughCapacity(int size);
+    int normalizePos(int pos) const;
     void substitute(const char *chArr, int newCapacity, int newSize);
     int findChArr(const char *chArr, int arrSize, int pos) const;
     const MyString subStrImpl(int pos, int len) const;
-    void appendCh(char ch);
     void appendChArr(const char *chArr, int chArrSize);
-    void insertChArr(const char *chArr, int chArrSize);
-    void replaceChArr(const char *chArr, int chArrSize);
-    int compareTo(const char *chArr, int chArrSize);
+    void insertChArr(const char *chArr, int chArrSize, int pos);
+    void replaceChArr(const char *chArr, int chArrSize, int pos, int len);
+    int compareTo(const char *chArr, int chArrSize) const;
 };
 
 ostream& operator<<(ostream& out, const MyString &str);
