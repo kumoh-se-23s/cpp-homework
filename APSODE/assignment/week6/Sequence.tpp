@@ -4,7 +4,7 @@
 
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence()
-    : container(new T[DEFAULT_CAPACITY + 1]), m_capacity(DEFAULT_CAPACITY), m_size(0) {
+    : container(new T[DEFAULT_CAPACITY + 1]()), m_capacity(DEFAULT_CAPACITY), m_size(0) {
 }
 
 template<typename T, int TAIL>
@@ -18,7 +18,7 @@ Sequence<T, TAIL>::Sequence(const T *elements, int size) : m_capacity(calc_new_c
 
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence(const Sequence &other) : m_capacity(other.m_capacity), m_size(other.m_size) {
-    this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
+    this->container = Sequence::create_empty_container(other.m_capacity);
     Sequence::copy_array(
         other.container, other.m_capacity,
         this->container, this->m_capacity
@@ -69,24 +69,24 @@ T& Sequence<T, TAIL>::operator[](int index) {
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::insert(int index, const T &element) {
-    this->insert(index, &element, 1);
+void Sequence<T, TAIL>::insert(int position, const T &element) {
+    this->insert(position, &element, 1);
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::insert(int index, const T *elements, int amount) {
-    require_valid_index(index);
+void Sequence<T, TAIL>::insert(int position, const T *elements, int amount) {
+    this->requre_valid_position(position);
     Sequence::require_valid_range(elements, amount);
 
-    if (need_extend(amount)) {
-        extend();
+    if (this->need_extend(amount)) {
+        this->extend(this->m_size + amount);
     }
 
-    for (int cursor = this->m_size - 1; cursor >= index; --cursor) {
+    for (int cursor = this->m_size - 1; cursor >= position; --cursor) {
         this->container[cursor + amount] = this->container[cursor];
     }
 
-    for (T* pointer = this->container + index; pointer < this->container + index + amount; ++pointer) {
+    for (T* pointer = this->container + position; pointer < this->container + position + amount; ++pointer) {
         *pointer = *(elements++);
     }
 
@@ -101,8 +101,9 @@ void Sequence<T, TAIL>::append(const T &element) {
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::append(const T *elements, int amount) {
-    if (need_extend(amount)) {
-        extend();
+    require_valid_range(elements, amount);
+    if (this->need_extend(amount)) {
+        this->extend(this->m_size + amount);
     }
 
     for (T* cursor = this->container + this->m_size; cursor < this->container + this->m_size + amount; ++cursor) {
@@ -137,6 +138,10 @@ void Sequence<T, TAIL>::erase(int start, int amount) {
 
     this->m_size -= amount;
     this->fill_tail();
+
+    if (this->need_shrink()) {
+        this->shrink();
+    }
 }
 
 // 0 1 2 3 4 5
@@ -163,11 +168,31 @@ Sequence<T, TAIL>& Sequence<T, TAIL>::operator=(const Sequence &other) {
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::shrink() {
+    int new_capacity = calc_new_capacity(this->m_capacity / GROWTH_FACTOR);
+    T* new_container = Sequence::create_empty_container(new_capacity);
+
+    Sequence::copy_array(
+        this->container, this->m_size,
+        new_container, new_capacity
+    );
+    delete[] this->container;
+    this->container = new_container;
+    this->m_capacity = new_capacity;
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::extend() {
+void Sequence<T, TAIL>::extend(int required) {
+    int grown = this->m_capacity * GROWTH_FACTOR;
+    int new_capacity = calc_new_capacity(grown > required ? grown : required);
+    T* new_container = Sequence::create_empty_container(new_capacity);
 
+    Sequence::copy_array(
+        this->container, this->m_capacity,
+        new_container, new_capacity
+    );
+    delete[] this->container;
+    this->container = new_container;
+    this->m_capacity = new_capacity;
 }
 
 template<typename T, int TAIL>
@@ -181,6 +206,14 @@ template<typename T, int TAIL>
 void Sequence<T, TAIL>::require_valid_index(int index) const {
     if (!(0 <= index && index < this->m_size)) {
         throw std::out_of_range("Sequence: index is out of range");
+    }
+}
+
+// insert 단일 사용이지만 일단 require_valid_index와의 통일성을 위해...
+template<typename T, int TAIL>
+void Sequence<T, TAIL>::requre_valid_position(int position) const {
+    if (!(0 <= position && position <= this->m_size)) {
+        throw std::out_of_range("Sequence: position is out of range");
     }
 }
 

@@ -37,9 +37,9 @@ class Sequence {
         virtual ~Sequence();
 
 
-        void insert(int index, const T &element);
+        void insert(int position, const T &element);
 
-        void insert(int index, const T *elements, int amount);
+        void insert(int position, const T *elements, int amount);
 
         void append(const T &element);
 
@@ -53,21 +53,23 @@ class Sequence {
         Sequence& operator=(const Sequence &other);
 
     private:
-        constexpr bool need_shrink() {
+        bool need_shrink() const {
             return this->m_capacity > DEFAULT_CAPACITY && this->m_size <= this->m_capacity / 4;
         }
 
-        constexpr bool need_extend(int size_delta = 1) {
+        bool need_extend(int size_delta = 1) const {
             return this->m_size + size_delta >= this->m_capacity;
         }
 
         void shrink();
 
-        void extend();
+        void extend(int required);
 
         void fill_tail();
 
         void require_valid_index(int index) const;
+
+        void requre_valid_position(int position) const;
 
         static void require_valid_range(const T *elements, int amount);
 
@@ -83,7 +85,7 @@ class Sequence {
             return (amount + DEFAULT_CAPACITY - 1) / DEFAULT_CAPACITY * DEFAULT_CAPACITY;
         }
 
-        constexpr static void swap(Sequence &sequence1, Sequence &sequence2) {
+        static void swap(Sequence &sequence1, Sequence &sequence2) {
             T *temp_container = sequence1.container;
             sequence1.container = sequence2.container;
             sequence2.container = temp_container;
@@ -97,7 +99,7 @@ class Sequence {
             sequence2.m_capacity = temp_capacity;
         }
 
-        constexpr static void copy_array(T *src, int src_capacity, T *dest, int dest_capacity) {
+        static void copy_array(const T *src, int src_capacity, T *dest, int dest_capacity) {
             for (int index = 0; index < src_capacity && index < dest_capacity; ++index) {
                 dest[index] = src[index];
             }
