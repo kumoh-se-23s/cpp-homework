@@ -5,13 +5,15 @@
 #include "CharSequence.h"
 
 
+CharSequence::CharSequence(const char *elements, int size) : Sequence(elements, size){
+}
 
 int CharSequence::find(const CharSequence &pattern, int start) const {
     return this->rabin_karp(pattern, start);
 }
 
-int CharSequence::find(const char pattern[], int start) const {
-    return this->rabin_karp(CharSequence(pattern), start);
+int CharSequence::find(const char *pattern, int start) const {
+    return this->rabin_karp(CharSequence(pattern, count_elements(pattern)), start);
 }
 
 int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
