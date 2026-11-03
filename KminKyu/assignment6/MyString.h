@@ -18,6 +18,8 @@ public:
 
     MyString(const char *cstr2nd);
 
+    MyString(const char *cstr2nd, int capacity);
+
     MyString(MyString &&srcStr);
 
     ~MyString();

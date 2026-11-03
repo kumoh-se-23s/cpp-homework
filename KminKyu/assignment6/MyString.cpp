@@ -5,27 +5,23 @@ using namespace std;
 
 static char FAILED_CHAR = '\0';
 
-MyString::MyString() {
-    this->charArray = new char[DEFAULT_CAPACITY];
-    this->size = 0;
-    this->charArray[size] = '\0';
-    this->capacity = DEFAULT_CAPACITY;
-}
+MyString::MyString()
+    :MyString("", DEFAULT_CAPACITY) {}
 
-MyString::MyString(const MyString& srcStr) {
-    this->charArray = new char[srcStr.capacity];
-    this->capacity = srcStr.capacity;
+MyString::MyString(const MyString& srcStr)
+    : MyString(srcStr.charArray, srcStr.capacity) {}
 
-    setString(srcStr.charArray);
-}
+MyString::MyString(const char *cstr2nd)
+    : MyString(cstr2nd, DEFAULT_CAPACITY) {}
 
-MyString::MyString(const char *cstr2nd) {
-    this->charArray = new char[DEFAULT_CAPACITY];
-    this->capacity = DEFAULT_CAPACITY;
+MyString::MyString(const char* cstr2nd, int capacity) {
+    this->charArray = new char[capacity + 1];
+    this->capacity = capacity;
     setString(cstr2nd);
 }
 
 MyString::MyString(MyString &&srcStr) {
+
     this->charArray = srcStr.charArray;
     this->size = srcStr.size;
     this->capacity = srcStr.capacity;
@@ -42,6 +38,12 @@ MyString& MyString::operator =(const MyString& srcStr) {
     if (this == &srcStr){
         return *this;
     }
+
+    if (charArray == nullptr) {
+        capacity = srcStr.capacity;
+        charArray = new char[capacity + 1];
+    }
+
     setString(srcStr.charArray);
     return *this;
 }
@@ -50,7 +52,10 @@ MyString& MyString::operator =(MyString &&srcStr) {
     if (this == &srcStr) {
         return *this;
     }
-    delete[] this->charArray;
+
+    if (charArray != nullptr) {
+        delete[] this->charArray;
+    }
 
     this->size = srcStr.size;
     this->capacity = srcStr.capacity;
@@ -64,6 +69,15 @@ MyString& MyString::operator =(MyString &&srcStr) {
 }
 
 MyString& MyString::operator =(const char *str2nd) {
+    if (charArray == str2nd) {
+        return *this;
+    }
+
+    if (charArray == nullptr) {
+        capacity = DEFAULT_CAPACITY;
+        charArray = new char[DEFAULT_CAPACITY + 1];
+    }
+
     setString(str2nd);
     return *this;
 }
@@ -84,6 +98,7 @@ char& MyString::at(int pos) {
     if (0 <= pos && pos < size) {
         return charArray[pos];
     }
+    FAILED_CHAR = '\0';
     return FAILED_CHAR;
 }
 
@@ -106,35 +121,6 @@ MyString MyString::operator +(const char *cstr2nd) const {
 
 MyString MyString::operator +(const MyString& str2nd) const {
     return *this + str2nd.charArray;
-}
-
-bool MyString::operator ==(const MyString& str) const {
-    if (str.size != this->size) {
-        return false;
-    }
-    for (int index = 0; charArray[index] != '\0' && str[index] != '\0'; ++index) {
-        if (charArray[index] != str.charArray[index]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool MyString::operator !=(const MyString& str) const {
-    return !(*this == str);
-}
-
-bool MyString::operator ==(const char *cstr2nd) const {
-    for (int index = 0; charArray[index] != '\0' && cstr2nd[index] != '\0'; ++index) {
-        if (charArray[index] != cstr2nd[index]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool MyString::operator !=(const char *cstr2nd) const {
-    return !(*this == cstr2nd);
 }
 
 int MyString::find(const char *subStr, int pos) const {
@@ -161,18 +147,18 @@ MyString MyString::substr(int pos, int len) const {
     MyString result = MyString();
 
     if (pos < 0) {
-        pos = size + pos % size;
+        pos = (size + pos % size) % size;
 
     } else if (pos >= size) {
-        pos = size -1;
+        pos = std::max(size -1, 0);
     }
 
     if (pos + len >= size) {
         len = size - pos;
     }
 
-    for (int index = 0; index < len && charArray[index + pos] != '\0'; ++index) {
-        result.append(charArray[index + pos]);
+    for (int index = pos; index < pos + len && index < size; ++index) {
+        result.append(charArray[index]);
     }
 
     return result;
@@ -203,13 +189,23 @@ MyString& MyString::append(char appendChr) {
 }
 
 MyString &MyString::append(const char *cstr2nd) {
-
-    for (int index = 0; cstr2nd[index] != '\0'; ++index) {
-        if (size >= capacity) {
-            resize();
+    if (cstr2nd == charArray) {
+        for (int index = size; index < size * 2; ++index) {
+            if (size >= capacity) {
+                resize();
+            }
+            charArray[index] = charArray[index - size];
         }
-        charArray[size++] = cstr2nd[index];
+        size *= 2;
+    } else {
+        for (int index = 0; cstr2nd[index] != '\0'; ++index) {
+            if (size >= capacity) {
+                resize();
+            }
+            charArray[size++] = cstr2nd[index];
+        }
     }
+
     charArray[size] = '\0';
 
     return *this;
@@ -219,41 +215,56 @@ MyString& MyString::append(const MyString &str) {
     return this->append(str.charArray);
 }
 
+bool MyString::operator ==(const MyString& str) const {
+    return compare(str.charArray) == 0;
+}
+
+bool MyString::operator !=(const MyString& str) const {
+    return !(*this == str);
+}
+
+bool MyString::operator ==(const char *cstr2nd) const {
+    return compare(cstr2nd) == 0;
+}
+
+bool MyString::operator !=(const char *cstr2nd) const {
+    return !(*this == cstr2nd);
+}
 
 bool MyString::operator <(const MyString &str) const {
-    return (compare(str.charArray) == -1);
+    return compare(str.charArray) == -1;
 }
 
 bool MyString::operator >(const MyString &str) const {
-    return (compare(str.charArray) == 1);
+    return compare(str.charArray) == 1;
 }
 
 bool MyString::operator <=(const MyString &str) const {
     int result = compare(str.charArray);
-    return (result == -1 || result == 0);
+    return result == -1 || result == 0;
 }
 
 bool MyString::operator >=(const MyString &str) const {
     int result = compare(str.charArray);
-    return (result == 1 || result == 0);
+    return result == 1 || result == 0;
 }
 
 bool MyString::operator <(const char *cstr2nd) const {
-    return (compare(cstr2nd) == -1);
+    return compare(cstr2nd) == -1;
 }
 
 bool MyString::operator >(const char *cstr2nd) const {
-    return (compare(cstr2nd) == 1);
+    return compare(cstr2nd) == 1;
 }
 
 bool MyString::operator <=(const char *cstr2nd) const {
     int result = compare(cstr2nd);
-    return (result == -1 || result == 0);
+    return result == -1 || result == 0;
 }
 
 bool MyString::operator >=(const char *cstr2nd) const {
     int result = compare(cstr2nd);
-    return (result == 1 || result == 0);
+    return result == 1 || result == 0;
 }
 
 int MyString::compare(const char *str2nd) const {
@@ -312,9 +323,11 @@ MyString& MyString::replace(int pos, int len, const char *subStr) {
     MyString resultString = MyString();
     for (int index = 0; index < size; ++index) {
         if (index == pos) {
-            for (; index < pos + len && subStr[index - pos] != '\0'; ++index) {
+            while (subStr[index - pos] != '\0') {
                 resultString.append(subStr[index - pos]);
+                ++index;
             }
+            index = pos + len;
         }
         resultString.append(charArray[index]);
     }
@@ -356,11 +369,13 @@ void MyString::clear() {
 void MyString::resize() {
     this->capacity = (capacity == 0) ? 8 : capacity * 2;
 
-    char *result = new char[capacity];
+    char *result = new char[capacity + 1];
 
     for (int index = 0; index < size; ++index) {
         result[index] = charArray[index];
     }
+    result[size] = '\0';
+
     delete[] charArray;
     charArray = result;
 }
@@ -368,7 +383,7 @@ void MyString::resize() {
 //생성자, 대입연산자에서만 사용하는 깊은복사
 void MyString::setString(const char *str2nd) {
     for (size = 0; str2nd[size] != '\0'; ++size) {
-        if (size >= this->capacity) {
+        if (size > this->capacity) {
             resize();
         }
         charArray[size] = str2nd[size];
@@ -401,15 +416,18 @@ ostream& operator<<(ostream& os, const MyString& str){
 
 istream& operator>>(istream& is, MyString& str) {
     str.clear();
-    char input;
-    is.get(input);
 
+    char input;
+
+    if (!is.get(input)) {
+        return is;
+    }
     while (!is.fail() && isspace(input)) {
         is.get(input);
     }
     is.putback(input);
 
-    while (is.get(input) && !isspace(input) && (str.length() < str.getCapacity())) {
+    while (is.get(input) && !isspace(input)) {
         str.append(input);
     }
     is.putback(input);
@@ -420,9 +438,7 @@ istream& getline(istream& is, MyString& str, char delim) {
     str.clear();
     char input;
     while (is.get(input) && input != delim) {
-        if (str.length() < str.getCapacity()) {
-            str.append(input);
-        }
+        str.append(input);
     }
 
     return is;
