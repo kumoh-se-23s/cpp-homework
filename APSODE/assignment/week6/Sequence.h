@@ -37,17 +37,15 @@ class Sequence {
         virtual ~Sequence();
 
 
-        void ensure_capacity(int min_size);
-
         void insert(int index, const T &element);
 
         void insert(int index, const T *elements, int amount);
 
-        void erase(int start, int amount = 1);
-
         void append(const T &element);
 
         void append(const T *elements, int amount);
+
+        void erase(int start, int amount = 1);
 
         void clear();
 
@@ -59,11 +57,11 @@ class Sequence {
             return this->m_capacity > DEFAULT_CAPACITY && this->m_size <= this->m_capacity / 4;
         }
 
-        void shrink();
-
         constexpr bool need_extend(int size_delta = 1) {
             return this->m_size + size_delta >= this->m_capacity;
         }
+
+        void shrink();
 
         void extend();
 
