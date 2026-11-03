@@ -550,4 +550,3 @@ void MyString::resize(const int newCapacity) {
     delete [] str;
     str = newStr;
 }
-
