@@ -68,25 +68,6 @@ T& Sequence<T, TAIL>::operator[](int index) {
     return const_cast<T&>(static_cast<const Sequence&>(*this)[index]);
 }
 
-
-// template<typename T, int TAIL>
-// void Sequence<T, TAIL>::ensure_capacity(int min_size) {
-//     if (this->m_capacity >= min_size) {
-//         return;
-//     }
-//
-//     int new_capacity = calc_new_capacity(min_size);
-//     T *new_container = create_empty_container(new_capacity);
-//     for (int index = 0; index < min_size; ++index) {
-//         new_container[index] = this->container[index];
-//     }
-//
-//     delete[] this->container;
-//     this->container = new_container;
-//     this->m_capacity = new_capacity;
-//     this->fill_tail();
-// }
-
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::insert(int index, const T &element) {
     this->insert(index, &element, 1);
@@ -94,6 +75,9 @@ void Sequence<T, TAIL>::insert(int index, const T &element) {
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::insert(int index, const T *elements, int amount) {
+    require_valid_index(index);
+    Sequence::require_valid_range(elements, amount);
+
     if (need_extend(amount)) {
         extend();
     }
@@ -201,9 +185,9 @@ void Sequence<T, TAIL>::require_valid_index(int index) const {
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::require_valid_range(const T *elements, int count) {
-    if (count < 0) {
-        throw std::invalid_argument("Sequence: count must not be negative");
+void Sequence<T, TAIL>::require_valid_range(const T *elements, int amount) {
+    if (amount < 0) {
+        throw std::invalid_argument("Sequence: amount must not be negative");
     }
 
     if (elements == nullptr) {

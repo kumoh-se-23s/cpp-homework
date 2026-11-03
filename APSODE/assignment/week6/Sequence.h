@@ -71,7 +71,7 @@ class Sequence {
 
         void require_valid_index(int index) const;
 
-        static void require_valid_range(const T *elements, int count);
+        static void require_valid_range(const T *elements, int amount);
 
         static T* create_empty_container(int new_capacity) {
             return new T[new_capacity + TAIL]();
