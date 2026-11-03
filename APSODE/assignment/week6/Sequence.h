@@ -39,19 +39,15 @@ class Sequence {
 
         void ensure_capacity(int min_size);
 
-        void copy_elements(const Sequence &other);
+        void insert(int index, const T &element);
 
-        void copy_elements(const T *elements, int size);
+        void insert(int index, const T *elements, int amount);
 
-        void insert(int index, const T *element);
+        void erase(int start, int amount = 1);
 
-        void insert(int index, const T *elements, int count);
+        void append(const T &element);
 
-        void erase(int start, int count = 1);
-
-        void append(const T *element);
-
-        void append(const T *elements, int count);
+        void append(const T *elements, int amount);
 
         void clear();
 
@@ -59,7 +55,17 @@ class Sequence {
         Sequence& operator=(const Sequence &other);
 
     private:
-        int extend(int add_amount);
+        constexpr bool need_shrink() {
+            return this->m_capacity > DEFAULT_CAPACITY && this->m_size <= this->m_capacity / 4;
+        }
+
+        void shrink();
+
+        constexpr bool need_extend(int size_delta = 1) {
+            return this->m_size + size_delta >= this->m_capacity;
+        }
+
+        void extend();
 
         void fill_tail();
 
@@ -67,8 +73,8 @@ class Sequence {
 
         static void require_valid_range(const T *elements, int count);
 
-        constexpr static T* create_empty_container(int size) {
-            return new T[calc_new_capacity(size) + TAIL]();
+        static T* create_empty_container(int new_capacity) {
+            return new T[new_capacity + TAIL]();
         }
 
         constexpr static int calc_new_capacity(int amount) {
@@ -79,8 +85,8 @@ class Sequence {
             return (amount + DEFAULT_CAPACITY - 1) / DEFAULT_CAPACITY * DEFAULT_CAPACITY;
         }
 
-        constexpr static void swap(Sequence& sequence1, Sequence& sequence2) {
-            T* temp_container = sequence1.container;
+        constexpr static void swap(Sequence &sequence1, Sequence &sequence2) {
+            T *temp_container = sequence1.container;
             sequence1.container = sequence2.container;
             sequence2.container = temp_container;
 
@@ -92,8 +98,13 @@ class Sequence {
             sequence1.m_capacity = sequence2.m_capacity;
             sequence2.m_capacity = temp_capacity;
         }
-};
 
+        constexpr static void copy_array(T *src, int src_capacity, T *dest, int dest_capacity) {
+            for (int index = 0; index < src_capacity && index < dest_capacity; ++index) {
+                dest[index] = src[index];
+            }
+        }
+};
 
 
 #include "Sequence.tpp"

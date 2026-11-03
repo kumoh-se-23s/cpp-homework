@@ -1,5 +1,7 @@
 #include <stdexcept>
 
+// #include "Sequence.h"
+
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence()
     : container(new T[DEFAULT_CAPACITY + 1]), m_capacity(DEFAULT_CAPACITY), m_size(0) {
@@ -7,14 +9,20 @@ Sequence<T, TAIL>::Sequence()
 
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence(const T *elements, int size) : m_capacity(calc_new_capacity(size)), m_size(size) {
-    this->copy_elements(elements, size);
+    this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
+    Sequence::copy_array(
+        elements, size,
+        this->container, this->m_capacity
+    );
 }
 
 template<typename T, int TAIL>
-Sequence<T, TAIL>::Sequence(const Sequence &other) {
-    this->m_size = other.m_size;
-    this->m_capacity = other.m_capacity;
-    this->copy_elements(other);
+Sequence<T, TAIL>::Sequence(const Sequence &other) : m_capacity(other.m_capacity), m_size(other.m_size) {
+    this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
+    Sequence::copy_array(
+        other.container, other.m_capacity,
+        this->container, this->m_capacity
+    );
 }
 
 template<typename T, int TAIL>
@@ -61,64 +69,101 @@ T& Sequence<T, TAIL>::operator[](int index) {
 }
 
 
+// template<typename T, int TAIL>
+// void Sequence<T, TAIL>::ensure_capacity(int min_size) {
+//     if (this->m_capacity >= min_size) {
+//         return;
+//     }
+//
+//     int new_capacity = calc_new_capacity(min_size);
+//     T *new_container = create_empty_container(new_capacity);
+//     for (int index = 0; index < min_size; ++index) {
+//         new_container[index] = this->container[index];
+//     }
+//
+//     delete[] this->container;
+//     this->container = new_container;
+//     this->m_capacity = new_capacity;
+//     this->fill_tail();
+// }
+
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::ensure_capacity(int min_size) {
-    if (this->m_capacity >= min_size) {
-        return;
+void Sequence<T, TAIL>::insert(int index, const T &element) {
+    this->insert(index, &element, 1);
+}
+
+template<typename T, int TAIL>
+void Sequence<T, TAIL>::insert(int index, const T *elements, int amount) {
+    if (need_extend(amount)) {
+        extend();
     }
 
-    int new_capacity = calc_new_capacity(min_size);
-    T *new_container = create_empty_container(new_capacity);
-    for (int index = 0; index < min_size; ++index) {
-        new_container[index] = this->container[index];
+    for (int cursor = this->m_size - 1; cursor >= index; --cursor) {
+        this->container[cursor + amount] = this->container[cursor];
     }
 
-    delete[] this->container;
-    this->container = new_container;
-    this->m_capacity = new_capacity;
+    for (T* pointer = this->container + index; pointer < this->container + index + amount; ++pointer) {
+        *pointer = *(elements++);
+    }
+
+    this->m_size += amount;
     this->fill_tail();
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::copy_elements(const Sequence &other) {
-    Sequence::copy_elements(other.container, other.m_size);
+void Sequence<T, TAIL>::append(const T &element) {
+    this->append(&element, 1);
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::copy_elements(const T *elements, int size) {
-    for (int index = 0; index < size; ++index) {
-        this->container[index] = elements[index];
+void Sequence<T, TAIL>::append(const T *elements, int amount) {
+    if (need_extend(amount)) {
+        extend();
     }
 
+    for (T* cursor = this->container + this->m_size; cursor < this->container + this->m_size + amount; ++cursor) {
+        *cursor = *(elements++);
+    }
+
+    this->m_size += amount;
     this->fill_tail();
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::insert(int index, const T *element) {
+void Sequence<T, TAIL>::erase(int start, int amount) {
+    if (start < 0) {
+        start = 0;
+    }
+
+    if (start > this->m_size) {
+        start = this->m_size;
+    }
+
+    if (amount < 0 || amount > this->m_size - start) {
+        amount = this->m_size - start;
+    }
+
+    for (int index = start; index < this->m_size - amount; ++index) {
+        this->container[index] = this->container[index + amount];
+    }
+
+    for (int index = this->m_size - amount; index < this->m_size; ++index) {
+        this->container[index] = T();
+    }
+
+    this->m_size -= amount;
+    this->fill_tail();
 }
 
-template<typename T, int TAIL>
-void Sequence<T, TAIL>::insert(int index, const T *elements, int count) {
-}
-
-template<typename T, int TAIL>
-void Sequence<T, TAIL>::erase(int start, int count) {
-}
-
-template<typename T, int TAIL>
-void Sequence<T, TAIL>::append(const T *element) {
-}
-
-template<typename T, int TAIL>
-void Sequence<T, TAIL>::append(const T *elements, int count) {
-}
+// 0 1 2 3 4 5
+// 2, 3
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::clear() {
     this->m_capacity = DEFAULT_CAPACITY;
     this->m_size = 0;
-    delete[] this->container;
-    this->container = Sequence::create_empty_container(this->m_size);
+    delete[] this->container; // 굳이 delete를 할까 싶긴한데... 일단은 초기 상태의 컨테이너를 가지는게 맞다고 생각하기에...
+    this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
 }
 
 template<typename T, int TAIL>
@@ -133,7 +178,12 @@ Sequence<T, TAIL>& Sequence<T, TAIL>::operator=(const Sequence &other) {
 }
 
 template<typename T, int TAIL>
-int Sequence<T, TAIL>::extend(int expected) {
+void Sequence<T, TAIL>::shrink() {
+}
+
+template<typename T, int TAIL>
+void Sequence<T, TAIL>::extend() {
+
 }
 
 template<typename T, int TAIL>
