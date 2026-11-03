@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 11..
 //
 
-#ifndef CPP_HOMEWORK_SEQUENCE_H
-#define CPP_HOMEWORK_SEQUENCE_H
+#ifndef CPP_HOMEWORK_WEEK4_SEQUENCE_H
+#define CPP_HOMEWORK_WEEK4_SEQUENCE_H
 
 template <typename E>
 class Sequence {
@@ -21,4 +21,4 @@ class Sequence {
         virtual bool empty() const = 0;
 };
 
-#endif //CPP_HOMEWORK_SEQUENCE_H
+#endif //CPP_HOMEWORK_WEEK4_SEQUENCE_H

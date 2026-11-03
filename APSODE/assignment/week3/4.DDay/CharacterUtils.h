@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 8..
 //
 
-#ifndef CPP_HOMEWORK_CHARACTERUTILS_H
-#define CPP_HOMEWORK_CHARACTERUTILS_H
+#ifndef CPP_HOMEWORK_WEEK3_CHARACTERUTILS_H
+#define CPP_HOMEWORK_WEEK3_CHARACTERUTILS_H
 
 namespace char_utils {
     bool is_numeric_character(char maybe_numeric);
@@ -23,5 +23,5 @@ namespace char_utils {
     bool is_correct_range(int start, int end, int size);
 }
 
-#endif //CPP_HOMEWORK_CHARACTERUTILS_H
+#endif //CPP_HOMEWORK_WEEK3_CHARACTERUTILS_H
 

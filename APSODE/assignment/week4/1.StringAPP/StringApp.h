@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 9..
 //
 
-#ifndef CPP_HOMEWORK_STRINGAPP_H
-#define CPP_HOMEWORK_STRINGAPP_H
+#ifndef CPP_HOMEWORK_WEEK4_STRINGAPP_H
+#define CPP_HOMEWORK_WEEK4_STRINGAPP_H
 #include "TextFormatter.h"
 
 class StringApp {
@@ -27,4 +27,4 @@ class StringApp {
 
 };
 
-#endif //CPP_HOMEWORK_STRINGAPP_H
+#endif //CPP_HOMEWORK_WEEK4_STRINGAPP_H

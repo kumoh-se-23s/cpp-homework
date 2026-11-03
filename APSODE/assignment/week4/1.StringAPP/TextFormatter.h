@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 10..
 //
 
-#ifndef CPP_HOMEWORK_TEXTENCRYPTER_H
-#define CPP_HOMEWORK_TEXTENCRYPTER_H
+#ifndef CPP_HOMEWORK_WEEK4_TEXTFORMATTER_H
+#define CPP_HOMEWORK_WEEK4_TEXTFORMATTER_H
 
 class TextFormatter {
     public:
@@ -32,5 +32,5 @@ class TextFormatter {
         int get_first_not_blank_index() const;
 };
 
-#endif //CPP_HOMEWORK_TEXTENCRYPTER_H
+#endif //CPP_HOMEWORK_WEEK4_TEXTFORMATTER_H
 

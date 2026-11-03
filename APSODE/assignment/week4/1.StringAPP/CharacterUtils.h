@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 8..
 //
 
-#ifndef CPP_HOMEWORK_CHARACTERUTILS_H
-#define CPP_HOMEWORK_CHARACTERUTILS_H
+#ifndef CPP_HOMEWORK_WEEK4_CHARACTERUTILS_H
+#define CPP_HOMEWORK_WEEK4_CHARACTERUTILS_H
 
 namespace char_utils {
     bool is_numeric_character(char maybe_numeric);
@@ -49,5 +49,5 @@ namespace char_utils {
     char offset_alphabet(char alphabet_character, int gap);
 }
 
-#endif //CPP_HOMEWORK_CHARACTERUTILS_H
+#endif //CPP_HOMEWORK_WEEK4_CHARACTERUTILS_H
 

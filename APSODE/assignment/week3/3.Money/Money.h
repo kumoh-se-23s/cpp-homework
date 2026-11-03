@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 7..
 //
 
-#ifndef CPP_HOMEWORK_MONEY_H
-#define CPP_HOMEWORK_MONEY_H
+#ifndef CPP_HOMEWORK_WEEK3_MONEY_H
+#define CPP_HOMEWORK_WEEK3_MONEY_H
 #include <iostream>
 
 class Money {
@@ -51,4 +51,4 @@ std::ostream &operator <<(std::ostream &output_stream, const Money &money);
 
 std::istream &operator >>(std::istream &input_stream, Money &money);
 
-#endif //CPP_HOMEWORK_MONEY_H
+#endif //CPP_HOMEWORK_WEEK3_MONEY_H

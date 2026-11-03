@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 8..
 //
 
-#ifndef CPP_HOMEWORK_DDAYAPP_H
-#define CPP_HOMEWORK_DDAYAPP_H
+#ifndef CPP_HOMEWORK_WEEK3_DDAYAPP_H
+#define CPP_HOMEWORK_WEEK3_DDAYAPP_H
 
 #include "DDay.h"
 #include "Day.h"
@@ -47,4 +47,4 @@ class DDayApp {
         bool setting_new_day(const Command &command_struct);
 
 };
-#endif //CPP_HOMEWORK_DDAYAPP_H
+#endif //CPP_HOMEWORK_WEEK3_DDAYAPP_H

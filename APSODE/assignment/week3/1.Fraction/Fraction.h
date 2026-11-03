@@ -2,8 +2,8 @@
 // Created by leegu on 26. 9. 18..
 //
 
-#ifndef CPP_HOMEWORK_9_RUNFRACTION_H
-#define CPP_HOMEWORK_9_RUNFRACTION_H
+#ifndef CPP_HOMEWORK_WEEK3_FRACTION_H
+#define CPP_HOMEWORK_WEEK3_FRACTION_H
 #include <iosfwd>
 
 class Fraction {
@@ -53,4 +53,4 @@ std::ostream& operator <<(std::ostream& output_stream, const Fraction& fraction)
 
 
 
-#endif //CPP_HOMEWORK_9_RUNFRACTION_H
+#endif //CPP_HOMEWORK_WEEK3_FRACTION_H

@@ -2,8 +2,8 @@
 // Created by leegu on 26. 9. 17..
 //
 
-#ifndef CPP_HOMEWORK_8_RUNMATRIX_HPP
-#define CPP_HOMEWORK_8_RUNMATRIX_HPP
+#ifndef CPP_HOMEWORK_WEEK2_MATRIX_H
+#define CPP_HOMEWORK_WEEK2_MATRIX_H
 
 class Matrix {
     public:
@@ -29,5 +29,5 @@ class Matrix {
 };
 
 
-#endif //CPP_HOMEWORK_8_RUNMATRIX_HPP
+#endif //CPP_HOMEWORK_WEEK2_MATRIX_H
 

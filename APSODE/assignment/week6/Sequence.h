@@ -1,13 +1,9 @@
-#ifndef SEQUENCE_H
-#define SEQUENCE_H
+#ifndef CPP_HOMEWORK_WEEK6_SEQUENCE_H
+#define CPP_HOMEWORK_WEEK6_SEQUENCE_H
 
 
-template<typename T, int TAIL = 1>
+template<typename E, int TAIL = 1>
 class Sequence {
-    T *container;
-    int m_capacity;
-    int m_size;
-
     public:
         int size() const;
 
@@ -15,37 +11,44 @@ class Sequence {
 
         int capacity() const;
 
-        const T& at(int index) const;
+        const E& at(int index) const;
 
-        T& at(int index);
+        E& at(int index);
 
 
-        const T& operator[](int index) const;
+        const E& operator[](int index) const;
 
-        T& operator[](int index);
+        E& operator[](int index);
 
     protected:
         static constexpr int DEFAULT_CAPACITY = 8;
         static constexpr int GROWTH_FACTOR = 2;
 
+        E *container;
+        int m_capacity;
+        int m_size;
+
+
         Sequence();
 
-        Sequence(const T *elements, int size);
+        Sequence(const E *elements, int size);
 
         Sequence(const Sequence &other);
 
         virtual ~Sequence();
 
 
-        void insert(int position, const T &element);
+        void insert(int position, const E &element);
 
-        void insert(int position, const T *elements, int amount);
+        void insert(int position, const E *elements, int amount);
 
-        void append(const T &element);
+        void append(const E &element);
 
-        void append(const T *elements, int amount);
+        void append(const E *elements, int amount);
 
         void erase(int start, int amount = 1);
+
+        bool equals(const Sequence &other) const;
 
         void clear();
 
@@ -71,10 +74,10 @@ class Sequence {
 
         void requre_valid_position(int position) const;
 
-        static void require_valid_range(const T *elements, int amount);
+        static void require_valid_range(const E *elements, int amount);
 
-        static T* create_empty_container(int new_capacity) {
-            return new T[new_capacity + TAIL]();
+        static E* create_empty_container(int new_capacity) {
+            return new E[new_capacity + TAIL]();
         }
 
         constexpr static int calc_new_capacity(int amount) {
@@ -86,7 +89,7 @@ class Sequence {
         }
 
         static void swap(Sequence &sequence1, Sequence &sequence2) {
-            T *temp_container = sequence1.container;
+            E *temp_container = sequence1.container;
             sequence1.container = sequence2.container;
             sequence2.container = temp_container;
 
@@ -99,7 +102,7 @@ class Sequence {
             sequence2.m_capacity = temp_capacity;
         }
 
-        static void copy_array(const T *src, int src_capacity, T *dest, int dest_capacity) {
+        static void copy_array(const E *src, int src_capacity, E *dest, int dest_capacity) {
             for (int index = 0; index < src_capacity && index < dest_capacity; ++index) {
                 dest[index] = src[index];
             }
@@ -109,4 +112,4 @@ class Sequence {
 
 #include "Sequence.tpp"
 
-#endif //SEQUENCE_H
+#endif //CPP_HOMEWORK_WEEK6_SEQUENCE_H

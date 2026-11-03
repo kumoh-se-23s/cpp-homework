@@ -2,8 +2,8 @@
 // Created by leegu on 26. 9. 18..
 //
 
-#ifndef CPP_HOMEWORK_9_RUNFRACTION_H
-#define CPP_HOMEWORK_9_RUNFRACTION_H
+#ifndef CPP_HOMEWORK_WEEK2_FRACTION_H
+#define CPP_HOMEWORK_WEEK2_FRACTION_H
 
 class Fraction {
     public:
@@ -46,4 +46,4 @@ class Fraction {
         static bool is_same_denominator(Fraction fraction1, Fraction fraction2);
 };
 
-#endif //CPP_HOMEWORK_9_RUNFRACTION_H
+#endif //CPP_HOMEWORK_WEEK2_FRACTION_H

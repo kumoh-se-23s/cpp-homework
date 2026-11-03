@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 10..
 //
 
-#ifndef CPP_HOMEWORK_CHARSEQUENCE_H
-#define CPP_HOMEWORK_CHARSEQUENCE_H
+#ifndef CPP_HOMEWORK_WEEK4_CHARSEQUENCE_H
+#define CPP_HOMEWORK_WEEK4_CHARSEQUENCE_H
 #include <iostream>
 
 #include "Sequence.h"
@@ -66,4 +66,4 @@ class CharSequence : public Sequence<char> {
 
 std::ostream& operator<<(std::ostream &output_stream, const CharSequence &char_sequence);
 
-#endif //CPP_HOMEWORK_CHARSEQUENCE_H
+#endif //CPP_HOMEWORK_WEEK4_CHARSEQUENCE_H

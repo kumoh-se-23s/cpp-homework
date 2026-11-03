@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 7..
 //
 
-#ifndef CPP_HOMEWORK_DDAY_H
-#define CPP_HOMEWORK_DDAY_H
+#ifndef CPP_HOMEWORK_WEEK3_DDAY_H
+#define CPP_HOMEWORK_WEEK3_DDAY_H
 
 #include "Day.h"
 
@@ -37,4 +37,4 @@ class DDay {
 
 std::ostream& operator<<(std::ostream &output_stream, const DDay &dday);
 
-#endif //CPP_HOMEWORK_DDAY_H
+#endif //CPP_HOMEWORK_WEEK3_DDAY_H

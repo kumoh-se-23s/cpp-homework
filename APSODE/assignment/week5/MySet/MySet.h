@@ -2,8 +2,8 @@
 // Created by apsode on 26. 10. 13..
 //
 
-#ifndef CPP_HOMEWORK_MYSET_H
-#define CPP_HOMEWORK_MYSET_H
+#ifndef CPP_HOMEWORK_WEEK5_MYSET_H
+#define CPP_HOMEWORK_WEEK5_MYSET_H
 #include <istream>
 #include <ostream>
 
@@ -66,4 +66,4 @@ std::istream& operator>>(std::istream& input_stream, MySet& set);
 
 std::ostream& operator<<(std::ostream& output_stream, const MySet& set);
 
-#endif //CPP_HOMEWORK_MYSET_H
+#endif //CPP_HOMEWORK_WEEK5_MYSET_H

@@ -2,8 +2,8 @@
 // Created by leegu on 26. 9. 17..
 //
 
-#ifndef CPP_HOMEWORK_8_RUNMATRIX_HPP
-#define CPP_HOMEWORK_8_RUNMATRIX_HPP
+#ifndef CPP_HOMEWORK_WEEK3_MATRIX_H
+#define CPP_HOMEWORK_WEEK3_MATRIX_H
 
 #include <iostream>
 
@@ -42,4 +42,4 @@ std::ostream &operator <<(std::ostream &output_stream, const Matrix &matrix);
 
 std::istream &operator >>(std::istream &input_stream, Matrix &matrix);
 
-#endif //CPP_HOMEWORK_8_RUNMATRIX_HPP
+#endif //CPP_HOMEWORK_WEEK3_MATRIX_H

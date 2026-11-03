@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 28..
 //
 
-#ifndef CPP_HOMEWORK_ARRAYS_H
-#define CPP_HOMEWORK_ARRAYS_H
+#ifndef CPP_HOMEWORK_WEEK5_ARRAY_LIST_H
+#define CPP_HOMEWORK_WEEK5_ARRAY_LIST_H
 
 #include <stdexcept>
 
@@ -217,4 +217,4 @@ class ArrayList : public Collection<E> {
         }
 };
 
-#endif //CPP_HOMEWORK_ARRAYS_H
+#endif //CPP_HOMEWORK_WEEK5_ARRAY_LIST_H

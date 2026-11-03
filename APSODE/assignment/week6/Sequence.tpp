@@ -1,6 +1,5 @@
 #include <stdexcept>
 
-// #include "Sequence.h"
 
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence()
@@ -142,6 +141,21 @@ void Sequence<T, TAIL>::erase(int start, int amount) {
     if (this->need_shrink()) {
         this->shrink();
     }
+}
+
+template<typename T, int TAIL>
+bool Sequence<T, TAIL>::equals(const Sequence &other) const {
+    if (this->m_size != other.m_size) {
+        return false;
+    }
+
+    for (int index = 0; index < this->m_size; ++index) {
+        if (this->container[index] != other.container[index]) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0 1 2 3 4 5

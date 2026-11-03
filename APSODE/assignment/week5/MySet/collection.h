@@ -2,8 +2,8 @@
 // Created by apsode on 26. 10. 28..
 //
 
-#ifndef CPP_HOMEWORK_COLLECTION_H
-#define CPP_HOMEWORK_COLLECTION_H
+#ifndef CPP_HOMEWORK_WEEK5_COLLECTION_H
+#define CPP_HOMEWORK_WEEK5_COLLECTION_H
 
 template<typename E>
 class Collection {
@@ -27,4 +27,4 @@ class Collection {
         virtual bool contains(const E &object) const = 0;
 };
 
-#endif //CPP_HOMEWORK_COLLECTION_H
+#endif //CPP_HOMEWORK_WEEK5_COLLECTION_H

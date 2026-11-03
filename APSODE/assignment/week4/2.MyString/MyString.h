@@ -2,8 +2,8 @@
 // Created by leegu on 26. 10. 10..
 //
 
-#ifndef CPP_HOMEWORK_MYSTRING_H
-#define CPP_HOMEWORK_MYSTRING_H
+#ifndef CPP_HOMEWORK_WEEK4_MYSTRING_H
+#define CPP_HOMEWORK_WEEK4_MYSTRING_H
 #include "CharSequence.h"
 
 class MyString : public CharSequence {
@@ -38,4 +38,4 @@ class MyString : public CharSequence {
 std::istream& operator>>(std::istream &input_stream, MyString &string);
 
 std::istream& getline(std::istream &input_stream, MyString &string, char delim = '\n') ;
-#endif //CPP_HOMEWORK_MYSTRING_H
+#endif //CPP_HOMEWORK_WEEK4_MYSTRING_H

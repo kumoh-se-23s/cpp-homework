@@ -2,8 +2,8 @@
 // Created by apsode on 26. 10. 29..
 //
 
-#ifndef CPP_HOMEWORK_MYMATRIX_H
-#define CPP_HOMEWORK_MYMATRIX_H
+#ifndef CPP_HOMEWORK_WEEK5_MYMATRIX_H
+#define CPP_HOMEWORK_WEEK5_MYMATRIX_H
 #include <iosfwd>
 
 class MyMatrix {
@@ -71,4 +71,4 @@ std::ostream& operator <<(std::ostream &output_stream, const MyMatrix &matrix);
 
 std::istream& operator >>(std::istream &input_stream, MyMatrix &matrix);
 
-#endif //CPP_HOMEWORK_MYMATRIX_H
+#endif //CPP_HOMEWORK_WEEK5_MYMATRIX_H
