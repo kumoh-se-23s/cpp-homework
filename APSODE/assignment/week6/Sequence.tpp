@@ -9,7 +9,7 @@ Sequence<T, TAIL>::Sequence()
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence(const T *elements, int size) : m_capacity(calc_new_capacity(size)), m_size(size) {
     Sequence::require_non_null(elements);
-    Sequence::require_valid_range(elements, size);
+    Sequence::require_valid_amount(size);
     this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
     Sequence::copy_array(
         elements, size,
@@ -76,9 +76,15 @@ void Sequence<T, TAIL>::insert(int position, const T &element) {
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::insert(int position, const T *elements, int amount) {
-    this->requre_valid_position(position);
-    Sequence::require_non_null(elements);
-    Sequence::require_valid_range(elements, amount);
+    this->require_valid_position(position);
+    require_non_null(elements);
+    require_valid_amount(amount);
+
+    if (elements == this->container) {
+        T* temp = new T[this->m_capacity + 1];
+        copy_array(elements, amount, temp, this->m_capacity);
+        elements = temp;
+    }
 
     if (this->need_extend(amount)) {
         this->extend(this->m_size + amount);
@@ -104,7 +110,14 @@ void Sequence<T, TAIL>::append(const T &element) {
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::append(const T *elements, int amount) {
     require_non_null(elements);
-    require_valid_range(elements, amount);
+    require_valid_amount(amount);
+
+    if (elements == this->container) {
+        T* temp = new T[this->m_capacity + 1];
+        copy_array(elements, amount, temp, this->m_capacity);
+        elements = temp;
+    }
+
     if (this->need_extend(amount)) {
         this->extend(this->m_size + amount);
     }
@@ -170,7 +183,7 @@ void Sequence<T, TAIL>::clear() {
     this->m_capacity = DEFAULT_CAPACITY;
     this->m_size = 0;
     delete[] this->container; // 굳이 delete를 할까 싶긴한데... 일단은 초기 상태의 컨테이너를 가지는게 맞다고 생각하기에...
-    this->container = Sequence::create_empty_container(DEFAULT_CAPACITY);
+    this->container = create_empty_container(DEFAULT_CAPACITY);
 }
 
 template<typename T, int TAIL>
@@ -180,16 +193,16 @@ Sequence<T, TAIL>& Sequence<T, TAIL>::operator=(const Sequence &other) {
     }
 
     Sequence temp = Sequence(other);
-    Sequence::swap(*this, temp);
+    swap(*this, temp);
     return *this;
 }
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::shrink() {
     int new_capacity = calc_new_capacity(this->m_capacity / GROWTH_FACTOR);
-    T* new_container = Sequence::create_empty_container(new_capacity);
+    T* new_container = create_empty_container(new_capacity);
 
-    Sequence::copy_array(
+    copy_array(
         this->container, this->m_size,
         new_container, new_capacity
     );
@@ -204,7 +217,7 @@ void Sequence<T, TAIL>::extend(int required) {
     int new_capacity = calc_new_capacity(grown > required ? grown : required);
     T* new_container = Sequence::create_empty_container(new_capacity);
 
-    Sequence::copy_array(
+    copy_array(
         this->container, this->m_capacity,
         new_container, new_capacity
     );
@@ -229,7 +242,7 @@ void Sequence<T, TAIL>::require_valid_index(int index) const {
 
 // insert 단일 사용이지만 일단 require_valid_index와의 통일성을 위해...
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::requre_valid_position(int position) const {
+void Sequence<T, TAIL>::require_valid_position(int position) const {
     if (!(0 <= position && position <= this->m_size)) {
         throw std::out_of_range("Sequence: position is out of range");
     }
@@ -243,13 +256,9 @@ void Sequence<E, TAIL>::require_non_null(const E *nullable) {
 }
 
 template<typename T, int TAIL>
-void Sequence<T, TAIL>::require_valid_range(const T *elements, int amount) {
+void Sequence<T, TAIL>::require_valid_amount(int amount) {
     if (amount < 0) {
         throw std::invalid_argument("Sequence: amount must not be negative");
-    }
-
-    if (Sequence::count_elements(elements) != amount) {
-        throw std::invalid_argument("Sequence: amount does not match the number of elements");
     }
 }
 

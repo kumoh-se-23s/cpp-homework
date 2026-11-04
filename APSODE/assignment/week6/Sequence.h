@@ -58,11 +58,11 @@ class Sequence {
 
         void require_valid_index(int index) const;
 
-        void requre_valid_position(int position) const;
+        void require_valid_position(int position) const;
 
         static void require_non_null(const E *nullable);
 
-        static void require_valid_range(const E *elements, int amount);
+        static void require_valid_amount(int amount);
 
         static int count_elements(const E *elements) {
             Sequence::require_non_null(elements);
@@ -83,6 +83,10 @@ class Sequence {
             int temp_capacity = sequence1.m_capacity;
             sequence1.m_capacity = sequence2.m_capacity;
             sequence2.m_capacity = temp_capacity;
+        }
+
+        static void swap(Sequence &sequence1, Sequence &&sequence2) {
+            return Sequence::swap(sequence1, sequence2);
         }
 
         static E* create_empty_container(int new_capacity) {

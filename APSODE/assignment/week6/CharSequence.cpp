@@ -43,28 +43,54 @@ CharSequence CharSequence::operator+(const char *chars) const {
 }
 
 CharSequence& CharSequence::operator=(const char *chars) {
-
+    require_non_null(chars);
+    swap(*this, CharSequence(chars, count_elements(chars)));
+    return *this;
 }
 
 CharSequence& CharSequence::operator+=(const char *chars) {
+    require_non_null(chars);
+    swap(*this, *this + chars);
+    return *this;
 }
 
 bool CharSequence::operator==(const char *chars) const {
+    require_non_null(chars);
+    return this->equals(CharSequence(chars, count_elements(chars)));
 }
 
 bool CharSequence::operator!=(const char *chars) const {
+    return !(*this == chars);
 }
 
 bool CharSequence::operator>(const char *chars) const {
+    if (chars == nullptr) {
+        return true;
+    }
+
+    int chars_length = count_elements(chars);
+
+    for (int index = 0; index < this->m_size && index < chars_length; ++index) {
+        unsigned char this_char = (*this)[index];
+        unsigned char other_char = *chars++;
+        if (this_char != other_char) {
+            return this_char > other_char;
+        }
+    }
+
+    return this->m_size > chars_length;
 }
 
 bool CharSequence::operator<(const char *chars) const {
+    return !(*this >= chars);
 }
 
 bool CharSequence::operator>=(const char *chars) const {
+    return *this > chars || *this == chars;
 }
 
 bool CharSequence::operator<=(const char *chars) const {
+    return *this < chars || *this == chars;
 }
 
 int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
@@ -83,15 +109,15 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
     // 첫번째 윈도우의 해싱
     long long int hashed_pattern = 0, hashed_target = 0;
     for (int index = 0; index < pattern.m_size; ++index) {
-        hashed_pattern = (hashed_pattern * HASH_BASE + pattern.container[index]) % HASH_MODULAR;
-        hashed_target = (hashed_target * HASH_BASE + this->container[start + index]) % HASH_MODULAR;
+        hashed_pattern = (hashed_pattern * HASH_BASE + static_cast<unsigned char>(pattern.container[index])) % HASH_MODULAR;
+        hashed_target = (hashed_target * HASH_BASE + static_cast<unsigned char>(this->container[start + index])) % HASH_MODULAR;
     }
 
     // 슬라이딩 윈도우 시작
     const int end = this->m_size - pattern.m_size;
     for (int index = start; index <= end; ++index) {
         if (index != start) {
-            hashed_target -= this->container[index - 1] * highest_power % HASH_MODULAR;
+            hashed_target -= static_cast<unsigned char>(this->container[index - 1]) * highest_power % HASH_MODULAR;
 
             if (hashed_target < 0) {
                 hashed_target += HASH_MODULAR;
@@ -100,7 +126,7 @@ int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
             hashed_target *= HASH_BASE;
 
 
-            hashed_target += this->container[index + pattern.m_size - 1];
+            hashed_target += static_cast<unsigned char>(this->container[index + pattern.m_size - 1]);
             hashed_target %= HASH_MODULAR;
         }
 

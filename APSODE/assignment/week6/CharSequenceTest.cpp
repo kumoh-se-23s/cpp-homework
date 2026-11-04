@@ -283,3 +283,472 @@ TEST(CharSequenceFind, DoesNotModifySequence) {
 
     EXPECT_EQ("hello world", to_std_string(sequence));
 }
+
+// =====================================================================
+// operator[]
+// =====================================================================
+
+TEST(CharSequenceSubscript, ReadsElement) {
+    const CharSequence sequence = make("abc");
+
+    EXPECT_EQ('a', sequence[0]);
+    EXPECT_EQ('c', sequence[2]);
+}
+
+TEST(CharSequenceSubscript, IsWritable) {
+    CharSequence sequence = make("abc");
+
+    sequence[1] = 'X';
+
+    EXPECT_EQ("aXc", to_std_string(sequence));
+}
+
+// =====================================================================
+// append
+// =====================================================================
+
+TEST(CharSequenceAppend, AppendsToEnd) {
+    CharSequence sequence = make("hello");
+
+    sequence.append(" world");
+
+    EXPECT_EQ(11, sequence.size());
+    EXPECT_STREQ("hello world", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, ToEmptySequence) {
+    CharSequence sequence;
+
+    sequence.append("abc");
+
+    EXPECT_EQ(3, sequence.size());
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, EmptyTextChangesNothing) {
+    CharSequence sequence = make("abc");
+
+    sequence.append("");
+
+    EXPECT_EQ(3, sequence.size());
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, ReturnsSelfForChaining) {
+    CharSequence sequence = make("a");
+
+    CharSequence &returned = sequence.append("b");
+    returned.append("c").append("d");
+
+    EXPECT_EQ(&sequence, &returned);
+    EXPECT_STREQ("abcd", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, DoublesCapacityWhenFull) {
+    CharSequence sequence = make("1234567");
+    ASSERT_EQ(8, sequence.capacity());
+
+    sequence.append("8");
+
+    EXPECT_EQ(16, sequence.capacity());
+    EXPECT_STREQ("12345678", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, LongTextKeepsCapacityMultipleOfEight) {
+    const std::string text(100, 'x');
+    CharSequence sequence = make("abc");
+
+    sequence.append(text.c_str());
+
+    EXPECT_EQ(103, sequence.size());
+    EXPECT_GE(sequence.capacity(), 103);
+    EXPECT_EQ(0, sequence.capacity() % 8);
+    EXPECT_EQ("abc" + text, std::string(&sequence[0]));
+}
+
+TEST(CharSequenceAppend, OwnContentSurvivesGrowth) {
+    // 재할당으로 기존 버퍼가 해제된 뒤에 읽으면 안 된다
+    CharSequence sequence = make("abcde");
+
+    sequence.append(&sequence[0]);
+
+    EXPECT_STREQ("abcdeabcde", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, NullThrows) {
+    CharSequence sequence = make("abc");
+    const char *null_chars = nullptr;
+
+    EXPECT_THROW(sequence.append(null_chars), std::invalid_argument);
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+// =====================================================================
+// insert
+// =====================================================================
+
+TEST(CharSequenceInsert, AtFront) {
+    CharSequence sequence = make("world");
+
+    sequence.insert(0, "hello ");
+
+    EXPECT_EQ(11, sequence.size());
+    EXPECT_STREQ("hello world", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, InMiddle) {
+    CharSequence sequence = make("held");
+
+    sequence.insert(2, "llo wor");
+
+    EXPECT_STREQ("hello world", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, AtEnd) {
+    CharSequence sequence = make("abc");
+
+    sequence.insert(3, "def");
+
+    EXPECT_STREQ("abcdef", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, IntoEmpty) {
+    CharSequence sequence;
+
+    sequence.insert(0, "abc");
+
+    EXPECT_EQ(3, sequence.size());
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, EmptyTextChangesNothing) {
+    CharSequence sequence = make("abc");
+
+    sequence.insert(1, "");
+
+    EXPECT_EQ(3, sequence.size());
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, ReturnsSelfForChaining) {
+    CharSequence sequence = make("ad");
+
+    CharSequence &returned = sequence.insert(1, "c");
+    returned.insert(1, "b");
+
+    EXPECT_EQ(&sequence, &returned);
+    EXPECT_STREQ("abcd", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, GrowsCapacity) {
+    CharSequence sequence = make("1234567");
+
+    sequence.insert(3, "abc");
+
+    EXPECT_GE(sequence.capacity(), 10);
+    EXPECT_EQ(0, sequence.capacity() % 8);
+    EXPECT_STREQ("123abc4567", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, OwnContent) {
+    // 원소를 뒤로 미는 동안 넣을 내용이 덮어써지면 안 된다
+    CharSequence sequence = make("abc");
+
+    sequence.insert(1, &sequence[0]);
+
+    EXPECT_STREQ("aabcbc", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, InvalidPositionThrows) {
+    CharSequence sequence = make("abc");
+
+    EXPECT_THROW(sequence.insert(-1, "x"), std::out_of_range);
+    EXPECT_THROW(sequence.insert(4, "x"), std::out_of_range);
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequenceInsert, NullThrows) {
+    CharSequence sequence = make("abc");
+    const char *null_chars = nullptr;
+
+    EXPECT_THROW(sequence.insert(0, null_chars), std::invalid_argument);
+}
+
+// =====================================================================
+// operator+
+// =====================================================================
+
+TEST(CharSequencePlus, ReturnsConcatenation) {
+    const CharSequence sequence = make("hello");
+
+    const CharSequence result = sequence + " world";
+
+    EXPECT_EQ(11, result.size());
+    EXPECT_STREQ("hello world", &result[0]);
+}
+
+TEST(CharSequencePlus, DoesNotModifyOperand) {
+    const CharSequence sequence = make("hello");
+
+    const CharSequence result = sequence + " world";
+
+    EXPECT_EQ(5, sequence.size());
+    EXPECT_STREQ("hello", &sequence[0]);
+    EXPECT_NE(&sequence[0], &result[0]);
+}
+
+TEST(CharSequencePlus, EmptyOperands) {
+    const CharSequence empty;
+    const CharSequence sequence = make("abc");
+
+    EXPECT_STREQ("abc", &(empty + "abc")[0]);
+    EXPECT_STREQ("abc", &(sequence + "")[0]);
+    EXPECT_STREQ("", &(empty + "")[0]);
+}
+
+TEST(CharSequencePlus, CanBeChained) {
+    const CharSequence result = make("a") + "b" + "c";
+
+    EXPECT_STREQ("abc", &result[0]);
+}
+
+TEST(CharSequencePlus, GrowsCapacity) {
+    const std::string text(100, 'x');
+    const CharSequence sequence = make("abc");
+
+    const CharSequence result = sequence + text.c_str();
+
+    EXPECT_EQ(103, result.size());
+    EXPECT_EQ(0, result.capacity() % 8);
+    EXPECT_EQ("abc" + text, std::string(&result[0]));
+}
+
+TEST(CharSequencePlus, NullThrows) {
+    const CharSequence sequence = make("abc");
+    const char *null_chars = nullptr;
+
+    EXPECT_THROW(sequence + null_chars, std::invalid_argument);
+}
+
+// =====================================================================
+// operator= (const char*)
+// =====================================================================
+
+TEST(CharSequenceAssignChars, ReplacesContent) {
+    CharSequence sequence = make("hello");
+
+    sequence = "bye";
+
+    EXPECT_EQ(3, sequence.size());
+    EXPECT_STREQ("bye", &sequence[0]);
+}
+
+TEST(CharSequenceAssignChars, FromEmptyText) {
+    CharSequence sequence = make("hello");
+
+    sequence = "";
+
+    EXPECT_TRUE(sequence.empty());
+    EXPECT_STREQ("", &sequence[0]);
+}
+
+TEST(CharSequenceAssignChars, GrowsAndKeepsCapacityMultipleOfEight) {
+    const std::string text(100, 'x');
+    CharSequence sequence = make("abc");
+
+    sequence = text.c_str();
+
+    EXPECT_EQ(100, sequence.size());
+    EXPECT_EQ(0, sequence.capacity() % 8);
+    EXPECT_EQ(text, std::string(&sequence[0]));
+}
+
+TEST(CharSequenceAssignChars, ReturnsSelfForChaining) {
+    CharSequence sequence;
+
+    CharSequence &returned = (sequence = "abc");
+
+    EXPECT_EQ(&sequence, &returned);
+}
+
+TEST(CharSequenceAssignChars, FromOwnContent) {
+    CharSequence sequence = make("hello");
+
+    sequence = &sequence[1];
+
+    EXPECT_STREQ("ello", &sequence[0]);
+}
+
+TEST(CharSequenceAssignChars, NullThrowsAndKeepsContent) {
+    CharSequence sequence = make("abc");
+    const char *null_chars = nullptr;
+
+    EXPECT_THROW(sequence = null_chars, std::invalid_argument);
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+// =====================================================================
+// operator+=
+// =====================================================================
+
+TEST(CharSequencePlusAssign, AppendsToSelf) {
+    CharSequence sequence = make("hello");
+
+    sequence += " world";
+
+    EXPECT_EQ(11, sequence.size());
+    EXPECT_STREQ("hello world", &sequence[0]);
+}
+
+TEST(CharSequencePlusAssign, EmptyText) {
+    CharSequence sequence = make("abc");
+
+    sequence += "";
+
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequencePlusAssign, ReturnsSelfForChaining) {
+    CharSequence sequence = make("a");
+
+    CharSequence &returned = (sequence += "b");
+    (returned += "c") += "d";
+
+    EXPECT_EQ(&sequence, &returned);
+    EXPECT_STREQ("abcd", &sequence[0]);
+}
+
+TEST(CharSequencePlusAssign, ManyAppendsKeepContent) {
+    CharSequence sequence;
+    std::string expected;
+
+    for (int loop = 0; loop < 200; ++loop) {
+        sequence += "ab";
+        expected += "ab";
+    }
+
+    EXPECT_EQ(400, sequence.size());
+    EXPECT_EQ(0, sequence.capacity() % 8);
+    EXPECT_EQ(expected, std::string(&sequence[0]));
+}
+
+TEST(CharSequencePlusAssign, OwnContent) {
+    CharSequence sequence = make("abcde");
+
+    sequence += &sequence[0];
+
+    EXPECT_STREQ("abcdeabcde", &sequence[0]);
+}
+
+TEST(CharSequencePlusAssign, NullThrowsAndKeepsContent) {
+    CharSequence sequence = make("abc");
+    const char *null_chars = nullptr;
+
+    EXPECT_THROW(sequence += null_chars, std::invalid_argument);
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+// =====================================================================
+// operator== / operator!=
+// =====================================================================
+
+TEST(CharSequenceEquality, SameContent) {
+    const CharSequence sequence = make("abc");
+
+    EXPECT_TRUE(sequence == "abc");
+    EXPECT_FALSE(sequence != "abc");
+}
+
+TEST(CharSequenceEquality, DifferentContent) {
+    const CharSequence sequence = make("abc");
+
+    EXPECT_FALSE(sequence == "abd");
+    EXPECT_TRUE(sequence != "abd");
+}
+
+TEST(CharSequenceEquality, DifferentLength) {
+    const CharSequence sequence = make("abc");
+
+    EXPECT_FALSE(sequence == "ab");
+    EXPECT_FALSE(sequence == "abcd");
+    EXPECT_TRUE(sequence != "ab");
+    EXPECT_TRUE(sequence != "abcd");
+}
+
+TEST(CharSequenceEquality, Empty) {
+    const CharSequence empty;
+
+    EXPECT_TRUE(empty == "");
+    EXPECT_FALSE(empty != "");
+    EXPECT_FALSE(empty == "a");
+}
+
+TEST(CharSequenceEquality, NullThrows) {
+    const CharSequence sequence = make("abc");
+    const char *null_chars = nullptr;
+
+    EXPECT_THROW(sequence == null_chars, std::invalid_argument);
+    EXPECT_THROW(sequence != null_chars, std::invalid_argument);
+}
+
+// =====================================================================
+// operator< / <= / > / >= (사전 순서, std::string과 동일)
+// =====================================================================
+
+namespace {
+    // 네 비교 연산자의 결과를 std::string 비교 결과와 대조한다
+    void expect_ordering(const char *left, const char *right) {
+        const CharSequence sequence = make(left);
+        const std::string left_text(left);
+        const std::string right_text(right);
+
+        EXPECT_EQ(left_text < right_text, sequence < right) << '"' << left << "\" < \"" << right << '"';
+        EXPECT_EQ(left_text <= right_text, sequence <= right) << '"' << left << "\" <= \"" << right << '"';
+        EXPECT_EQ(left_text > right_text, sequence > right) << '"' << left << "\" > \"" << right << '"';
+        EXPECT_EQ(left_text >= right_text, sequence >= right) << '"' << left << "\" >= \"" << right << '"';
+    }
+}
+
+TEST(CharSequenceOrdering, EqualText) {
+    expect_ordering("abc", "abc");
+    expect_ordering("", "");
+}
+
+TEST(CharSequenceOrdering, FirstDifferenceDecides) {
+    expect_ordering("abc", "abd");
+    expect_ordering("abd", "abc");
+    expect_ordering("abc", "bbc");
+    expect_ordering("bbc", "abc");
+}
+
+TEST(CharSequenceOrdering, EarlierDifferenceBeatsLaterOnes) {
+    expect_ordering("axa", "bab");
+    expect_ordering("bab", "axa");
+}
+
+TEST(CharSequenceOrdering, PrefixIsSmaller) {
+    expect_ordering("abc", "abcd");
+    expect_ordering("abcd", "abc");
+}
+
+TEST(CharSequenceOrdering, DifferenceBeatsLength) {
+    expect_ordering("b", "abcd");
+    expect_ordering("abcd", "b");
+}
+
+TEST(CharSequenceOrdering, EmptyIsSmallest) {
+    expect_ordering("", "a");
+    expect_ordering("a", "");
+}
+
+TEST(CharSequenceOrdering, UppercaseBeforeLowercase) {
+    expect_ordering("Zebra", "apple");
+    expect_ordering("apple", "Zebra");
+}
+
+TEST(CharSequenceOrdering, NonAsciiBytesCompareAsUnsigned) {
+    // UTF-8 한글은 signed char에서 음수지만 std::string은 unsigned로 비교한다
+    expect_ordering("가", "a");
+    expect_ordering("a", "가");
+    expect_ordering("가", "나");
+}

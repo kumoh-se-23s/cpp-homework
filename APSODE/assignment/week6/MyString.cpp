@@ -2,6 +2,7 @@
 // Created by apsode on 26. 11. 2..
 //
 
+#if 0 // TODO: MyString 작성 중이라 임시로 빌드에서 제외. 완성하면 이 줄과 파일 끝의 #endif를 지울 것
 #include "MyString.h"
 
 int MyString::length() const {
@@ -125,5 +126,6 @@ int MyString::compare_to(const MyString &other) const {
 
 int stoi(const MyString &str, int pos, int base) {
 }
+#endif
 
 
