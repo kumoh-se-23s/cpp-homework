@@ -17,16 +17,22 @@ int CharSequence::find(const char *pattern, int start) const {
     return this->rabin_karp(CharSequence(pattern, count_elements(pattern)), start);
 }
 
-CharSequence& CharSequence::append(const char *chars) {
+void CharSequence::append(const char *chars) {
     require_non_null(chars);
     Sequence::append(chars, count_elements(chars));
-    return *this;
 }
 
-CharSequence& CharSequence::insert(int pos, const char *chars) {
+void CharSequence::append(const CharSequence &other) {
+    Sequence::append(other.container, other.m_size);
+}
+
+void CharSequence::insert(int pos, const char *chars) {
     require_non_null(chars);
     Sequence::insert(pos, chars, count_elements(chars));
-    return *this;
+}
+
+void CharSequence::insert(int pos, const CharSequence &other) {
+    Sequence::insert(pos, other.container, other.m_size);
 }
 
 char& CharSequence::operator[](int pos) {
@@ -39,7 +45,9 @@ const char& CharSequence::operator[](int pos) const {
 
 CharSequence CharSequence::operator+(const char *chars) const {
     require_non_null(chars);
-    return CharSequence(*this).append(chars);
+    CharSequence temp = CharSequence(*this);
+    temp.append(chars);
+    return temp;
 }
 
 CharSequence& CharSequence::operator=(const char *chars) {

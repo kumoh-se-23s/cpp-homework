@@ -26,9 +26,13 @@ class CharSequence : public Sequence<char> {
 
         int find(const char *pattern, int start) const;
 
-        CharSequence& append(const char* chars);
+        void append(const char* chars);
 
-        CharSequence& insert(int pos, const char* chars);
+        void append(const CharSequence &other);
+
+        void insert(int pos, const char* chars);
+
+        void insert(int pos, const CharSequence &other);
 
 
         char& operator[](int pos);

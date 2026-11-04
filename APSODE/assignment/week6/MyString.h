@@ -9,9 +9,12 @@
 #include "Comparable.h"
 
 
-class MyString : public CharSequence, Comparable<MyString>{
+class MyString : public CharSequence {
     public:
         MyString() = default;
+
+        MyString(const char *cstr2nd);
+
 
         int length() const;
 
@@ -19,37 +22,11 @@ class MyString : public CharSequence, Comparable<MyString>{
 
         int getCapacity() const;
 
-
-        char& operator[](int pos);
-
-        const char& operator[](int pos) const;
-
-
-        MyString(const char *cstr2nd);
-
-        MyString operator+(const MyString &str2nd) const;
-
-        bool operator==(const MyString &str) const;
-
-        bool operator!=(const MyString &str) const;
-
         int find(const MyString &subStr, int pos = 0) const;
 
         MyString substr(int pos, int len) const;
 
-
-        MyString& operator+=(const MyString &str2nd);
-
         MyString& append(const MyString &str2nd);
-
-        bool operator<(const MyString &str) const;
-
-        bool operator<=(const MyString &str) const;
-
-        bool operator>(const MyString &str) const;
-
-        bool operator>=(const MyString &str) const;
-
 
         MyString& insert(int pos, const MyString &subStr);
 
@@ -57,7 +34,28 @@ class MyString : public CharSequence, Comparable<MyString>{
 
         MyString& erase(int pos, int cnt);
 
-        int compare_to(const MyString &other) const override;
+
+        char& operator[](int pos);
+
+        const char& operator[](int pos) const;
+
+
+        MyString operator+(const MyString &str2nd) const;
+
+        MyString& operator+=(const MyString &str2nd);
+
+
+        bool operator==(const MyString &str) const;
+
+        bool operator!=(const MyString &str) const;
+
+        bool operator>(const MyString &str) const;
+
+        bool operator<(const MyString &str) const;
+
+        bool operator>=(const MyString &str) const;
+
+        bool operator<=(const MyString &str) const;
 };
 
 std::istream& operator>>(std::istream &is, MyString &str);
