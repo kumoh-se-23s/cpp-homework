@@ -15,7 +15,8 @@ public:
     int length() const;
     bool isEmpty() const;
     int getCapacity() const;
-    char& at(int pos) const;
+    char& at(int pos);
+    const char& at(int pos) const;
     int find(const char *cSubStr, int pos = 0) const;
     int find(const MyString &subStr, int pos = 0) const;
     MyString substr(int pos, int len) const;
@@ -55,9 +56,9 @@ public:
     void appendCh(char ch);
 private:
     static constexpr int DEFAULT_CAPACITY = 8;
-    char *str;
-    int capacity;
+    int capacity = DEFAULT_CAPACITY;
     int size;
+    char *str;
 
     void resize(int minLength);
     static void copyArr(char *copy, const char *src, int srcSize);

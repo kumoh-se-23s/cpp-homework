@@ -5,7 +5,6 @@
 //생성자
 MyString::MyString() {
     str = new char[DEFAULT_CAPACITY];
-    capacity = DEFAULT_CAPACITY;
     size = 0;
     str[size] = '\0';
 }
@@ -13,7 +12,6 @@ MyString::MyString() {
 //복사생성자: str
 MyString::MyString(const MyString &srcStr) {
     size = srcStr.size;
-    capacity = DEFAULT_CAPACITY; //기본값 할당
     capacity = getEnoughCapacity(size); //기본값에서 2배씩 늘려가며 최소용량 잡기
     str = new char[capacity];
     copyArr(str, srcStr.str, srcStr.size);
@@ -22,7 +20,6 @@ MyString::MyString(const MyString &srcStr) {
 //복사생성자: cArr
 MyString::MyString(const char *cstr2nd) {
     size = getLengthOfChArr(cstr2nd);
-    capacity = DEFAULT_CAPACITY;
     capacity = getEnoughCapacity(size);
     str = new char[capacity];
     copyArr(str, cstr2nd, size);
@@ -50,7 +47,14 @@ int MyString::getCapacity() const {
 }
 
 //pos위치 주소 반환
-char& MyString::at(int pos) const {
+char& MyString::at(int pos) {
+    if (pos < 0 || pos >= size)
+        return str[size];
+    return str[pos];
+}
+
+//pos위치 주소 반환
+const char& MyString::at(int pos) const {
     if (pos < 0 || pos >= size)
         return str[size];
     return str[pos];
@@ -71,11 +75,19 @@ int MyString::find(const MyString &subStr, int pos) const {
 //문자열 부분추출
 MyString MyString::substr(int pos, int len) const {
     //입력정리
-    if (pos < -size || pos > size)
-        pos = size;
-    else if (pos < 0) //범위 내 음수면 뒷글자
-        pos += size;
-    len = normalizeLen(len, pos);
+    if (pos < -size || pos > size) //범위 외 pos면 빈 문자열 리턴
+        return MyString();
+
+    if (pos < 0) { //범위 내 음수면 뒷글자부터 역행
+        pos = size + pos; //역행시작점 (오른쪽 끝)
+        int startIdx = pos - len + 1; //역행 도착점 (왼쪽 끝, 오른쪽 끝이 자기 포함이니 여기서 + 1)
+        if (startIdx < 0 || len < 0) //도착점이 범위를 넘어서면 문자열 처음까지만
+            startIdx = 0;
+        len = pos - startIdx + 1; //길이 = 역행 시작점 - 도착점 + 1
+        pos = startIdx; //Impl에 넣기 위해 변경
+    } else {
+        len = normalizeLen(len, pos);
+    }
 
     return subStrImpl(pos, len);
 }
@@ -126,10 +138,6 @@ MyString &MyString::replace(int pos, int len, const MyString &subStr) {
 MyString &MyString::erase(int pos, int cnt) {
     pos = normalizePos(pos);
     cnt = normalizeLen(cnt, pos);
-    if (cnt < 0) //음수면 끝값
-        cnt = size - pos;
-    if (cnt > size - pos) //cnt가 범위 넘어가면 마지막 글자까지로 조정
-        cnt = size - pos;
     //pos부터 idx + cnt를 idx로 옮김
     for (int idx = pos; idx + cnt < size; idx++) {
         str[idx] = str[idx + cnt];
@@ -148,7 +156,7 @@ void MyString::clear() {
 //stoi용: 진수에 맞는 값인지 판별 (base 범위 2~36)
 static bool isValidValue(char ch, int base) {
     if (base <= 10)
-        return ch >= '0' && ch <= '0' + base;
+        return ch >= '0' && ch < '0' + base;
     return (ch >= '0' && ch < '0' + base) || (ch >= 'a' && ch < 'a' + base - 10);
 }
 
@@ -218,16 +226,12 @@ MyString &MyString::operator=(const MyString &srcStr) {
 
 //[]
 char &MyString::operator[](int pos) {
-    if (pos < 0 || pos >= size)
-        return str[size];
-    return str[pos];
+    return at(pos);
 }
 
 //[]
 const char &MyString::operator[](int pos) const {
-    if (pos < 0 || pos >= size)
-        return str[size];
-    return str[pos];
+    return at(pos);
 }
 
 //== cArr
