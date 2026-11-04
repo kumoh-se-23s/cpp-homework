@@ -1,38 +1,15 @@
 #pragma once
-#include "SinglyNode.h"
+#include "SinglyLinkedList.h"
 
-template <typename T>
-class SinglyLinkedList {
-    public:
-        SinglyLinkedList();
-        ~SinglyLinkedList();
-        void add(T element);
-        void append(T element);
-        void insert(int index, T element);
-        void remove(T element);
-        void clear();
-        int getSize() const;
-        bool isEmpty() const;
-        T get(int index) const;
-        T getHead() const;
-
-    private:
-        SinglyHeadNode<T> head;
-        int size = 0;
-};
 
 template <typename T>
 SinglyLinkedList<T>::SinglyLinkedList() {
-
+    head(nullptr);
+    size = 0;
 }
 
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList() {
-
-}
-
-template<typename T>
-void SinglyLinkedList<T>::add(T element) {
 
 }
 
@@ -43,6 +20,11 @@ void SinglyLinkedList<T>::append(T element) {
 
 template<typename T>
 void SinglyLinkedList<T>::insert(int index, T element) {
+
+}
+
+template<typename T>
+void SinglyLinkedList<T>::insertFirst(T element) {
 
 }
 
@@ -72,6 +54,12 @@ void SinglyLinkedList<T>::remove(T element) {
 }
 
 template<typename T>
+void SinglyLinkedList<T>::removeFirst() {
+
+}
+
+template<typename T>
 void SinglyLinkedList<T>::clear() {
 
 }
+

@@ -1,5 +1,4 @@
 #pragma once
-#include "DoubliyNode.h"
 
 template <typename T>
 class CircularLinkedList {
@@ -16,6 +15,14 @@ class CircularLinkedList {
         T get(int index) const;
         T getHead() const;
     private:
-        DoublyNode<T> head;
+        struct DoublyNode{
+            T data;
+            DoublyNode* next;
+            DoublyNode* prev;
+            DoublyNode(T element) : data(element), next(nullptr), prev(nullptr) {}
+        };
+        DoublyNode* head;
         int size = 0;
 };
+
+#include "CircularLinkedList.tpp"
