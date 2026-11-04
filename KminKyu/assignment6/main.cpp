@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+
 #include "MyString.h"
 using namespace std;
 
@@ -6,9 +8,9 @@ int main(){
 
 
     MyString str1, str2, str3 = "test", str4 = MyString("tes1111111testdsfdsf"), str5, str6;
-    // cin >> str1;
-    // cin >> str5;
-    // getline(cin, str6);
+    cin >> str1;
+    cin >> str5;
+    getline(cin, str6);
     str2= str3;
     str2 = str2 + str1;
     str2 = str2 + "1";
@@ -59,4 +61,20 @@ int main(){
     cout << source << endl;
     cout << destination << endl;
 
+    std::string temp7 = "0123";
+
+    cout << temp7.replace(1, 2, "tes") << endl;
+
+    MyString temp8 = "0123";
+
+    cout << temp8.replace(1,2, "") << endl;
+
+    std::istringstream istring("one two three");
+    MyString temp9;
+    istring >> temp9;
+    cout << temp9;
+    istring >> temp9;
+    cout << temp9;
+    istring >> temp9;
+    cout << temp9;
 }

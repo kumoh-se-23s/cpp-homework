@@ -19,12 +19,13 @@
 //  과제 PDF 에서 std::string 과 다르게 정한 규칙은 아래 도우미로만 반영한다.
 //   - clamp_pos()       : pos 가 음수이면 0, 문자열 범위 밖(pos >= size)이면 마지막 위치(size-1)
 //                         (find / insert / replace / erase 에 적용)
-//   - expected_substr() : pos 가 음수이면 뒤에서부터(size + pos), 범위 밖이면 마지막 위치
+//   - expected_substr() : 교수님 예시 기준 (음수 pos 는 뒤에서 앞으로 len 글자, 범위 밖 pos 는 "")
 //   - at() / operator[] : 범위를 벗어나면 '\0' return (예외를 던지지 않는다)
 //
 //  [교수님께 확인이 필요한 부분]
 //   - pos >= size 를 "마지막 위치(size-1)"로 취급하는 해석 (insert(size, ...) 도 size-1 로 취급)
-//   - substr 에서 pos < -size 인 경우 (PDF 에 규칙이 없어서 테스트하지 않음)
+//   - substr 의 범위 밖 pos 는 교수님 예시에서 "" 였는데, 그렇다면 find/insert/replace/erase 의
+//     "마지막 위치" 규칙도 같은 뜻인지 (여기서는 PDF 문구 그대로 size-1 로 해석)
 //   - EOF / 스트림 상태 테스트 (과제 PDF 에 직접 언급은 없고 "std 와 동일하게" 조항에 근거)
 //
 //  스트림의 상태 플래그는 EOF 관련 테스트에서만 직접 검사하고,
@@ -39,13 +40,13 @@ namespace {
     }
 
     // MyString 과 std::string 의 내용/길이/비어있음 여부가 모두 같은지,
-    // 그리고 '\0' 종료와 capacity 규칙(8의 배수, 길이보다 커야 함)이 지켜지는지 확인
+    // 그리고 '\0' 종료와 capacity 규칙(8의 배수, 길이 이상. 배열은 capacity + 1 칸)이 지켜지는지 확인
     void expect_same(const MyString &actual, const std::string &expected) {
         EXPECT_EQ(expected, to_std_string(actual));
         EXPECT_EQ(static_cast<int>(expected.size()), actual.length());
         EXPECT_EQ(expected.empty(), actual.empty());
         EXPECT_EQ('\0', actual[actual.length()]);        // const operator[] : 문자열 끝의 '\0'
-        EXPECT_GE(actual.getCapacity(), actual.length()); // '\0' 이 들어갈 자리가 있어야 한다.
+        EXPECT_GE(actual.getCapacity(), actual.length()); // 배열은 capacity + 1 칸이라 '\0' 자리는 따로 있다.
         EXPECT_EQ(0, actual.getCapacity() % 8);
     }
 
@@ -66,19 +67,24 @@ namespace {
         return found == std::string::npos ? -1 : static_cast<int>(found);
     }
 
-    // substr 규칙: 음수 pos 는 뒤에서부터 (-size <= pos < 0 만 테스트), 범위 밖은 마지막 위치
-    std::string expected_substr(const std::string &text, int pos, const int len) {
-        if (text.empty()) {
+    // substr 규칙 (교수님 예시 기준, "0123456789" 에서)
+    //  - pos >= 0 : pos 에서 뒤로 len 글자 (넘치면 문자열 끝까지). pos >= size 이면 빈 문자열
+    //  - pos <  0 : -1 이 제일 뒷글자. 그 글자에서 "앞(왼쪽)으로" len 글자 (넘치면 문자열 처음까지)
+    //               size + pos < 0 (불가능한 위치)이면 빈 문자열
+    std::string expected_substr(const std::string &text, const int pos, const int len) {
+        const int size = static_cast<int>(text.size());
+        if (len <= 0) {
             return "";
         }
-        const int size = static_cast<int>(text.size());
-        if (pos < 0) {
-            pos += size;
+        if (pos >= 0) {
+            return pos >= size ? "" : text.substr(static_cast<std::size_t>(pos), static_cast<std::size_t>(len));
         }
-        if (pos >= size) {
-            pos = size - 1;
+        const int last = size + pos;                               // 포함되는 마지막 글자의 index
+        if (last < 0) {
+            return "";
         }
-        return text.substr(static_cast<std::size_t>(pos), static_cast<std::size_t>(len));
+        const int first = (last - len + 1 < 0) ? 0 : last - len + 1;  // 포함되는 첫 글자의 index
+        return text.substr(static_cast<std::size_t>(first), static_cast<std::size_t>(last - first + 1));
     }
 
     std::string expected_insert(std::string text, const int pos, const std::string &sub) {
@@ -324,7 +330,7 @@ TEST(MyStringCapacity, DefaultCapacityIsEight) {
     EXPECT_EQ(8, MyString().getCapacity());
 }
 
-TEST(MyStringCapacity, AlwaysMultipleOfEightAndLargerThanLength) {
+TEST(MyStringCapacity, AlwaysMultipleOfEightAndAtLeastLength) {
     std::string text;
 
     for (int length = 0; length <= 100; ++length) {
@@ -339,9 +345,13 @@ TEST(MyStringCapacity, LengthSevenFitsInEight) {
     EXPECT_EQ(8, MyString("1234567").getCapacity());
 }
 
-TEST(MyStringCapacity, LengthEightNeedsRoomForTerminator) {
-    // '\0' 까지 들어가야 하므로 8글자는 capacity 8 에 들어가지 않는다. -> 16
+TEST(MyStringCapacity, LengthEightStillFitsInEight) {
+    // 배열은 capacity + 1 칸이므로 8글자도 capacity 8 에 들어간다.
     EXPECT_EQ(8, MyString("12345678").getCapacity());
+}
+
+TEST(MyStringCapacity, LengthNineDoublesToSixteen) {
+    EXPECT_EQ(16, MyString("123456789").getCapacity());
 }
 
 TEST(MyStringCapacity, GrowsByDoublingOnlyWhenAppending) {
@@ -558,6 +568,7 @@ TEST(MyStringMove, AssignmentTakesContent) {
 TEST(MyStringMove, MovedFromObjectCanBeReused) {
     MyString source("hello");
     MyString destination(std::move(source));
+
     source = "again";
     source.append("!");
 
@@ -1250,10 +1261,10 @@ TEST(MyStringGetLine, MatchesStdStringForVariousInputs) {
 }
 
 // =====================================================================
-// substr
-//  - pos 가 음수이면 제일 뒷글자부터 그 앞으로 확인 (-size <= pos < 0 만 테스트)
-//  - pos 가 문자열 범위 밖이면 문자열 마지막 위치로 취급
-//  - len 이 맞지 않으면 가능한 최대 길이로 취급
+// substr (교수님 예시 기준)
+//  - pos >= 0 : pos 에서 len 글자. len 이 넘치면 가능한 최대 길이
+//  - pos <  0 : -1 이 제일 뒷글자, 거기서 앞으로 len 글자. 넘치면 문자열 처음까지
+//  - 불가능한 위치(pos < -size)와 범위 밖 pos(pos >= size)는 예외 없이 빈 문자열
 // =====================================================================
 
 TEST(MyStringSubstr, FromStart) {
@@ -1304,20 +1315,58 @@ TEST(MyStringSubstr, LengthOneBeyondEndStopsAtEnd) {
     expect_same(string.substr(1, 3), "bc");
 }
 
-TEST(MyStringSubstr, NegativePositionCountsFromTheBack) {
-    const MyString string("hello");
+// 교수님이 주신 예시 그대로
+TEST(MyStringSubstr, ProfessorExamples) {
+    const MyString str("0123456789");
 
-    expect_same(string.substr(-1, 1), "o");
-    expect_same(string.substr(-3, 2), "ll");
-    expect_same(string.substr(-3, 10), "llo");
-    expect_same(string.substr(-5, 5), "hello");
+    expect_same(str.substr(-1, 3), "789");      // 제일 뒷글자부터 3글자
+    expect_same(str.substr(-2, 2), "78");       // 뒤 두번째 글자 '8' 부터 앞으로 두 글자
+    expect_same(str.substr(-5, 4), "2345");     // 뒤에서 다섯번째 '5' 부터 앞으로 4글자
+    expect_same(str.substr(-5, 10), "012345");  // 범위를 넘어서면 문자열 처음까지
+    expect_same(str.substr(-15, 3), "");        // 불가능한 위치
+    expect_same(str.substr(20, 3), "");         // 예외처리 하지 않고 빈 문자열
 }
 
-TEST(MyStringSubstr, PositionBeyondEndIsTreatedAsLastPosition) {
-    const MyString string("hello");
+TEST(MyStringSubstr, NegativePositionLastCharacterOnly) {
+    const MyString str("0123456789");
 
-    expect_same(string.substr(10, 2), "o");
-    expect_same(string.substr(5, 3), "o");
+    expect_same(str.substr(-1, 1), "9");
+    expect_same(str.substr(-1, 100), "0123456789");
+}
+
+TEST(MyStringSubstr, NegativePositionAtFirstCharacter) {
+    const MyString str("0123456789");
+
+    expect_same(str.substr(-10, 1), "0");
+    expect_same(str.substr(-10, 5), "0");       // 처음 글자에서 더 앞으로 갈 수 없다.
+}
+
+TEST(MyStringSubstr, NegativePositionJustOutOfRangeGivesEmpty) {
+    const MyString str("0123456789");
+
+    expect_same(str.substr(-11, 3), "");
+    expect_same(str.substr(-100, 3), "");
+}
+
+TEST(MyStringSubstr, NegativePositionWithZeroLength) {
+    const MyString str("0123456789");
+
+    expect_same(str.substr(-3, 0), "");
+}
+
+TEST(MyStringSubstr, PositionAtOrBeyondEndGivesEmpty) {
+    const MyString str("0123456789");
+
+    expect_same(str.substr(10, 3), "");
+    expect_same(str.substr(11, 3), "");
+    expect_same(str.substr(20, 3), "");
+    expect_same(str.substr(1000, 1), "");
+}
+
+TEST(MyStringSubstr, NegativePositionOnShortStrings) {
+    expect_same(MyString("a").substr(-1, 1), "a");
+    expect_same(MyString("a").substr(-2, 1), "");
+    expect_same(MyString("ab").substr(-1, 2), "ab");
 }
 
 TEST(MyStringSubstr, EmptySourceGivesEmpty) {
@@ -1360,7 +1409,7 @@ TEST(MyStringSubstr, MatchesExpectedForManyRanges) {
         const MyString string(text);
         const std::string ref = text;
 
-        for (int pos = -static_cast<int>(ref.size()); pos <= static_cast<int>(ref.size()) + 3; ++pos) {
+        for (int pos = -static_cast<int>(ref.size()) - 3; pos <= static_cast<int>(ref.size()) + 3; ++pos) {
             for (int len = 0; len <= 40; ++len) {
                 SCOPED_TRACE("text: \"" + ref + "\", pos: " + std::to_string(pos) + ", len: " + std::to_string(len));
                 expect_same(string.substr(pos, len), expected_substr(ref, pos, len));
