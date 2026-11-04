@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(practice_ground practice_ground/testzone.cpp)
 
-add_executable(assignment0 assignment0/main.cpp)
+#add_executable(assignment0 assignment0/main.cpp)
 
 #add_executable(assignment1_1 assignment1/1.floatDivide.cpp)
 #add_executable(assignment1_2 assignment1/2.findMSD.cpp)
@@ -35,7 +35,9 @@ add_executable(assignment0 assignment0/main.cpp)
 #add_executable(assignment4_1 assignment4/1.StringAPP/main.cpp)
 #add_executable(assignment4_2 assignment4/2.MyString/main.cpp assignment4/2.MyString/MyString.cpp)
 
-add_executable(assignment5_1 assignment5/prob1.cpp)
-add_executable(assignment5_2 assignment5/prob2.cpp)
-add_executable(assignment5_3 assignment5/MySet/main.cpp assignment5/MySet/MySet.cpp)
-add_executable(assignment5_4 assignment5/MyMatrix/main.cpp assignment5/MyMatrix/MyMatrix.cpp)
+#add_executable(assignment5_1 assignment5/prob1.cpp)
+#add_executable(assignment5_2 assignment5/prob2.cpp)
+#add_executable(assignment5_3 assignment5/MySet/main.cpp assignment5/MySet/MySet.cpp)
+#add_executable(assignment5_4 assignment5/MyMatrix/main.cpp assignment5/MyMatrix/MyMatrix.cpp)
+
+add_executable(assignment6 assignment6/main.cpp assignment6/MyString.cpp)
