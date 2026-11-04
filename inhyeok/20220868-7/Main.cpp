@@ -12,10 +12,10 @@
 static Student readStudent(const MyString &line) {
     const int numEndIndex = line.find(" ");
     const MyString numStr = line.substr(0, numEndIndex);
-    const int num = MyString::stoi(numStr);
+    const int num = stoi(numStr);
     const int groupEndIndex = line.find(" ", numEndIndex + 1);
     const MyString groupStr = line.substr(numEndIndex + 2, groupEndIndex - numEndIndex - 2);
-    const int groupId = groupStr.isEmpty() ? Student::NO_GROUP : MyString::stoi(groupStr);
+    const int groupId = groupStr.isEmpty() ? Student::NO_GROUP : stoi(groupStr);
     MyString name = line.substr(groupEndIndex + 1);
     return Student(num, std::move(name), groupId);
 }
@@ -35,12 +35,12 @@ int main(const int argc, char *argv[]) {
     MyString line;
     StudentTable table{};
 
-    MyString::getline(ifs, line, ' '); //min year
-    MyString::getline(ifs, line, '\n'); //max year
-    MyString::getline(ifs, line, ' '); //students
-    MyString::getline(ifs, line, '\n'); //groups
+    getline(ifs, line, ' '); //min year
+    getline(ifs, line, '\n'); //max year
+    getline(ifs, line, ' '); //students
+    getline(ifs, line, '\n'); //groups
     do {
-        MyString::getline(ifs, line);
+        getline(ifs, line);
         if (line.length() != 0) {
             Student student = readStudent(line);
             table.addStudent(std::move(student));
@@ -58,17 +58,17 @@ int main(const int argc, char *argv[]) {
                 break;
             case 'I':
             case 'i': {
-                MyString::getline(std::cin, line); //remove \nq
-                MyString::getline(std::cin, line);
+                getline(std::cin, line); //remove \nq
+                getline(std::cin, line);
                 Student student = readStudent(line);
                 table.addStudent(std::move(student));
                 break;
             }
             case 'D':
             case 'd': {
-                MyString::getline(std::cin, line); //remove \n
-                MyString::getline(std::cin, line);
-                int num = MyString::stoi(line);
+                getline(std::cin, line);
+                getline(std::cin, line); //remove \n
+                int num = stoi(line);
                 table.removeStudent(num);
                 break;
             }
