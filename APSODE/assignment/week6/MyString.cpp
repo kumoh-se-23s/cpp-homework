@@ -108,7 +108,7 @@ MyString& MyString::insert(int pos, const MyString &subStr) {
 
 MyString& MyString::replace(int pos, int len, const char *subStr) {
     require_non_null(subStr);
-    require_valid_range(subStr,     count_elements(subStr));
+    require_valid_range(subStr, count_elements(subStr));
     Sequence::insert(pos, subStr, )
 }
 

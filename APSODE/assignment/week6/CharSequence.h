@@ -26,6 +26,35 @@ class CharSequence : public Sequence<char> {
 
         int find(const char *pattern, int start) const;
 
+        CharSequence& append(const char* chars);
+
+        CharSequence& insert(int pos, const char* chars);
+
+
+        char& operator[](int pos);
+
+        const char& operator[](int pos) const;
+
+
+        CharSequence operator+(const char* chars) const;
+
+        CharSequence& operator=(const char* chars);
+
+        CharSequence& operator+=(const char* chars);
+
+
+        bool operator==(const char* chars) const;
+
+        bool operator!=(const char* chars) const;
+
+        bool operator>(const char* chars) const;
+
+        bool operator<(const char* chars) const;
+
+        bool operator>=(const char* chars) const;
+
+        bool operator<=(const char* chars) const;
+
     private:
         int rabin_karp(const CharSequence &pattern, int start) const;
 

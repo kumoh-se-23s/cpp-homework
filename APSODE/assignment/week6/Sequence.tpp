@@ -103,6 +103,7 @@ void Sequence<T, TAIL>::append(const T &element) {
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::append(const T *elements, int amount) {
+    require_non_null(elements);
     require_valid_range(elements, amount);
     if (this->need_extend(amount)) {
         this->extend(this->m_size + amount);

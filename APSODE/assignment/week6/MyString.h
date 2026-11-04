@@ -27,32 +27,18 @@ class MyString : public CharSequence, Comparable<MyString>{
 
         MyString(const char *cstr2nd);
 
-        MyString& operator=(const char *cstr2nd);
-
-        MyString operator+(const char *cstr2nd) const;
-
         MyString operator+(const MyString &str2nd) const;
 
         bool operator==(const MyString &str) const;
 
         bool operator!=(const MyString &str) const;
 
-        bool operator==(const char *cstr2nd) const;
-
-        bool operator!=(const char *cstr2nd) const;
-
-        int find(const char *cSubStr, int pos = 0) const;
-
         int find(const MyString &subStr, int pos = 0) const;
 
         MyString substr(int pos, int len) const;
 
 
-        MyString& operator+=(const char *cstr2nd);
-
         MyString& operator+=(const MyString &str2nd);
-
-        MyString& append(const char *cstr2nd);
 
         MyString& append(const MyString &str2nd);
 
@@ -64,19 +50,8 @@ class MyString : public CharSequence, Comparable<MyString>{
 
         bool operator>=(const MyString &str) const;
 
-        bool operator<(const char *cstr2nd) const;
-
-        bool operator<=(const char *cstr2nd) const;
-
-        bool operator>(const char *cstr2nd) const;
-
-        bool operator>=(const char *cstr2nd) const;
-
-        MyString& insert(int pos, const char *subStr);
 
         MyString& insert(int pos, const MyString &subStr);
-
-        MyString& replace(int pos, int len, const char *subStr);
 
         MyString& replace(int pos, int len, const MyString &subStr);
 

@@ -17,6 +17,56 @@ int CharSequence::find(const char *pattern, int start) const {
     return this->rabin_karp(CharSequence(pattern, count_elements(pattern)), start);
 }
 
+CharSequence& CharSequence::append(const char *chars) {
+    require_non_null(chars);
+    Sequence::append(chars, count_elements(chars));
+    return *this;
+}
+
+CharSequence& CharSequence::insert(int pos, const char *chars) {
+    require_non_null(chars);
+    Sequence::insert(pos, chars, count_elements(chars));
+    return *this;
+}
+
+char& CharSequence::operator[](int pos) {
+    return Sequence::operator[](pos);
+}
+
+const char& CharSequence::operator[](int pos) const {
+    return Sequence::operator[](pos);
+}
+
+CharSequence CharSequence::operator+(const char *chars) const {
+    require_non_null(chars);
+    return CharSequence(*this).append(chars);
+}
+
+CharSequence& CharSequence::operator=(const char *chars) {
+
+}
+
+CharSequence& CharSequence::operator+=(const char *chars) {
+}
+
+bool CharSequence::operator==(const char *chars) const {
+}
+
+bool CharSequence::operator!=(const char *chars) const {
+}
+
+bool CharSequence::operator>(const char *chars) const {
+}
+
+bool CharSequence::operator<(const char *chars) const {
+}
+
+bool CharSequence::operator>=(const char *chars) const {
+}
+
+bool CharSequence::operator<=(const char *chars) const {
+}
+
 int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {
     start = start < 0 ? 0 : start;
     if (pattern.m_size == 0 || pattern.m_size + start > this->m_size) {
