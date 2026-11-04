@@ -84,8 +84,6 @@ std::ostream &operator<<(std::ostream &os, const MyString& str) {
 }
 
 std::istream &operator>>(std::istream &is, MyString &str) {
-    // >> s1 >> s1
-    str = "";
     char temp[MyString::DEFAULT_CAPACITY];
     char c;
     int i = 0;
@@ -95,6 +93,8 @@ std::istream &operator>>(std::istream &is, MyString &str) {
     // "      "와 같은 입력에서 방어 코드
     //없으면 putback으로 공백 문자가 들어가 버그 발생
     if (!is) return is;
+    // str 초기화
+    str = "";
     //공백 다음 첫글자 넣어주기
     is.putback(c);
 
@@ -118,10 +118,11 @@ std::istream &operator>>(std::istream &is, MyString &str) {
         temp[i] = '\0';
         str.append(temp);
     }
-    return is;;
+    return is;
 }
 
 std::istream &getline(std::istream &is, MyString &str, char delimiter) {
+    // >> s1 >> s1
     str = "";
     char temp[MyString::DEFAULT_CAPACITY];
     char c;
@@ -264,36 +265,28 @@ int MyString::findHelper(const char subStr[], int subLen, int pos) const {
 //------------------------------------------------------------
 MyString MyString::substr(int pos, int len) const {
     MyString result;
-    if (size == 0 ) return result;
-    // //abcde -1 -> e(4) -> pos + size
-    // // if) -6 -> -1 -> 4
-    // // pso = (pos + size ) % size
-    // // -11 % 5 + 5 -> 4 its like a encrypt
-    // if (pos < 0) {
-    //     pos = (pos % size + size) % size;
-    // }
-    //
-    // if (pos > size) {
-    //     pos = size;
-    // }
-    // //if len is out of range >> max len(size) len < 0 is also max len
-    // if (len < 0 || pos + len > size) {
-    //     len = size - pos;
-    // }
-    if (pos < -size || pos > size) {
+    if (size == 0 || len <= 0 || pos < -size || pos >= size) {
         return result;
     }
 
     if (pos < 0) {
-        pos = pos + size - len + 1;
-        if (pos < 0) {
-            len = -1 * pos + 2;
-            pos = 0;
+        int endPos = size + pos;
+        int startPos = endPos - len + 1;
+
+        if (startPos < 0) {
+            startPos = 0;
+            len = endPos + 1;
+        }
+        pos = startPos;
+    }
+    else {
+        if (pos + len > size) {
+            len = size - pos;
         }
     }
 
     result.resize(len);
-    for(int i = 0; i < len && pos + i < size && i < capacity; i++) {
+    for (int i = 0; i < len; i++) {
         result.str[i] = str[pos + i];
     }
     result.str[len] = '\0';
@@ -466,7 +459,7 @@ MyString &MyString::erase(int pos, int len) {
     size -= len;
     this->str[size] = '\0';
 
-    //지웟으니 역resize 확인
+    //지웟으니 resize 확인
     resize(size);
 
     return *this;
@@ -491,7 +484,7 @@ static bool isAlpha(char c) {
     c = toLower(c);
     return 'a' <= c && c <= 'z';
 }
-// must exist before stoi(cause normal? function is top->down,,,,)
+
 static int baseConverter(char c) {
     c = toLower(c);
 
@@ -512,7 +505,7 @@ static bool isConvertible(const char c, int base) {
 // isdigit, isAllDigit, baseConverter,,,, maybe need to implement more,,nn
 int stoi(const MyString &str, int pos, int base) {
     if (base < 2 || base > 36) {
-        return -1;
+        return 0;
     }
 
     pos = pos < 0 ? 0 : pos;
@@ -537,26 +530,33 @@ int MyString::cstrlen(const char str[]) {
 }
 
 void MyString::resize(int newCapacity) {
-    // //담기는 크기가 잡힐때까지 capacity 2배씩
-    // //원래 8인데 한 20 들어오면 32 자동으로 잡히게
-    // while (capacity <= newCapacity) {
-    //     capacity *= 2;
-    // }
-    // //역resize, 최소 크기 8(DEFAULT_capa)
-    // while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 4) {
-    //     capacity /=  2;
-    // }
+    const int oldCapacity = capacity;
+    //담기는 크기가 잡힐때까지 capacity 2배씩
+    //원래 8인데 한 20 들어오면 32 자동으로 잡히게
+    while (capacity <= newCapacity) {
+        capacity *= 2;
+    }
+    //역resize, 최소 크기 8(DEFAULT_capa)
+    while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 4) {
+        capacity /=  2;
+    }
 
-    //newCapacity를 받으면 %8로 ++하면서 돌리기? 8 배수 유지
-    while (++newCapacity % 8) {}
-    //같으면 복사 안되게 만들기
-    if (capacity == newCapacity) {
+    if (capacity == oldCapacity) {
         return;
     }
-    // auto는 옆의 값을보고 자신의 타입을 추론함 포인터의 경우 옆에 * 붙혀서 포인터 명시(안붙혀도 되긴함)
-    // auto a = num; (num이 10이면 int, 3.14면 double의 형식으로 추론)
-    // auto* newStr = new char[capacity];
-    char* newStr = new char[newCapacity];
+
+    // 여기는 newCapacity에 제일 가까운 8배수 만드는 방법으로 생각해본 것
+    // while (newCapacity % DEFAULT_CAPACITY) {
+    //     newCapacity++;
+    // }
+    // if (capacity == newCapacity) {
+    //     return;
+    // }
+    //
+    // capacity = newCapacity;
+    //
+
+    char* newStr = new char[capacity];
 
     for (int i = 0; i < size; i++) {
         newStr[i] = str[i];
