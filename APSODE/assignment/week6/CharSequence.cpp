@@ -5,7 +5,8 @@
 #include "CharSequence.h"
 
 
-CharSequence::CharSequence(const char *elements, int size) : Sequence(elements, size){
+CharSequence::CharSequence(const char *elements, int size)
+    : Sequence(elements, size) {
 }
 
 int CharSequence::find(const CharSequence &pattern, int start) const {

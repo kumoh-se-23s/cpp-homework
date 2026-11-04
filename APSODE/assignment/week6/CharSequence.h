@@ -30,12 +30,6 @@ class CharSequence : public Sequence<char> {
         int rabin_karp(const CharSequence &pattern, int start) const;
 
         static bool is_same(const CharSequence &target, const CharSequence &pattern, int pattern_start);
-
-        static int count_elements(const char *elements) {
-            int count = 0;
-            for (const char *cursor = elements; *cursor != '\0'; ++cursor) ++count;
-            return count;
-        }
 };
 
 std::ostream& operator<<(std::ostream &output_stream, const CharSequence &char_sequence);

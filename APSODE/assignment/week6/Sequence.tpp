@@ -8,6 +8,7 @@ Sequence<T, TAIL>::Sequence()
 
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence(const T *elements, int size) : m_capacity(calc_new_capacity(size)), m_size(size) {
+    Sequence::require_non_null(elements);
     Sequence::require_valid_range(elements, size);
     this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
     Sequence::copy_array(
@@ -76,6 +77,7 @@ void Sequence<T, TAIL>::insert(int position, const T &element) {
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::insert(int position, const T *elements, int amount) {
     this->requre_valid_position(position);
+    Sequence::require_non_null(elements);
     Sequence::require_valid_range(elements, amount);
 
     if (this->need_extend(amount)) {
@@ -232,14 +234,21 @@ void Sequence<T, TAIL>::requre_valid_position(int position) const {
     }
 }
 
+template<typename E, int TAIL>
+void Sequence<E, TAIL>::require_non_null(const E *nullable) {
+    if (nullable == nullptr) {
+        throw std::invalid_argument("Sequence: elements must not be null");
+    }
+}
+
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::require_valid_range(const T *elements, int amount) {
     if (amount < 0) {
         throw std::invalid_argument("Sequence: amount must not be negative");
     }
 
-    if (elements == nullptr) {
-        throw std::invalid_argument("Sequence: elements must not be null");
+    if (Sequence::count_elements(elements) != amount) {
+        throw std::invalid_argument("Sequence: amount does not match the number of elements");
     }
 }
 

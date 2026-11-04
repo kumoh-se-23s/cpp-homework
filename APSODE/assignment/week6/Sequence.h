@@ -60,33 +60,15 @@ class Sequence {
 
         void requre_valid_position(int position) const;
 
+        static void require_non_null(const E *nullable);
+
         static void require_valid_range(const E *elements, int amount);
 
-    private:
-        bool need_shrink() const {
-            return this->m_capacity > DEFAULT_CAPACITY && this->m_size <= this->m_capacity / 4;
-        }
-
-        bool need_extend(int size_delta = 1) const {
-            return this->m_size + size_delta >= this->m_capacity;
-        }
-
-        void shrink();
-
-        void extend(int required);
-
-        void fill_tail();
-
-        static E* create_empty_container(int new_capacity) {
-            return new E[new_capacity + TAIL]();
-        }
-
-        constexpr static int calc_new_capacity(int amount) {
-            if (amount < DEFAULT_CAPACITY) {
-                return DEFAULT_CAPACITY;
-            }
-
-            return (amount + DEFAULT_CAPACITY - 1) / DEFAULT_CAPACITY * DEFAULT_CAPACITY;
+        static int count_elements(const E *elements) {
+            Sequence::require_non_null(elements);
+            int count = 0;
+            for (const char *cursor = elements; *cursor != '\0'; ++cursor) ++count;
+            return count;
         }
 
         static void swap(Sequence &sequence1, Sequence &sequence2) {
@@ -103,11 +85,38 @@ class Sequence {
             sequence2.m_capacity = temp_capacity;
         }
 
+        static E* create_empty_container(int new_capacity) {
+            return new E[new_capacity + TAIL]();
+        }
+
+        constexpr static int calc_new_capacity(int amount) {
+            if (amount < DEFAULT_CAPACITY) {
+                return DEFAULT_CAPACITY;
+            }
+
+            return (amount + DEFAULT_CAPACITY - 1) / DEFAULT_CAPACITY * DEFAULT_CAPACITY;
+        }
+
         static void copy_array(const E *src, int src_capacity, E *dest, int dest_capacity) {
             for (int index = 0; index < src_capacity && index < dest_capacity; ++index) {
                 dest[index] = src[index];
             }
         }
+
+    private:
+        bool need_shrink() const {
+            return this->m_capacity > DEFAULT_CAPACITY && this->m_size <= this->m_capacity / 4;
+        }
+
+        bool need_extend(int size_delta = 1) const {
+            return this->m_size + size_delta >= this->m_capacity;
+        }
+
+        void shrink();
+
+        void extend(int required);
+
+        void fill_tail();
 };
 
 
