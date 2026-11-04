@@ -1,6 +1,6 @@
 
 #pragma once
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <compare>
 
@@ -134,32 +134,9 @@ inline int stoi(const MyString &str, const int pos = 0, const int base = 10) {
 }
 
 
+std::istream &getline(std::istream &in, MyString &str, char delim = '\n');
 
-inline std::istream &getline(std::istream &in, MyString &str, const char delim = '\n') {
-    char ch;
-    MyString temp;
-    while ((ch = in.get()) != delim && ch != EOF) {
-        temp.append(ch);
-    }
-    str = temp;
-    return in;
-}
+std::ostream &operator<<(std::ostream &out, const MyString &string);
 
-inline std::ostream &operator<<(std::ostream &out, const MyString &string) {
-    out << string.getData();
-    return out;
-}
-
-
-inline std::istream &operator>>(std::istream &in, MyString &str) {
-    char ch = 0;
-
-    while (str.isEmpty() || !MyString::isWhitespace(ch)) {
-        ch = in.get();
-        if (!MyString::isWhitespace(ch)) {
-            str.append(ch);
-        }
-    }
-    return in;
-}
+std::istream &operator>>(std::istream &in, MyString &str);
 

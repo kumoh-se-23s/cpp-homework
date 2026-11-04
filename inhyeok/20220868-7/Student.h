@@ -17,7 +17,7 @@ public:
 
     [[nodiscard]] bool operator==(const Student& student) const;
 
-    int getNum() const;
+    [[nodiscard]] int getNum() const;
 
     [[nodiscard]] int getYear() const;
 
