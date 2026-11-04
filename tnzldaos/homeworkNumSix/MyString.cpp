@@ -1,5 +1,11 @@
 #include "MyString.h"
 
+//신경 써야 할 부분 
+//1.capacnity
+//2.size
+//3.배열
+//4.'\0'
+
 void MyString::resize() {
     capacity = capacity * 2;
     char* newStringArr = new char[capacity];
@@ -13,7 +19,16 @@ void MyString::resize() {
     stringArr[size] = '\0';
 }
 
-void MyString::append(char inputChar) {
+// bool MyString::isCharacter(char inputChar) {
+//     if (inputChar == ' ' || inputChar == '\t' || inputChar == '\n') {
+//         return false;
+//     } else {
+//         return true;
+//     }
+    
+// }
+
+void MyString::appendChar(char inputChar) {
     if(size > capacity - 2) {
         resize();
     }
@@ -36,9 +51,13 @@ MyString::MyString(const MyString& srcStr) {
     size = 0;
     stringArr = new char[capacity];
 
-    for(int index = 0 ; index < srcStr.size ; index++) {
-        append(srcStr.stringArr[index]);
-    } 
+    if(srcStr.size == 0) {
+        stringArr[size] = '\0';
+    } else {
+        for(int index = 0 ; index < srcStr.size ; index++) {
+            appendChar(srcStr.stringArr[index]);
+        } 
+    }
 }
 
 MyString::MyString(const char* sctr2nd) {
@@ -47,7 +66,11 @@ MyString::MyString(const char* sctr2nd) {
     stringArr = new char[capacity];
 
     while(sctr2nd[size] != '\0') {
-        append(sctr2nd[size]);
+        appendChar(sctr2nd[size]);
+    }
+
+    if(size == 0) {
+        stringArr[size] = '\0';
     }
 }
 
@@ -56,6 +79,12 @@ MyString::~MyString() {
 }
 
 //----------------------------------------------------------------------
+
+void MyString::clear() {
+    delete[] stringArr;
+
+    stringArr = new char[capacity];
+}
 
 int MyString::length() const {
     return size;
@@ -70,17 +99,18 @@ int MyString::getCapacity() const {
 }
 
 char& MyString::at(int pos) {
-    if(pos < size) {
+    if(pos >= 0 && pos < size) {
         return stringArr[pos];
     } 
 }
 
 char& MyString::operator[](int pos) {
-    if(pos < size) {
+    if(pos >= 0 && pos < size) {
         return stringArr[pos];
     } 
 
-    //return '\0';
+    char result = '\0';
+    return result;
 }
 
 const char& MyString::operator[](int pos) const {
@@ -88,91 +118,100 @@ const char& MyString::operator[](int pos) const {
         return stringArr[pos];
     } 
 
-    return '\0';
+    char result = '\0';
+    return result;
 }
 
 int MyString::find(const char* cSubStr, int pos) {
-    pos = pos < 0 ? 0 : pos;
+    pos = pos < 0 ? 0 : (pos > size - 1 ? size - 1 : pos);
 
     int index = 0;
 
-    while(cSubStr[index] != '\0') {
+    while(cSubStr[index] != '\0' && stringArr[index] != '\0') {
         if(stringArr[pos + index] == cSubStr[index]) {
             index++;
         } else {
-            pos == pos + index ? pos++ : pos = pos + index; 
+            pos++; 
             index = 0;
         }
 
-        if(pos == size - 1) {
+        if(pos > size - 1) {
             return -1;
         }
     }
-
     return pos;
 }
 
 int MyString::find(const MyString& subStr, int pos) {
-    pos = pos < 0 ? 0 : pos;
+    pos = pos < 0 ? 0 : (pos > size - 1 ? size - 1 : pos);
 
     int index = 0;
 
-    while(subStr.stringArr[index] != '\0') {
+    while(subStr.stringArr[index] != '\0' && stringArr[index] != '\0') {
         if(stringArr[pos + index] == subStr.stringArr[index]) {
             index++;
         } else {
-            pos == pos + index ? pos++ : pos = pos + index; 
+            pos++;
             index = 0;
         }
 
-        if(pos == size - 1) {
+        if(pos > size - 1) {
             return -1;
         }
     }
-
     return pos;
 }
 
-MyString MyString::substr(int pos, int len) {
+MyString MyString::substr(int pos, int len) const {
     MyString resultMyString = MyString();
+
+    len = len + pos > size ? size - pos : len; 
+
+    if(pos >= 0) {
+        pos = pos > size ? size - 1 : pos;
+    } else {
+        pos = pos + size < 0 ? 0 : pos + size;
+    }
 
     for(int index = pos ; index < pos + len ; index++) {
         if(stringArr[index] == '\0') {
             return resultMyString;
         } else {
-            resultMyString.append(stringArr[index]);
+            resultMyString.appendChar(stringArr[index]);
         }
     }
+
+    return resultMyString;
 }
 
-const MyString MyString::operator+(const char* cstr2nd) {
+const MyString MyString::operator+(const char* cstr2nd) const {
     MyString resultMyString = MyString();
 
     for(int index = 0 ; index < size ; index++) {
-        resultMyString.append(stringArr[index]);
+        resultMyString.appendChar(stringArr[index]);
     }
 
     int index = 0;
 
     while(cstr2nd[index] != '\0') {
-        resultMyString.append(cstr2nd[index]);
+        resultMyString.appendChar(cstr2nd[index]);
         index++;
     }
 
     return resultMyString;
 }
 
-const MyString MyString::operator+(const MyString& str2nd) {
+const MyString MyString::operator+(const MyString& str2nd) const {
     MyString resultMyString = MyString();
 
     for(int index = 0 ; index < size ; index++) {
-        resultMyString.append(stringArr[index]);
+        resultMyString.appendChar(stringArr[index]);
     }
 
     int index = 0;
 
     while(str2nd.stringArr[index] != '\0') {
-        resultMyString.append(str2nd.stringArr[index]);
+        resultMyString.appendChar(str2nd.stringArr[index]);
         index++;
     }
 
@@ -194,13 +233,19 @@ bool MyString::operator==(const MyString& str) {
 
 bool MyString::operator==(const char* cstr2nd) {
     int index = 0;
-    while(cstr2nd[index] != '\0') {
+
+    while(cstr2nd[index] != '\0' && stringArr[index] != '\0') {
         if (stringArr[index] != cstr2nd[index]) {
             return false;
         }
         index++;
     }
-    return true;
+
+    if(cstr2nd[index] == '\0' && stringArr[index] == '\0') {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool MyString::operator!=(const MyString& str) {
@@ -238,7 +283,7 @@ MyString MyString::operator=(const MyString& srcStr) {
     stringArr = new char[capacity];
 
     for(int index = 0 ; index < srcStr.size ; index++) {
-        append(srcStr.stringArr[index]);
+        appendChar(srcStr.stringArr[index]);
     }
     return *this;
 }
@@ -268,12 +313,235 @@ MyString& MyString::operator=(const char* sctr2nd) {
     stringArr = new char[capacity];
 
     while(sctr2nd[size] != '\0') {
-        append(sctr2nd[size]);
+        appendChar(sctr2nd[size]);
     }
 
     stringArr[size] = '\0';
 
     return *this;
+}
+
+//---------------------------------------------------------------------
+
+MyString& MyString::operator+=(const char* cstr2nd) {
+    int index = 0;
+    while(cstr2nd[index] != '\0') {
+        appendChar(cstr2nd[index]);
+        index++;
+    }
+
+    return *this;
+}
+
+MyString& MyString::operator+=(const MyString& str) {
+    int nowSize = str.size;
+    for(int index = 0 ; index < nowSize ; index++) {
+        appendChar(str.stringArr[index]);
+    }
+
+    return *this;
+}
+
+MyString& MyString::append(const char* cstr2nd) {
+    int index = 0;
+    while(cstr2nd[index] != '\0') {
+        appendChar(cstr2nd[index]);
+        index++;
+    }
+
+    return *this;
+}
+
+MyString& MyString::append(const MyString& str) {
+    for(int index = 0 ; index < str.size ; index++) {
+        appendChar(str.stringArr[index]);
+    }
+
+    return *this;
+}
+
+bool MyString::operator<(const MyString& str) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && str.stringArr[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = str.stringArr[index];
+
+        if(lhsChar > rhsChar) {
+            return false;
+        } else if (lhsChar < rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] == '\0' && str.stringArr[index] != '\0') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MyString::operator<=(const MyString& str) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && str.stringArr[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = str.stringArr[index];
+
+        if(lhsChar > rhsChar) {
+            return false;
+        } else if (lhsChar < rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] == '\0' && str.stringArr[index] != '\0') {
+        return true;
+    } else if (stringArr[index] != '\0' && str.stringArr[index] == '\0') {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool MyString::operator>(const MyString& str) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && str.stringArr[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = str.stringArr[index];
+
+        if(lhsChar < rhsChar) {
+            return false;
+        } else if (lhsChar > rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] != '\0' && str.stringArr[index] == '\0') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MyString::operator>=(const MyString& str) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && str.stringArr[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = str.stringArr[index];
+
+        if(lhsChar < rhsChar) {
+            return false;
+        } else if (lhsChar > rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] != '\0' && str.stringArr[index] == '\0') {
+        return true;
+    } else if (stringArr[index] == '\0' && str.stringArr[index] != '\0') {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool MyString::operator<(const char* cstr2nd) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && cstr2nd[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = cstr2nd[index];
+
+        if(lhsChar > rhsChar) {
+            return false;
+        } else if (lhsChar < rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] == '\0' && cstr2nd[index] != '\0') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MyString::operator<=(const char* cstr2nd) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && cstr2nd[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = cstr2nd[index];
+
+        if(lhsChar > rhsChar) {
+            return false;
+        } else if (lhsChar < rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] == '\0' && cstr2nd[index] != '\0') {
+        return true;
+    } else if (stringArr[index] != '\0' && cstr2nd[index] == '\0') {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool MyString::operator>(const char* cstr2nd) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && cstr2nd[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = cstr2nd[index];
+
+        if(lhsChar < rhsChar) {
+            return false;
+        } else if (lhsChar > rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] != '\0' && cstr2nd[index] == '\0') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MyString::operator>=(const char* cstr2nd) const {
+    int index = 0 ;
+    while(stringArr[index] != '\0' && cstr2nd[index] != '\0') {
+        char lhsChar = stringArr[index];
+        char rhsChar = cstr2nd[index];
+
+        if(lhsChar < rhsChar) {
+            return false;
+        } else if (lhsChar > rhsChar) {
+            return true;
+        }
+
+        index++;
+    }
+
+    if(stringArr[index] != '\0' && cstr2nd[index] == '\0') {
+        return true;
+    } else if (stringArr[index] == '\0' && cstr2nd[index] != '\0') {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 //--------------------------------------------------------------------
@@ -287,27 +555,37 @@ ostream& operator<<(ostream& outputStream, const MyString& str) {
 }
 
 istream& operator>>(istream& inputStream, MyString& str) {
+    str.clear();
+
     bool isFirst = true;
-    char inputChar;
-
-    while (inputStream.get()) {
-        if((32 < inputChar) && (inputChar < 127)) {
-            str.append(inputChar);
+    bool isRun = true;
+    
+    while (isRun) {
+        char inputChar = inputStream.get();
+        
+        if((inputChar == ' ' || inputChar == '\t' || inputChar == '\n') && !isFirst) {
+            isRun = false;
+        } else if ((inputChar == ' ' || inputChar == '\t' || inputChar == '\n') && isFirst) {
+            
+        } else {
+            str.appendChar(inputChar);
             isFirst = false;
-        } 
+        }
     }
-
+    
     return inputStream;  
 }
 
 istream& getline(istream& inputStream, MyString& str, char delim) {
+    str.clear();
+
     char inputChar = inputStream.get();
 
-    while (inputChar != delim) {
-        str.append(inputChar);
+    while (inputChar != delim && inputChar != '\n') {
+        str.appendChar(inputChar);
+
+        inputChar = inputStream.get();
     }
-
-    return inputStream;
+    
+    return inputStream;  
 }
-
-//'\0'처리 해줘야함
