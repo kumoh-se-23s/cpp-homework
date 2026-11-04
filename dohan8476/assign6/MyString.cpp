@@ -50,7 +50,7 @@ int MyString::getCapacity() const {
 }
 
 //1-8. 문자열의 pos 위치에 있는 글자를 return 또는 참조
-char& MyString::at(const int pos) const {
+char& MyString::at(int pos) const {
     if (0 <= pos && pos < length()) {
         return str[pos];
     }
@@ -58,7 +58,7 @@ char& MyString::at(const int pos) const {
     return str[size];
 }
 
-char& MyString::operator[](const int pos) {
+char& MyString::operator[](int pos) {
     if (0 <= pos && pos < length()) {
         return str[pos];
     }
@@ -66,7 +66,7 @@ char& MyString::operator[](const int pos) {
     return str[size];
 }
 
-const char& MyString::operator[](const int pos) const {
+const char& MyString::operator[](int pos) const {
     if (0 <= pos && pos < length()) {
         return str[pos];
     }
@@ -74,7 +74,7 @@ const char& MyString::operator[](const int pos) const {
 }
 
 //1-9 출력, 입력 관련
-static bool isWhitespace(const char c) {
+static bool isWhitespace(char c) {
     return c == '\n' || c == '\r' || c == ' ' || c == '\t';
 }
 
@@ -123,7 +123,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
     return is;;
 }
 
-std::istream &getline(std::istream &is, MyString &str, const char delimiter) {
+std::istream &getline(std::istream &is, MyString &str, char delimiter) {
     str = "";
     char temp[MyString::DEFAULT_CAPACITY];
     char c;
@@ -187,7 +187,7 @@ MyString MyString::operator+(const MyString& str2nd) const {
 }
 
 // private method
-MyString MyString::plusHelper(const char srcStr[], const int strLen) const {
+MyString MyString::plusHelper(const char srcStr[], int strLen) const {
     MyString result = *this;
     result.appendHelper(srcStr, strLen);
     return result;
@@ -213,7 +213,7 @@ bool MyString::operator!=(const char cstr2nd[]) const {
 }
 
 //private
-bool MyString::compareHelper(const char srcStr[], const int strLen) const {
+bool MyString::compareHelper(const char srcStr[], int strLen) const {
     if (this->length() != strLen) {
         return false;
     }
@@ -229,7 +229,7 @@ bool MyString::compareHelper(const char srcStr[], const int strLen) const {
 //------------------------------------------------------------
 // 2-4. 부분문자열을 찾아 위치를 return하는 함수류(부분 문자열 없으면 -1)
 //------------------------------------------------------------
-int MyString::find(const MyString& subStr, const int pos) const {
+int MyString::find(const MyString& subStr, int pos) const {
     return findHelper(subStr.str, subStr.length(), pos);
 }
 
@@ -238,7 +238,7 @@ int MyString::find(const char subStr[], int pos) const {
 }
 
 //private sector
-int MyString::findHelper(const char subStr[], const int subLen, int pos) const {
+int MyString::findHelper(const char subStr[], int subLen, int pos) const {
     if (pos < 0) {
         pos = 0;
     }
@@ -317,7 +317,7 @@ MyString &MyString::append(const char cstr2nd[]) {
     return appendHelper(cstr2nd, cstrlen(cstr2nd));
 }
 // private method
-MyString &MyString::appendHelper(const char srcStr[], const int strLen) {
+MyString &MyString::appendHelper(const char srcStr[], int strLen) {
     if (strLen <= 0) return *this;
     //resize하면 원본 delete되서 원본 임시 복사
     char* temp = new char[strLen];
@@ -376,7 +376,7 @@ bool MyString::operator>=(const char cstr2nd[]) const {
 }
 
 // private
-int MyString::compareTo(const char srcStr[], const int strLen) const {
+int MyString::compareTo(const char srcStr[], int strLen) const {
     const int minLen = (size < strLen) ? size : strLen;
     for (int i = 0; i < minLen; i++) {
         if (str[i] != srcStr[i]) {
@@ -391,11 +391,11 @@ int MyString::compareTo(const char srcStr[], const int strLen) const {
 //------------------------------------------------------------
 //3-3. 문자열 수정 함수류(insert, replace, erase)
 //------------------------------------------------------------
-MyString &MyString::insert(const int pos, const MyString &srcStr) {
+MyString &MyString::insert(int pos, const MyString &srcStr) {
     return insertHelper(pos, srcStr.length(), srcStr.str);
 }
 
-MyString &MyString::insert(const int pos, const char subStr[]) {
+MyString &MyString::insert(int pos, const char subStr[]) {
     return insertHelper(pos, cstrlen(subStr), subStr);
 }
 
@@ -403,7 +403,7 @@ MyString &MyString::insert(const int pos, const char subStr[]) {
 // insertChar로 한칸씩 미루면 n^2급 비효율인디 바로 미루면
 // this 4 len 6 일때 resize 8 but 총 capa = 10보다 커야함(16) 흠
 // size + len < capa * 2 이 만족할떄까지 loop and resize(capacity)를 만들까
-MyString &MyString::insertHelper(int pos, const int len, const char srcStr[]) {
+MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
     //len이 0이면 삽입X로 판단
     if (len == 0) return *this;
     //if pos < 0 -> 0 out of range -> size
@@ -428,13 +428,13 @@ MyString &MyString::insertHelper(int pos, const int len, const char srcStr[]) {
     return *this;
 }
 
-MyString &MyString::replace(const int pos, const int len, const MyString &subStr) {
+MyString &MyString::replace(int pos, int len, const MyString &subStr) {
     //const와 len은 erase, insertHelper 내부에서 보정
     //직접 내부 로직 구현과 O(N+M)으로 동일한데 shift 1회, 2회 차이 정도 발생할듯?
     return erase(pos, len).insert(pos, subStr);
 }
 
-MyString &MyString::replace(const int pos, const int len, const char subStr[]) {
+MyString &MyString::replace(int pos, int len, const char subStr[]) {
     return erase(pos, len).insert(pos, subStr);
 }
 
@@ -495,23 +495,26 @@ static int baseConverter(char c) {
     return -1;
 }
 //next isComvertible?
-static bool isConvertible(const char c, const int base) {
+static bool isConvertible(const char c, int base) {
     const int val = baseConverter(c);
     return (0 <= val && val < base);
 }
 
 // isdigit, isAllDigit, baseConverter,,,, maybe need to implement more,,nn
-int stoi(const MyString &str, int pos, const int base) {
+int stoi(const MyString &str, int pos, int base) {
     if (base < 2 || base > 36) {
         return -1;
     }
+
     pos = pos < 0 ? 0 : pos;
     pos = pos > str.length() ? str.length() : pos;
+
     int res = 0;
     for (int i = pos; isConvertible(str[i], base); i++) {
         res *= base;
         res += baseConverter(str[i]);
     }
+
     return res;
 }
 
