@@ -13,8 +13,8 @@ MyString::MyString() {
 //복사생성자: str
 MyString::MyString(const MyString &srcStr) {
     size = srcStr.size;
-    capacity = DEFAULT_CAPACITY;
-    capacity = getEnoughCapacity(size);
+    capacity = DEFAULT_CAPACITY; //기본값 할당
+    capacity = getEnoughCapacity(size); //기본값에서 2배씩 늘려가며 최소용량 잡기
     str = new char[capacity];
     copyArr(str, srcStr.str, srcStr.size);
 }
@@ -22,6 +22,7 @@ MyString::MyString(const MyString &srcStr) {
 //복사생성자: cArr
 MyString::MyString(const char *cstr2nd) {
     size = getLengthOfChArr(cstr2nd);
+    capacity = DEFAULT_CAPACITY;
     capacity = getEnoughCapacity(size);
     str = new char[capacity];
     copyArr(str, cstr2nd, size);
@@ -49,31 +50,34 @@ int MyString::getCapacity() const {
 }
 
 //pos위치 주소 반환
-char& MyString::at(int pos) {
-    // if (pos < 0 || pos >= size)
-    //     return ?; //TODO: ???
+char& MyString::at(int pos) const {
+    if (pos < 0 || pos >= size)
+        return str[size];
     return str[pos];
 }
 
 //find: cArr
 int MyString::find(const char *cSubStr, int pos) const {
+    pos = normalizePos(pos);
     return findChArr(cSubStr, getLengthOfChArr(cSubStr), pos);
 }
 
 //find: str
 int MyString::find(const MyString &subStr, int pos) const {
+    pos = normalizePos(pos);
     return findChArr(subStr.str, subStr.size, pos);
 }
 
 //문자열 부분추출
 MyString MyString::substr(int pos, int len) const {
+    //입력정리
     if (pos < -size || pos > size)
         pos = size;
-    if (len < 0 || pos + len > size )
-        len = size;
-    if (pos >= 0)
-        return subStrImpl(pos, len);
-    return subStrImpl(size + pos, len); //범위 내 음수면 뒷글자
+    else if (pos < 0) //범위 내 음수면 뒷글자
+        pos += size;
+    len = normalizeLen(len, pos);
+
+    return subStrImpl(pos, len);
 }
 
 //append: cArr
@@ -105,6 +109,7 @@ MyString &MyString::insert(int pos, const MyString &subStr) {
 //replace: cArr
 MyString &MyString::replace(int pos, int len, const char *csubStr) {
     pos = normalizePos(pos);
+    len = normalizeLen(len, pos);
     replaceChArr(csubStr, getLengthOfChArr(csubStr), pos, len);
     return *this;
 }
@@ -112,6 +117,7 @@ MyString &MyString::replace(int pos, int len, const char *csubStr) {
 //replace: str
 MyString &MyString::replace(int pos, int len, const MyString &subStr) {
     pos = normalizePos(pos);
+    len = normalizeLen(len, pos);
     replaceChArr(subStr.str, subStr.length(), pos, len);
     return *this;
 }
@@ -119,10 +125,13 @@ MyString &MyString::replace(int pos, int len, const MyString &subStr) {
 //erase
 MyString &MyString::erase(int pos, int cnt) {
     pos = normalizePos(pos);
+    cnt = normalizeLen(cnt, pos);
+    if (cnt < 0) //음수면 끝값
+        cnt = size - pos;
     if (cnt > size - pos) //cnt가 범위 넘어가면 마지막 글자까지로 조정
         cnt = size - pos;
     //pos부터 idx + cnt를 idx로 옮김
-    for (int idx = pos; idx < size; idx++) {
+    for (int idx = pos; idx + cnt < size; idx++) {
         str[idx] = str[idx + cnt];
     }
     size -= cnt;
@@ -133,20 +142,21 @@ MyString &MyString::erase(int pos, int cnt) {
 //비우기
 void MyString::clear() {
     size = 0;
+    str[size] = '\0';
 }
 
 //stoi용: 진수에 맞는 값인지 판별 (base 범위 2~36)
-bool isValidValue(char ch, int base) {
-    if (base < 10)
+static bool isValidValue(char ch, int base) {
+    if (base <= 10)
         return ch >= '0' && ch <= '0' + base;
-    return (ch >= '0' && ch <= '0' + base) || (ch >= 'a' && ch <= 'a' + base);
+    return (ch >= '0' && ch < '0' + base) || (ch >= 'a' && ch < 'a' + base - 10);
 }
 
 //stoi용: 단일문자 숫자화 (범위 0~9, a~z)
-int toInt(char ch) {
+static int toInt(char ch) {
     if (ch >= '0' && ch <= '9')
         return ch - '0';
-    return ch - 'a';
+    return ch - 'a' + 10;
 }
 
 //진수 읽기
@@ -208,8 +218,8 @@ MyString &MyString::operator=(const MyString &srcStr) {
 
 //[]
 char &MyString::operator[](int pos) {
-    // if (pos < 0 || pos >= size)
-    //     return '\0'; //TODO: ???
+    if (pos < 0 || pos >= size)
+        return str[size];
     return str[pos];
 }
 
@@ -303,13 +313,13 @@ istream& operator>>(istream& in, MyString& str) {
 
     //stream 앞부분 정리
     int inputCode = in.peek();
-    for (;isWhiteSpace(inputCode) && inputCode != EOF; inputCode = in.peek()) {
+    for (;isWhiteSpace(inputCode); inputCode = in.peek()) {
         in.ignore();
     }
 
     //이후 append
     char ch;
-    for (;!isWhiteSpace(inputCode); inputCode = in.peek()) {
+    for (;!isWhiteSpace(inputCode) && inputCode != EOF; inputCode = in.peek()) {
         in.get(ch);
         str.appendCh(ch);
     }
@@ -318,7 +328,7 @@ istream& operator>>(istream& in, MyString& str) {
 
 //getline
 istream& getline(istream& in, MyString& str, char delim) {
-    str = MyString(); //초기화
+    str.clear(); //초기화
 
     int inputCode = in.peek();
     for (; inputCode != delim && inputCode != EOF; inputCode = in.peek()) {
@@ -332,7 +342,7 @@ istream& getline(istream& in, MyString& str, char delim) {
 }
 
 //private--------------------------
-//인자로 최소 길이 받아서, +1(\0 고려)한 길이 담을 수 있게 2배씩 늘리며 resize
+//resize: 인자는 최소 길이, capacity는 항상 8 * 2^n배수
 void MyString::resize(int minLength) {
     capacity = getEnoughCapacity(minLength);
     char *newArr = new char[capacity];
@@ -357,7 +367,7 @@ int MyString::getLengthOfChArr(const char *chArr) {
     return idx;
 }
 
-//적절한 용량 구하기
+//인자로 최소길이 받아서, capacity 두 배로 늘리면서 적절한 용량 구하기
 int MyString::getEnoughCapacity(int minLength) const {
     int result;
     for (result = capacity; result <= minLength; result *= 2) {}
@@ -373,10 +383,15 @@ int MyString::normalizePos(int pos) const{
     return pos;
 }
 
+int MyString::normalizeLen(int len, int pos) const {
+    if (len > size - pos || len < 0)
+        return size - pos;
+    return len;
+}
+
 //대입 동작부
 void MyString::substitute(const char *chArr, int newSize) {
-    //크기 감당 안 되면 재할당
-    //copyArr 대상이 달라서 resize 호출 안하고 자체 생성
+    //크기 감당 안되면 재할당
     if (newSize >= capacity) {
         capacity = getEnoughCapacity(newSize);
         delete[] str;
@@ -388,7 +403,6 @@ void MyString::substitute(const char *chArr, int newSize) {
 
 //find 동작부
 int MyString::findChArr(const char *chArr, int arrSize, int pos) const{
-    pos = normalizePos(pos);
     if (arrSize == 0)
         return pos;
     if (size - pos < arrSize) //길이 기반 판단했을 때 절대 못 찾는 경우
@@ -448,11 +462,11 @@ void MyString::insertChArr(const char *chArr, int chArrSize, int pos) {
         resize(size + chArrSize);
 
     //원래 글자를 뒤로 밀기
-    for (int idx = size - 1; idx <= pos; idx--) {
+    for (int idx = size - 1; idx >= pos; idx--) {
         str[idx + chArrSize] = str[idx];
     }
     //insert
-    for (int idx = pos; idx < chArrSize; idx++) {
+    for (int idx = pos; idx < pos + chArrSize; idx++) {
         str[idx] = chArr[idx - pos];
     }
 
@@ -464,6 +478,13 @@ void MyString::insertChArr(const char *chArr, int chArrSize, int pos) {
 void MyString::replaceChArr(const char *chArr, int chArrSize, int pos, int len) {
     erase(pos, len);
     insertChArr(chArr, chArrSize, pos);
+}
+
+//compareTo용 더 작은 수 리턴
+int MyString::min(int val1, int val2) {
+    if (val1 <= val2)
+        return val1;
+    return val2;
 }
 
 //사전순 대소비교
