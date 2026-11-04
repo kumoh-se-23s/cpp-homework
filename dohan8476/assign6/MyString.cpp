@@ -54,7 +54,6 @@ char& MyString::at(int pos) const {
     if (0 <= pos && pos < length()) {
         return str[pos];
     }
-    //return null
     return str[size];
 }
 
@@ -62,7 +61,6 @@ char& MyString::operator[](int pos) {
     if (0 <= pos && pos < length()) {
         return str[pos];
     }
-    //return null
     return str[size];
 }
 
@@ -267,24 +265,35 @@ int MyString::findHelper(const char subStr[], int subLen, int pos) const {
 MyString MyString::substr(int pos, int len) const {
     MyString result;
     if (size == 0 ) return result;
-    //abcde -1 -> e(4) -> pos + size
-    // if) -6 -> -1 -> 4
-    // pso = (pos + size ) % size
-    // -11 % 5 + 5 -> 4 its like a encrypt
-    if (pos < 0) {
-        pos = (pos % size + size) % size;
+    // //abcde -1 -> e(4) -> pos + size
+    // // if) -6 -> -1 -> 4
+    // // pso = (pos + size ) % size
+    // // -11 % 5 + 5 -> 4 its like a encrypt
+    // if (pos < 0) {
+    //     pos = (pos % size + size) % size;
+    // }
+    //
+    // if (pos > size) {
+    //     pos = size;
+    // }
+    // //if len is out of range >> max len(size) len < 0 is also max len
+    // if (len < 0 || pos + len > size) {
+    //     len = size - pos;
+    // }
+    if (pos < -size || pos > size) {
+        return result;
     }
 
-    if (pos > size) {
-        pos = size;
-    }
-    //if len is out of range >> max len(size) len < 0 is also max len
-    if (len < 0 || pos + len > size) {
-        len = size - pos;
+    if (pos < 0) {
+        pos = pos + size - len + 1;
+        if (pos < 0) {
+            len = -1 * pos + 2;
+            pos = 0;
+        }
     }
 
     result.resize(len);
-    for(int i = 0;i < len && pos + i < size && i < capacity; i++) {
+    for(int i = 0; i < len && pos + i < size && i < capacity; i++) {
         result.str[i] = str[pos + i];
     }
     result.str[len] = '\0';
@@ -527,25 +536,27 @@ int MyString::cstrlen(const char str[]) {
     return len;
 }
 
-void MyString::resize(const int newCapacity) {
-    const int oldCapacity = capacity;
-    //담기는 크기가 잡힐때까지 capacity 2배씩
-    //원래 8인데 한 20 들어오면 32 자동으로 잡히게
-    while (capacity <= newCapacity) {
-        capacity *= 2;
-    }
-    //역resize, 최소 크기 8(DEFAULT_capa)
-    while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 4) {
-        capacity /=  2;
-    }
+void MyString::resize(int newCapacity) {
+    // //담기는 크기가 잡힐때까지 capacity 2배씩
+    // //원래 8인데 한 20 들어오면 32 자동으로 잡히게
+    // while (capacity <= newCapacity) {
+    //     capacity *= 2;
+    // }
+    // //역resize, 최소 크기 8(DEFAULT_capa)
+    // while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 4) {
+    //     capacity /=  2;
+    // }
+
+    //newCapacity를 받으면 %8로 ++하면서 돌리기? 8 배수 유지
+    while (++newCapacity % 8) {}
     //같으면 복사 안되게 만들기
-    if (capacity == oldCapacity) {
+    if (capacity == newCapacity) {
         return;
     }
     // auto는 옆의 값을보고 자신의 타입을 추론함 포인터의 경우 옆에 * 붙혀서 포인터 명시(안붙혀도 되긴함)
     // auto a = num; (num이 10이면 int, 3.14면 double의 형식으로 추론)
     // auto* newStr = new char[capacity];
-    char* newStr = new char[capacity];
+    char* newStr = new char[newCapacity];
 
     for (int i = 0; i < size; i++) {
         newStr[i] = str[i];
