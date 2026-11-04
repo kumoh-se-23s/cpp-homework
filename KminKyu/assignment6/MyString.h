@@ -5,11 +5,11 @@ class MyString {
     constexpr static int DEFAULT_CAPACITY = 8;
 
 
-    char *charArray;
+    char *charArray = nullptr;
 
-    int size;
+    int size = 0;
 
-    int capacity;
+    int capacity = 0;
 
 public:
     MyString();
