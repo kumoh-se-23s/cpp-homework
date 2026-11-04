@@ -19,15 +19,6 @@ void MyString::resize() {
     stringArr[size] = '\0';
 }
 
-// bool MyString::isCharacter(char inputChar) {
-//     if (inputChar == ' ' || inputChar == '\t' || inputChar == '\n') {
-//         return false;
-//     } else {
-//         return true;
-//     }
-    
-// }
-
 void MyString::appendChar(char inputChar) {
     if(size > capacity - 2) {
         resize();
@@ -102,6 +93,9 @@ char& MyString::at(int pos) {
     if(pos >= 0 && pos < size) {
         return stringArr[pos];
     } 
+
+    char result = '\0';
+    return result;
 }
 
 char& MyString::operator[](int pos) {
@@ -114,7 +108,7 @@ char& MyString::operator[](int pos) {
 }
 
 const char& MyString::operator[](int pos) const {
-    if(pos < size) {
+    if(pos >= 0 && pos < size) {
         return stringArr[pos];
     } 
 
@@ -122,7 +116,7 @@ const char& MyString::operator[](int pos) const {
     return result;
 }
 
-int MyString::find(const char* cSubStr, int pos) {
+int MyString::find(const char* cSubStr, int pos) const {
     pos = pos < 0 ? 0 : (pos > size - 1 ? size - 1 : pos);
 
     int index = 0;
@@ -142,11 +136,10 @@ int MyString::find(const char* cSubStr, int pos) {
     return pos;
 }
 
-int MyString::find(const MyString& subStr, int pos) {
+int MyString::find(const MyString& subStr, int pos) const {
     pos = pos < 0 ? 0 : (pos > size - 1 ? size - 1 : pos);
 
     int index = 0;
-
     while(subStr.stringArr[index] != '\0' && stringArr[index] != '\0') {
         if(stringArr[pos + index] == subStr.stringArr[index]) {
             index++;
@@ -165,24 +158,143 @@ int MyString::find(const MyString& subStr, int pos) {
 MyString MyString::substr(int pos, int len) const {
     MyString resultMyString = MyString();
 
-    len = len + pos > size ? size - pos : len; 
-
-    if(pos >= 0) {
-        pos = pos > size ? size - 1 : pos;
-    } else {
-        pos = pos + size < 0 ? 0 : pos + size;
+    if(pos > size || -pos > size) {
+        resultMyString.append("");
+        return resultMyString;
     }
 
-    for(int index = pos ; index < pos + len ; index++) {
-        if(stringArr[index] == '\0') {
-            return resultMyString;
-        } else {
-            resultMyString.appendChar(stringArr[index]);
+    if(pos >= 0) {
+        len = len + pos > size ? size - pos : len; 
+        
+        for(int index = pos ; index < pos + len ; index++) {
+            resultMyString.appendChar(stringArr[index]);       
+        }
+    } else {
+        pos = pos + size;
+        int start = pos - len + 1 < 0 ? 0 : pos - len + 1;
+
+        for(int index = start ; index <= pos ; index++) {
+            resultMyString.appendChar(stringArr[index]);       
         }
     }
 
     return resultMyString;
 }
+
+MyString& MyString::insert(int pos, const char* subStr) {
+    char* resultCharArr = new char[capacity];
+
+    pos = pos < 0 ? pos + size :(pos > size ? size : pos);
+
+    int newSize = 0;
+
+    for(int index = 0 ; index < pos ; index++) {
+        resultCharArr[index] = stringArr[index];
+        newSize++;
+    }
+
+    int inputCharArrSize = 0;
+    while(subStr[inputCharArrSize] != '\0') {
+        resultCharArr[pos + inputCharArrSize] = subStr[inputCharArrSize];
+        inputCharArrSize++;
+        newSize++;
+    }
+
+    for(int index = pos ; index < size ; index++) {
+        resultCharArr[pos + inputCharArrSize] = stringArr[index];
+        newSize++;
+    }
+
+    delete[] stringArr;
+    stringArr = resultCharArr;
+    size = newSize;
+
+    return *this;
+}
+
+MyString& MyString::insert(int pos, const MyString& subStr) {
+    char* resultCharArr = new char[capacity];
+
+    pos = pos < 0 ? pos + size :(pos > size ? size : pos);
+
+    for(int index = 0 ; index < pos ; index++) {
+        resultCharArr[index] = stringArr[index];
+    }
+
+    for(int index = 0 ; index < size ; index++) {
+        resultCharArr[pos + index] = subStr.stringArr[index];
+    }
+
+    for(int index = pos ; index < size ; index++) {
+        resultCharArr[pos + subStr.size] = stringArr[index];
+    }
+
+    delete[] stringArr;
+    stringArr = resultCharArr;
+
+    return *this;
+}
+
+MyString& MyString::replace(int pos, int len, const char* subStr) {
+    
+
+}
+
+MyString& MyString::replace(int pos, int len, const MyString& subStr) {
+
+}
+
+MyString& MyString::erase(int pos, int cnt) {
+    if(pos >= size || -pos > size) {
+        delete[] stringArr;
+        capacity = 8;
+        size = 0;
+        stringArr = new char[capacity];
+        stringArr[0] = '\0';
+
+        return *this;
+    }
+
+    char* resultCharArr = new char[capacity];
+    resultCharArr[0] = '\0';
+
+    int resultIndex = 0;
+    if(pos >= 0) {
+
+        for(int index = 0 ; index < pos ; index++) {
+            resultCharArr[resultIndex] = stringArr[index];
+            resultIndex++;
+        }
+
+        for(int index = pos + cnt ; index < size ; index++) {
+            resultCharArr[resultIndex] = stringArr[index];
+            resultIndex++;
+        }
+    } else {
+        pos = pos + size;
+
+        for(int index = 0 ; index <= pos - cnt ; index++) {
+            resultCharArr[resultIndex] = stringArr[index];
+            resultIndex++;
+        } 
+
+        for(int index = pos + 1 ; index < size ; index++) {
+            resultCharArr[resultIndex] = stringArr[index];
+            resultIndex++;
+        }
+    }
+
+    delete[] stringArr;
+    stringArr = resultCharArr;
+    size = resultIndex;
+
+    return *this;
+}
+
+int MyString::stoi(const MyString& str, int pos, int base) {
+
+}
+
 
 const MyString MyString::operator+(const char* cstr2nd) const {
     MyString resultMyString = MyString();
@@ -218,7 +330,7 @@ const MyString MyString::operator+(const MyString& str2nd) const {
     return resultMyString;
 }
 
-bool MyString::operator==(const MyString& str) {
+bool MyString::operator==(const MyString& str) const {
     if(size != str.size) {
         return false;
     } else {
@@ -231,7 +343,7 @@ bool MyString::operator==(const MyString& str) {
     }
 }
 
-bool MyString::operator==(const char* cstr2nd) {
+bool MyString::operator==(const char* cstr2nd) const {
     int index = 0;
 
     while(cstr2nd[index] != '\0' && stringArr[index] != '\0') {
@@ -248,7 +360,7 @@ bool MyString::operator==(const char* cstr2nd) {
     }
 }
 
-bool MyString::operator!=(const MyString& str) {
+bool MyString::operator!=(const MyString& str) const {
     if(size != str.size) {
         return true;
     } else {
@@ -261,7 +373,7 @@ bool MyString::operator!=(const MyString& str) {
     }
 }
 
-bool MyString::operator!=(const char* cstr2nd) {
+bool MyString::operator!=(const char* cstr2nd) const {
     int index = 0;
     while(cstr2nd[index] != '\0') {
         if (stringArr[index] != cstr2nd[index]) {
@@ -353,7 +465,9 @@ MyString& MyString::append(const char* cstr2nd) {
 }
 
 MyString& MyString::append(const MyString& str) {
-    for(int index = 0 ; index < str.size ; index++) {
+    int nowSize = str.size;
+
+    for(int index = 0 ; index < nowSize ; index++) {
         appendChar(str.stringArr[index]);
     }
 
