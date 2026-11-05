@@ -9,7 +9,7 @@
 #include "Comparable.h"
 
 
-class MyString : public CharSequence {
+class MyString : public CharSequence, Comparable<MyString> {
     public:
         MyString() = default;
 
@@ -34,28 +34,12 @@ class MyString : public CharSequence {
 
         MyString& erase(int pos, int cnt);
 
-
-        char& operator[](int pos);
-
-        const char& operator[](int pos) const;
+        int compare(const MyString &other) const override;
 
 
         MyString operator+(const MyString &str2nd) const;
 
         MyString& operator+=(const MyString &str2nd);
-
-
-        bool operator==(const MyString &str) const;
-
-        bool operator!=(const MyString &str) const;
-
-        bool operator>(const MyString &str) const;
-
-        bool operator<(const MyString &str) const;
-
-        bool operator>=(const MyString &str) const;
-
-        bool operator<=(const MyString &str) const;
 };
 
 std::istream& operator>>(std::istream &is, MyString &str);
