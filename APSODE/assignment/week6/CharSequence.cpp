@@ -14,12 +14,12 @@ int CharSequence::find(const CharSequence &pattern, int start) const {
 }
 
 int CharSequence::find(const char *pattern, int start) const {
-    return this->rabin_karp(CharSequence(pattern, count_elements(pattern)), start);
+    return this->rabin_karp(CharSequence(pattern, count_chars(pattern)), start);
 }
 
 void CharSequence::append(const char *chars) {
     require_non_null(chars);
-    Sequence::append(chars, count_elements(chars));
+    Sequence::append(chars, count_chars(chars));
 }
 
 void CharSequence::append(const CharSequence &other) {
@@ -28,7 +28,7 @@ void CharSequence::append(const CharSequence &other) {
 
 void CharSequence::insert(int pos, const char *chars) {
     require_non_null(chars);
-    Sequence::insert(pos, chars, count_elements(chars));
+    Sequence::insert(pos, chars, count_chars(chars));
 }
 
 void CharSequence::insert(int pos, const CharSequence &other) {
@@ -43,6 +43,20 @@ const char& CharSequence::operator[](int pos) const {
     return Sequence::operator[](pos);
 }
 
+int CharSequence::compare(const char *const&other) const {
+    const int other_length = count_chars(other);
+
+    for (int index = 0; index < this->m_size && index < other_length; ++index) {
+        const unsigned char this_char = this->container[index];
+        const unsigned char other_char = other[index];
+        if (this_char != other_char) {
+            return this_char - other_char;
+        }
+    }
+
+    return this->m_size - other_length;
+}
+
 CharSequence CharSequence::operator+(const char *chars) const {
     require_non_null(chars);
     CharSequence temp = CharSequence(*this);
@@ -52,7 +66,7 @@ CharSequence CharSequence::operator+(const char *chars) const {
 
 CharSequence& CharSequence::operator=(const char *chars) {
     require_non_null(chars);
-    swap(*this, CharSequence(chars, count_elements(chars)));
+    swap(*this, CharSequence(chars, count_chars(chars)));
     return *this;
 }
 
@@ -62,43 +76,11 @@ CharSequence& CharSequence::operator+=(const char *chars) {
     return *this;
 }
 
-bool CharSequence::operator==(const char *chars) const {
+int CharSequence::count_chars(const char *chars) {
     require_non_null(chars);
-    return this->equals(CharSequence(chars, count_elements(chars)));
-}
-
-bool CharSequence::operator!=(const char *chars) const {
-    return !(*this == chars);
-}
-
-bool CharSequence::operator>(const char *chars) const {
-    if (chars == nullptr) {
-        return true;
-    }
-
-    int chars_length = count_elements(chars);
-
-    for (int index = 0; index < this->m_size && index < chars_length; ++index) {
-        unsigned char this_char = (*this)[index];
-        unsigned char other_char = *chars++;
-        if (this_char != other_char) {
-            return this_char > other_char;
-        }
-    }
-
-    return this->m_size > chars_length;
-}
-
-bool CharSequence::operator<(const char *chars) const {
-    return !(*this >= chars);
-}
-
-bool CharSequence::operator>=(const char *chars) const {
-    return *this > chars || *this == chars;
-}
-
-bool CharSequence::operator<=(const char *chars) const {
-    return *this < chars || *this == chars;
+    int count = 0;
+    for (const char *cursor = chars; *cursor != '\0'; ++cursor) ++count;
+    return count;
 }
 
 int CharSequence::rabin_karp(const CharSequence &pattern, int start) const {

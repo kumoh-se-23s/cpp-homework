@@ -64,13 +64,6 @@ class Sequence {
 
         static void require_valid_amount(int amount);
 
-        static int count_elements(const E *elements) {
-            Sequence::require_non_null(elements);
-            int count = 0;
-            for (const char *cursor = elements; *cursor != '\0'; ++cursor) ++count;
-            return count;
-        }
-
         static void swap(Sequence &sequence1, Sequence &sequence2) {
             E *temp_container = sequence1.container;
             sequence1.container = sequence2.container;
