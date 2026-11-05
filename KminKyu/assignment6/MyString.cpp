@@ -501,8 +501,22 @@ istream& getline(istream& is, MyString& str, char delim) {
     return is;
 }
 
+static constexpr int MAX_BASE = 36;
+static constexpr int MIN_BASE = 2;
+
 int stoi(const MyString &str, int pos, int base) {
     int result = 0;
+    if (pos < 0) {
+        pos = 0;
+    } else if (pos >= str.length()) {
+        pos = std::max(str.length() - 1, 0);
+    }
+    if (base < 2) {
+        base = MIN_BASE;
+    } else if (base > MAX_BASE) {
+        base = MAX_BASE;
+    }
+    
     for (int index = pos; index < str.length(); ++index) {
 
         int changeValue = changeAlphabetToInt(str[index]);
