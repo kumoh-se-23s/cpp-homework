@@ -1,0 +1,13 @@
+//
+// Created by KminKyu on 2026-11-05.
+//
+
+#ifndef CPP_HOMEWORK_GIT_SINGLELINKEDLIST_H
+#define CPP_HOMEWORK_GIT_SINGLELINKEDLIST_H
+
+
+class KeySingleLinkedList {
+};
+
+
+#endif //CPP_HOMEWORK_GIT_SINGLELINKEDLIST_H
