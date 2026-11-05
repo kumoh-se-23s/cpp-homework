@@ -48,6 +48,8 @@ class Sequence {
 
         void erase(int start, int amount = 1);
 
+        void replace(int start, int length, const E* elements);
+
         bool equals(const Sequence &other) const;
 
         void clear();

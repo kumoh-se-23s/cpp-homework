@@ -162,6 +162,22 @@ void Sequence<T, TAIL>::erase(int start, int amount) {
     }
 }
 
+template<typename E, int TAIL>
+void Sequence<E, TAIL>::replace(int start, int length, const E *elements) {
+    require_non_null(elements);
+    require_valid_index(start);
+
+    for (int index = this->m_size - 1; index >= start + length; --index) {
+        this->container[index + length] = this->container[index];
+    }
+
+    for (int index = start; index < length; ++index) {
+        this->container[index] = elements[index - start];
+    }
+
+    this->fill_tail();
+}
+
 template<typename T, int TAIL>
 bool Sequence<T, TAIL>::equals(const Sequence &other) const {
     if (this->m_size != other.m_size) {

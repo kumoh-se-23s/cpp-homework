@@ -6,6 +6,9 @@
 
 #include <limits>
 
+MyString::MyString(const CharSequence &sequence) {
+}
+
 MyString::MyString(const char *cstr2nd) {
 }
 
@@ -40,9 +43,15 @@ MyString& MyString::insert(int pos, const MyString &subStr) {
 }
 
 MyString& MyString::replace(int pos, int len, const MyString &subStr) {
-    MyString t = MyString("TODO");
-    return t;
+    Sequence::replace(pos, len, subStr.container);
+    return *this;
 }
+
+MyString& MyString::replace(int pos, int len, const char *subStr) {
+    Sequence::replace(pos, len, subStr);
+    return *this;
+}
+
 
 MyString& MyString::erase(int pos, int cnt) {
     Sequence::erase(pos, cnt);
@@ -61,8 +70,8 @@ MyString& MyString::operator+=(const MyString &str2nd) {
     return this->append(str2nd);
 }
 
-std::istream& operator>>(std::istream &input_stream, OldMyString &string) {
-    OldMyString temp;
+std::istream& operator>>(std::istream &input_stream, MyString &string) {
+    MyString temp;
     int char_code = input_stream.get();
 
     // EOF를 검증을 해줘야할까..?
@@ -81,15 +90,15 @@ std::istream& operator>>(std::istream &input_stream, OldMyString &string) {
         char_code != EOF;
         char_code = input_stream.get()
     ) {
-        if (std::isspace(char_code) || temp.length() >= CharSequence::MAX_LENGTH) {
+        if (std::isspace(char_code) || temp.length() >= string.capacity()) {
             input_stream.putback(static_cast<char>(char_code));
             break;
         }
 
-        temp.add_last(static_cast<char>(char_code));
+        temp.CharSequence::append(static_cast<char>(char_code));
     }
 
-    temp.add_last('\0');
+    temp.CharSequence::append('\0');
     string = temp;
     return input_stream;
 }
@@ -112,13 +121,16 @@ std::istream& getline(std::istream &input_stream, MyString &string, char delim) 
             break;
         }
 
-        temp.append(static_cast<char>(char_code));
+        temp.CharSequence::append(static_cast<char>(char_code));
     }
 
-    temp.add_last('\0');
+    temp.CharSequence::append('\0');
     string = temp;
     return input_stream;
 }
 
 int stoi(const MyString &str, int pos, int base) {
+    if (0 <= pos && pos < str.length()) {
+
+    }
 }

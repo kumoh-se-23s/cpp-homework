@@ -30,6 +30,8 @@ class CharSequence : public Sequence<char>, public Comparable<CharSequence> {
 
         int find(const char *pattern, int start) const;
 
+        void append(char c);
+
         void append(const char *chars);
 
         void append(const CharSequence &other);

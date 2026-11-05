@@ -13,8 +13,13 @@ class MyString : public CharSequence, Comparable<MyString> {
     public:
         MyString() = default;
 
-        MyString(const char *cstr2nd);
+        MyString(const CharSequence& sequence);
 
+        MyString(const char *cstr2nd);
+        using CharSequence::append;
+        // using CharSequence::insert;
+        // using CharSequence::compare;
+        // using CharSequence::find;
 
         int length() const;
 
@@ -31,6 +36,8 @@ class MyString : public CharSequence, Comparable<MyString> {
         MyString& insert(int pos, const MyString &subStr);
 
         MyString& replace(int pos, int len, const MyString &subStr);
+
+        MyString& replace(int pos, int len, const char *subStr);
 
         MyString& erase(int pos, int cnt);
 

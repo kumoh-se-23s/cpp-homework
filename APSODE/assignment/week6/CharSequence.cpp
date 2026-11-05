@@ -20,6 +20,10 @@ int CharSequence::find(const char *pattern, int start) const {
     return this->rabin_karp(CharSequence(pattern, count_chars(pattern)), start);
 }
 
+void CharSequence::append(char c) {
+    Sequence::append(c);
+}
+
 void CharSequence::append(const char *chars) {
     require_non_null(chars);
     Sequence::append(chars, count_chars(chars));
