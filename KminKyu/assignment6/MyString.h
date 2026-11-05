@@ -103,6 +103,16 @@ private:
 
     void resize();
 
+    void resize(int reCapacity);
+
+    //배열 길이를 구해서 인자로 private 메소드 -> 따로 nullptr 체크는 하지 않음
+    MyString &insert(int pos, const char *subStr, int subStrLength);
+
+    MyString &replace(int pos, int len, const char *subStr, int subStrLength);
+
+    MyString &append(const char *cstr2nd, int cstr2ndSize);
+
+    static int getCharArrayLength(const char *str2nd);
     //생성자, 대입 연산자에서 사용하는 string 복사 메소드
     void copyString(const char *copyStr, int copyStrCapacity);
 
@@ -114,10 +124,12 @@ private:
     //insert, find, replace, erase 에서 올바른 pos 값을 지정하기 위한 메소드
     int positionNormalize(int pos) const;
 
+    int lengthNormalize(int pos, int len) const;
+
     static bool isSame(const char *str1st, const char *str2nd, int start, int end);
 
     //생성자에서 cstr2nd의 사이즈에 맞는 배열 capacity를 찾아주기 위한 메소드
-    static int growCapacity(const char *cstr2nd);
+    static int calcInitialCapacity(int arraySize);
 };
 
 std::ostream &operator <<(std::ostream &os, const MyString &str);

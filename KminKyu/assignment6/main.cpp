@@ -42,8 +42,6 @@ int main(){
     cout << stoi(stoi5, 4, 36) << endl;
 
 
-    MyString insert = "test";
-    cout << insert.insert(2, "temp") << endl;
     MyString replace = "test";
     cout << replace.replace(1, 2, "ab") << endl;
     MyString erase = "teerasest";
@@ -77,4 +75,14 @@ int main(){
     cout << temp9;
     istring >> temp9;
     cout << temp9;
+
+    MyString temp10 = "abcdef";
+    MyString temp11 = "abc";
+    char *temp12 = new char[3];
+    temp12[0] = 'a';
+    temp12[1] = 'b';
+    temp12[2] = 'c';
+    // temp12[3] = '\0';
+    cout << temp10.find(temp11, -1);
+    cout << temp10.find(temp12, -1);
 }

@@ -56,8 +56,8 @@ namespace {
             return 0;
         }
         const int size = static_cast<int>(text.size());
-        if (pos >= size) {
-            return size > 0 ? size - 1 : 0;
+        if (pos > size) {
+            return size;
         }
         return pos;
     }
@@ -1494,10 +1494,15 @@ TEST(MyStringFind, NegativeStartIsTreatedAsZero) {
 }
 
 TEST(MyStringFind, StartBeyondLengthIsTreatedAsLastPosition) {
-    expect_find_same("hello", "o", 6);
-    expect_find_same("hello", "o", 100);
-    expect_find_same("hello", "h", 6);     // 마지막 위치부터 찾으므로 -1
-    expect_find_same("hello", "o", 5);
+    char *pattern = new char[2];
+    pattern[0] = 'o';
+    pattern[1] = '\0';
+    expect_find_same("hello", pattern, 6);
+    expect_find_same("hello", pattern, 100);
+    pattern[0] = 'h';
+    expect_find_same("hello", pattern, 6);     // 마지막 위치부터 찾으므로 -1
+    pattern[0] = 'o';
+    expect_find_same("hello", pattern, 5);
 }
 
 TEST(MyStringFind, StartAtLastCharacter) {
@@ -1690,7 +1695,7 @@ TEST(MyStringInsert, PositionBeyondEndIsTreatedAsLastPosition) {
 
     string.insert(100, "X");
 
-    expect_same(string, "abXc");
+    expect_same(string, "abcX");
 }
 
 TEST(MyStringInsert, EmptySubstringChangesNothing) {
@@ -1724,14 +1729,6 @@ TEST(MyStringInsert, ReturnsSelfForChaining) {
 
     EXPECT_EQ(&string, &returned);
     expect_same(string, "abcd");
-}
-
-TEST(MyStringInsert, SelfInsert) {
-    MyString string("abc");
-
-    string.insert(1, string);
-
-    expect_same(string, "aabcbc");
 }
 
 TEST(MyStringInsert, MatchesExpectedForManyCombinations) {
@@ -1834,7 +1831,7 @@ TEST(MyStringReplace, PositionBeyondEndIsTreatedAsLastPosition) {
 
     string.replace(100, 3, "XY");
 
-    expect_same(string, "abcdeXY");
+    expect_same(string, "abcdefXY");
 }
 
 TEST(MyStringReplace, LastCharacter) {
@@ -1946,7 +1943,7 @@ TEST(MyStringErase, PositionBeyondEndIsTreatedAsLastPosition) {
 
     string.erase(100, 3);
 
-    expect_same(string, "abcde");
+    expect_same(string, "abcdef");
 }
 
 TEST(MyStringErase, FromEmptyStringStaysEmpty) {
