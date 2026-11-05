@@ -77,8 +77,8 @@ void Sequence<T, TAIL>::insert(int position, const T &element) {
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::insert(int position, const T *elements, int amount) {
     this->require_valid_position(position);
-    require_non_null(elements);
-    require_valid_amount(amount);
+    Sequence::require_non_null(elements);
+    Sequence::require_valid_amount(amount);
 
     if (elements == this->container) {
         T* temp = new T[this->m_capacity + 1];
@@ -109,8 +109,8 @@ void Sequence<T, TAIL>::append(const T &element) {
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::append(const T *elements, int amount) {
-    require_non_null(elements);
-    require_valid_amount(amount);
+    Sequence::require_non_null(elements);
+    Sequence::require_valid_amount(amount);
 
     if (elements == this->container) {
         T* temp = new T[this->m_capacity + 1];
@@ -183,7 +183,7 @@ void Sequence<T, TAIL>::clear() {
     this->m_capacity = DEFAULT_CAPACITY;
     this->m_size = 0;
     delete[] this->container; // 굳이 delete를 할까 싶긴한데... 일단은 초기 상태의 컨테이너를 가지는게 맞다고 생각하기에...
-    this->container = create_empty_container(DEFAULT_CAPACITY);
+    this->container = Sequence::create_empty_container(DEFAULT_CAPACITY);
 }
 
 template<typename T, int TAIL>
@@ -199,8 +199,8 @@ Sequence<T, TAIL>& Sequence<T, TAIL>::operator=(const Sequence &other) {
 
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::shrink() {
-    int new_capacity = calc_new_capacity(this->m_capacity / GROWTH_FACTOR);
-    T* new_container = create_empty_container(new_capacity);
+    int new_capacity = Sequence::calc_new_capacity(this->m_capacity / GROWTH_FACTOR);
+    T* new_container = Sequence::create_empty_container(new_capacity);
 
     copy_array(
         this->container, this->m_size,
@@ -214,7 +214,7 @@ void Sequence<T, TAIL>::shrink() {
 template<typename T, int TAIL>
 void Sequence<T, TAIL>::extend(int required) {
     int grown = this->m_capacity * GROWTH_FACTOR;
-    int new_capacity = calc_new_capacity(grown > required ? grown : required);
+    int new_capacity = Sequence::calc_new_capacity(grown > required ? grown : required);
     T* new_container = Sequence::create_empty_container(new_capacity);
 
     copy_array(
