@@ -1,5 +1,7 @@
 #include <stdexcept>
 
+#include "Sequence.h"
+
 
 template<typename T, int TAIL>
 Sequence<T, TAIL>::Sequence()
@@ -7,7 +9,7 @@ Sequence<T, TAIL>::Sequence()
 }
 
 template<typename T, int TAIL>
-Sequence<T, TAIL>::Sequence(const T *elements, int size) : m_capacity(calc_new_capacity(size)), m_size(size) {
+Sequence<T, TAIL>::Sequence(const T *elements, int size) : m_capacity(Sequence::calc_new_capacity(size)), m_size(size) {
     Sequence::require_non_null(elements);
     Sequence::require_valid_amount(size);
     this->container = Sequence::create_empty_container(Sequence::calc_new_capacity(this->m_size));
