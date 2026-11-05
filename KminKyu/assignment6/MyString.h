@@ -18,13 +18,13 @@ public:
 
     MyString(const char *cstr2nd);
 
-    MyString(MyString &&srcStr);
+    MyString(MyString &&srcStr) noexcept;
 
     ~MyString();
 
     MyString &operator =(const MyString &srcStr);
 
-    MyString &operator =(MyString &&srcStr);
+    MyString &operator =(MyString &&srcStr) noexcept;
 
     MyString &operator =(const char *cstr2nd);
 

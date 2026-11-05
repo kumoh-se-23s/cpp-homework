@@ -19,7 +19,7 @@ MyString::MyString(const char *cstr2nd) {
 
 }
 
-MyString::MyString(MyString &&srcStr) {
+MyString::MyString(MyString &&srcStr) noexcept {
 
     this->charArray = srcStr.charArray;
     this->size = srcStr.size;
@@ -41,7 +41,7 @@ MyString& MyString::operator =(const MyString& srcStr) {
     return *this;
 }
 
-MyString& MyString::operator =(MyString &&srcStr) {
+MyString& MyString::operator =(MyString &&srcStr) noexcept {
     if (this == &srcStr) {
         return *this;
     }
@@ -130,9 +130,8 @@ int MyString::find(const MyString& subStr, int pos) const {
 
 MyString MyString::substr(int pos, int len) const {
     MyString result = MyString();
-    int temp = 0;
     if (pos < 0) {
-        temp = max(pos - len + size + 1, 0);
+        int temp = max(pos - len + size + 1, 0);
         len =  (pos + size + 1) - temp;
         pos = temp;
     }
@@ -401,7 +400,7 @@ int MyString::rabinKarp(const char *subStr, int pos, int subStrLength) const {
 
     constexpr int HASH_BASE = 257, HASH_MOD = 1e9 + 7;
 
-    long long int findHash = 0, resultHash = 0, highestPower = 1; //HASH_BASSE ^ (m-1)을 저장할 변수
+    long long int findHash = 0, resultHash = 0, highestPower = 1; //HASH_BASE ^ (m-1)을 저장할 변수
 
     int endPos = size - subStrLength + 1;
 
