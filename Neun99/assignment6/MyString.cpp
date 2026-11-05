@@ -478,8 +478,18 @@ void MyString::insertChArr(const char *chArr, int chArrSize, int pos) {
 
 //replace 동작부
 void MyString::replaceChArr(const char *chArr, int chArrSize, int pos, int len) {
-    erase(pos, len);
-    insertChArr(chArr, chArrSize, pos);
+    if (size - len + chArrSize >= capacity)
+        resize(size - len + chArrSize);
+
+    //원래 글자를 뒤로 밀기 (지워지지 않을 글자부분까지만)
+    for (int idx = size - 1; idx >= pos + len; idx++) {
+        str[idx + chArrSize] = str[idx];
+    }
+
+    //replace할 부분 덮어쓰면서 넣기
+    for (int idx = pos; idx < pos + chArrSize; idx++) {
+        str[idx] = chArr[idx - pos];
+    }
 }
 
 //compareTo용 더 작은 수 리턴
