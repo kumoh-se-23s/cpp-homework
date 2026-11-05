@@ -4,10 +4,13 @@
 
 #include "CharSequence.h"
 
+CharSequence::CharSequence(const char *other) : Sequence(other, count_chars(other)) {
+}
 
 CharSequence::CharSequence(const char *elements, int size)
     : Sequence(elements, size) {
 }
+
 
 int CharSequence::find(const CharSequence &pattern, int start) const {
     return this->rabin_karp(pattern, start);
@@ -35,20 +38,16 @@ void CharSequence::insert(int pos, const CharSequence &other) {
     Sequence::insert(pos, other.container, other.m_size);
 }
 
-char& CharSequence::operator[](int pos) {
-    return Sequence::operator[](pos);
+int CharSequence::compare(const CharSequence &other) const {
+    return this->compare(other.container);
 }
 
-const char& CharSequence::operator[](int pos) const {
-    return Sequence::operator[](pos);
-}
-
-int CharSequence::compare(const char *const&other) const {
-    const int other_length = count_chars(other);
+int CharSequence::compare(const char *chars) const {
+    const int other_length = count_chars(chars);
 
     for (int index = 0; index < this->m_size && index < other_length; ++index) {
         const unsigned char this_char = this->container[index];
-        const unsigned char other_char = other[index];
+        const unsigned char other_char = chars[index];
         if (this_char != other_char) {
             return this_char - other_char;
         }
@@ -56,6 +55,7 @@ int CharSequence::compare(const char *const&other) const {
 
     return this->m_size - other_length;
 }
+
 
 CharSequence CharSequence::operator+(const char *chars) const {
     require_non_null(chars);
@@ -75,6 +75,7 @@ CharSequence& CharSequence::operator+=(const char *chars) {
     swap(*this, *this + chars);
     return *this;
 }
+
 
 int CharSequence::count_chars(const char *chars) {
     require_non_null(chars);
@@ -137,6 +138,7 @@ bool CharSequence::is_same(const CharSequence &target, const CharSequence &patte
 
     return true;
 }
+
 
 std::ostream& operator<<(std::ostream &output_stream, const CharSequence &char_sequence) {
     for (int index = 0; index < char_sequence.size(); ++index) {

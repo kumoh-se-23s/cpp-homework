@@ -10,7 +10,7 @@
 #include "Sequence.h"
 
 
-class CharSequence : public Sequence<char>, public Comparable<const char*> {
+class CharSequence : public Sequence<char>, public Comparable<CharSequence> {
     constexpr static int HASH_MODULAR = 1e9 + 7;
     constexpr static int HASH_BASE = 257;
 
@@ -18,6 +18,8 @@ class CharSequence : public Sequence<char>, public Comparable<const char*> {
         CharSequence() = default;
 
         CharSequence(const CharSequence &other) = default;
+
+        CharSequence(const char* other);
 
         CharSequence(const char *elements, int size);
 
@@ -28,26 +30,24 @@ class CharSequence : public Sequence<char>, public Comparable<const char*> {
 
         int find(const char *pattern, int start) const;
 
-        void append(const char* chars);
+        void append(const char *chars);
 
         void append(const CharSequence &other);
 
-        void insert(int pos, const char* chars);
+        void insert(int pos, const char *chars);
 
         void insert(int pos, const CharSequence &other);
 
-        int compare(const char * const &other) const override;
+        int compare(const CharSequence &other) const override;
 
-        char& operator[](int pos);
-
-        const char& operator[](int pos) const;
+        int compare(const char *chars) const;
 
 
-        CharSequence operator+(const char* chars) const;
+        CharSequence operator+(const char *chars) const;
 
-        CharSequence& operator=(const char* chars);
+        CharSequence& operator=(const char *chars);
 
-        CharSequence& operator+=(const char* chars);
+        CharSequence& operator+=(const char *chars);
 
     protected:
         static int count_chars(const char *chars);
