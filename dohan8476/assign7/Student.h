@@ -3,16 +3,16 @@
 #include "MyString.h"
 
 class Student {
-    MyString studentID;
+    int studentID = 0;
     MyString studentName;
     MyString teamID;
 
     public:
-        MyString getStudentID();
+        int getStudentID() const;
         MyString getStudentName();
         MyString getTeamID();
 
-        void setStudentID(MyString studentID);
+        void setStudentID(int studentID);
         void setStudentName(MyString studentName);
         void setTeamID(MyString teamID);
 };

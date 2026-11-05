@@ -16,7 +16,7 @@ class MyString {
         [[nodiscard]] int getCapacity() const;
 
         char& at(int pos) const;
-        char& operator[](int pos) ;
+        char& operator[](int pos);
         const char& operator[](int pos) const;
 
         //기본 기능 난이도 중

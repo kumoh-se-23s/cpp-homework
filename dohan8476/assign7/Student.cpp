@@ -1,6 +1,6 @@
 #include "Student.h"
 
-MyString Student::getStudentID() {
+int Student::getStudentID() const {
     return this->studentID;
 }
 
@@ -12,7 +12,7 @@ MyString Student::getTeamID() {
     return this->teamID;
 }
 
-void Student::setStudentID(MyString studentID) {
+void Student::setStudentID(int studentID) {
     this->studentID = studentID;
 }
 
