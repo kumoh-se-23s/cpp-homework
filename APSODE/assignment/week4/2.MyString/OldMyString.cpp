@@ -2,32 +2,32 @@
 // Created by leegu on 26. 10. 10..
 //
 
-#include "MyString.h"
+#include "OldMyString.h"
 
 #include <limits>
 
-MyString::MyString(const MyString &other) : CharSequence(other) {
+OldMyString::OldMyString(const OldMyString &other) : CharSequence(other) {
 }
 
-MyString::MyString(const CharSequence &other) : CharSequence(other){
+OldMyString::OldMyString(const CharSequence &other) : CharSequence(other){
 }
 
-MyString::MyString(const char other[]) : CharSequence(other){
+OldMyString::OldMyString(const char other[]) : CharSequence(other){
 }
 
-MyString::~MyString() = default;
+OldMyString::~OldMyString() = default;
 
-MyString MyString::substr(int pos, int len) const {
+OldMyString OldMyString::substr(int pos, int len) const {
     const int start = (pos < 0) ? 0 : pos;
 
     if (start >= this->m_length || len <= 0) {
-        return MyString();
+        return OldMyString();
     }
 
     const int remaining = this->m_length - start;
     const int count = (len > remaining) ? remaining : len;
 
-    MyString substring;
+    OldMyString substring;
     for (int index = 0; index < count; ++index) {
         substring.add_last(this->container[start + index]);
     }
@@ -35,34 +35,34 @@ MyString MyString::substr(int pos, int len) const {
     return substring;
 }
 
-bool MyString::operator==(const MyString &other) const {
+bool OldMyString::operator==(const OldMyString &other) const {
     return this->equals(other);
 }
 
-bool MyString::operator!=(const MyString &other) const {
+bool OldMyString::operator!=(const OldMyString &other) const {
     return !this->equals(other);
 }
 
-MyString& MyString::operator=(const MyString &other) {
+OldMyString& OldMyString::operator=(const OldMyString &other) {
     this->copy_from_other(other);
 
     return *this;
 }
 
-MyString MyString::operator+(const MyString &other) const {
-    return MyString(this->append_truncated(other));
+OldMyString OldMyString::operator+(const OldMyString &other) const {
+    return OldMyString(this->append_truncated(other));
 }
 
-MyString MyString::operator+(const CharSequence &other) const {
-    return MyString(this->append_truncated(other));
+OldMyString OldMyString::operator+(const CharSequence &other) const {
+    return OldMyString(this->append_truncated(other));
 }
 
-MyString MyString::operator+(const char char_array[]) const {
-    return MyString(this->append_truncated(char_array));
+OldMyString OldMyString::operator+(const char char_array[]) const {
+    return OldMyString(this->append_truncated(char_array));
 }
 
-std::istream& operator>>(std::istream &input_stream, MyString &string) {
-    MyString temp;
+std::istream& operator>>(std::istream &input_stream, OldMyString &string) {
+    OldMyString temp;
     int char_code = input_stream.get();
 
     // EOF를 검증을 해줘야할까..?
@@ -94,8 +94,8 @@ std::istream& operator>>(std::istream &input_stream, MyString &string) {
     return input_stream;
 }
 
-std::istream& getline(std::istream &input_stream, MyString &string, char delim) {
-    MyString temp;
+std::istream& getline(std::istream &input_stream, OldMyString &string, char delim) {
+    OldMyString temp;
     int char_code = input_stream.get();
 
     // early return
