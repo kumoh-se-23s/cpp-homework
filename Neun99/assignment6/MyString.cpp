@@ -75,13 +75,13 @@ int MyString::find(const MyString &subStr, int pos) const {
 //문자열 부분추출
 MyString MyString::substr(int pos, int len) const {
     //입력정리
-    if (pos < -size || pos > size) //범위 외 pos면 빈 문자열 리턴
+    if (pos < -size || pos > size || len < 0) //범위 외 pos면 빈 문자열 리턴
         return MyString();
 
     if (pos < 0) { //범위 내 음수면 뒷글자부터 역행
         pos = size + pos; //역행시작점 (오른쪽 끝)
         int startIdx = pos - len + 1; //역행 도착점 (왼쪽 끝, 오른쪽 끝이 자기 포함이니 여기서 + 1)
-        if (startIdx < 0 || len < 0) //도착점이 범위를 넘어서면 문자열 처음까지만
+        if (startIdx < 0) //도착점이 범위를 넘어서면 문자열 처음까지만
             startIdx = 0;
         len = pos - startIdx + 1; //길이 = 역행 시작점 - 도착점 + 1
         pos = startIdx; //Impl에 넣기 위해 변경
@@ -322,8 +322,7 @@ istream& operator>>(istream& in, MyString& str) {
     }
 
     //이후 append
-    char ch;
-    for (;!isWhiteSpace(inputCode) && inputCode != EOF; inputCode = in.peek()) {
+    for (char ch; !isWhiteSpace(inputCode) && inputCode != EOF; inputCode = in.peek()) {
         in.get(ch);
         str.appendCh(ch);
     }
@@ -334,8 +333,7 @@ istream& operator>>(istream& in, MyString& str) {
 istream& getline(istream& in, MyString& str, char delim) {
     str.clear(); //초기화
 
-    int inputCode = in.peek();
-    for (; inputCode != delim && inputCode != EOF; inputCode = in.peek()) {
+    for (int inputCode = in.peek(); inputCode != delim && inputCode != EOF; inputCode = in.peek()) {
         char ch;
         in.get(ch);
         str.appendCh(ch);
@@ -427,7 +425,7 @@ int MyString::findChArr(const char *chArr, int arrSize, int pos) const{
 }
 
 //subStr 동작부
-const MyString MyString::subStrImpl(int pos, int len) const {
+MyString MyString::subStrImpl(int pos, int len) const {
     MyString result;
     if (len >= DEFAULT_CAPACITY)
         result.resize(len);

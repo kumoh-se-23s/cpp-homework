@@ -68,7 +68,7 @@ private:
     int normalizeLen(int len, int pos) const;
     void substitute(const char *chArr, int newSize);
     int findChArr(const char *chArr, int arrSize, int pos) const;
-    const MyString subStrImpl(int pos, int len) const;
+    MyString subStrImpl(int pos, int len) const;
     void appendChArr(const char *chArr, int chArrSize);
     void insertChArr(const char *chArr, int chArrSize, int pos);
     void replaceChArr(const char *chArr, int chArrSize, int pos, int len);
