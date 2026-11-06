@@ -1,4 +1,7 @@
 #pragma once
+#include <iterator>
+#include <ranges>
+
 #include "SinglyLinkedList.h"
 
 
@@ -89,6 +92,11 @@ void SinglyLinkedList<T>::remove(int index) {
 
     delete prevNode->next;
     --size;
+}
+
+template<typename T>
+void SinglyLinkedList<T>::remove(T element) {
+
 }
 
 template<typename T>

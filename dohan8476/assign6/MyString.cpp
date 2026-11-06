@@ -502,7 +502,7 @@ static bool isConvertible(const char c, int base) {
     return (0 <= val && val < base);
 }
 
-// isdigit, isAllDigit, baseConverter,,,, maybe need to implement more,,nn
+// isdigit, isAllDigit, baseConverter,,,, maybe more need to implement,,nn
 int stoi(const MyString &str, int pos, int base) {
     if (base < 2 || base > 36) {
         return 0;
@@ -545,7 +545,7 @@ void MyString::resize(int newCapacity) {
         return;
     }
 
-    // 여기는 newCapacity에 제일 가까운 8배수 만드는 방법으로 생각해본 것
+    // newCapacity에 제일 가까운 8배수 만드는 방법?
     // while (newCapacity % DEFAULT_CAPACITY) {
     //     newCapacity++;
     // }

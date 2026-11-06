@@ -7,6 +7,7 @@ class SinglyLinkedList {
         ~SinglyLinkedList();
         void add(T element);
         void insert(int index, T element);
+        void remove(T element);
         void remove(int index);
         void clear();
         int getSize() const;

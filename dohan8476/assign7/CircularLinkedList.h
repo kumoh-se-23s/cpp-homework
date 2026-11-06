@@ -9,20 +9,23 @@ class CircularLinkedList {
         void append(T element);
         void insert(int index, T element);
         void remove(T element);
+        void remove(int index);
         void clear();
         int getSize() const;
         bool isEmpty() const;
         T get(int index) const;
         T getHead() const;
     private:
-        struct DoublyNode{
+        struct Node{
             T data;
-            DoublyNode* next;
-            DoublyNode* prev;
-            DoublyNode(T element) : data(element), next(nullptr), prev(nullptr) {}
+            Node* next;
+            Node* prev;
+            Node(T element) : data(element), next(nullptr), prev(nullptr) {}
         };
-        DoublyNode* head;
+        Node* head;
         int size = 0;
+
+        void removeFirst();
 };
 
 #include "CircularLinkedList.tpp"
