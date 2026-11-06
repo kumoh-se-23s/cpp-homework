@@ -1,5 +1,5 @@
-1998 2024
-9 3
+1998 2023
+8 3
 19981475 - Aria Lee
 19980909 G3 Liam Son
 19980123 G1 Jenny Anh
@@ -8,4 +8,3 @@
 20220987 G1 Harley Kim
 20230554 G2 Oliver Kim
 20231555 G1 William Jin
-20240178 G1 Nora Kang

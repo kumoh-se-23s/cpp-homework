@@ -59,7 +59,7 @@ private:
 
 
 
-std::ostream &operator<<(std::ostream &out, const MyMatrix &v)
+inline std::ostream &operator<<(std::ostream &out, const MyMatrix &v)
 {
 
     using namespace std;
@@ -86,7 +86,7 @@ std::ostream &operator<<(std::ostream &out, const MyMatrix &v)
     return out;
 };
 
-std::istream &operator>>(std::istream &in, MyMatrix &v)
+inline std::istream &operator>>(std::istream &in, MyMatrix &v)
 {
     auto data = v.getData();
     for (int i = 0; i < v.getRows(); ++i)

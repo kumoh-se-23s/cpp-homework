@@ -77,7 +77,7 @@ MyString &MyString::operator=(const char str2nd[]) {
 };
 
 MyString MyString::operator+(const char str2nd[]) const {
-    MyString result;
+    MyString result(size);
     for (int i = 0; i < size; ++i) {
         result.data[i] = data[i];
     }
@@ -152,6 +152,9 @@ MyString &MyString::operator+=(const char *v) {
 }
 
 MyString &MyString::append(const MyString &v) {
+    if (&v == this && size >= capacity / 2) {
+        resize(capacity * 2);
+    }
     return append(v.getData());
 }
 MyString &MyString::append(const char *v) {
@@ -251,10 +254,12 @@ char MyString::at(const int pos) const {
 }
 
 char &MyString::operator[](const int pos) {
+    if (pos >= size || pos < 0) return data[size];
     return data[pos];
 }
 
 const char &MyString::operator[](const int pos) const {
+    if (pos >= size || pos < 0) return data[size];
     return data[pos];
 }
 
@@ -281,6 +286,33 @@ int MyString::charToInt(const char c, const int base) {
         num = c - 'a' + 10;
     }
     return num >= base ? -1 : num;
+}
+
+std::istream & getline(std::istream &in, MyString &str, const char delim) {
+    char ch;
+    MyString temp;
+    while ((ch = in.get()) != delim && ch != EOF) {
+        temp.append(ch);
+    }
+    str = temp;
+    return in;
+}
+
+std::ostream & operator<<(std::ostream &out, const MyString &string) {
+    out << string.getData();
+    return out;
+}
+
+std::istream & operator>>(std::istream &in, MyString &str) {
+    char ch = 0;
+
+    while (str.isEmpty() || !MyString::isWhitespace(ch)) {
+        ch = in.get();
+        if (!MyString::isWhitespace(ch)) {
+            str.append(ch);
+        }
+    }
+    return in;
 }
 
 

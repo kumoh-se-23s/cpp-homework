@@ -21,6 +21,9 @@ static Student readStudent(const MyString &line) {
 }
 
 int main(const int argc, char *argv[]) {
+    foo();
+
+
     if (argc != 2) {
         std::cout << "no input file" << std::endl;
         return 1;

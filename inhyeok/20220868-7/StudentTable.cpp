@@ -181,8 +181,8 @@ void StudentTable::exportFile(const MyString &filename) const {
 }
 
 void StudentTable::getStudentInfos(int &min, int &max, int &studentCount, int &teamCount) const {
-    min = studentTable.getSize() == 0 ? 0 : studentTable.getHead()->data.key;
-    max = studentTable.getSize() == 0 ? 0 : studentTable.getHead()->prev->data.key;
+    min = INT_MAX;
+    max = INT_MIN;
     studentCount = 0;
     teamCount = teamTable.getSize();
 
@@ -193,6 +193,8 @@ void StudentTable::getStudentInfos(int &min, int &max, int &studentCount, int &t
     for (auto itl = studentTable.begin(); itl.hasNext(); ++itl) {
         auto &value = (*itl)->data.value;
         studentCount += value.getSize();
+        min = std::min(min, value.getSize() == 0 ? INT_MAX : (*itl)->data.key);
+        max = std::max(max, value.getSize() == 0 ? INT_MIN : (*itl)->data.key);
     }
 
 }

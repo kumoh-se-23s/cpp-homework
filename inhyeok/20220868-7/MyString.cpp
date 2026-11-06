@@ -77,7 +77,7 @@ MyString &MyString::operator=(const char str2nd[]) {
 };
 
 MyString MyString::operator+(const char str2nd[]) const {
-    MyString result;
+    MyString result(size);
     for (int i = 0; i < size; ++i) {
         result.data[i] = data[i];
     }
@@ -152,6 +152,9 @@ MyString &MyString::operator+=(const char *v) {
 }
 
 MyString &MyString::append(const MyString &v) {
+    if (&v == this && size >= capacity / 2) {
+        resize(capacity * 2);
+    }
     return append(v.getData());
 }
 MyString &MyString::append(const char *v) {
