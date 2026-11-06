@@ -8,29 +8,7 @@
 template<typename T>
 class Comparable {
     public:
-        bool operator==(const T& other) const {
-            return this->compare(other) == 0;
-        }
 
-        bool operator!=(const T& other) const {
-            return this->compare(other) != 0;
-        }
-
-        bool operator>(const T& other) const {
-            return this->compare(other) > 0;
-        }
-
-        bool operator<(const T& other) const {
-            return this->compare(other) < 0;
-        }
-
-        bool operator>=(const T& other) const {
-            return this->compare(other) >= 0;
-        }
-
-        bool operator<=(const T& other) const {
-            return this->compare(other) <= 0;
-        }
 
         virtual int compare(const T& other) const = 0;
 

@@ -58,7 +58,8 @@ const T& Sequence<T, TAIL>::at(int index) const {
 
 template<typename T, int TAIL>
 T& Sequence<T, TAIL>::at(int index) {
-    return const_cast<T&>(static_cast<const Sequence&>(*this).at(index));
+    this->require_valid_index(index);
+    return (*this)[index];
 }
 
 template<typename T, int TAIL>
@@ -68,7 +69,7 @@ const T& Sequence<T, TAIL>::operator[](int index) const {
 
 template<typename T, int TAIL>
 T& Sequence<T, TAIL>::operator[](int index) {
-    return const_cast<T&>(static_cast<const Sequence&>(*this)[index]);
+    return this->container[index];
 }
 
 template<typename T, int TAIL>
@@ -160,22 +161,6 @@ void Sequence<T, TAIL>::erase(int start, int amount) {
     if (this->need_shrink()) {
         this->shrink();
     }
-}
-
-template<typename E, int TAIL>
-void Sequence<E, TAIL>::replace(int start, int length, const E *elements) {
-    require_non_null(elements);
-    require_valid_index(start);
-
-    for (int index = this->m_size - 1; index >= start + length; --index) {
-        this->container[index + length] = this->container[index];
-    }
-
-    for (int index = start; index < length; ++index) {
-        this->container[index] = elements[index - start];
-    }
-
-    this->fill_tail();
 }
 
 template<typename T, int TAIL>

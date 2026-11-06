@@ -93,6 +93,42 @@ TEST(CharSequenceConstructor, NullElementsThrows) {
     EXPECT_THROW(CharSequence(nullptr, 3), std::invalid_argument);
 }
 
+TEST(CharSequenceConstructor, FromCString) {
+    CharSequence sequence("hello");
+
+    EXPECT_EQ(5, sequence.size());
+    EXPECT_STREQ("hello", &sequence[0]);
+}
+
+TEST(CharSequenceConstructor, FromEmptyCString) {
+    CharSequence sequence("");
+
+    EXPECT_TRUE(sequence.empty());
+    EXPECT_STREQ("", &sequence[0]);
+}
+
+TEST(CharSequenceConstructor, FromCStringIsDeepCopy) {
+    char source[] = "hello";
+    CharSequence sequence(source);
+
+    source[0] = 'j';
+
+    EXPECT_STREQ("hello", &sequence[0]);
+}
+
+TEST(CharSequenceConstructor, ImplicitConversionFromCString) {
+    const CharSequence sequence = "hello";   // explicit이 아니어야 컴파일된다
+
+    EXPECT_EQ("hello", to_std_string(sequence));
+}
+
+TEST(CharSequenceConstructor, NullCStringThrows) {
+    const char *null_chars = nullptr;
+
+    // 소괄호로 쓰면 null_chars라는 변수 선언으로 해석되므로 중괄호를 쓴다
+    EXPECT_THROW(CharSequence{null_chars}, std::invalid_argument);
+}
+
 TEST(CharSequenceCopy, CopyConstructorIsDeep) {
     CharSequence original = make("hello");
     CharSequence copy(original);
@@ -334,14 +370,13 @@ TEST(CharSequenceAppend, EmptyTextChangesNothing) {
     EXPECT_STREQ("abc", &sequence[0]);
 }
 
-TEST(CharSequenceAppend, ReturnsSelfForChaining) {
+TEST(CharSequenceAppend, ConsecutiveCallsAccumulate) {
     CharSequence sequence = make("a");
 
-    CharSequence &returned = sequence.append("b");
-    returned.append("c").append("d");
+    sequence.append("b");
+    sequence.append("c");
 
-    EXPECT_EQ(&sequence, &returned);
-    EXPECT_STREQ("abcd", &sequence[0]);
+    EXPECT_STREQ("abc", &sequence[0]);
 }
 
 TEST(CharSequenceAppend, DoublesCapacityWhenFull) {
@@ -372,6 +407,59 @@ TEST(CharSequenceAppend, OwnContentSurvivesGrowth) {
 
     sequence.append(&sequence[0]);
 
+    EXPECT_STREQ("abcdeabcde", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, SingleCharacter) {
+    CharSequence sequence = make("ab");
+
+    sequence.append('c');
+
+    EXPECT_EQ(3, sequence.size());
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, SingleCharacterGrowsCapacity) {
+    CharSequence sequence;
+    std::string expected;
+
+    for (int loop = 0; loop < 100; ++loop) {
+        const char character = static_cast<char>('a' + loop % 26);
+        sequence.append(character);
+        expected += character;
+    }
+
+    EXPECT_EQ(100, sequence.size());
+    EXPECT_EQ(0, sequence.capacity() % 8);
+    EXPECT_EQ(expected, std::string(&sequence[0]));
+}
+
+TEST(CharSequenceAppend, OtherSequence) {
+    CharSequence sequence = make("hello");
+    const CharSequence other = make(" world");
+
+    sequence.append(other);
+
+    EXPECT_STREQ("hello world", &sequence[0]);
+    EXPECT_STREQ(" world", &other[0]);
+}
+
+TEST(CharSequenceAppend, OtherSequenceUsesOnlyItsSize) {
+    CharSequence sequence = make("a");
+    const CharSequence other("bcdef", 2);
+
+    sequence.append(other);
+
+    EXPECT_EQ(3, sequence.size());
+    EXPECT_STREQ("abc", &sequence[0]);
+}
+
+TEST(CharSequenceAppend, OwnSequence) {
+    CharSequence sequence = make("abcde");
+
+    sequence.append(sequence);
+
+    EXPECT_EQ(10, sequence.size());
     EXPECT_STREQ("abcdeabcde", &sequence[0]);
 }
 
@@ -430,13 +518,12 @@ TEST(CharSequenceInsert, EmptyTextChangesNothing) {
     EXPECT_STREQ("abc", &sequence[0]);
 }
 
-TEST(CharSequenceInsert, ReturnsSelfForChaining) {
+TEST(CharSequenceInsert, ConsecutiveCallsAccumulate) {
     CharSequence sequence = make("ad");
 
-    CharSequence &returned = sequence.insert(1, "c");
-    returned.insert(1, "b");
+    sequence.insert(1, "c");
+    sequence.insert(1, "b");
 
-    EXPECT_EQ(&sequence, &returned);
     EXPECT_STREQ("abcd", &sequence[0]);
 }
 
@@ -459,11 +546,33 @@ TEST(CharSequenceInsert, OwnContent) {
     EXPECT_STREQ("aabcbc", &sequence[0]);
 }
 
+TEST(CharSequenceInsert, OtherSequence) {
+    CharSequence sequence = make("held");
+    const CharSequence other = make("llo wor");
+
+    sequence.insert(2, other);
+
+    EXPECT_STREQ("hello world", &sequence[0]);
+    EXPECT_STREQ("llo wor", &other[0]);
+}
+
+TEST(CharSequenceInsert, OwnSequence) {
+    CharSequence sequence = make("abc");
+
+    sequence.insert(1, sequence);
+
+    EXPECT_EQ(6, sequence.size());
+    EXPECT_STREQ("aabcbc", &sequence[0]);
+}
+
 TEST(CharSequenceInsert, InvalidPositionThrows) {
     CharSequence sequence = make("abc");
+    const CharSequence other = make("x");
 
     EXPECT_THROW(sequence.insert(-1, "x"), std::out_of_range);
     EXPECT_THROW(sequence.insert(4, "x"), std::out_of_range);
+    EXPECT_THROW(sequence.insert(-1, other), std::out_of_range);
+    EXPECT_THROW(sequence.insert(4, other), std::out_of_range);
     EXPECT_STREQ("abc", &sequence[0]);
 }
 
@@ -683,6 +792,15 @@ TEST(CharSequenceEquality, Empty) {
     EXPECT_FALSE(empty == "a");
 }
 
+TEST(CharSequenceEquality, WithOtherSequence) {
+    const CharSequence sequence = make("abc");
+
+    EXPECT_TRUE(sequence == make("abc"));
+    EXPECT_FALSE(sequence != make("abc"));
+    EXPECT_FALSE(sequence == make("abd"));
+    EXPECT_TRUE(sequence != make("abcd"));
+}
+
 TEST(CharSequenceEquality, NullThrows) {
     const CharSequence sequence = make("abc");
     const char *null_chars = nullptr;
@@ -692,13 +810,48 @@ TEST(CharSequenceEquality, NullThrows) {
 }
 
 // =====================================================================
+// compare
+// =====================================================================
+
+TEST(CharSequenceCompare, ReturnsSignOfOrder) {
+    const CharSequence sequence = make("banana");
+
+    EXPECT_EQ(0, sequence.compare("banana"));
+    EXPECT_LT(sequence.compare("cherry"), 0);
+    EXPECT_GT(sequence.compare("apple"), 0);
+
+    EXPECT_EQ(0, sequence.compare(make("banana")));
+    EXPECT_LT(sequence.compare(make("cherry")), 0);
+    EXPECT_GT(sequence.compare(make("apple")), 0);
+}
+
+TEST(CharSequenceCompare, PrefixIsSmaller) {
+    EXPECT_LT(make("abc").compare("abcd"), 0);
+    EXPECT_GT(make("abcd").compare("abc"), 0);
+    EXPECT_LT(CharSequence().compare("a"), 0);
+    EXPECT_EQ(0, CharSequence().compare(""));
+}
+
+TEST(CharSequenceCompare, NonAsciiBytesCompareAsUnsigned) {
+    EXPECT_GT(make("가").compare("a"), 0);
+    EXPECT_LT(make("a").compare(make("가")), 0);
+}
+
+TEST(CharSequenceCompare, NullThrows) {
+    const char *null_chars = nullptr;
+
+    EXPECT_THROW(make("abc").compare(null_chars), std::invalid_argument);
+}
+
+// =====================================================================
 // operator< / <= / > / >= (사전 순서, std::string과 동일)
 // =====================================================================
 
 namespace {
-    // 네 비교 연산자의 결과를 std::string 비교 결과와 대조한다
+    // 네 비교 연산자의 결과를 const char*와 CharSequence 인자 모두 std::string 비교 결과와 대조한다
     void expect_ordering(const char *left, const char *right) {
         const CharSequence sequence = make(left);
+        const CharSequence other = make(right);
         const std::string left_text(left);
         const std::string right_text(right);
 
@@ -706,6 +859,11 @@ namespace {
         EXPECT_EQ(left_text <= right_text, sequence <= right) << '"' << left << "\" <= \"" << right << '"';
         EXPECT_EQ(left_text > right_text, sequence > right) << '"' << left << "\" > \"" << right << '"';
         EXPECT_EQ(left_text >= right_text, sequence >= right) << '"' << left << "\" >= \"" << right << '"';
+
+        EXPECT_EQ(left_text < right_text, sequence < other) << '"' << left << "\" < \"" << right << '"';
+        EXPECT_EQ(left_text <= right_text, sequence <= other) << '"' << left << "\" <= \"" << right << '"';
+        EXPECT_EQ(left_text > right_text, sequence > other) << '"' << left << "\" > \"" << right << '"';
+        EXPECT_EQ(left_text >= right_text, sequence >= other) << '"' << left << "\" >= \"" << right << '"';
     }
 }
 
