@@ -130,6 +130,8 @@ class MyString {
         MyString& operator+=(const char *chars);
 
     private:
+        bool is_valid_index(int index) const;
+
         void require_valid_index(int index) const;
 
         static void require_non_null(const char *nullable);
@@ -178,7 +180,7 @@ class MyString {
         }
 
         bool need_extend(int size_delta = 1) const {
-            return this->m_size + size_delta >= this->m_capacity;
+            return this->m_size + size_delta > this->m_capacity;
         }
 
         void shrink();

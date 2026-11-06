@@ -68,12 +68,16 @@ int MyString::capacity() const {
 }
 
 const char& MyString::at(int index) const {
-    this->require_valid_index(index);
+    if (!is_valid_index(index)) {
+        return (*this)[this->m_size];
+    }
     return (*this)[index];
 }
 
 char& MyString::at(int index) {
-    this->require_valid_index(index);
+    if (!is_valid_index(index)) {
+        return (*this)[this->m_size];
+    }
     return (*this)[index];
 }
 
@@ -101,6 +105,11 @@ int MyString::find(const char *pattern, int start) const {
 
 MyString MyString::substr(int pos, int len) const {
     MyString result = MyString();
+
+    if (pos >= this->m_size || len <= 0) {
+        return result;
+    }
+
     if (pos < 0) {
         // +00 +01 +02 +03 +04 +05 +06 +07 +08 +09
         // -10 -09 -08 -07 -06 -05 -04 -03 -02 -01
@@ -116,10 +125,6 @@ MyString MyString::substr(int pos, int len) const {
         if (len < 0) {
             len = this->m_size - pos;
         }
-    }
-
-    if (pos >= this->m_size || len <= 0) {
-        return result;
     }
 
     for (int index = 0; index < len && pos + index < this->m_size; ++index) {
@@ -347,6 +352,10 @@ MyString& MyString::operator+=(const char *chars) {
     require_non_null(chars);
     swap(*this, *this + chars);
     return *this;
+}
+
+bool MyString::is_valid_index(int index) const {
+    return 0 <= index && index < this->m_size;
 }
 
 void MyString::require_valid_index(int index) const {
