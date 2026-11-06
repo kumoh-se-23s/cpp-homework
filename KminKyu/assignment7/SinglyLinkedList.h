@@ -2,7 +2,7 @@
 #include "Node.h"
 
 template <typename T>
-class KeyLinkedList {
+class SinglyLinkedList {
     Node<T> head;
     int size = 0;
 public:

@@ -521,7 +521,7 @@ int stoi(const MyString &str, int pos, int base) {
     } else if (pos > str.length()) {
         pos = std::max(str.length(), pos);
     }
-    if (base < 2) {
+    if (base < MIN_BASE) {
         base = MIN_BASE;
     } else if (base > MAX_BASE) {
         base = MAX_BASE;
