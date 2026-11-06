@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <cstring>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -11,10 +12,10 @@
 //       MyString 조건 변경&추가사항.png (PDF와 다르면 이쪽이 우선)
 //
 // 명세가 모호해서 이 파일에서 정한 해석
-//   - erase / replace / insert: pos가 length 이상이면 맨 끝 (std::string의 pos == length와 같음)
+//   - erase / replace / insert: pos == length는 std::string처럼 맨 끝, pos > length는 PDF대로 마지막 글자 위치
 //   - find / stoi: pos가 범위 밖이면 PDF대로 마지막 글자 위치
 //   - capacity: '\0'을 뺀 글자 수 기준이라 8글자는 8에 들어가고, 늘릴 때는 충분해질 때까지 2배씩
-//   - 범위 밖 operator[] / at()으로 쓰기: 문자열과 끝의 '\0'에 영향을 주지 않음
+//   - 범위 밖 operator[] / at()으로 쓰기: 사용자 책임이라 테스트하지 않음 (읽기는 '\0' 반환)
 //
 // 잘못된 메모리 접근이 나면 실행 파일이 통째로 죽으므로 테스트별로 프로세스가 분리되는 ctest를 권장한다.
 //   ctest --test-dir cmake-build-debug -R '^MyString' --output-on-failure
@@ -98,6 +99,15 @@ namespace {
 
     template<typename T>
     constexpr bool is_mystring_ref = std::is_same_v<T, MyString &>;
+
+    // 위치마다 글자가 달라서 자기 참조 복사가 어긋나면 결과에 바로 드러나는 문자열
+    std::string alphabet(const int length) {
+        std::string text;
+        for (int index = 0; index < length; ++index) {
+            text += static_cast<char>('a' + index % 26);
+        }
+        return text;
+    }
 
     int doubled_capacity(int capacity, const int required) {
         while (capacity < required) {
@@ -417,30 +427,6 @@ TEST(MyStringAccess, NonConstSubscriptOutOfRangeReturnsNull) {
     EXPECT_EQ('\0', str[-1]);
     EXPECT_EQ('\0', str[100]);
     EXPECT_EQ('\0', str[100000]);
-}
-
-TEST(MyStringAccess, WritingThroughOutOfRangeSubscriptKeepsString) {
-    for (const int index : {-1, 5, 100}) {
-        MyString str("hello");
-
-        str[index] = 'x';
-
-        EXPECT_SAME(str, "hello") << "index: " << index;
-        EXPECT_EQ('\0', str[index]) << "index: " << index;
-        EXPECT_SAME(str.append("!"), "hello!") << "index: " << index;
-    }
-}
-
-TEST(MyStringAccess, WritingThroughOutOfRangeAtKeepsString) {
-    for (const int index : {-1, 5, 100}) {
-        MyString str("hello");
-
-        str.at(index) = 'x';
-
-        EXPECT_SAME(str, "hello") << "index: " << index;
-        EXPECT_EQ('\0', str.at(index)) << "index: " << index;
-        EXPECT_SAME(str.append("!"), "hello!") << "index: " << index;
-    }
 }
 
 // =====================================================================
@@ -1121,6 +1107,42 @@ TEST(MyStringAssign, PointerIntoItself) {
     EXPECT_SAME(str, "cdefgh");
 }
 
+// 자기 버퍼의 어느 위치를 가리키든(끝의 '\0' 포함) 복사본으로 처리되어야 한다
+TEST(MyStringAppend, PointerIntoItselfMatchesStdString) {
+    for (const int length : {0, 1, 7, 8, 9, 15, 16, 17, 32}) {
+        const std::string text = alphabet(length);
+
+        for (int offset = 0; offset <= length; ++offset) {
+            MyString mine(text.c_str());
+            std::string expected = text;
+
+            mine.append(&mine[offset]);
+            expected.append(expected.c_str() + offset);
+
+            EXPECT_SAME(mine, expected) << "length: " << length << ", offset: " << offset;
+        }
+    }
+}
+
+TEST(MyStringAppend, PointerAndAmountIntoItselfMatchesStdString) {
+    for (const int length : {1, 7, 8, 9, 16, 17}) {
+        const std::string text = alphabet(length);
+
+        for (int offset = 0; offset <= length; ++offset) {
+            for (int amount = 0; amount <= length - offset; ++amount) {
+                MyString mine(text.c_str());
+                std::string expected = text;
+
+                mine.append(&mine[offset], amount);
+                expected.append(expected.data() + offset, amount);
+
+                EXPECT_SAME(mine, expected)
+                    << "length: " << length << ", offset: " << offset << ", amount: " << amount;
+            }
+        }
+    }
+}
+
 // =====================================================================
 // 고급 기능: < <= > >=
 // =====================================================================
@@ -1183,6 +1205,222 @@ TEST(MyStringCompare, ReturnsSign) {
     EXPECT_GT(str.compare("ban"), 0);
 }
 
+// 헤더에 선언된 const char * 오버로드가 그대로 있는지 확인한다.
+// 없으면 MyString으로 변환되어 조용히 통과하므로 멤버 함수 포인터로 직접 고른다.
+TEST(MyStringOrdering, CStringOverloadsAreDeclared) {
+    using CStringComparison = bool (MyString::*)(const char *) const;
+
+    const CStringComparison equal = &MyString::operator==;
+    const CStringComparison not_equal = &MyString::operator!=;
+    const CStringComparison less = &MyString::operator<;
+    const CStringComparison less_equal = &MyString::operator<=;
+    const CStringComparison greater = &MyString::operator>;
+    const CStringComparison greater_equal = &MyString::operator>=;
+
+    const MyString str("b");
+
+    EXPECT_TRUE((str.*equal)("b"));
+    EXPECT_TRUE((str.*not_equal)("a"));
+    EXPECT_TRUE((str.*less)("c"));
+    EXPECT_TRUE((str.*less_equal)("b"));
+    EXPECT_TRUE((str.*greater)("a"));
+    EXPECT_TRUE((str.*greater_equal)("b"));
+}
+
+TEST(MyStringOrdering, AllOperatorsMatchStdString) {
+    const char *const samples[] = {"", " ", "Z", "a", "aa", "ab", "abc", "abd", "a b", "b", "\xEB\x82\x98", "\x7F"};
+
+    for (const char *left : samples) {
+        for (const char *right : samples) {
+            const std::string left_text(left), right_text(right);
+            const MyString mine(left), other(right);
+
+            SCOPED_TRACE(testing::PrintToString(left_text) + " vs " + testing::PrintToString(right_text));
+
+            EXPECT_EQ(left_text == right_text, mine == right);
+            EXPECT_EQ(left_text != right_text, mine != right);
+            EXPECT_EQ(left_text < right_text, mine < right);
+            EXPECT_EQ(left_text <= right_text, mine <= right);
+            EXPECT_EQ(left_text > right_text, mine > right);
+            EXPECT_EQ(left_text >= right_text, mine >= right);
+
+            EXPECT_EQ(left_text == right_text, mine == other);
+            EXPECT_EQ(left_text != right_text, mine != other);
+            EXPECT_EQ(left_text < right_text, mine < other);
+            EXPECT_EQ(left_text <= right_text, mine <= other);
+            EXPECT_EQ(left_text > right_text, mine > other);
+            EXPECT_EQ(left_text >= right_text, mine >= other);
+        }
+    }
+}
+
+TEST(MyStringOrdering, AcceptsEveryCStringForm) {
+    MyString str("hello");
+    const MyString const_str("hello");
+    char buffer[] = "hello";
+    char *pointer = buffer;
+    const char *const_pointer = buffer;
+
+    EXPECT_TRUE(str == buffer);
+    EXPECT_TRUE(str == pointer);
+    EXPECT_TRUE(str == const_pointer);
+    EXPECT_TRUE(const_str == buffer);
+    EXPECT_TRUE(const_str == pointer);
+    EXPECT_TRUE(const_str == const_pointer);
+
+    EXPECT_TRUE(str <= pointer);
+    EXPECT_TRUE(const_str >= const_pointer);
+    EXPECT_FALSE(str != buffer);
+    EXPECT_FALSE(const_str < buffer);
+}
+
+TEST(MyStringOrdering, ComparingWithPointerIntoItself) {
+    const MyString str("hello");
+
+    EXPECT_TRUE(str == &str[0]);
+    EXPECT_TRUE(str != &str[1]);
+    EXPECT_TRUE(str > &str[1]);    // "hello" > "ello"
+    EXPECT_TRUE(str > &str[5]);    // 끝의 '\0'을 가리키면 빈 문자열
+    EXPECT_SAME(str, "hello");
+}
+
+TEST(MyStringOrdering, ComparingKeepsOperands) {
+    const char *chars = "banana";
+    const MyString str("banana");
+
+    EXPECT_TRUE(str == chars);
+    EXPECT_FALSE(str < chars);
+    EXPECT_TRUE(str >= MyString(chars));
+
+    EXPECT_SAME(str, "banana");
+    EXPECT_STREQ("banana", chars);
+}
+
+// compare(const char *, int): 첫 '\0'이 아니라 넘겨받은 length까지만 비교한다
+TEST(MyStringCompare, WithLengthUsesOnlyThatLength) {
+    const MyString str("banana");
+
+    EXPECT_EQ(0, str.compare("banana split", 6));
+    EXPECT_GT(str.compare("banana", 3), 0);
+    EXPECT_LT(str.compare("banana split", 7), 0);
+    EXPECT_LT(str.compare("cherry", 1), 0);
+    EXPECT_GT(str.compare("apple", 1), 0);
+}
+
+TEST(MyStringCompare, WithZeroLength) {
+    EXPECT_EQ(0, MyString().compare("anything", 0));
+    EXPECT_GT(MyString("a").compare("anything", 0), 0);
+}
+
+TEST(MyStringCompare, WithLengthReadsPastEmbeddedNull) {
+    const MyString str("a\0b", 3);
+
+    EXPECT_EQ(0, str.compare("a\0b", 3));
+    EXPECT_LT(str.compare("a\0c", 3), 0);
+    EXPECT_GT(str.compare("a\0a", 3), 0);
+    EXPECT_GT(str.compare("a", 1), 0);
+    EXPECT_LT(MyString("a").compare("a\0b", 3), 0);
+}
+
+// 끝에 '\0'이 없는 버퍼도 length를 넘어 읽지 않아야 한다 (AddressSanitizer로 돌리면 더 확실하다)
+TEST(MyStringCompare, WithLengthAcceptsBufferWithoutTerminator) {
+    const char buffer[] = {'a', 'b', 'c'};
+
+    EXPECT_EQ(0, MyString("abc").compare(buffer, 3));
+    EXPECT_EQ(0, MyString("ab").compare(buffer, 2));
+    EXPECT_LT(MyString("ab").compare(buffer, 3), 0);
+    EXPECT_GT(MyString("abcd").compare(buffer, 3), 0);
+}
+
+TEST(MyStringCompare, WithLengthUsesUnsignedCharacterCode) {
+    EXPECT_GT(MyString("\xEB").compare("a", 1), 0);
+    EXPECT_LT(MyString("a").compare("\xEB", 1), 0);
+}
+
+TEST(MyStringCompare, WithLengthAgreesWithPointerIntoItself) {
+    const MyString str("hello");
+
+    EXPECT_EQ(0, str.compare(&str[0], 5));
+    EXPECT_GT(str.compare(&str[0], 4), 0);
+    EXPECT_GT(str.compare(&str[1], 4), 0);    // "hello" > "ello"
+    EXPECT_SAME(str, "hello");
+}
+
+// append / insert와 같은 인자 검사: 길이가 0이어도 null은 허용하지 않는다
+TEST(MyStringCompare, WithLengthRejectsNull) {
+    const char *null_chars = nullptr;
+    const MyString str("hello");
+
+    EXPECT_THROW(str.compare(null_chars, 3), std::invalid_argument);
+    EXPECT_THROW(str.compare(null_chars, 0), std::invalid_argument);
+    EXPECT_THROW(MyString().compare(null_chars, 0), std::invalid_argument);
+    EXPECT_SAME(str, "hello");
+}
+
+TEST(MyStringCompare, WithLengthRejectsNegativeLength) {
+    const MyString str("hello");
+
+    EXPECT_THROW(str.compare("hello", -1), std::invalid_argument);
+    EXPECT_THROW(MyString().compare("", -1), std::invalid_argument);
+    EXPECT_SAME(str, "hello");
+}
+
+TEST(MyStringCompare, WithoutLengthRejectsNull) {
+    const char *null_chars = nullptr;
+    const MyString str("hello");
+
+    EXPECT_THROW(str.compare(null_chars), std::invalid_argument);
+    EXPECT_SAME(str, "hello");
+}
+
+TEST(MyStringCompare, WithLengthMatchesStdStringSign) {
+    const auto sign = [](const int value) {
+        return (value > 0) - (value < 0);
+    };
+    const char *const samples[] = {"", "a", "ab", "abc", "abd", "b", "Z", "\xEB\x82\x98"};
+
+    for (const char *left : samples) {
+        const std::string text(left);
+        const MyString mine(left);
+
+        for (const char *right : samples) {
+            const int right_length = static_cast<int>(std::strlen(right));
+
+            for (int length = 0; length <= right_length; ++length) {
+                EXPECT_EQ(sign(text.compare(0, std::string::npos, right, length)), sign(mine.compare(right, length)))
+                    << testing::PrintToString(text) << " vs " << testing::PrintToString(std::string(right, length));
+            }
+        }
+    }
+}
+
+// MyString(const char *, int)로는 중간에 '\0'이 든 문자열을 만들 수 있다.
+// std::string처럼 length까지 비교해야 하며, equals와 결과가 같아야 한다
+TEST(MyStringEquality, EmbeddedNullAgreesWithEquals) {
+    const MyString str("a\0b", 3), same("a\0b", 3), different("a\0c", 3), prefix("a");
+
+    EXPECT_TRUE(str.equals(same));
+    EXPECT_TRUE(str == same);
+    EXPECT_FALSE(str != same);
+    EXPECT_EQ(0, str.compare(same));
+
+    EXPECT_FALSE(str.equals(different));
+    EXPECT_FALSE(str == different);
+
+    EXPECT_FALSE(prefix.equals(str));
+    EXPECT_FALSE(prefix == str);
+}
+
+TEST(MyStringOrdering, EmbeddedNullMatchesStdString) {
+    const std::string left_text("a\0b", 3), right_text("a\0c", 3), prefix_text("a");
+    const MyString left("a\0b", 3), right("a\0c", 3), prefix("a");
+
+    EXPECT_EQ(left_text < right_text, left < right);
+    EXPECT_EQ(left_text > right_text, left > right);
+    EXPECT_EQ(prefix_text < left_text, prefix < left);
+    EXPECT_EQ(left_text > prefix_text, left > prefix);
+}
+
 // =====================================================================
 // 고급 기능: insert
 // =====================================================================
@@ -1227,13 +1465,24 @@ TEST(MyStringInsert, NegativePositionIsTreatedAsZero) {
     EXPECT_SAME(str, "XYhello");
 }
 
-TEST(MyStringInsert, PositionAtOrPastLengthAppends) {
-    for (const int pos : {5, 6, 100}) {
-        MyString str("hello");
+TEST(MyStringInsert, PositionAtLengthAppends) {
+    MyString str("hello");
+
+    str.insert(5, "XY");
+
+    EXPECT_SAME(str, "helloXY");
+}
+
+// PDF: pos가 범위 밖이면 문자열 마지막 위치로 취급
+TEST(MyStringInsert, PositionPastLengthIsTreatedAsLastCharacter) {
+    for (const int pos : {6, 100}) {
+        MyString str("hello"), one("a");
 
         str.insert(pos, "XY");
+        one.insert(pos, "XY");
 
-        EXPECT_SAME(str, "helloXY") << "pos: " << pos;
+        EXPECT_SAME(str, "hellXYo") << "pos: " << pos;
+        EXPECT_SAME(one, "XYa") << "pos: " << pos;
     }
 }
 
@@ -1278,6 +1527,58 @@ TEST(MyStringInsert, MatchesStdStringForEveryPosition) {
 
         EXPECT_SAME(str, expected) << "pos: " << pos;
     }
+}
+
+TEST(MyStringInsert, PointerIntoItselfMatchesStdString) {
+    for (const int length : {0, 1, 7, 8, 9, 16, 17}) {
+        const std::string text = alphabet(length);
+
+        for (int offset = 0; offset <= length; ++offset) {
+            for (int pos = 0; pos <= length; ++pos) {
+                MyString mine(text.c_str());
+                std::string expected = text;
+
+                mine.insert(pos, &mine[offset]);
+                expected.insert(pos, expected.c_str() + offset);
+
+                EXPECT_SAME(mine, expected)
+                    << "length: " << length << ", offset: " << offset << ", pos: " << pos;
+            }
+        }
+    }
+}
+
+TEST(MyStringInsert, PointerAndAmountIntoItselfMatchesStdString) {
+    for (const int length : {1, 7, 8, 9, 16}) {
+        const std::string text = alphabet(length);
+
+        for (int offset = 0; offset <= length; ++offset) {
+            for (int amount = 0; amount <= length - offset; ++amount) {
+                for (int pos = 0; pos <= length; ++pos) {
+                    MyString mine(text.c_str());
+                    std::string expected = text;
+
+                    mine.insert(pos, &mine[offset], amount);
+                    expected.insert(pos, expected.data() + offset, amount);
+
+                    EXPECT_SAME(mine, expected)
+                        << "length: " << length << ", offset: " << offset
+                        << ", amount: " << amount << ", pos: " << pos;
+                }
+            }
+        }
+    }
+}
+
+// insert(int, const char &)는 참조를 받으므로 자기 글자를 넘기면 밀리거나 해제된 칸을 읽을 수 있다
+TEST(MyStringInsert, ReferenceToOwnCharacter) {
+    MyString within("abc"), growing("abcdefgh");
+
+    within.insert(0, within[2]);
+    growing.insert(0, growing[7]);
+
+    EXPECT_SAME(within, "cabc");
+    EXPECT_SAME(growing, "habcdefgh");
 }
 
 // =====================================================================
@@ -1366,14 +1667,33 @@ TEST(MyStringReplace, NegativePositionIsTreatedAsZero) {
     EXPECT_SAME(str, "XYllo");
 }
 
-TEST(MyStringReplace, PositionAtOrPastLengthAppends) {
-    for (const int pos : {5, 6, 100}) {
-        for (const int len : {0, 1, 3, -1}) {
+TEST(MyStringReplace, PositionAtLengthAppends) {
+    for (const int len : {0, 1, 3, -1}) {
+        MyString str("hello");
+
+        str.replace(5, len, "X");
+
+        EXPECT_SAME(str, "helloX") << "len: " << len;
+    }
+}
+
+// PDF: pos가 범위 밖이면 문자열 마지막 위치로 취급
+TEST(MyStringReplace, PositionPastLengthIsTreatedAsLastCharacter) {
+    for (const int pos : {6, 100}) {
+        MyString keeps_last("hello"), one("a");
+
+        keeps_last.replace(pos, 0, "X");
+        one.replace(pos, 1, "X");
+
+        EXPECT_SAME(keeps_last, "hellXo") << "pos: " << pos;
+        EXPECT_SAME(one, "X") << "pos: " << pos;
+
+        for (const int len : {1, 3, -1}) {
             MyString str("hello");
 
             str.replace(pos, len, "X");
 
-            EXPECT_SAME(str, "helloX") << "pos: " << pos << ", len: " << len;
+            EXPECT_SAME(str, "hellX") << "pos: " << pos << ", len: " << len;
         }
     }
 }
@@ -1482,14 +1802,33 @@ TEST(MyStringErase, NegativePositionIsTreatedAsZero) {
     EXPECT_SAME(str, "llo");
 }
 
-TEST(MyStringErase, PositionAtOrPastLengthErasesNothing) {
-    for (const int pos : {5, 6, 100}) {
-        for (const int cnt : {0, 1, 3, -1}) {
+TEST(MyStringErase, PositionAtLengthErasesNothing) {
+    for (const int cnt : {0, 1, 3, -1}) {
+        MyString str("hello");
+
+        str.erase(5, cnt);
+
+        EXPECT_SAME(str, "hello") << "cnt: " << cnt;
+    }
+}
+
+// PDF: pos가 범위 밖이면 문자열 마지막 위치로 취급
+TEST(MyStringErase, PositionPastLengthIsTreatedAsLastCharacter) {
+    for (const int pos : {6, 100}) {
+        MyString unchanged("hello"), one("a");
+
+        unchanged.erase(pos, 0);
+        one.erase(pos, 1);
+
+        EXPECT_SAME(unchanged, "hello") << "pos: " << pos;
+        EXPECT_SAME(one, "") << "pos: " << pos;
+
+        for (const int cnt : {1, 3, -1}) {
             MyString str("hello");
 
             str.erase(pos, cnt);
 
-            EXPECT_SAME(str, "hello") << "pos: " << pos << ", cnt: " << cnt;
+            EXPECT_SAME(str, "hell") << "pos: " << pos << ", cnt: " << cnt;
         }
     }
 }

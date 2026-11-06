@@ -6,7 +6,7 @@
 #define CPP_HOMEWORK_WEEK6_MYSTRING_H
 #include <iostream>
 
-
+// Sequence<T> -> CharSequence -> MyString을 포기했습니다.
 class MyString {
     static constexpr int TAIL = 1;
     static constexpr int DEFAULT_CAPACITY = 8;
@@ -18,7 +18,6 @@ class MyString {
     char *container;
     int m_capacity;
     int m_size;
-
 
     public:
         MyString();
@@ -32,18 +31,11 @@ class MyString {
         ~MyString();
 
 
-        int length() const;
+        int length() const; // 과제 양식에 따라 camelCase
 
-        bool isEmpty() const;
+        bool isEmpty() const; // 과제 양식에 따라 camelCase
 
-        int getCapacity() const;
-
-        int size() const;
-
-        bool empty() const;
-
-        int capacity() const;
-
+        int getCapacity() const; // 과제 양식에 따라 camelCase
 
         const char& at(int index) const;
 
@@ -54,14 +46,14 @@ class MyString {
         char& operator[](int index);
 
 
-        int find(const MyString &subStr, int pos = 0) const;
+        int find(const MyString &subStr, int position = 0) const;
 
         int find(const char *pattern, int start) const;
 
-        MyString substr(int pos, int len) const;
+        MyString substr(int position, int length) const;
 
 
-        MyString& append(char c);
+        MyString& append(char character);
 
         MyString& append(const char *chars);
 
@@ -75,11 +67,11 @@ class MyString {
 
         MyString& insert(int position, const char *elements, int amount);
 
-        MyString& insert(int pos, const MyString &subStr);
+        MyString& insert(int position, const MyString &subStr);
 
-        MyString& replace(int pos, int len, const MyString &subStr);
+        MyString& replace(int position, int length, const MyString &subStr);
 
-        MyString& replace(int pos, int len, const char *subStr);
+        MyString& replace(int position, int length, const char *subStr);
 
         MyString& erase(int start, int amount);
 
@@ -90,29 +82,55 @@ class MyString {
 
         int compare(const char *chars) const;
 
+        int compare(const char *chars, int length) const;
+
         bool equals(const MyString &other) const;
 
-        bool operator==(const MyString& other) const {
+        bool operator==(const MyString &other) const {
             return this->compare(other) == 0;
         }
 
-        bool operator!=(const MyString& other) const {
+        bool operator!=(const MyString &other) const {
             return this->compare(other) != 0;
         }
 
-        bool operator>(const MyString& other) const {
+        bool operator>(const MyString &other) const {
             return this->compare(other) > 0;
         }
 
-        bool operator<(const MyString& other) const {
+        bool operator<(const MyString &other) const {
             return this->compare(other) < 0;
         }
 
-        bool operator>=(const MyString& other) const {
+        bool operator>=(const MyString &other) const {
             return this->compare(other) >= 0;
         }
 
-        bool operator<=(const MyString& other) const {
+        bool operator<=(const MyString &other) const {
+            return this->compare(other) <= 0;
+        }
+
+        bool operator==(const char *other) const {
+            return this->compare(other) == 0;
+        }
+
+        bool operator!=(const char *other) const {
+            return this->compare(other) != 0;
+        }
+
+        bool operator>(const char *other) const {
+            return this->compare(other) > 0;
+        }
+
+        bool operator<(const char *other) const {
+            return this->compare(other) < 0;
+        }
+
+        bool operator>=(const char *other) const {
+            return this->compare(other) >= 0;
+        }
+
+        bool operator<=(const char *other) const {
             return this->compare(other) <= 0;
         }
 
@@ -132,29 +150,29 @@ class MyString {
     private:
         bool is_valid_index(int index) const;
 
-        void require_valid_index(int index) const;
+        bool is_alias_container(const char *maybe_this) const;
 
         static void require_non_null(const char *nullable);
 
         static void require_valid_amount(int amount);
 
 
-        static void swap(MyString &sequence1, MyString &sequence2) {
-            char *temp_container = sequence1.container;
-            sequence1.container = sequence2.container;
-            sequence2.container = temp_container;
+        static void swap(MyString &string1, MyString &string2) {
+            char *temp_container = string1.container;
+            string1.container = string2.container;
+            string2.container = temp_container;
 
-            int temp_size = sequence1.m_size;
-            sequence1.m_size = sequence2.m_size;
-            sequence2.m_size = temp_size;
+            int temp_size = string1.m_size;
+            string1.m_size = string2.m_size;
+            string2.m_size = temp_size;
 
-            int temp_capacity = sequence1.m_capacity;
-            sequence1.m_capacity = sequence2.m_capacity;
-            sequence2.m_capacity = temp_capacity;
+            int temp_capacity = string1.m_capacity;
+            string1.m_capacity = string2.m_capacity;
+            string2.m_capacity = temp_capacity;
         }
 
-        static void swap(MyString &sequence1, MyString &&sequence2) {
-            return MyString::swap(sequence1, sequence2);
+        static void swap(MyString &string1, MyString &&string2) {
+            return MyString::swap(string1, string2);
         }
 
         static char* create_empty_container(int new_capacity) {
@@ -197,12 +215,14 @@ class MyString {
         static bool is_same(const MyString &target, const MyString &pattern, int pattern_start);
 };
 
-std::ostream& operator<<(std::ostream &output_stream, const MyString &char_sequence);
+std::ostream& operator<<(std::ostream &output_stream, const MyString &string);
 
-std::istream& operator>>(std::istream &is, MyString &str);
+std::istream& operator>>(std::istream &input_stream, MyString &string);
 
-std::istream& getline(std::istream &is, MyString &str, char delim = '\n');
+std::istream& getline(std::istream &input_stream, MyString &string, char delim = '\n');
 
-int stoi(const MyString &str, int pos = 0, int base = 10);
+int stoi(const MyString &string, int position = 0, int base = 10);
+
+int stoi(const char* chars, int position = 0, int base = 10);
 
 #endif //CPP_HOMEWORK_WEEK6_MYSTRING_H

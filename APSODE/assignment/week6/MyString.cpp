@@ -8,7 +8,6 @@
 #include <cctype>
 #include <cmath>
 #include <cstdio>
-#include <limits>
 #include <stdexcept>
 
 MyString::MyString()
@@ -55,87 +54,61 @@ int MyString::getCapacity() const {
     return this->m_capacity;
 }
 
-int MyString::size() const {
-    return this->m_size;
-}
-
-bool MyString::empty() const {
-    return this->m_size == 0;
-}
-
-int MyString::capacity() const {
-    return this->m_capacity;
-}
-
 const char& MyString::at(int index) const {
-    if (!is_valid_index(index)) {
-        return (*this)[this->m_size];
-    }
     return (*this)[index];
 }
 
 char& MyString::at(int index) {
-    if (!is_valid_index(index)) {
-        return (*this)[this->m_size];
-    }
     return (*this)[index];
 }
 
 const char& MyString::operator[](int index) const {
-    if (0 <= index && index < this->m_size) {
-        return this->container[index];
+    if (!is_valid_index(index)) {
+        return this->container[this->m_size];
     }
-    return this->container[this->m_size];
+    return this->container[index];
 }
 
 char& MyString::operator[](int index) {
-    if (0 <= index && index < this->m_size) {
-        return this->container[index];
+    if (!is_valid_index(index)) {
+        return this->container[this->m_size];
     }
-    return this->container[this->m_size];
+    return this->container[index];
 }
 
-int MyString::find(const MyString &subStr, int pos) const {
-    return this->rabin_karp(subStr, pos);
+int MyString::find(const MyString &subStr, int position) const {
+    return this->rabin_karp(subStr, position);
 }
 
 int MyString::find(const char *pattern, int start) const {
     return this->rabin_karp(MyString(pattern, count_chars(pattern)), start);
 }
 
-MyString MyString::substr(int pos, int len) const {
+MyString MyString::substr(int position, int length) const {
     MyString result = MyString();
 
-    if (pos >= this->m_size || len <= 0) {
+    if (position >= this->m_size || length <= 0) {
         return result;
     }
 
-    if (pos < 0) {
+    if (position < 0) {
         // +00 +01 +02 +03 +04 +05 +06 +07 +08 +09
         // -10 -09 -08 -07 -06 -05 -04 -03 -02 -01
         // p:-3, l:3, cl:10 -> -3 + 10
-        int temp = pos + this->m_size + 1;
-        len = std::min(len, temp);
-        pos = temp - len;
-    } else {
-        if (pos >= this->m_size && this->m_size > 0) {
-            pos = this->m_size - 1;
-        }
-
-        if (len < 0) {
-            len = this->m_size - pos;
-        }
+        int temp = position + this->m_size + 1;
+        length = std::min(length, temp);
+        position = temp - length;
     }
 
-    for (int index = 0; index < len && pos + index < this->m_size; ++index) {
-        result.append(this->container[pos + index]);
+    for (int index = 0; index < length && position + index < this->m_size; ++index) {
+        result.append(this->container[position + index]);
     }
 
     return result;
 }
 
-MyString& MyString::append(char c) {
-    return this->append(&c, 1);
+MyString& MyString::append(char character) {
+    return this->append(&character, 1);
 }
 
 MyString& MyString::append(const char *chars) {
@@ -148,7 +121,7 @@ MyString& MyString::append(const char *elements, int amount) {
     MyString::require_valid_amount(amount);
 
     char *temp = nullptr;
-    if (elements == this->container) {
+    if (this->is_alias_container(elements)) {
         temp = new char[this->m_capacity + 1];
         copy_array(elements, amount, temp, this->m_capacity);
         elements = temp;
@@ -183,18 +156,19 @@ MyString& MyString::insert(int position, const char *chars) {
 }
 
 MyString& MyString::insert(int position, const char *elements, int amount) {
+    if (position > this->m_size) {
+        position = this->m_size - 1;
+    }
+
     if (position < 0) {
         position = 0;
-    }
-    if (position > this->m_size) {
-        position = this->m_size;
     }
 
     MyString::require_non_null(elements);
     MyString::require_valid_amount(amount);
 
     char *temp = nullptr;
-    if (elements == this->container) {
+    if (this->is_alias_container(elements)) {
         temp = new char[this->m_capacity + 1];
         copy_array(elements, amount, temp, this->m_capacity);
         elements = temp;
@@ -219,38 +193,39 @@ MyString& MyString::insert(int position, const char *elements, int amount) {
     return *this;
 }
 
-MyString& MyString::insert(int pos, const MyString &subStr) {
-    return this->insert(pos, subStr.container, subStr.m_size);
+MyString& MyString::insert(int position, const MyString &subStr) {
+    return this->insert(position, subStr.container, subStr.m_size);
 }
 
-MyString& MyString::replace(int pos, int len, const MyString &subStr) {
+MyString& MyString::replace(int position, int length, const MyString &subStr) {
     if (&subStr == this) {
-        return this->replace(pos, len, MyString(subStr));
+        return this->replace(position, length, MyString(subStr));
     }
 
-    if (pos >= this->m_size) {
-        pos = this->m_size - 1;
-    }
-    if (pos < 0) {
-        pos = 0;
+    if (position > this->m_size) {
+        position = this->m_size - 1;
     }
 
-    this->erase(pos, len);
-    this->insert(pos, subStr);
+    if (position < 0) {
+        position = 0;
+    }
+
+    this->erase(position, length);
+    this->insert(position, subStr);
     return *this;
 }
 
-MyString& MyString::replace(int pos, int len, const char *subStr) {
-    return this->replace(pos, len, MyString(subStr));
+MyString& MyString::replace(int position, int length, const char *subStr) {
+    return this->replace(position, length, MyString(subStr));
 }
 
 MyString& MyString::erase(int start, int amount) {
-    if (start < 0) {
-        start = 0;
-    }
-
     if (start > this->m_size) {
         start = this->m_size - 1;
+    }
+
+    if (start < 0) {
+        start = 0;
     }
 
     if (amount < 0 || amount > this->m_size - start) {
@@ -281,18 +256,23 @@ MyString& MyString::erase(int start, int amount) {
 void MyString::clear() {
     this->m_capacity = DEFAULT_CAPACITY;
     this->m_size = 0;
-    delete[] this->container; // 굳이 delete를 할까 싶긴한데... 일단은 초기 상태의 컨테이너를 가지는게 맞다고 생각하기에...
+    delete[] this->container; // 굳이 delete&create를 할까 싶긴한데... 일단은 초기 상태의 컨테이너를 가지는게 맞다고 생각하기에...
     this->container = MyString::create_empty_container(DEFAULT_CAPACITY);
 }
 
 int MyString::compare(const MyString &other) const {
-    return this->compare(other.container);
+    return this->compare(other.container, other.m_size);
 }
 
 int MyString::compare(const char *chars) const {
-    const int other_length = count_chars(chars);
+    return this->compare(chars, count_chars(chars));
+}
 
-    for (int index = 0; index < this->m_size && index < other_length; ++index) {
+int MyString::compare(const char *chars, int length) const {
+    require_non_null(chars);
+    require_valid_amount(length);
+
+    for (int index = 0; index < this->m_size && index < length; ++index) {
         const unsigned char this_char = this->container[index];
         const unsigned char other_char = chars[index];
         if (this_char != other_char) {
@@ -300,7 +280,7 @@ int MyString::compare(const char *chars) const {
         }
     }
 
-    return this->m_size - other_length;
+    return this->m_size - length;
 }
 
 bool MyString::equals(const MyString &other) const {
@@ -339,9 +319,7 @@ MyString MyString::operator+(const MyString &str2nd) const {
 
 MyString MyString::operator+(const char *chars) const {
     require_non_null(chars);
-    MyString temp = MyString(*this);
-    temp.append(chars);
-    return temp;
+    return MyString(*this).append(chars);
 }
 
 MyString& MyString::operator+=(const MyString &str2nd) {
@@ -350,29 +328,26 @@ MyString& MyString::operator+=(const MyString &str2nd) {
 
 MyString& MyString::operator+=(const char *chars) {
     require_non_null(chars);
-    swap(*this, *this + chars);
-    return *this;
+    return this->append(chars);
 }
 
 bool MyString::is_valid_index(int index) const {
     return 0 <= index && index < this->m_size;
 }
 
-void MyString::require_valid_index(int index) const {
-    if (!(0 <= index && index < this->m_size)) {
-        throw std::out_of_range("Sequence: index is out of range");
-    }
+bool MyString::is_alias_container(const char *maybe_this) const {
+    return this->container <= maybe_this && maybe_this < this->container + this->m_capacity;
 }
 
 void MyString::require_non_null(const char *nullable) {
     if (nullable == nullptr) {
-        throw std::invalid_argument("Sequence: elements must not be null");
+        throw std::invalid_argument("MyString: elements must not be null");
     }
 }
 
 void MyString::require_valid_amount(int amount) {
     if (amount < 0) {
-        throw std::invalid_argument("Sequence: amount must not be negative");
+        throw std::invalid_argument("MyString: amount must not be negative");
     }
 }
 
@@ -390,9 +365,11 @@ void MyString::shrink() {
 }
 
 void MyString::extend(int required) {
-    int grown = this->m_capacity * GROWTH_FACTOR;
-    int new_capacity = MyString::calc_new_capacity(grown > required ? grown : required);
-    char *new_container = MyString::create_empty_container(new_capacity);
+    int new_capacity = this->m_capacity;
+    while (new_capacity < required) {
+        new_capacity *= GROWTH_FACTOR;
+    }
+    char* new_container = MyString::create_empty_container(new_capacity);
 
     copy_array(
         this->container, this->m_capacity,
@@ -417,15 +394,22 @@ int MyString::count_chars(const char *chars) {
 }
 
 int MyString::rabin_karp(const MyString &pattern, int start) const {
-    if (start >= this->m_size) {
+    // start 범위 밖 검증
+    if (start > this->m_size) {
         start = this->m_size - 1;
     }
-    start = start < 0 ? 0 : start;
 
+    // start 음수 검증
+    if (start < 0) {
+        start = 0;
+    }
+
+    // 빈 패턴 검증
     if (pattern.m_size == 0) {
         return start;
     }
 
+    // 시작~끝 보다 패턴이 긴 경우 fail
     if (pattern.m_size + start > this->m_size) {
         return -1;
     }
@@ -440,10 +424,8 @@ int MyString::rabin_karp(const MyString &pattern, int start) const {
     // 첫번째 윈도우의 해싱
     long long int hashed_pattern = 0, hashed_target = 0;
     for (int index = 0; index < pattern.m_size; ++index) {
-        hashed_pattern = (hashed_pattern * HASH_BASE + static_cast<unsigned char>(pattern.container[index])) %
-                         HASH_MODULAR;
-        hashed_target = (hashed_target * HASH_BASE + static_cast<unsigned char>(this->container[start + index])) %
-                        HASH_MODULAR;
+        hashed_pattern = (hashed_pattern * HASH_BASE + static_cast<unsigned char>(pattern.container[index])) % HASH_MODULAR;
+        hashed_target = (hashed_target * HASH_BASE + static_cast<unsigned char>(this->container[start + index])) % HASH_MODULAR;
     }
 
     // 슬라이딩 윈도우 시작
@@ -481,39 +463,49 @@ bool MyString::is_same(const MyString &target, const MyString &pattern, int patt
     return true;
 }
 
-std::ostream& operator<<(std::ostream &output_stream, const MyString &char_sequence) {
-    for (int index = 0; index < char_sequence.size(); ++index) {
-        output_stream << char_sequence.at(index);
+std::ostream& operator<<(std::ostream &output_stream, const MyString &string) {
+    for (int index = 0; index < string.length(); ++index) {
+        output_stream << string.at(index);
     }
     return output_stream;
 }
 
 std::istream& operator>>(std::istream &input_stream, MyString &string) {
-    MyString temp;
-    int char_code = input_stream.get();
+    MyString temp = MyString();
+    int char_code = input_stream.peek();
 
-    // EOF를 검증을 해줘야할까..?
 
-    // early return
+    // EOF Check
     if (char_code == EOF) {
+        input_stream.setstate(std::ios::failbit);
         return input_stream;
     }
 
-    // strip lead
-    while (std::isspace(char_code)) {
-        char_code = input_stream.get();
+    // strip lead (only space char)
+    for (
+        char_code = input_stream.peek();
+        std::isspace(char_code) && char_code != EOF;
+        char_code = input_stream.peek()
+    ) {
+        input_stream.get();
     }
 
-    for (;
+    // peek loop
+    for (
+        char_code = input_stream.peek();
         char_code != EOF;
-        char_code = input_stream.get()
+        char_code = input_stream.peek()
     ) {
         if (std::isspace(char_code)) {
-            input_stream.putback(static_cast<char>(char_code));
             break;
         }
 
-        temp.append(static_cast<char>(char_code));
+        temp.append(static_cast<char>(input_stream.get()));
+    }
+
+    if (temp.isEmpty()) {
+        input_stream.setstate(std::ios::failbit);
+        return input_stream;
     }
 
     string = temp;
@@ -521,29 +513,55 @@ std::istream& operator>>(std::istream &input_stream, MyString &string) {
 }
 
 std::istream& getline(std::istream &input_stream, MyString &string, char delim) {
-    MyString temp;
-    int char_code = input_stream.get();
-
-    // early return
-    if (char_code == EOF) {
+    // bad(ㅠㅠ) stream check
+    if (!input_stream.good()) {
+        input_stream.setstate(std::ios::failbit);
         return input_stream;
     }
 
-    for (;
-        char_code != EOF && char_code != delim;
-        char_code = input_stream.get()
+    MyString temp = MyString();
+    bool extracted = false;
+    int char_code = input_stream.peek();
+    // non ascii delim guard
+    unsigned char unsigned_delim = static_cast<unsigned char>(delim);
+
+    // non extracted => Failbit
+    // extracted -> Success
+    for (
+        char_code = input_stream.peek();
+        char_code != EOF;
+        char_code = input_stream.peek()
     ) {
-        temp.append(static_cast<char>(char_code));
+        extracted = true;
+        if (char_code == unsigned_delim) {
+            input_stream.get();
+            break;
+        }
+
+        temp.append(static_cast<char>(input_stream.get()));
+    }
+
+    if (!extracted) {
+        input_stream.setstate(std::ios::failbit);
     }
 
     string = temp;
     return input_stream;
 }
 
-int stoi(const MyString &str, int pos, int base) {
+int stoi(const MyString &string, int position, int base) {
+    if (position < 0) {
+        position = 0;
+    }
+
+    if (position >= string.length()) {
+        position = string.length() - 1;
+    }
+
     int result = 0;
-    for (int index = pos; index < str.length(); ++index) {
-        int current_char_code = static_cast<unsigned char>(str[index]);
+    for (int index = position; index < string.length(); ++index) {
+        // non ascii support
+        int current_char_code = static_cast<unsigned char>(string[index]);
         int digit;
 
 
@@ -565,4 +583,8 @@ int stoi(const MyString &str, int pos, int base) {
     }
 
     return result;
+}
+
+int stoi(const char *chars, int position, int base) {
+    return stoi(MyString(chars), position, base);
 }
