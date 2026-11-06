@@ -1,15 +1,8 @@
 #include "Student.h"
-
-Student::Student(int newId, MyString newName) {
+Student::Student(int newId, MyString newGroup, MyString newName) {
     id = newId;
-    name = newName;
-    group = NO_GROUP;
-}
-
-Student::Student(int newId, MyString newName, MyString newGroup) {
-    id = newId;
-    name = newName;
     group = newGroup;
+    name = newName;
 }
 
 //getter----------------------------------

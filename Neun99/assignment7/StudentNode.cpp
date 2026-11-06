@@ -1,7 +1,7 @@
 #include "StudentNode.h"
 
-StudentNode::StudentNode(int id, MyString name, MyString group) {
-    student = Student(id, name, group);
+StudentNode::StudentNode(int id, MyString group, MyString name) {
+    student = Student(id, group, name);
 }
 
 //getter-----------------------------------------------

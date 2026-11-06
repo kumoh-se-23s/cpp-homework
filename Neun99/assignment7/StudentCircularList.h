@@ -2,18 +2,11 @@
 #include "StudentNode.h"
 #include "MyString.h"
 
+//이 곳에선 노드의 생성 소멸을 관리하지 않음, 모두 외부에서 노드를 받아서 작업
 class StudentCircularList {
 public:
     //생성자
     StudentCircularList();
-
-    //기능
-    void addAscendly(int id, MyString name, MyString group);
-    void addAfter(int id, MyString name, MyString group, StudentNode* preNode);
-    MyString getAllStudentAscendly();
-    MyString getAllStudentFromTarget(int id);
-    void removeStudent(int id);
-
 private:
     StudentNode* head;
     int size;

@@ -4,8 +4,7 @@
 class Student {
 public:
     //생성자
-    Student(int newId, MyString newName);
-    Student(int newId, MyString newName, MyString newGroup);
+    Student(int newId, MyString newGroup, MyString newName);
 
     //getter
     int getId() const;
@@ -23,6 +22,4 @@ private:
     int id;
     MyString name;
     MyString group;
-
-    const MyString NO_GROUP = "-"; //그룹없음
 };

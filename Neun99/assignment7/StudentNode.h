@@ -4,7 +4,7 @@
 class StudentNode {
 public:
     //생성자
-    StudentNode(int id, MyString name, MyString group);
+    StudentNode(int id, MyString group, MyString name);
 
     //getter
     const Student& getStudent() const;
