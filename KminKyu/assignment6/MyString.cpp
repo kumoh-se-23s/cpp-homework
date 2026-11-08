@@ -16,7 +16,7 @@ MyString::MyString(const MyString& srcStr) {
 }
 
 MyString::MyString(const char *cstr2nd) {
-    int cstr2ndSize = getCharArrayLength(cstr2nd);
+    int cstr2ndSize = getCharArraySize(cstr2nd);
     copyString(cstr2nd, calcInitialCapacity(cstr2ndSize));
 
 }
@@ -65,7 +65,7 @@ MyString& MyString::operator =(MyString &&srcStr) noexcept {
 
 MyString& MyString::operator =(const char *str2nd) {
     if (charArray != str2nd) {
-        int str2ndSize = getCharArrayLength(str2nd);
+        int str2ndSize = getCharArraySize(str2nd);
         copyString(str2nd, calcInitialCapacity(str2ndSize));
     }
     return *this;
@@ -75,7 +75,7 @@ int MyString::length() const {
     return size;
 }
 
-bool MyString::empty() const {
+bool MyString::isEmpty() const {
     return size == 0;
 }
 
@@ -136,7 +136,7 @@ int MyString::find(const char *subStr, int pos) const {
         return -1;
     }
 
-    return rabinKarp(subStr, positionNormalize(pos), getCharArrayLength(subStr));
+    return rabinKarp(subStr, positionNormalize(pos), getCharArraySize(subStr));
 }
 
 int MyString::find(const MyString& subStr, int pos) const {
@@ -185,10 +185,18 @@ MyString &MyString::append(const char *cstr2nd) {
     if (cstr2nd == nullptr) {
         return *this;
     }
-    return this->append(cstr2nd, getCharArrayLength(cstr2nd));
+    return this->append(cstr2nd, getCharArraySize(cstr2nd));
 }
 
 MyString & MyString::append(const char *cstr2nd, int cstr2ndSize) {
+
+    char *copyStr = nullptr;
+
+    if (cstr2nd == charArray) {
+        copyStr =copyCharArray(cstr2nd, cstr2ndSize);
+        cstr2nd = copyStr;
+    }
+
     if (cstr2ndSize + size >= capacity) {
         resize(calcInitialCapacity(cstr2ndSize + size));
     }
@@ -198,6 +206,10 @@ MyString & MyString::append(const char *cstr2nd, int cstr2ndSize) {
     }
 
     charArray[size] = '\0';
+
+    if (copyStr != nullptr) {
+        delete[] copyStr;
+    }
 
     return *this;
 }
@@ -241,26 +253,37 @@ MyString& MyString::insert(int pos, const char *subStr) {
     if (subStr == nullptr) {
         return *this;
     }
-    return insert(pos, subStr, getCharArrayLength(subStr));
+    return insert(pos, subStr, getCharArraySize(subStr));
 
 }
-MyString & MyString::insert(int pos, const char *subStr, int subStrLength) {
+MyString & MyString::insert(int pos, const char *subStr, int subStrSize) {
+    char *copyStr = nullptr;
+
+    if (subStr == charArray) {
+        copyStr = copyCharArray(subStr, subStrSize);
+        subStr = copyStr;
+    }
 
     pos = positionNormalize(pos);
 
-    if (size + subStrLength >= capacity) {
-        resize(calcInitialCapacity(size + subStrLength));
+    if (size + subStrSize >= capacity) {
+        resize(calcInitialCapacity(size + subStrSize));
     }
     for (int index = size - 1; index >= pos; --index) {
-        charArray[index + subStrLength] = charArray[index];
+        charArray[index + subStrSize] = charArray[index];
     }
 
-    for (int index = pos; index < pos + subStrLength; ++index) {
+    for (int index = pos; index < pos + subStrSize; ++index) {
         charArray[index] = subStr[index - pos];
     }
 
-    size += subStrLength;
+    size += subStrSize;
     charArray[size] = '\0';
+
+    if (copyStr != nullptr) {
+        delete[] copyStr;
+    }
+
     return *this;
 }
 
@@ -272,19 +295,26 @@ MyString& MyString::replace(int pos, int len, const char *subStr) {
     if (subStr == nullptr) {
         return *this;
     }
-    return replace(pos, len, subStr, getCharArrayLength(subStr));
+    return replace(pos, len, subStr, getCharArraySize(subStr));
 }
 
 MyString& MyString::replace(int pos, int len, const MyString &subStr) {
     return replace(pos, len, subStr.charArray);
 }
-MyString & MyString::replace(int pos, int len, const char *subStr, int subStrLength) {
+MyString & MyString::replace(int pos, int len, const char *subStr, int subStrSize) {
+    char *copyStr = nullptr;
+
+    if (subStr == charArray) {
+        copyStr = copyCharArray(subStr, subStrSize);
+        subStr = copyStr;
+    }
+
     pos = positionNormalize(pos);
 
     len = lengthNormalize(pos, len);
 
-    if (size - len + subStrLength >= capacity) {
-        resize(calcInitialCapacity(size - len + subStrLength));
+    if (size - len + subStrSize >= capacity) {
+        resize(calcInitialCapacity(size - len + subStrSize));
     }
 
     for (int index = pos + len; index < size; ++index) {
@@ -292,15 +322,19 @@ MyString & MyString::replace(int pos, int len, const char *subStr, int subStrLen
     }
 
     for (int index = size - len; index >= pos; --index) {
-        charArray[index + subStrLength] = charArray[index];
+        charArray[index + subStrSize] = charArray[index];
     }
 
-    for (int index = pos; index < pos + subStrLength; ++index) {
+    for (int index = pos; index < pos + subStrSize; ++index) {
         charArray[index] = subStr[index - pos];
     }
 
-    size = size - len + subStrLength;
+    size = size - len + subStrSize;
     charArray[size] = '\0';
+
+    if (copyStr != nullptr) {
+        delete[] copyStr;
+    }
 
     return *this;
 }
@@ -348,23 +382,41 @@ void MyString::resize(int reCapacity) {
     charArray = result;
 }
 
-int MyString::getCharArrayLength(const char *str2nd) {
+int MyString::getCharArraySize(const char *str2nd) {
     int cnt;
     for (cnt = 0; str2nd[cnt] != '\0'; ++cnt) {}
     return cnt;
 }
 
+char *MyString::copyCharArray(const char *baseStr, int baseStrSize) {
+    char *resultStr = new char[baseStrSize + 1];
+    for (int index = 0; index < baseStrSize; ++index) {
+        resultStr[index] = baseStr[index];
+    }
+    resultStr[baseStrSize] = '\0';
+    return resultStr;
+}
+
 
 //생성자, 대입연산자에서만 사용하는 깊은복사 및 size, capacity 설정
 void MyString::copyString(const char *copyStr, int copyStrCapacity) {
-    char *result = new char[max(copyStrCapacity, 0) + 1];
+    char *result;
+    if (this->capacity < copyStrCapacity) {
+        result = new char[max(copyStrCapacity, 0) + 1];
+    } else {
+        result = this->charArray;
+    }
 
     for (size = 0; copyStr[size] != '\0'; ++size) {
         result[size] = copyStr[size];
     }
+
     result[size] = '\0';
-    delete[] charArray;
-    this->charArray = result;
+
+    if (result != this->charArray) {
+        delete[] charArray;
+        this->charArray = result;
+    }
     this->capacity = copyStrCapacity;
 }
 
@@ -394,13 +446,13 @@ int MyString::compare(const char *str2nd) const {
     }
 }
 
-int MyString::rabinKarp(const char *subStr, int pos, int subStrLength) const {
+int MyString::rabinKarp(const char *subStr, int pos, int subStrSize) const {
 
-    if (subStrLength == 0) {
+    if (subStrSize == 0) {
         return pos;
     }
 
-    if (subStrLength + pos > size) {
+    if (subStrSize + pos > size) {
         return -1;
     }
 
@@ -408,21 +460,21 @@ int MyString::rabinKarp(const char *subStr, int pos, int subStrLength) const {
 
     long long int findHash = 0, resultHash = 0, highestPower = 1; //HASH_BASE ^ (m-1)을 저장할 변수
 
-    int endPos = size - subStrLength + 1;
+    int endPos = size - subStrSize + 1;
 
-    for (int index = 1; index < subStrLength; ++index) { //슬라이딩 할때마다 뺄 값 계산
+    for (int index = 1; index < subStrSize; ++index) { //슬라이딩 할때마다 뺄 값 계산
         highestPower = highestPower * HASH_BASE % HASH_MOD;
     }
-    for (int index = 0; index < subStrLength; ++index) { //첫 해시 값 계산 -> index -1이 불가능하므로 따로 계산
+    for (int index = 0; index < subStrSize; ++index) { //첫 해시 값 계산 -> index -1이 불가능하므로 따로 계산
         findHash = (findHash * HASH_BASE + static_cast<unsigned char>(subStr[index])) % HASH_MOD;
         resultHash = (resultHash * HASH_BASE + static_cast<unsigned char>(charArray[pos + index])) % HASH_MOD;
     }
     for (int index = pos; index < endPos; ++index) {
         if (index != pos) { //해시 값 계산
             resultHash = (resultHash - static_cast<unsigned char>(charArray[index - 1]) * highestPower % HASH_MOD + HASH_MOD) % HASH_MOD;
-            resultHash = (resultHash * HASH_BASE + static_cast<unsigned char>(charArray[index + subStrLength - 1])) % HASH_MOD;
+            resultHash = (resultHash * HASH_BASE + static_cast<unsigned char>(charArray[index + subStrSize - 1])) % HASH_MOD;
         }
-        if (findHash == resultHash && isSame(charArray, subStr, index, index + subStrLength - 1)) {
+        if (findHash == resultHash && isSame(charArray, subStr, index, index + subStrSize - 1)) {
             //해시 값이 같으면 실제로 같은지 확인 -> 이중 해시 쓰면 확률이 낮아짐
             return index;
         }
@@ -501,20 +553,30 @@ istream& operator>>(istream& is, MyString& str) {
 istream& getline(istream& is, MyString& str, char delim) {
     str.clear();
     int input = is.get();
+    //
+    //앞 공백 제거 코드 -> 실제 string과 다른 작동이므로 테스트에서 버그가 나서 잠깐보류
+    //
+    // while (input != EOF && isspace(input)) {
+    //     input = is.get();
+    // }
+    // if (input == EOF) {
+    //     return is;
+    // }
+
     while (input != EOF && static_cast<char>(input) != delim) {
         str.append(static_cast<char>(input));
         input = is.get();
     }
-    if (input == EOF && !str.empty()) {
+    if (input == EOF && !str.isEmpty()) {
         is.clear();
     }
     return is;
 }
 
-static constexpr int MAX_BASE = 36;
-static constexpr int MIN_BASE = 2;
-
 int stoi(const MyString &str, int pos, int base) {
+    constexpr int MAX_BASE = 36;
+    constexpr int MIN_BASE = 2;
+
     int result = 0;
     if (pos < 0) {
         pos = 0;

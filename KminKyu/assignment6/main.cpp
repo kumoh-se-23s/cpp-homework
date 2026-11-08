@@ -83,6 +83,11 @@ int main(){
     temp12[1] = 'b';
     temp12[2] = 'c';
     // temp12[3] = '\0';
-    cout << temp10.find(temp11, -1);
-    cout << temp10.find(temp12, -1);
+    cout << temp10.find(temp11, -1) << endl;
+    cout << temp10.find(temp12, -1) << endl;
+
+    temp10 += temp10;
+    cout << temp10 << endl;
+    temp11 += temp11;
+    cout << temp11 << endl;
 }
