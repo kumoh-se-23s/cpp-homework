@@ -44,7 +44,7 @@ namespace {
     void expect_same(const MyString &actual, const std::string &expected) {
         EXPECT_EQ(expected, to_std_string(actual));
         EXPECT_EQ(static_cast<int>(expected.size()), actual.length());
-        EXPECT_EQ(expected.empty(), actual.empty());
+        EXPECT_EQ(expected.empty(), actual.isEmpty());
         EXPECT_EQ('\0', actual[actual.length()]);        // const operator[] : 문자열 끝의 '\0'
         EXPECT_GE(actual.getCapacity(), actual.length()); // 배열은 capacity + 1 칸이라 '\0' 자리는 따로 있다.
         EXPECT_EQ(0, actual.getCapacity() % 8);
@@ -410,11 +410,11 @@ TEST(MyStringLength, EveryLengthFromZeroToThirtyMatches) {
 }
 
 TEST(MyStringEmpty, DefaultIsEmpty) {
-    EXPECT_TRUE(MyString().empty());
+    EXPECT_TRUE(MyString().isEmpty());
 }
 
 TEST(MyStringEmpty, NonEmptyIsNotEmpty) {
-    EXPECT_FALSE(MyString("a").empty());
+    EXPECT_FALSE(MyString("a").isEmpty());
 }
 
 TEST(MyStringEmpty, ErasingEverythingMakesItEmpty) {
@@ -422,7 +422,7 @@ TEST(MyStringEmpty, ErasingEverythingMakesItEmpty) {
 
     string.erase(0, 3);
 
-    EXPECT_TRUE(string.empty());
+    EXPECT_TRUE(string.isEmpty());
 }
 
 // =====================================================================

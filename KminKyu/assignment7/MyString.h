@@ -30,7 +30,7 @@ public:
 
     int length() const;
 
-    bool empty() const;
+    bool isEmpty() const;
 
     int getCapacity() const;
 
@@ -106,20 +106,22 @@ private:
     void resize(int reCapacity);
 
     //배열 길이를 구해서 인자로 private 메소드 -> 따로 nullptr 체크는 하지 않음
-    MyString &insert(int pos, const char *subStr, int subStrLength);
+    MyString &insert(int pos, const char *subStr, int subStrSize);
 
-    MyString &replace(int pos, int len, const char *subStr, int subStrLength);
+    MyString &replace(int pos, int len, const char *subStr, int subStrSize);
 
     MyString &append(const char *cstr2nd, int cstr2ndSize);
 
-    static int getCharArrayLength(const char *str2nd);
+    static int getCharArraySize(const char *str2nd);
+
+    static char *copyCharArray(const char *baseStr, int baseStrSize);
     //생성자, 대입 연산자에서 사용하는 string 복사 메소드
     void copyString(const char *copyStr, int copyStrCapacity);
 
     //비교 연산자에서 사용하는 메소드
     int compare(const char *str2nd) const;
 
-    int rabinKarp(const char *subStr, int pos, int subStrLength) const;
+    int rabinKarp(const char *subStr, int pos, int subStrSize) const;
 
     //insert, find, replace, erase 에서 올바른 pos 값을 지정하기 위한 메소드
     int positionNormalize(int pos) const;
