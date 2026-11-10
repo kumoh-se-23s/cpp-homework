@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include <compare>
+#include <climits>
 
 
 class MyString{
@@ -36,13 +37,19 @@ public:
     [[nodiscard]] int find(const MyString &subStr, int pos = 0) const;
     [[nodiscard]] int find(const char *subStr, int pos = 0) const;
 
+    MyString &operator+=(const MyString &v);
+
     MyString &operator+=(const char* v);
 
-    MyString &append(const MyString &v);
+    MyString &append(const MyString &v, int len = INT_MAX);
 
-    MyString &append(const char *v);
+    MyString &append(const char *v, int len = INT_MAX);
 
-    MyString &insert(int pos, const char *v);
+    MyString &insert(int pos, const MyString &v, int len = INT_MAX);
+
+    MyString &insert(int pos, char v);
+
+    MyString &insert(int pos, const char *v, int len = INT_MAX);
 
     MyString &replace(int pos, int len, const MyString &v);
 
@@ -54,10 +61,11 @@ public:
     static MyString toString(T num);
 
     std::partial_ordering operator<=>(const MyString &other) const {
-        return compare(*this , other) <=> 0;
+        return compare(*this , other, std::min(size, other.size)) <=> 0;
     }
 
-    static int compare(const MyString &lhs, const MyString &rhs);
+    [[nodiscard]] int compare(const MyString &v, int len = INT_MAX) const;
+    [[nodiscard]] static int compare(const MyString &lhs, const MyString &rhs, int len = INT_MAX);
 
     [[nodiscard]] MyString substr(int pos) const;
 
@@ -65,7 +73,7 @@ public:
 
     [[nodiscard]] int length() const;
     [[nodiscard]] bool isEmpty() const;
-    [[nodiscard]] char at(int pos) const;
+    [[nodiscard]] char &at(int pos) const;
     [[nodiscard]] char &operator[](int pos);
     [[nodiscard]] const char &operator[](int pos) const;
 
@@ -122,17 +130,7 @@ inline int charToInt(const char c, const int base) {
     return num >= base ? -1 : num;
 }
 
-inline int stoi(const MyString &str, const int pos = 0, const int base = 10) {
-    int num = 0;
-    for (int i = pos; i < str.length(); ++i) {
-        num *= base;
-        const int add = charToInt(str[pos + i], base);
-        if (add == -1) break;
-        num += add;
-    }
-    return num;
-}
-
+int stoi(const MyString &str, int pos = 0, int base = 10);
 
 std::istream &getline(std::istream &in, MyString &str, char delim = '\n');
 

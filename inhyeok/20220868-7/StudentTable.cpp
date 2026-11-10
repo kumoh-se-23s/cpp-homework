@@ -4,8 +4,8 @@
 
 #include "StudentTable.h"
 
-#include "StudentCircularLinkedList.h"
-#include "Node.h"
+#include "StudentSingleLinkedList.h"
+#include "DoubleNode.h"
 #include "TeamMemberCircularLinkedList.h"
 #include <fstream>
 StudentTable::StudentTable() {
@@ -16,7 +16,7 @@ StudentTable::~StudentTable() {
 }
 
 void StudentTable::addStudent(Student student) {
-    const RAIISharedPointer node(Node(std::move(student)));
+    const RAIISharedPointer node(StudentNode(std::move(student)));
     bool inserted = false;
     const int year = student.getYear();
     const int teamId = student.getTeamId();
@@ -29,20 +29,20 @@ void StudentTable::addStudent(Student student) {
             break;
         }
         if (key > year) {
-            KeyValuePair<int, StudentCircularLinkedList> pair;
+            KeyValuePair<int, StudentSingleLinkedList> pair;
             pair.key = year;
             pair.value.addFirst(node);
-            auto ptr = RAIISharedPointer(Node(std::move(pair)));
+            auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
             studentTable.insertBefore(*studentIt, ptr);
             inserted = true;
             break;
         }
     }
     if (!inserted) {
-        KeyValuePair<int, StudentCircularLinkedList> pair;
+        KeyValuePair<int, StudentSingleLinkedList> pair;
         pair.key = year;
         pair.value.addFirst(node);
-        auto ptr = RAIISharedPointer(Node(std::move(pair)));
+        auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
         if (studentTable.getSize() == 0) {
             studentTable.addFirst(ptr);
         } else {
@@ -63,7 +63,7 @@ void StudentTable::addStudent(Student student) {
             KeyValuePair<int, TeamMemberCircularLinkedList> pair;
             pair.key = teamId;
             pair.value.addFirst(node);
-            auto ptr = RAIISharedPointer(Node(std::move(pair)));
+            auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
             teamTable.insertBefore(*teamIt, ptr);
             inserted = true;
             break;
@@ -73,7 +73,7 @@ void StudentTable::addStudent(Student student) {
         KeyValuePair<int, TeamMemberCircularLinkedList> pair;
         pair.key = teamId;
         pair.value.addFirst(node);
-        auto ptr = RAIISharedPointer(Node(std::move(pair)));
+        auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
         if (teamTable.getSize() == 0) {
             teamTable.addFirst(ptr);
         } else {
@@ -86,14 +86,16 @@ void StudentTable::removeStudent(const int num) {
     const int year = num / 10000;
 
     for (auto it = studentTable.begin(); it.hasNext(); ++it) {
-        KeyValuePair<int, StudentCircularLinkedList> &entry = (*it)->data;
+        KeyValuePair<int, StudentSingleLinkedList> &entry = (*it)->data;
         if (entry.key == year) {
+            RAIISharedPointer<StudentNode> pn;
             for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
                 if ((*it2)->data.getNum() == num) {
-                    entry.value.remove(*it2);
+                    pn = *it2;
                     break;
                 }
             }
+            entry.value.remove(pn);
         }
     }
 

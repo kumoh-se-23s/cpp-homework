@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "Node.h"
+#include "DoubleNode.h"
 
 template<typename PrevNextGen, typename RAIINode>
 class CircularLinkedList {
@@ -107,9 +107,9 @@ public:
         ++size;
     }
 
-    void remove(const Student &student) {
+    void remove(const RAIINode &node) {
         for (auto it = begin(); it.hasNext(); ++it) {
-            if ((*it)->data == student) {
+            if ((*it)->data == node) {
                 remove(*it);
                 break;
             }
@@ -119,6 +119,8 @@ public:
     void remove(RAIINode &node) {
         if (!head || !node) return;
         if (node == head && size == 1) {
+            PrevNextGen::nextNode(head) = nullptr;
+            PrevNextGen::prevNode(head) = nullptr;
             head = nullptr;
             size = 0;
             return;

@@ -64,7 +64,7 @@ private:
         }
         if (!keyFound) {
             V nv;
-            currTable[hashIdx].addFirst(RAIISharedPointer(Node(KeyValuePair{
+            currTable[hashIdx].addFirst(RAIISharedPointer(DoubleNode(KeyValuePair{
                 .key = pair.key,
                 .value = std::move(nv)
             })));

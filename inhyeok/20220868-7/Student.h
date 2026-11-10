@@ -13,7 +13,7 @@ public:
 
     constexpr static int NO_GROUP = -1;
 
-    explicit Student(int num, MyString string, int teamId);
+    explicit Student(int num, MyString string = "", int teamId = NO_GROUP);
 
     [[nodiscard]] bool operator==(const Student& student) const;
 

@@ -5,13 +5,13 @@
 #pragma once
 #include "CircularLinkedList.h"
 
-struct TeamMemberCircularLinkedList : CircularLinkedList<TeamMemberCircularLinkedList, RAIISharedPointer<Node<Student>>> {
+struct TeamMemberCircularLinkedList : CircularLinkedList<TeamMemberCircularLinkedList, RAIISharedPointer<StudentNode>> {
 
-    static RAIISharedPointer<Node<Student>> &nextNode(RAIISharedPointer<Node<Student>> &v) {
+    static RAIISharedPointer<StudentNode> &nextNode(RAIISharedPointer<StudentNode> &v) {
         return v->nextTeamMember;
     };
 
-    static RAIISharedPointer<Node<Student>> &prevNode(RAIISharedPointer<Node<Student>> &v) {
+    static RAIISharedPointer<StudentNode> &prevNode(RAIISharedPointer<StudentNode> &v) {
         return v->prevTeamMember;
     };
 };

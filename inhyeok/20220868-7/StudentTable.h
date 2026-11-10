@@ -8,11 +8,11 @@
 
 #include "GenericCircularLinkedList.h"
 #include "KeyValuePair.h"
-#include "StudentCircularLinkedList.h"
+#include "StudentSingleLinkedList.h"
 #include "TeamMemberCircularLinkedList.h"
 
 class StudentTable {
-    GenericCircularLinkedList<KeyValuePair<int, StudentCircularLinkedList>> studentTable;
+    GenericCircularLinkedList<KeyValuePair<int, StudentSingleLinkedList>> studentTable;
     GenericCircularLinkedList<KeyValuePair<int, TeamMemberCircularLinkedList>> teamTable;
 
     constexpr static int INITIAL_CAPACITY = 16;

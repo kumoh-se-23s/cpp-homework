@@ -6,13 +6,13 @@
 #include "CircularLinkedList.h"
 
 template<typename Data>
-struct GenericCircularLinkedList : CircularLinkedList<GenericCircularLinkedList<Data>, RAIISharedPointer<Node<Data>>> {
+struct GenericCircularLinkedList : CircularLinkedList<GenericCircularLinkedList<Data>, RAIISharedPointer<DoubleNode<Data>>> {
 
-    static RAIISharedPointer<Node<Data>> &nextNode(RAIISharedPointer<Node<Data>> &v) {
+    static RAIISharedPointer<DoubleNode<Data>> &nextNode(RAIISharedPointer<DoubleNode<Data>> &v) {
         return v->next;
     };
 
-    static RAIISharedPointer<Node<Data>> &prevNode(RAIISharedPointer<Node<Data>> &v) {
+    static RAIISharedPointer<DoubleNode<Data>> &prevNode(RAIISharedPointer<DoubleNode<Data>> &v) {
         return v->prev;
     };
 };
