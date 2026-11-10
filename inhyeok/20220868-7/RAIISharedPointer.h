@@ -10,7 +10,7 @@
 #include "DefaultAllocator.h"
 
 
-template<typename Data, typename Alloc = DebugAllocator>
+template<typename Data, typename Alloc = DefaultAllocator>
 class RAIISharedPointer {
     Data *target;
     int *refCount;
