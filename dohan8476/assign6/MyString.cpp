@@ -7,15 +7,27 @@
 
 //1-1. default 생성자
 MyString::MyString() {
+    str = new char[DEFAULT_CAPACITY];
     str[0] = '\0';
 }
 //1-2. 복사 생성자
 MyString::MyString(const MyString& srcStr){
-    //if append nothing
-    str[0] = '\0';
-    //if append something overwriting str[0]
-    appendHelper(srcStr.str, srcStr.size);
+    size = srcStr.size;
+    capacity = srcStr.capacity;
+    str = new char[capacity];
+
+    for (int i = 0; i < size ; i++) {
+        str[i] = srcStr.str[i];
+    }
+    str[size] = '\0';
 }
+
+MyString::MyString(int newCapacity) {
+    capacity = calcCapacity(newCapacity);
+    str = new char[capacity];
+    str[0] = '\0';
+}
+
 //1-3. 파괴자(구현)
 MyString::~MyString() {
     delete[] str;
@@ -27,11 +39,7 @@ MyString &MyString::operator=(const MyString& srcStr) {
     if (this == &srcStr) {
         return *this;
     }
-    *this = srcStr.str;
-
-    this->size = srcStr.size;
-
-    return *this;
+    return assignHelper(srcStr.str, srcStr.size);
 }
 
 //1-5. 길이 반환
@@ -156,19 +164,34 @@ std::istream &getline(std::istream &is, MyString &str, char delimiter) {
 //------------------------------------------------------------
 MyString::MyString(const char srcStr[]) {
     size = cstrlen(srcStr);
-    resize(size);
+    capacity = calcCapacity(size);
+    str = new char[capacity];
 
-    for (int i = 0; srcStr[i] != '\0' && i < capacity ; i++){
+    for (int i = 0; i < size ; i++){
         str[i] = srcStr[i];
     }
     str[size] = '\0';
 }
 
 MyString &MyString::operator=(const char cstr2nd[]) {
-    size = cstrlen(cstr2nd);
-    resize(size);
-    for (int i = 0; cstr2nd[i] != '\0' && i < capacity; i++) {
-        str[i] = cstr2nd[i];
+    if (this->str == cstr2nd) {
+        return *this;
+    }
+    return assignHelper(cstr2nd, cstrlen(cstr2nd));
+}
+
+MyString &MyString::assignHelper(const char srcStr[], int strLen) {
+    size = strLen;
+    int newCap = calcCapacity(strLen);
+
+    if (newCap != capacity) {
+        delete[] str;
+        capacity = newCap;
+        str = new char[capacity];
+    }
+
+    for (int i = 0; i < size; i++) {
+        str[i] = srcStr[i];
     }
     str[size] = '\0';
     return *this;
@@ -187,8 +210,16 @@ MyString MyString::operator+(const MyString& str2nd) const {
 
 // private method
 MyString MyString::plusHelper(const char srcStr[], int strLen) const {
-    MyString result = *this;
-    result.appendHelper(srcStr, strLen);
+    MyString result(size + strLen);
+
+    for (int i = 0; i < this->size; i++) {
+        result.str[i] = this->str[i];
+    }
+    for (int i = 0; i < strLen; i++) {
+        result.str[this->size + i] = srcStr[i];
+    }
+    result.size = this->size + strLen;
+    result.str[result.size] = '\0';
     return result;
 }
 
@@ -264,9 +295,8 @@ int MyString::findHelper(const char subStr[], int subLen, int pos) const {
 // 2-5. 부분문자열 추출 함수
 //------------------------------------------------------------
 MyString MyString::substr(int pos, int len) const {
-    MyString result;
     if (size == 0 || len <= 0 || pos < -size || pos >= size) {
-        return result;
+        return {};
     }
 
     if (pos < 0) {
@@ -285,7 +315,7 @@ MyString MyString::substr(int pos, int len) const {
         }
     }
 
-    result.resize(len);
+    MyString result(len);
     for (int i = 0; i < len; i++) {
         result.str[i] = str[pos + i];
     }
@@ -530,37 +560,27 @@ int MyString::cstrlen(const char str[]) {
 }
 
 void MyString::resize(int newCapacity) {
-    const int oldCapacity = capacity;
-    //담기는 크기가 잡힐때까지 capacity 2배씩
-    //원래 8인데 한 20 들어오면 32 자동으로 잡히게
-    while (capacity <= newCapacity) {
-        capacity *= 2;
-    }
-    //역resize, 최소 크기 8(DEFAULT_capa)
-    while (capacity > DEFAULT_CAPACITY && newCapacity < capacity / 4) {
-        capacity /=  2;
-    }
-
-    if (capacity == oldCapacity) {
+    int newCap = calcCapacity(newCapacity);
+    if (newCap == capacity) {
         return;
     }
 
-    // newCapacity에 제일 가까운 8배수 만드는 방법?
-    // while (newCapacity % DEFAULT_CAPACITY) {
-    //     newCapacity++;
-    // }
-    // if (capacity == newCapacity) {
-    //     return;
-    // }
-    //
-    // capacity = newCapacity;
-    //
-
-    char* newStr = new char[capacity];
-
-    for (int i = 0; i < size; i++) {
+    char* newStr = new char[newCap];
+    int copyLen = (size < newCapacity) ? size : newCapacity;
+    for (int i = 0; i < copyLen; i++) {
         newStr[i] = str[i];
     }
-    delete [] str;
+    newStr[copyLen] = '\0';
+
+    delete[] str;
     str = newStr;
+    capacity = newCap;
+}
+
+int MyString::calcCapacity(int targetSize) const{
+    int newCap = DEFAULT_CAPACITY;
+    while (newCap <= targetSize) {
+        newCap *= 2;
+    }
+    return newCap;
 }
