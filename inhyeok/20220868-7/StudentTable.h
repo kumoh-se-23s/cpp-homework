@@ -6,14 +6,18 @@
 #include "Student.h"
 #include <stop_token>
 
+#include "DefaultHasher.h"
 #include "GenericCircularLinkedList.h"
+#include "HashMap.h"
 #include "KeyValuePair.h"
 #include "StudentSingleLinkedList.h"
 #include "TeamMemberCircularLinkedList.h"
 
 class StudentTable {
-    GenericCircularLinkedList<KeyValuePair<int, StudentSingleLinkedList>> studentTable;
-    GenericCircularLinkedList<KeyValuePair<int, TeamMemberCircularLinkedList>> teamTable;
+    GenericCircularLinkedList<KeyValuePair<int, StudentSingleLinkedList>> studentList;
+    HashMap<int, RAIISharedPointer<DoubleNode<KeyValuePair<int, StudentSingleLinkedList>>>, DefaultHasher<int>> studentHashMap;
+    GenericCircularLinkedList<KeyValuePair<int, TeamMemberCircularLinkedList>> teamList;
+    HashMap<int, RAIISharedPointer<DoubleNode<KeyValuePair<int, TeamMemberCircularLinkedList>>>, DefaultHasher<int>> teamHashMap;
 
     constexpr static int INITIAL_CAPACITY = 16;
 

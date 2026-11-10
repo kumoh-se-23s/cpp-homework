@@ -8,6 +8,7 @@
 #include "DoubleNode.h"
 #include "TeamMemberCircularLinkedList.h"
 #include <fstream>
+
 StudentTable::StudentTable() {
 }
 
@@ -20,7 +21,7 @@ void StudentTable::addStudent(Student student) {
     bool inserted = false;
     const int year = student.getYear();
     const int teamId = student.getTeamId();
-    auto studentIt = studentTable.begin();
+    auto studentIt = studentList.begin();
     for (; studentIt.hasNext(); ++studentIt) {
         const int key = (*studentIt)->data.key;
         if (key == year) {
@@ -29,11 +30,13 @@ void StudentTable::addStudent(Student student) {
             break;
         }
         if (key > year) {
+            //key not found
             KeyValuePair<int, StudentSingleLinkedList> pair;
             pair.key = year;
             pair.value.addFirst(node);
             auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
-            studentTable.insertBefore(*studentIt, ptr);
+            studentList.insertBefore(*studentIt, ptr);
+            studentHashMap.put(year, ptr);
             inserted = true;
             break;
         }
@@ -43,15 +46,16 @@ void StudentTable::addStudent(Student student) {
         pair.key = year;
         pair.value.addFirst(node);
         auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
-        if (studentTable.getSize() == 0) {
-            studentTable.addFirst(ptr);
+        if (studentList.getSize() == 0) {
+            studentList.addFirst(ptr);
         } else {
-            studentTable.insertAfter(*--studentIt, ptr);
+            studentList.insertAfter(*--studentIt, ptr);
         }
+        studentHashMap.put(year, ptr);
     }
 
     inserted = false;
-    auto teamIt = teamTable.begin();
+    auto teamIt = teamList.begin();
     for (; teamIt.hasNext(); ++teamIt) {
         const int key = (*teamIt)->data.key;
         if (key == teamId) {
@@ -64,7 +68,8 @@ void StudentTable::addStudent(Student student) {
             pair.key = teamId;
             pair.value.addFirst(node);
             auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
-            teamTable.insertBefore(*teamIt, ptr);
+            teamList.insertBefore(*teamIt, ptr);
+            teamHashMap.put(teamId, ptr);
             inserted = true;
             break;
         }
@@ -74,33 +79,35 @@ void StudentTable::addStudent(Student student) {
         pair.key = teamId;
         pair.value.addFirst(node);
         auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
-        if (teamTable.getSize() == 0) {
-            teamTable.addFirst(ptr);
+        if (teamList.getSize() == 0) {
+            teamList.addFirst(ptr);
         } else {
-            teamTable.insertAfter(*--teamIt, ptr);
+            teamList.insertAfter(*--teamIt, ptr);
         }
+        teamHashMap.put(year, ptr);
+
     }
 }
 
 void StudentTable::removeStudent(const int num) {
     const int year = num / 10000;
 
-    for (auto it = studentTable.begin(); it.hasNext(); ++it) {
-        KeyValuePair<int, StudentSingleLinkedList> &entry = (*it)->data;
-        if (entry.key == year) {
-            RAIISharedPointer<StudentNode> pn;
-            for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
-                if ((*it2)->data.getNum() == num) {
-                    pn = *it2;
-                    break;
-                }
+    auto studentPair = studentHashMap[year];
+    if (studentPair) {
+        KeyValuePair<int, StudentSingleLinkedList> &entry = (*studentPair)->data;
+        RAIISharedPointer<StudentNode> pn;
+        for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
+            if ((*it2)->data.getNum() == num) {
+                pn = *it2;
+                break;
             }
-            entry.value.remove(pn);
         }
+        entry.value.remove(pn);
     }
 
-    for (auto it = teamTable.begin(); it.hasNext(); ++it) {
-        KeyValuePair<int, TeamMemberCircularLinkedList> &entry = (*it)->data;
+    auto teamPair = teamHashMap[year];
+    if (teamPair) {
+        KeyValuePair<int, TeamMemberCircularLinkedList> &entry = (*teamPair)->data;
         for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
             if ((*it2)->data.getNum() == num) {
                 entry.value.remove(*it2);
@@ -127,7 +134,7 @@ MyString StudentTable::toString() const {
     result.append(MyString::toString(teamCount));
     result.append("]\n");
 
-    for (auto itl = studentTable.begin(); itl.hasNext(); ++itl) {
+    for (auto itl = studentList.begin(); itl.hasNext(); ++itl) {
         for (auto it = (*itl)->data.value.begin(); it.hasNext(); ++it) {
             Student &student = (*it)->data;
             MyString d = student.toString();
@@ -174,7 +181,7 @@ void StudentTable::exportFile(const MyString &filename) const {
     getStudentInfos(min, max, studentCount, teamCount);
 
     out << min << " " << max << "\n" << studentCount << " " << teamCount << "\n";
-    for (auto itl = studentTable.begin(); itl.hasNext(); ++itl) {
+    for (auto itl = studentList.begin(); itl.hasNext(); ++itl) {
         for (auto it = (*itl)->data.value.begin(); it.hasNext(); ++it) {
             Student &student = (*it)->data;
             out << student.toFormatString() << "\n";
@@ -186,17 +193,16 @@ void StudentTable::getStudentInfos(int &min, int &max, int &studentCount, int &t
     min = INT_MAX;
     max = INT_MIN;
     studentCount = 0;
-    teamCount = teamTable.getSize();
+    teamCount = teamList.getSize();
 
-    if (teamTable.getSize() > 0 && teamTable.getHead()->data.key == Student::NO_GROUP) {
+    if (teamList.getSize() > 0 && teamList.getHead()->data.key == Student::NO_GROUP) {
         --teamCount;
     }
 
-    for (auto itl = studentTable.begin(); itl.hasNext(); ++itl) {
+    for (auto itl = studentList.begin(); itl.hasNext(); ++itl) {
         auto &value = (*itl)->data.value;
         studentCount += value.getSize();
         min = std::min(min, value.getSize() == 0 ? INT_MAX : (*itl)->data.key);
         max = std::max(max, value.getSize() == 0 ? INT_MIN : (*itl)->data.key);
     }
-
 }

@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include "GenericCircularLinkedList.h"
 #include "KeyValuePair.h"
 
@@ -17,6 +18,30 @@ public:
     explicit HashMap(const int initialCapacity = INITIAL_CAPACITY) {
         table = new GenericCircularLinkedList<KeyValuePair<K, V> >[initialCapacity];
         capacity = initialCapacity;
+    }
+
+    ~HashMap() {
+        delete[] table;
+    }
+
+    [[nodiscard]] bool containsKey(const K &key) {
+        int idx = hash(key, capacity);
+        for (auto it = table[idx].begin(); it.hasNext(); ++it) {
+            if ((*it)->data.key == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    [[nodiscard]] V *operator[](const K &key) {
+        int idx = hash(key, capacity);
+        for (auto it = table[idx].begin(); it.hasNext(); ++it) {
+            if ((*it)->data.key == key) {
+                return &(*it)->data.value;
+            }
+        }
+        return nullptr;
     }
 
     void put(K key, V value) {
@@ -44,8 +69,7 @@ public:
     }
 
 private:
-
-    static void hash(K key, int capacity) {
+    static size_t hash(K key, int capacity) {
         return H::hash(key) % capacity;
     }
 
@@ -55,22 +79,14 @@ private:
         KeyValuePair<K, V> &&pair, int &currWeight) {
         const int hashIdx = hash(pair.key, currCapacity);
 
-        bool keyFound = false;
         for (auto itl = currTable[hashIdx].begin(); itl.hasNext(); ++itl) {
             if (itl.hasNext() && (*itl)->data.key == pair.key) {
-                keyFound = true;
-                break;
+                (*itl)->data = std::move(pair);
+                return;
             }
         }
-        if (!keyFound) {
-            V nv;
-            currTable[hashIdx].addFirst(RAIISharedPointer(DoubleNode(KeyValuePair{
-                .key = pair.key,
-                .value = std::move(nv)
-            })));
-            ++currWeight;
-        }
-
+        currTable[hashIdx].addFirst(RAIISharedPointer(DoubleNode(std::move(pair))));
+        ++currWeight;
     }
 
     void resize(int newCapacity) {

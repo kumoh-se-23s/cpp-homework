@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "DefaultHasher.h"
+#include "HashMap.h"
 #include "StudentTable.h"
 
 
