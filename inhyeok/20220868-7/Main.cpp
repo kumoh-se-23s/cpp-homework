@@ -16,20 +16,12 @@ static Student readStudent(const MyString &line) {
     const MyString numStr = line.substr(0, numEndIndex);
     const int num = stoi(numStr);
     const int groupEndIndex = line.find(" ", numEndIndex + 1);
-    const MyString groupStr = line.substr(numEndIndex + 2, groupEndIndex - numEndIndex - 2);
-    const int groupId = groupStr.isEmpty() ? Student::NO_GROUP : stoi(groupStr);
+    MyString groupId = line.substr(numEndIndex + 1, groupEndIndex - numEndIndex - 1);
     MyString name = line.substr(groupEndIndex + 1);
-    return Student(num, std::move(name), groupId);
+    return Student(num, std::move(name), std::move(groupId));
 }
 
 int main(const int argc, char *argv[]) {
-    MyString s = "aksjhdakjshda";
-    s.replace(4, 2, "x");
-    std::cout << s << std::endl;
-
-
-
-
     if (argc != 2) {
         std::cout << "no input file" << std::endl;
         return 1;

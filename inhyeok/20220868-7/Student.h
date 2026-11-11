@@ -8,12 +8,12 @@
 class Student {
     int num = 0;
     MyString name;
-    int groupId;
+    MyString groupId;
 public:
 
-    constexpr static int NO_GROUP = -1;
+    inline static const MyString NO_GROUP = "";
 
-    explicit Student(int num, MyString string = "", int teamId = NO_GROUP);
+    explicit Student(int num, MyString string = "", MyString groupId = NO_GROUP);
 
     [[nodiscard]] bool operator==(const Student& student) const;
 
@@ -21,7 +21,9 @@ public:
 
     [[nodiscard]] int getYear() const;
 
-    [[nodiscard]] int getTeamId() const;
+    [[nodiscard]] MyString &getGroupId();
+
+    [[nodiscard]] const MyString &getGroupId() const;
 
     [[nodiscard]] const MyString &getName() const;
 

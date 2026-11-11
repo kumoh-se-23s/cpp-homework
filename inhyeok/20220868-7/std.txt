@@ -1,9 +1,9 @@
-1998 2023
-7 3
-19981475 - Aria Lee
-19980909 G3 Liam Son
-19990131 G2 Owen Park
-20221004 G2 Thomas Lee
-20220987 G1 Harley Kim
-20230554 G2 Oliver Kim
-20231555 G1 William Jin
+0 2000
+7 6
+0 23981022 23810 32190
+19951112 G1 Patrick Park
+19960308 G2 Caleb Lee
+19961208 G3 Finn Kim
+19971324 G3 Richard Kang
+20000000 d jsa
+20000101 aioshd ioasdoi oaidsuoiasd oahsfioh oiasoihassdioh

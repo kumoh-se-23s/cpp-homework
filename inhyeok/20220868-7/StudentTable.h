@@ -10,14 +10,15 @@
 #include "GenericCircularLinkedList.h"
 #include "HashMap.h"
 #include "KeyValuePair.h"
+#include "../20220868-8/StringHasher.h"
 #include "StudentSingleLinkedList.h"
 #include "TeamMemberCircularLinkedList.h"
 
 class StudentTable {
     GenericCircularLinkedList<KeyValuePair<int, StudentSingleLinkedList>> studentList;
     HashMap<int, RAIISharedPointer<DoubleNode<KeyValuePair<int, StudentSingleLinkedList>>>, DefaultHasher<int>> studentHashMap;
-    GenericCircularLinkedList<KeyValuePair<int, TeamMemberCircularLinkedList>> teamList;
-    HashMap<int, RAIISharedPointer<DoubleNode<KeyValuePair<int, TeamMemberCircularLinkedList>>>, DefaultHasher<int>> teamHashMap;
+    GenericCircularLinkedList<KeyValuePair<MyString, TeamMemberCircularLinkedList>> teamList;
+    HashMap<MyString, RAIISharedPointer<DoubleNode<KeyValuePair<MyString, TeamMemberCircularLinkedList>>>, StringHasher> teamHashMap;
 
     constexpr static int INITIAL_CAPACITY = 16;
 

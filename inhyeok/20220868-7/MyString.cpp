@@ -153,10 +153,12 @@ MyString &MyString::append(const char *v, const int len) {
         return append(temp.data, len);
     }
     const int prevSize = size;
+    const int required = size + strlen(v);
+    if (capacity <= required) {
+        resize(required * 2);
+    }
+
     for (; v[size - prevSize] != '\0' && size - prevSize < len; ++size) {
-        if (size >= capacity - 1) {
-            resize(capacity * 2);
-        }
         data[size] = v[size - prevSize];
     }
 

@@ -4,7 +4,7 @@
 
 #include "Student.h"
 
-Student::Student(const int num, MyString string, const int teamId): num(num), name(std::move(string)), groupId(teamId) {
+Student::Student(const int num, MyString string, MyString groupId): num(num), name(std::move(string)), groupId(std::move(groupId)) {
 }
 
 bool Student::operator==(const Student &student) const {
@@ -19,9 +19,14 @@ int Student::getYear() const {
     return num / 10000;
 }
 
-int Student::getTeamId() const {
+MyString &Student::getGroupId() {
     return groupId;
 }
+
+const MyString &Student::getGroupId() const {
+    return groupId;
+}
+
 
 const MyString & Student::getName() const {
     return name;
@@ -34,8 +39,8 @@ MyString Student::toFormatString() const {
     if (groupId == NO_GROUP) {
         result.append(" - ");
     }else {
-        result.append(" G");
-        result.append(MyString::toString(groupId));
+        result.append(" ");
+        result.append(groupId);
         result.append(" ");
     }
     result.append(name.getData());

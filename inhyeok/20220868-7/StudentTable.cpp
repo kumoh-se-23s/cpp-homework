@@ -17,10 +17,10 @@ StudentTable::~StudentTable() {
 }
 
 void StudentTable::addStudent(Student student) {
-    const RAIISharedPointer node(StudentNode(std::move(student)));
-    bool inserted = false;
     const int year = student.getYear();
-    const int teamId = student.getTeamId();
+    const MyString &groupId = student.getGroupId();
+    const RAIISharedPointer node = StudentNode(student);
+    bool inserted = false;
     auto studentIt = studentList.begin();
     for (; studentIt.hasNext(); ++studentIt) {
         const int key = (*studentIt)->data.key;
@@ -57,26 +57,26 @@ void StudentTable::addStudent(Student student) {
     inserted = false;
     auto teamIt = teamList.begin();
     for (; teamIt.hasNext(); ++teamIt) {
-        const int key = (*teamIt)->data.key;
-        if (key == teamId) {
+        const MyString &key = (*teamIt)->data.key;
+        if (key == groupId) {
             (*teamIt)->data.value.addFirst(node);
             inserted = true;
             break;
         }
-        if (key > teamId) {
-            KeyValuePair<int, TeamMemberCircularLinkedList> pair;
-            pair.key = teamId;
+        if (key > groupId) {
+            KeyValuePair<MyString, TeamMemberCircularLinkedList> pair;
+            pair.key = groupId;
             pair.value.addFirst(node);
             auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
             teamList.insertBefore(*teamIt, ptr);
-            teamHashMap.put(teamId, ptr);
+            teamHashMap.put(groupId, ptr);
             inserted = true;
             break;
         }
     }
     if (!inserted) {
-        KeyValuePair<int, TeamMemberCircularLinkedList> pair;
-        pair.key = teamId;
+        KeyValuePair<MyString, TeamMemberCircularLinkedList> pair;
+        pair.key = groupId;
         pair.value.addFirst(node);
         auto ptr = RAIISharedPointer(DoubleNode(std::move(pair)));
         if (teamList.getSize() == 0) {
@@ -84,7 +84,7 @@ void StudentTable::addStudent(Student student) {
         } else {
             teamList.insertAfter(*--teamIt, ptr);
         }
-        teamHashMap.put(year, ptr);
+        teamHashMap.put(groupId, ptr);
 
     }
 }
@@ -93,9 +93,9 @@ void StudentTable::removeStudent(const int num) {
     const int year = num / 10000;
 
     auto studentPair = studentHashMap[year];
+    RAIISharedPointer<StudentNode> pn;
     if (studentPair) {
         KeyValuePair<int, StudentSingleLinkedList> &entry = (*studentPair)->data;
-        RAIISharedPointer<StudentNode> pn;
         for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
             if ((*it2)->data.getNum() == num) {
                 pn = *it2;
@@ -105,9 +105,11 @@ void StudentTable::removeStudent(const int num) {
         entry.value.remove(pn);
     }
 
-    auto teamPair = teamHashMap[year];
+    if (!pn) return;
+
+    auto teamPair = teamHashMap[pn->data.getGroupId()];
     if (teamPair) {
-        KeyValuePair<int, TeamMemberCircularLinkedList> &entry = (*teamPair)->data;
+        KeyValuePair<MyString, TeamMemberCircularLinkedList> &entry = (*teamPair)->data;
         for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
             if ((*it2)->data.getNum() == num) {
                 entry.value.remove(*it2);
@@ -139,13 +141,13 @@ MyString StudentTable::toString() const {
             Student &student = (*it)->data;
             MyString d = student.toString();
             result += d.getData();
-            const int teamId = student.getTeamId();
+            const MyString &teamId = student.getGroupId();
 
             if (teamId == Student::NO_GROUP) {
                 result.append("()");
             } else {
-                result.append("([G");
-                result.append(MyString::toString(teamId));
+                result.append("([");
+                result.append(teamId);
                 result.append("]");
                 bool delim = false;
                 auto teamPtr = &*it;
