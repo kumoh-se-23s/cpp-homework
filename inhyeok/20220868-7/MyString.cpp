@@ -189,49 +189,36 @@ MyString &MyString::insert(int pos, const char *v, const int len) {
     }
 
 
-    int cnt = 0;
-    pos = std::clamp(pos, 0, size);
-    while (v[cnt] != '\0' && cnt < len) {
-        ++cnt;
-    }
-
-    const int newSize = size + cnt;
-    resize((newSize + 33) >> 5 << 5);
-
-    for (int i = newSize; i > pos; --i) {
-        data[i] = data[i - cnt];
-    }
+    const int cnt = std::min(strlen(v), len);
+    insertReserve(pos, cnt);
 
     for (int i = 0; i < cnt; ++i) {
         data[pos + i] = v[i];
     }
 
-    size = newSize;
     return *this;
 }
 
 MyString &MyString::replace(const int pos, const int len, const MyString &v) {
-    return replace(pos, len, v.data);
+    return replace(pos, len, v.data, v.size);
 }
 
 MyString &MyString::replace(const int pos, const int len, const char *v) {
     if (v == data) {
         const MyString temp = v;
-        return replace(pos, len, temp.data);
+        return replace(pos, len, temp.data, temp.size);
     }
 
-    for (int i = 0; v[i] != '\0' && i < len && pos + i < size; ++i) {
-        data[pos + i] = v[i];
-    }
-
-    return *this;
+    return replace(pos, len, v, strlen(v));
 }
 
-MyString &MyString::erase(const int pos, const int len) {
+MyString &MyString::erase(const int pos, int len) {
     const int oldSize = size;
-    for (int i = pos + len; i < oldSize; ++i, --size) {
+    len = std::clamp(len, 0, size - pos);
+    for (int i = pos + len; i < oldSize; ++i) {
         data[pos + i] = data[pos + len + i];
     }
+    size -= len;
     data[size] = '\0';
     return *this;
 }
@@ -307,11 +294,51 @@ void MyString::resize(const int newCapacity) {
     capacity = newCapacity;
 }
 
-int MyString::charToInt(const char c, const int base) {
+MyString & MyString::replace(const int pos, const int len, const char *v, const int vSize) {
+    const int diff = vSize - len;
+    if (diff > 0) {
+        insertReserve(pos, diff);
+    }else if (diff < 0) {
+        erase(pos,-diff);
+    }
+
+    for (int i = 0; i < vSize; ++i) {
+        data[pos + i] = v[i];
+    }
+    return *this;
+}
+
+MyString & MyString::insertReserve(int pos, int cnt) {
+    pos = std::clamp(pos, 0, size);
+
+    const int newSize = size + cnt;
+    resize((newSize + 33) >> 5 << 5);
+
+    for (int i = newSize; i > pos; --i) {
+        data[i] = data[i - cnt];
+    }
+
+    size = newSize;
+    return *this;
+}
+
+
+int strlen(const char *c) {
+    int cnt = 0;
+    while (c[cnt] != '\0') {
+        ++cnt;
+    }
+    return cnt;
+}
+
+int charToInt(const char c, const int base) {
     assert(base >= 2 && base <= 36);
     int num = 0;
     if (c >= '0' && c <= '9') {
         num = c - '0';
+    }
+    if (c >= 'A' && c <= 'Z') {
+        num = c - 'A' + 10;
     }
     if (c >= 'a' && c <= 'z') {
         num = c - 'a' + 10;

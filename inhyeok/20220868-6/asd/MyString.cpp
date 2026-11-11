@@ -1,8 +1,7 @@
-#include "MyString.h"
+#include "../MyString.h"
 
 #include <algorithm>
 #include <cassert>
-
 
 MyString::MyString(const int initialCapacity) {
     data = new char[initialCapacity];
@@ -147,19 +146,24 @@ int MyString::find(const char *subStr, int pos) const {
     return -1;
 }
 
+MyString &MyString::operator+=(const MyString &v) {
+    return append(v);
+}
+
 MyString &MyString::operator+=(const char *v) {
     return append(v);
 }
 
-MyString &MyString::append(const MyString &v) {
-    if (&v == this && size >= capacity / 2) {
-        resize(capacity * 2);
-    }
-    return append(v.getData());
+MyString &MyString::append(const MyString &v, const int len) {
+    return append(v.getData(), len);
 }
-MyString &MyString::append(const char *v) {
+MyString &MyString::append(const char *v, const int len) {
+    if (v == data) {
+        const MyString temp = v;
+        return append(temp.data, len);
+    }
     const int prevSize = size;
-    for (; v[size - prevSize] != '\0'; ++size) {
+    for (; v[size - prevSize] != '\0' && size - prevSize < len; ++size) {
         if (size >= capacity - 1) {
             resize(capacity * 2);
         }
@@ -170,20 +174,48 @@ MyString &MyString::append(const char *v) {
     return *this;
 }
 
-MyString &MyString::insert(int pos, const char *v) {
+MyString &MyString::insert(int pos, const MyString &v, const int len) {
+    return insert(pos, v.data, len);
+}
+
+MyString &MyString::insert(int pos, const char v) {
+
+    pos = std::clamp(pos, 0, size);
+    const int newSize = size + 1;
+    resize((newSize + 33) >> 5 << 5);
+    for (int i = newSize; i > pos; --i) {
+        data[i] = data[i - 1];
+    }
+
+    data[pos] = v;
+    size = newSize;
+    return *this;
+}
+
+MyString &MyString::insert(int pos, const char *v, const int len) {
+    if (v == data) {
+        const MyString temp = v;
+        return insert(pos, temp.data, len);
+    }
+
+
     int cnt = 0;
     pos = std::clamp(pos, 0, size);
-    while (v[cnt] != '\0') {
+    while (v[cnt] != '\0' && cnt < len) {
         ++cnt;
     }
 
     const int newSize = size + cnt;
     resize((newSize + 33) >> 5 << 5);
 
+    for (int i = newSize; i > pos; --i) {
+        data[i] = data[i - cnt];
+    }
+
     for (int i = 0; i < cnt; ++i) {
         data[pos + i] = v[i];
     }
-    data[newSize] = '\0';
+
     size = newSize;
     return *this;
 }
@@ -193,6 +225,11 @@ MyString &MyString::replace(const int pos, const int len, const MyString &v) {
 }
 
 MyString &MyString::replace(const int pos, const int len, const char *v) {
+    if (v == data) {
+        const MyString temp = v;
+        return replace(pos, len, temp.data);
+    }
+
     for (int i = 0; v[i] != '\0' && i < len && pos + i < size; ++i) {
         data[pos + i] = v[i];
     }
@@ -208,9 +245,12 @@ MyString &MyString::erase(const int pos, const int len) {
     return *this;
 }
 
+int MyString::compare(const MyString &v, const int len) const {
+    return compare(*this, v, len);
+}
 
-int MyString::compare(const MyString &lhs, const MyString &rhs) {
-    for (int i = 0; i < std::min(lhs.size, rhs.size); i++) {
+int MyString::compare(const MyString &lhs, const MyString &rhs, const int len) {
+    for (int i = 0; i < std::min(len, std::min(lhs.size, rhs.size)); i++) {
         const int diff = lhs[i] - rhs[i];
         if (diff != 0) {
             return (diff > 0) - (diff < 0);
@@ -229,7 +269,7 @@ MyString MyString::substr(int pos, const int len) const {
     const int endPos = std::max(0, pos + len);
     pos = std::max(0, pos);
 
-    const int actualLen = std::min(endPos - pos, std::max(0, size - pos));
+    const int actualLen = std::max(0, std::min(endPos - pos, size - pos));
     const auto temp = new char[actualLen + 1];
     for (int i = 0; i < actualLen; ++i) {
         temp[i] = data[pos + i];
@@ -248,8 +288,8 @@ bool MyString::isEmpty() const {
     return size == 0;
 }
 
-char MyString::at(const int pos) const {
-    if (pos >= size || pos < 0) return '\0';
+char &MyString::at(const int pos) const {
+    if (pos >= size || pos < 0) return data[size];
     return data[pos];
 }
 

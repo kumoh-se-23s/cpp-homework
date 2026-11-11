@@ -94,9 +94,9 @@ public:
     static bool isWhitespace(char ch) {
         return ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r' || ch == EOF;
     }
-
 private:
-    static int charToInt(char c, int base);
+    MyString &replace(int pos, int len, const char *v, int vSize);
+    MyString &insertReserve(int pos, int cnt);
 
 };
 
@@ -115,20 +115,10 @@ MyString MyString::toString(T num) {
     }
     return result;
 }
-inline int charToInt(const char c, const int base) {
-    assert(base >= 2 && base <= 36);
-    int num = 0;
-    if (c >= '0' && c <= '9') {
-        num = c - '0';
-    }
-    if (c >= 'A' && c <= 'Z') {
-        num = c - 'A' + 10;
-    }
-    if (c >= 'a' && c <= 'z') {
-        num = c - 'a' + 10;
-    }
-    return num >= base ? -1 : num;
-}
+
+int strlen(const char *c);
+
+int charToInt(char c, int base);
 
 int stoi(const MyString &str, int pos = 0, int base = 10);
 

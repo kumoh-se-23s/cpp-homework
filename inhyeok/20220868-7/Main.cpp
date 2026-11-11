@@ -23,6 +23,13 @@ static Student readStudent(const MyString &line) {
 }
 
 int main(const int argc, char *argv[]) {
+    MyString s = "aksjhdakjshda";
+    s.replace(4, 2, "x");
+    std::cout << s << std::endl;
+
+
+
+
     if (argc != 2) {
         std::cout << "no input file" << std::endl;
         return 1;

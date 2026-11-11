@@ -4,6 +4,6 @@ project(MyString)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(MyString
-        Main.cpp
-        MyString.cpp
+        asd/MyStringTest.cpp
+        asd/MyString.cpp
 )
