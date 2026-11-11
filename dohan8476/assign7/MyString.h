@@ -7,6 +7,7 @@ class MyString {
         //기본 기능 난이도 하
         MyString(); // 초기 크기 8byte의 문자열 공간을 생성하고 빈 문자열로 초기화
         MyString(const MyString& srcStr);
+        MyString(int newCapacity);
         ~MyString();
 
         MyString& operator =(const MyString& srcStr);
@@ -43,6 +44,7 @@ class MyString {
 
         MyString& append(const MyString& srcStr);
         MyString& append(const char cstr2nd[]);
+        MyString& append(char c);
 
         //사전 순서 기준 bool값 반환 (compareTo 만들어야할듯)
         bool operator <(const MyString & srcStr) const;
@@ -63,10 +65,11 @@ class MyString {
 
         MyString& erase(int pos, int len);
 
+
     private:
         int size = 0;
         int capacity = DEFAULT_CAPACITY;
-        char *str = new char[DEFAULT_CAPACITY];
+        char *str = nullptr;
 
         void resize(int newCapacity);
 
@@ -76,9 +79,11 @@ class MyString {
         int findHelper(const char subStr[], int subLen, int pos) const;
         bool compareHelper(const char srcStr[], int strLen) const;
         MyString plusHelper(const char srcStr[], int strLen) const;
+        MyString& replaceHelper(int pos, int len, int strlen, const char srcStr[]);
+        MyString& assignHelper(const char srcStr[], int strLen);
         MyString& appendHelper(const char srcStr[], int strLen);
         MyString& insertHelper(int pos, int len, const char srcStr[]);
-
+        int calcCapacity(int targetSize) const;
 };
 
 
