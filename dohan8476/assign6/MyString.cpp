@@ -322,28 +322,20 @@ MyString &MyString::append(const MyString &srcStr) {
 MyString &MyString::append(const char cstr2nd[]) {
     return appendHelper(cstr2nd, cstrlen(cstr2nd));
 }
+
+MyString& MyString::append(char c) {
+    if (size + 1>= capacity) {
+        resize(size + 1);
+    }
+    str[size++] = c;
+    str[size] = '\0';
+    return *this;
+}
+
 // private method
 MyString &MyString::appendHelper(const char srcStr[], int strLen) {
     if (strLen <= 0) return *this;
-    //resize하면 원본 delete되서 원본 임시 복사
-    char* temp = new char[strLen];
-    for (int i = 0; i < strLen; i++) {
-        temp[i] = srcStr[i];
-    }
-
-    int newCapacity = size + strLen;
-    if (newCapacity >= capacity) {
-        resize(newCapacity);
-    }
-    //추가로 붙히기
-    for (int i = 0; i < strLen; i++) {
-        str[size + i] = temp[i];
-    }
-    size += strLen;
-    str[size] = '\0';
-
-    delete[] temp;
-    return *this;
+    return replaceHelper(size, 0, strLen, srcStr);
 }
 
 //------------------------------------------------------------
@@ -414,41 +406,10 @@ MyString &MyString::insert(int pos, const char subStr[]) {
 // before pos / srcStr in pos to len / after pos(to pos + len)
 MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
     if (!len) return *this;
-
-    pos = pos < 0 ? 0 : pos > size ? size : pos;
-
-    if (size + len > capacity) {
-        int newCap = calcCapacity(size + len);
-        char* temp = new char[newCap];
-        for (int i = 0; i < pos; i++) {
-            temp[i] = this->str[i];
-        }
-        for (int i = 0; i < len; i++) {
-            temp[pos + i] = srcStr[i];
-        }
-        for (int i = pos + len; i < size + len; i++) {
-            temp[i] = this->str[i - len];
-        }
-        delete[] str;
-        str = temp;
-    }
-    else {
-        for (int i = size - 1; i >= pos; i--) {
-            this->str[i + len] = this->str[i];
-        }
-        for (int i = 0; i < len; i++) {
-            this->str[pos + i] = srcStr[i];
-        }
-    }
-    size += len;
-    this->str[size] = '\0';
-
-    return *this;
+    return replaceHelper(pos, 0, len, srcStr);
 }
 
 MyString &MyString::replace(int pos, int len, const MyString &subStr) {
-    //const와 len은 erase, insertHelper 내부에서 보정
-    //직접 내부 로직 구현과 O(N+M)으로 동일한데 shift 1회, 2회 차이 정도 발생할듯?
     return replaceHelper(pos, len, subStr.size, subStr.str);
 }
 
@@ -456,71 +417,71 @@ MyString &MyString::replace(int pos, int len, const char subStr[]) {
     return replaceHelper(pos, len, cstrlen(subStr), subStr);
 }
 
-// Hello World
-// replace hello -> hi / hi world
-//
-// replace hello -> hello c++ / hello c++ world
-//
 MyString &MyString::replaceHelper(int pos, int len, int strlen, const char srcStr[]) {
-    pos = pos < 0 ? 0 : pos > size ? size : pos;
-
-    if (len < strlen) {
-        for (int i = pos; i < strlen; i++) {
-            str[pos + i] = srcStr[i];
-        }
-        size = size + strlen - len;
-        for (int i = 0; i < size; i++) {
-            str[strlen + i] = str[pos + len + 1 + i];
-        }
-    }
-    else {
-        //if need more size
-        if (strlen + size > capacity) {
-            capacity = calcCapacity(strlen + size);
-            char* temp = new char[capacity];
-
-            for (int i = 0; i < pos; i++) {
-                temp[i] = this->str[i];
-            }
-            for (int i = 0; i < strlen; i++) {
-                temp[pos + i] = srcStr[i];
-            }
-            for (int i = 0; i < size - pos; i++) {
-                temp[pos + strlen + i] = srcStr[pos + i];
-            }
-            delete[] str;
-            str = temp;
-        }
-        else {
-            for (int i = pos; i < size; i++) {
-                this->str[i + strlen] = this->str[i];
-            }
-            for (int i = 0; i < strlen; i++) {
-                this->str[pos + i] = srcStr[i];
-            }
-        }
-        size += strlen;
-    }
-
-    str[size] = '\0';
-    return *this;
-}
-
-MyString &MyString::erase(int pos, int len) {
     pos = pos < 0 ? 0 : pos > size ? size : pos;
 
     if (len < 0 || pos + len > size) {
         len = size - pos;
     }
 
-    for (int i = pos + len; i < size; i++) {
-        this->str[i - len] = this->str[i];
+    int newSize = size + strlen - len;
+    int newCap = calcCapacity(newSize);
+    //need resize
+    if (newCap != capacity) {
+        capacity = newCap;
+        char* temp = new char[capacity];
+
+        for (int i = 0; i < pos; i++) {
+            temp[i] = this->str[i];
+        }
+        for (int i = 0; i < strlen; i++) {
+            temp[pos + i] = srcStr[i];
+        }
+        for (int i = pos + len; i < size; i++) {
+            temp[i - len + strlen] = this->str[i];
+        }
+        delete[] str;
+        str = temp;
     }
+    else {
+        char * temp = nullptr;
+        // srcStr이 str[0~size]을 가리키는 경우
+        if (str <= srcStr && srcStr <= str + size) {
+            temp = new char[strlen];
 
-    size -= len;
-    this->str[size] = '\0';
+            for (int i = 0; i < strlen; i++) {
+                temp[i] = srcStr[i];
+            }
 
+            srcStr = temp;
+        }
+
+        if (len < strlen) {
+            int shift = strlen - len;
+            for (int i = size - 1; i >= pos + len; i--) {
+                this->str[i + shift] = this->str[i];
+            }
+        }
+        else if (len > strlen) {
+            int shift = len - strlen;
+            for (int i = pos + len; i < size; i++) {
+                this->str[i - shift] = this->str[i];
+            }
+        }
+
+        for (int i = 0; i < strlen; i++) {
+            str[pos + i] = srcStr[i];
+        }
+
+        delete[] temp;
+    }
+    size = newSize;
+    str[size] = '\0';
     return *this;
+}
+
+MyString &MyString::erase(int pos, int len) {
+    return replaceHelper(pos, len, 0, "");
 }
 
 //------------------------------------------------------------
@@ -606,10 +567,4 @@ int MyString::calcCapacity(int targetSize) const{
     return newCap;
 }
 
-void MyString::appendChar(char c) {
-    if (size + 1>= capacity) {
-        resize(size + 1);
-    }
-    str[size++] = c;
-    str[size] = '\0';
-}
+

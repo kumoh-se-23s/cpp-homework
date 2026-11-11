@@ -44,6 +44,7 @@ class MyString {
 
         MyString& append(const MyString& srcStr);
         MyString& append(const char cstr2nd[]);
+        MyString& append(char c);
 
         //사전 순서 기준 bool값 반환 (compareTo 만들어야할듯)
         bool operator <(const MyString & srcStr) const;
@@ -64,6 +65,7 @@ class MyString {
 
         MyString& erase(int pos, int len);
 
+
     private:
         int size = 0;
         int capacity = DEFAULT_CAPACITY;
@@ -82,7 +84,6 @@ class MyString {
         MyString& appendHelper(const char srcStr[], int strLen);
         MyString& insertHelper(int pos, int len, const char srcStr[]);
         int calcCapacity(int targetSize) const;
-        void appendChar(char c);
 };
 
 
