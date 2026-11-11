@@ -8,13 +8,9 @@ public:
 
     //getter
     int getId() const;
-    MyString getName() const;
-    MyString getGroup() const;
-
-    //setter
-    void setId(int newId);
-    void setName(MyString newName);
-    void setGroup(MyString newGroup);
+    const MyString& getName() const;
+    const MyString& getGroup() const;
+    MyString toString() const;
 
     //연산자 오버로딩
     Student& operator=(const Student& newStudent);
@@ -22,4 +18,6 @@ private:
     int id;
     MyString name;
     MyString group;
+
+    MyString idToString() const;
 };

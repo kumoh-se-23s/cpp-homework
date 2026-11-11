@@ -13,7 +13,6 @@ public:
     StudentNode* getNextClassmate() const;
 
     //setter
-    void setStudent(const Student& newStudent);
     void setNextTeammate(StudentNode* newNextTeammate);
     void setPrevTeammate(StudentNode* newPrevTeammate);
     void setNextClassmate(StudentNode* newNextClassmate);
