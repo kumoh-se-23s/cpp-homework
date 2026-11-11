@@ -411,7 +411,7 @@ MyString &MyString::insert(int pos, const char subStr[]) {
 // false -> shift -> srcStr insert
 // shift pos -> pos + len / srcStr pos ~ pos+len
 // true -> Mystring result(size+len)
-// copy before pos / srcStr in pos to len / after pos(to pos + len)
+// before pos / srcStr in pos to len / after pos(to pos + len)
 MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
     if (!len) return *this;
 
@@ -429,8 +429,8 @@ MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
         for (int i = pos + len; i < size + len; i++) {
             temp[i] = this->str[i - len];
         }
+        delete[] str;
         str = temp;
-        delete[] temp;
     }
     else {
         for (int i = size - 1; i >= pos; i--) {
@@ -449,20 +449,61 @@ MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
 MyString &MyString::replace(int pos, int len, const MyString &subStr) {
     //const와 len은 erase, insertHelper 내부에서 보정
     //직접 내부 로직 구현과 O(N+M)으로 동일한데 shift 1회, 2회 차이 정도 발생할듯?
-    return erase(pos, len).insert(pos, subStr);
+    return replaceHelper(pos, len, subStr.size, subStr.str);
 }
 
 MyString &MyString::replace(int pos, int len, const char subStr[]) {
-    return erase(pos, len).insert(pos, subStr);
+    return replaceHelper(pos, len, cstrlen(subStr), subStr);
 }
 
 // Hello World
 // replace hello -> hi / hi world
 //
 // replace hello -> hello c++ / hello c++ world
-// 
+//
 MyString &MyString::replaceHelper(int pos, int len, int strlen, const char srcStr[]) {
+    pos = pos < 0 ? 0 : pos > size ? size : pos;
 
+    if (len < strlen) {
+        for (int i = pos; i < strlen; i++) {
+            str[pos + i] = srcStr[i];
+        }
+        size = size + strlen - len;
+        for (int i = 0; i < size; i++) {
+            str[strlen + i] = str[pos + len + 1 + i];
+        }
+    }
+    else {
+        //if need more size
+        if (strlen + size > capacity) {
+            capacity = calcCapacity(strlen + size);
+            char* temp = new char[capacity];
+
+            for (int i = 0; i < pos; i++) {
+                temp[i] = this->str[i];
+            }
+            for (int i = 0; i < strlen; i++) {
+                temp[pos + i] = srcStr[i];
+            }
+            for (int i = 0; i < size - pos; i++) {
+                temp[pos + strlen + i] = srcStr[pos + i];
+            }
+            delete[] str;
+            str = temp;
+        }
+        else {
+            for (int i = pos; i < size; i++) {
+                this->str[i + strlen] = this->str[i];
+            }
+            for (int i = 0; i < strlen; i++) {
+                this->str[pos + i] = srcStr[i];
+            }
+        }
+        size += strlen;
+    }
+
+    str[size] = '\0';
+    return *this;
 }
 
 MyString &MyString::erase(int pos, int len) {
