@@ -7,4 +7,8 @@ add_executable(manager
         Main.cpp
         MyString.cpp
         University.cpp
+        EmployeeEdu.cpp
+        LifeLong.cpp
+        ShortTermEdu.cpp
+        University.cpp
 )
