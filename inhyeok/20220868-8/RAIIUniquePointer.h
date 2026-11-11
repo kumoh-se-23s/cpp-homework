@@ -62,7 +62,7 @@ public:
         return target;
     }
 
-    MyString toString() const {
+    [[nodiscard]] MyString toString() const {
         return target->toString();
     }
 
