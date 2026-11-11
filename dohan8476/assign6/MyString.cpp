@@ -92,9 +92,7 @@ std::ostream &operator<<(std::ostream &os, const MyString& str) {
 }
 
 std::istream &operator>>(std::istream &is, MyString &str) {
-    char temp[MyString::DEFAULT_CAPACITY];
     char c;
-    int i = 0;
 
     //앞쪽 공백 지우기
     while (is.get(c) && isWhitespace(c)) {}
@@ -112,19 +110,7 @@ std::istream &operator>>(std::istream &is, MyString &str) {
             is.putback(c);
             break;
         }
-        temp[i++] = c;
-        //이거도 무한 받기로 수정해야함
-        // i 가 7되면 str로 append하고 다시 반복 돌리게 만들기
-        if (i == MyString::DEFAULT_CAPACITY - 1) {
-            temp[i] = '\0';
-            str.append(temp);
-            i = 0; // i 0으로 다시 뺑글뺑글 돌리기
-        }
-    }
-    // i가 5 이럴때 종료되면 str에 붙혀서 반환
-    if (i > 0) {
-        temp[i] = '\0';
-        str.append(temp);
+        str.append(c);
     }
     return is;
 }
@@ -132,25 +118,13 @@ std::istream &operator>>(std::istream &is, MyString &str) {
 std::istream &getline(std::istream &is, MyString &str, char delimiter) {
     // >> s1 >> s1
     str = "";
-    char temp[MyString::DEFAULT_CAPACITY];
     char c;
-    int i = 0;
 
     while (is.get(c)) {
         if (c == delimiter) {
             break;
         }
-        temp[i++] = c;
-        //상수값 드러나는거 고치기
-        if (i == MyString::DEFAULT_CAPACITY - 1) {
-            temp[i] = '\0';
-            str.append(temp);
-            i = 0;
-        }
-    }
-    if (i > 0) {
-        temp[i] = '\0';
-        str.append(temp);
+        str.append(c);
     }
     return is;
 }
@@ -432,30 +406,42 @@ MyString &MyString::insert(int pos, const char subStr[]) {
 }
 
 // insertPrivate
-// insertChar로 한칸씩 미루면 n^2급 비효율인디 바로 미루면
-// this 4 len 6 일때 resize 8 but 총 capa = 10보다 커야함(16) 흠
-// size + len < capa * 2 이 만족할떄까지 loop and resize(capacity)를 만들까
+//------------------------------------
+// if size + len > capacity
+// false -> shift -> srcStr insert
+// shift pos -> pos + len / srcStr pos ~ pos+len
+// true -> Mystring result(size+len)
+// copy before pos / srcStr in pos to len / after pos(to pos + len)
 MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
-    //len이 0이면 삽입X로 판단
-    if (len == 0) return *this;
-    //if pos < 0 -> 0 out of range -> size
-    pos = pos < 0 ? 0 : pos;
-    pos = pos > size ? size : pos;
+    if (!len) return *this;
 
-    if (size + len >= capacity) {
-        resize(size + len);
-    }
+    pos = pos < 0 ? 0 : pos > size ? size : pos;
 
-    //shift 먼저 해주고
-    for (int i = size - 1; i >= pos; i--) {
-        this->str[i + len] = this->str[i];
+    if (size + len > capacity) {
+        int newCap = calcCapacity(size + len);
+        char* temp = new char[newCap];
+        for (int i = 0; i < pos; i++) {
+            temp[i] = this->str[i];
+        }
+        for (int i = 0; i < len; i++) {
+            temp[pos + i] = srcStr[i];
+        }
+        for (int i = pos + len; i < size + len; i++) {
+            temp[i] = this->str[i - len];
+        }
+        str = temp;
+        delete[] temp;
     }
-    //값 채우기
-    for (int i = 0; i < len; i++) {
-        this->str[pos + i] = srcStr[i];
+    else {
+        for (int i = size - 1; i >= pos; i--) {
+            this->str[i + len] = this->str[i];
+        }
+        for (int i = 0; i < len; i++) {
+            this->str[pos + i] = srcStr[i];
+        }
     }
     size += len;
-    this->str[size] = '\0'; // 이거 생각도 안하고 있었네;;;
+    this->str[size] = '\0';
 
     return *this;
 }
@@ -470,13 +456,17 @@ MyString &MyString::replace(int pos, int len, const char subStr[]) {
     return erase(pos, len).insert(pos, subStr);
 }
 
-// abcdefg 에서 cd를 지운다고하면
-// abefg가 되어야함 pos + len 을 pos로 덮어쓰기하고 pos + len 을 널문자
-// abefg(널)g가 되는데 뒤에 g로 지워줘야하려나 덮어져서 상관없으려나
-// 만약 abcdef를 지우면 g하나만 남는데 그럼 7칸 텅텅 비게됨 역resize? 같은거도 고려 해야할듯
+// Hello World
+// replace hello -> hi / hi world
+//
+// replace hello -> hello c++ / hello c++ world
+// 
+MyString &MyString::replaceHelper(int pos, int len, int strlen, const char srcStr[]) {
+
+}
+
 MyString &MyString::erase(int pos, int len) {
-    pos = pos < 0 ? 0 : pos;
-    pos = pos > size ? size : pos;
+    pos = pos < 0 ? 0 : pos > size ? size : pos;
 
     if (len < 0 || pos + len > size) {
         len = size - pos;
@@ -489,11 +479,7 @@ MyString &MyString::erase(int pos, int len) {
     size -= len;
     this->str[size] = '\0';
 
-    //지웟으니 resize 확인
-    resize(size);
-
     return *this;
-    
 }
 
 //------------------------------------------------------------
@@ -538,8 +524,7 @@ int stoi(const MyString &str, int pos, int base) {
         return 0;
     }
 
-    pos = pos < 0 ? 0 : pos;
-    pos = pos > str.length() ? str.length() : pos;
+    pos = pos < 0 ? 0 : pos > str.length() ? str.length() : pos;
 
     int res = 0;
     for (int i = pos; isConvertible(str[i], base); i++) {
@@ -560,21 +545,16 @@ int MyString::cstrlen(const char str[]) {
 }
 
 void MyString::resize(int newCapacity) {
-    int newCap = calcCapacity(newCapacity);
-    if (newCap == capacity) {
-        return;
-    }
+    capacity = calcCapacity(newCapacity);
+    char* newStr = new char[capacity];
 
-    char* newStr = new char[newCap];
-    int copyLen = (size < newCapacity) ? size : newCapacity;
-    for (int i = 0; i < copyLen; i++) {
+    for (int i = 0; i < size; i++) {
         newStr[i] = str[i];
     }
-    newStr[copyLen] = '\0';
+    newStr[size] = '\0';
 
     delete[] str;
     str = newStr;
-    capacity = newCap;
 }
 
 int MyString::calcCapacity(int targetSize) const{
@@ -583,4 +563,12 @@ int MyString::calcCapacity(int targetSize) const{
         newCap *= 2;
     }
     return newCap;
+}
+
+void MyString::appendChar(char c) {
+    if (size + 1>= capacity) {
+        resize(size + 1);
+    }
+    str[size++] = c;
+    str[size] = '\0';
 }
