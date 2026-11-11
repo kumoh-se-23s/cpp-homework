@@ -49,15 +49,15 @@ public:
             resize(INITIAL_CAPACITY);
         }
 
-        KeyValuePair pair{
-            .key = key,
-            .value = value
+        KeyValuePair<K, V> pair{
+            .key = std::move(key),
+            .value = std::move(value)
         };
         put(table, capacity, std::move(pair), weight);
     }
 
 
-    void remove(K key) {
+    void remove(const K &key) {
         const int hashIdx = hash(key, capacity);
 
         for (auto it = table[hashIdx].begin(); it.hasNext(); ++it) {
@@ -69,7 +69,7 @@ public:
     }
 
 private:
-    static size_t hash(K key, int capacity) {
+    static size_t hash(const K &key, int capacity) {
         return H::hash(key) % capacity;
     }
 

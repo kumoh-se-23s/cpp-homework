@@ -28,10 +28,12 @@ public:
     MyString operator+(const char str2nd[]) const;
     MyString operator+(const MyString &other) const;
 
+    bool operator==(const char *str) const;
+
     bool operator==(const MyString &str) const;
     bool operator!=(const MyString &str) const;
 
-    void append(char ch);
+    MyString &append(char ch);
 
 
     [[nodiscard]] int find(const MyString &subStr, int pos = 0) const;

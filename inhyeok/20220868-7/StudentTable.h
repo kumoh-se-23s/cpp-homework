@@ -10,7 +10,7 @@
 #include "GenericCircularLinkedList.h"
 #include "HashMap.h"
 #include "KeyValuePair.h"
-#include "../20220868-8/StringHasher.h"
+#include "StringHasher.h"
 #include "StudentSingleLinkedList.h"
 #include "TeamMemberCircularLinkedList.h"
 

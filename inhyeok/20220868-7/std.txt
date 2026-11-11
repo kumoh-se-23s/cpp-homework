@@ -1,9 +1,7 @@
-0 2000
-7 6
-0 23981022 23810 32190
+1995 2000
+5 6
 19951112 G1 Patrick Park
-19960308 G2 Caleb Lee
 19961208 G3 Finn Kim
+19960308 G2 Caleb Lee
 19971324 G3 Richard Kang
 20000000 d jsa
-20000101 aioshd ioasdoi oaidsuoiasd oahsfioh oiasoihassdioh

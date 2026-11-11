@@ -102,8 +102,9 @@ public:
     void insertAfter(RAIINode &loc, RAIINode &node) {
         PrevNextGen::nextNode(node) = PrevNextGen::nextNode(loc);
         PrevNextGen::prevNode(node) = loc;
+        RAIINode tmp = loc;
         PrevNextGen::prevNode(PrevNextGen::nextNode(loc)) = node;
-        PrevNextGen::nextNode(loc) = node;
+        PrevNextGen::nextNode(tmp) = node;
         ++size;
     }
 

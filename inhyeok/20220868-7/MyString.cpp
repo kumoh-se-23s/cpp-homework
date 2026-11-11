@@ -89,25 +89,32 @@ MyString MyString::operator+(const MyString &other) const {
     return result;
 }
 
+bool MyString::operator==(const char *str) const {
+    int i = 0;
+    while (data[i] != '\0' && str[i] != '\0') {
+        if (data[i] != str[i]) return false;
+        ++i;
+    }
+    return data[i] == str[i];
+}
+
 bool MyString::operator==(const MyString &str) const {
     if (size != str.size) return false;
-    for (int i = 0; i < size; ++i) {
-        if (data[i] != str.data[i]) return false;
-    }
-    return true;
+    return *this == str.data;
 };
 
 bool MyString::operator!=(const MyString &str) const {
     return !(*this == str);
 }
 
-void MyString::append(const char ch) {
+MyString &MyString::append(const char ch) {
     if (size >= capacity - 1) {
         resize(capacity * 2);
     }
 
     data[size] = ch;
     data[++size] = '\0';
+    return *this;
 }
 
 int MyString::find(const MyString &subStr, int pos) const {
@@ -377,7 +384,7 @@ std::ostream & operator<<(std::ostream &out, const MyString &string) {
 std::istream & operator>>(std::istream &in, MyString &str) {
     char ch = 0;
     str = "";
-    while (str.isEmpty() || !MyString::isWhitespace(ch)) {
+    while (ch != EOF && (str.isEmpty() || !MyString::isWhitespace(ch))) {
         ch = in.get();
         if (!MyString::isWhitespace(ch)) {
             str.append(ch);
