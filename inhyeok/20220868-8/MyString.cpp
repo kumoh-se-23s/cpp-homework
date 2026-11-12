@@ -356,9 +356,9 @@ int charToInt(const char c, const int base) {
 int stoi(const MyString &str, const int pos, const int base) {
     int num = 0;
     for (int i = pos; i < str.length(); ++i) {
-        num *= base;
         const int add = charToInt(str[pos + i], base);
         if (add == -1) break;
+        num *= base;
         num += add;
     }
     return num;
