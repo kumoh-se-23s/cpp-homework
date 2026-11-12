@@ -140,7 +140,9 @@ int MyString::find(const char *subStr, int pos) const {
 }
 
 int MyString::find(const MyString& subStr, int pos) const {
-
+    if (subStr == nullptr) {
+        return -1;
+    }
     return rabinKarp(subStr.charArray, positionNormalize(pos), subStr.size);
 }
 
@@ -218,45 +220,46 @@ MyString& MyString::append(const MyString &str) {
 }
 
 bool MyString::operator <(const MyString &str) const {
-    return compare(str.charArray) == -1;
+    return compare(str.charArray) < 0;
 }
 
 bool MyString::operator >(const MyString &str) const {
-    return compare(str.charArray) == 1;
+    return compare(str.charArray) > 0;
 }
 
 bool MyString::operator <=(const MyString &str) const {
-    return !(*this > str);
+    return compare(str.charArray) <= 0;
 }
 
 bool MyString::operator >=(const MyString &str) const {
-    return !(*this < str);
+    return compare(str.charArray) >= 0;
 }
 
 bool MyString::operator <(const char *cstr2nd) const {
-    return compare(cstr2nd) == -1;
+    return compare(cstr2nd) < 0;
 }
 
 bool MyString::operator >(const char *cstr2nd) const {
-    return compare(cstr2nd) == 1;
+    return compare(cstr2nd) > 0;
 }
 
 bool MyString::operator <=(const char *cstr2nd) const {
-    return !(*this > cstr2nd);
+    return compare(cstr2nd) <= 0;
 }
 
 bool MyString::operator >=(const char *cstr2nd) const {
-    return !(*this < cstr2nd);
+    return compare(cstr2nd) >= 0;
 }
 
 MyString& MyString::insert(int pos, const char *subStr) {
-    if (subStr == nullptr) {
-        return *this;
-    }
     return insert(pos, subStr, getCharArraySize(subStr));
 
 }
 MyString & MyString::insert(int pos, const char *subStr, int subStrSize) {
+    if (subStr == nullptr) {
+        return *this;
+    }
+
     char *copyStr = nullptr;
 
     if (subStr == charArray) {
@@ -288,20 +291,20 @@ MyString & MyString::insert(int pos, const char *subStr, int subStrSize) {
 }
 
 MyString& MyString::insert(int pos, const MyString &subStr) {
-    return insert(pos, subStr.charArray);
+    return insert(pos, subStr.charArray, subStr.size);
 }
 
 MyString& MyString::replace(int pos, int len, const char *subStr) {
-    if (subStr == nullptr) {
-        return *this;
-    }
     return replace(pos, len, subStr, getCharArraySize(subStr));
 }
 
 MyString& MyString::replace(int pos, int len, const MyString &subStr) {
-    return replace(pos, len, subStr.charArray);
+    return replace(pos, len, subStr.charArray, subStr.size);
 }
 MyString & MyString::replace(int pos, int len, const char *subStr, int subStrSize) {
+    if (subStr == nullptr) {
+        return *this;
+    }
     char *copyStr = nullptr;
 
     if (subStr == charArray) {
@@ -317,12 +320,16 @@ MyString & MyString::replace(int pos, int len, const char *subStr, int subStrSiz
         resize(calcInitialCapacity(size - len + subStrSize));
     }
 
-    for (int index = pos + len; index < size; ++index) {
-        charArray[index - len] = charArray[index];
-    }
 
-    for (int index = size - len; index >= pos; --index) {
-        charArray[index + subStrSize] = charArray[index];
+
+    if (len < subStrSize) {
+        for (int index = size - 1; index >= pos + len; --index) {
+            charArray[index + subStrSize - len] = charArray[index];
+        }
+    } else {
+        for (int index = pos + len; index < size; ++index) {
+            charArray[index + subStrSize - len] = charArray[index];
+        }
     }
 
     for (int index = pos; index < pos + subStrSize; ++index) {
@@ -430,20 +437,23 @@ int MyString::compare(const char *str2nd) const {
     for (index = 0; this->charArray[index] != '\0' && str2nd[index] != '\0'; ++index) {
         unsigned char thisChar = this->charArray[index];
         unsigned char str2ndChar = str2nd[index];
-        if (thisChar < str2ndChar) {
-            return -1;
-        } else if (thisChar > str2ndChar) {
-            return 1;
+        if (thisChar != str2ndChar) {
+            return thisChar - str2ndChar;
         }
+        // if (thisChar < str2ndChar) {
+        //     return -1;
+        // } else if (thisChar > str2ndChar) {
+        //     return 1;
+        // }
     }
-
-    if (this->charArray[index] != '\0') {
-        return 1;
-    } else if (str2nd[index] != '\0') {
-        return -1;
-    } else {
-        return 0;
-    }
+    return this->charArray[index] - str2nd[index];
+    // if (this->charArray[index] != '\0') {
+    //     return 1;
+    // } else if (str2nd[index] != '\0') {
+    //     return -1;
+    // } else {
+    //     return 0;
+    // }
 }
 
 int MyString::rabinKarp(const char *subStr, int pos, int subStrSize) const {
@@ -596,7 +606,6 @@ int stoi(const MyString &str, int pos, int base) {
         if (changeValue != -1 && changeValue < base) {
             result *= base;
             result += changeValue;
-
         } else {
             break;
         }
