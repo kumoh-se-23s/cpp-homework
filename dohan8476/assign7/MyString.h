@@ -81,8 +81,6 @@ class MyString {
         MyString plusHelper(const char srcStr[], int strLen) const;
         MyString& replaceHelper(int pos, int len, int strlen, const char srcStr[]);
         MyString& assignHelper(const char srcStr[], int strLen);
-        MyString& appendHelper(const char srcStr[], int strLen);
-        MyString& insertHelper(int pos, int len, const char srcStr[]);
         int calcCapacity(int targetSize) const;
 };
 

@@ -316,11 +316,14 @@ MyString &MyString::operator+=(const char cstr2nd[]) {
 }
 
 MyString &MyString::append(const MyString &srcStr) {
-    return appendHelper(srcStr.str, srcStr.length());
+    if (srcStr.size <= 0) return *this;
+    return replaceHelper(size, 0, srcStr.size, srcStr.str);
 }
 
 MyString &MyString::append(const char cstr2nd[]) {
-    return appendHelper(cstr2nd, cstrlen(cstr2nd));
+    int len = cstrlen(cstr2nd);
+    if (len <= 0) return *this;
+    return replaceHelper(size, 0, len, cstr2nd);
 }
 
 MyString& MyString::append(char c) {
@@ -333,10 +336,6 @@ MyString& MyString::append(char c) {
 }
 
 // private method
-MyString &MyString::appendHelper(const char srcStr[], int strLen) {
-    if (strLen <= 0) return *this;
-    return replaceHelper(size, 0, strLen, srcStr);
-}
 
 //------------------------------------------------------------
 //3-2. 문자열 비교연산자류
@@ -390,23 +389,11 @@ int MyString::compareTo(const char srcStr[], int strLen) const {
 //3-3. 문자열 수정 함수류(insert, replace, erase)
 //------------------------------------------------------------
 MyString &MyString::insert(int pos, const MyString &srcStr) {
-    return insertHelper(pos, srcStr.length(), srcStr.str);
+    return replaceHelper(pos, 0, srcStr.size, srcStr.str);
 }
 
 MyString &MyString::insert(int pos, const char subStr[]) {
-    return insertHelper(pos, cstrlen(subStr), subStr);
-}
-
-// insertPrivate
-//------------------------------------
-// if size + len > capacity
-// false -> shift -> srcStr insert
-// shift pos -> pos + len / srcStr pos ~ pos+len
-// true -> Mystring result(size+len)
-// before pos / srcStr in pos to len / after pos(to pos + len)
-MyString &MyString::insertHelper(int pos, int len, const char srcStr[]) {
-    if (!len) return *this;
-    return replaceHelper(pos, 0, len, srcStr);
+    return replaceHelper(pos, 0, cstrlen(subStr), subStr);
 }
 
 MyString &MyString::replace(int pos, int len, const MyString &subStr) {
@@ -425,10 +412,9 @@ MyString &MyString::replaceHelper(int pos, int len, int strlen, const char srcSt
     }
 
     int newSize = size + strlen - len;
-    int newCap = calcCapacity(newSize);
     //need resize
-    if (newCap != capacity) {
-        capacity = newCap;
+    if (newSize >= capacity) {
+        capacity = calcCapacity(newSize);
         char* temp = new char[capacity];
 
         for (int i = 0; i < pos; i++) {
