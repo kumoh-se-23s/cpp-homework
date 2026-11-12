@@ -1,6 +1,4 @@
 #pragma once
-#include <iterator>
-#include <ranges>
 
 #include "SinglyLinkedList.h"
 
@@ -12,31 +10,28 @@ SinglyLinkedList<T>::SinglyLinkedList() {
 }
 
 template <typename T>
-SinglyLinkedList<T>::~SinglyLinkedList() {//이거 파괴자는 순차적으로 돌아가면서 다 지워야하나?
+SinglyLinkedList<T>::~SinglyLinkedList() {
     clear();
 }
 
 template<typename T>
-void SinglyLinkedList<T>::add(T element) {
-    Node newNode = new Node(element);
-    if (isEmpty()) {
-        head = newNode;
-    }
-    else {
-        newNode->next = head;
-    }
+void SinglyLinkedList<T>::add(T* newNode) {
+    if (newNode == nullptr) return;
+
+    newNode->next = head;
+    head = newNode;
+
     ++size;
 }
 
 template<typename T>
-void SinglyLinkedList<T>::insert(int index, T element) {
-    if (index == 0) {
-        add(element);
-    }
-    else {
-        Node newNode = new Node(element);
-        Node prevNode = head;
+void SinglyLinkedList<T>::insert(int index, T* newNode) {
+    if (newNode == nullptr || index < 0 || index > size) return;
 
+    if (index == 0) {
+        add(newNode);
+    } else {
+        T* prevNode = head;
         for (int i = 0; i < index - 1; i++) {
             prevNode = prevNode->next;
         }
@@ -44,6 +39,26 @@ void SinglyLinkedList<T>::insert(int index, T element) {
         prevNode->next = newNode;
         ++size;
     }
+}
+
+template<typename T>
+void SinglyLinkedList<T>::insertAscend(T* newNode) {
+    if (newNode == nullptr) return;
+    newNode->next = nullptr;
+
+    if (isEmpty() || *newNode < *head) {
+        newNode->next = head;
+        head = newNode;
+    } else {
+        T* currentNode = head;
+
+        while (currentNode->next != nullptr && *(currentNode->next) < *newNode) {
+            currentNode = currentNode->next;
+        }
+        newNode->next = currentNode->next;
+        currentNode->next = newNode;
+    }
+    ++size;
 }
 
 template<typename T>
@@ -94,9 +109,28 @@ void SinglyLinkedList<T>::remove(int index) {
     --size;
 }
 
-template<typename T>
-void SinglyLinkedList<T>::remove(T element) {
+template <typename T> template <typename KeyType>
+T SinglyLinkedList<T>::remove(const KeyType& key) {
+    if (head == nullptr) return nullptr;
 
+    if (*head == key) {
+        T* targetNode = head;
+        head = head->next;
+        targetNode->next = nullptr;
+    }
+    else {
+        T curr = head;
+        while (curr->next != nullptr && !(*(curr->next) == key)) {
+            curr = curr->next;
+        }
+
+        if (curr->next == nullptr) return nullptr;
+
+        T targetNode = curr->next;
+        curr->next = targetNode->next;
+        targetNode->next = nullptr;
+    }
+    return targetNode;
 }
 
 template<typename T>

@@ -1,13 +1,20 @@
 #pragma once
 
-#include "SinglyLinkedList.h"
-#include "CircularLinkedList.h"
 #include "Student.h"
 
 struct StudentNode {
     Student student;
-    
-    SinglyLinkedList<Student>* nextStudent = nullptr;
-    CircularLinkedList<Student>* nextTeam = nullptr;
-    CircularLinkedList<Student>* prevTeam = nullptr;
+    //singly
+    StudentNode* next;
+    //circular
+    StudentNode* nextTeam;
+    StudentNode* prevTeam;
+
+    StudentNode(const Student& student):student(student), next(nullptr), nextTeam(nullptr). prevTeam(nullptr) {};
+    ~StudentNode() {}
+
+    //student < overloading compared by stuID
+    bool operator<(const StudentNode& other) const {
+        return this->student < other.student;
+    }
 };

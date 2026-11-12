@@ -5,26 +5,25 @@ class SinglyLinkedList {
     public:
         SinglyLinkedList();
         ~SinglyLinkedList();
-        void add(T element);
-        void insert(int index, T element);
-        void remove(T element);
-        void remove(int index);
+
+        void add(T* newNode);
+        void insert(int index, T* newNode);
+        void insertAscend(T* newNode);
+
+        template <typename KeyType>
+        T* remove(const KeyType& element);
+        T* remove(int index);
+        T* removeFirst();
+
         void clear();
         int getSize() const;
         bool isEmpty() const;
-        T get(int index) const;
-        T getHead() const;
+        T* get(int index) const;
+        T* getHead() const;
 
     private:
-        struct Node {
-            T data;
-            Node* next;
-            Node(T element) : data(element), next(nullptr) {}
-        };
-        Node* head;
+        T* head;
         int size = 0;
-
-        void removeFirst();
 };
 
 #include "SinglyLinkedList.tpp"
