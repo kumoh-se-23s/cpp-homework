@@ -20,6 +20,16 @@ public:
         studentGroup("-") {
     }
 
+    ~Student() = default;
+
+    Student(Student &&otherStudent) noexcept;
+
+    Student(const Student &otherStudent);
+
+    Student &operator=(const Student &otherStudent);
+
+    Student &operator=(Student &&otherStudent) noexcept;
+
     bool operator ==(int otherStudentId) const;
 
     bool operator !=(int otherStudentId) const;

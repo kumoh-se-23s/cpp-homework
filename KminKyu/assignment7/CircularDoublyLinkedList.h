@@ -1,9 +1,11 @@
 #pragma once
-#include "SinglyLinkedList.h"
+#include "DoubleNode.h"
 
-
-class CircularDoublyLinkedList : public SinglyLinkedList {
+template <typename T>
+class CircularDoublyLinkedList {
+    T key;
+    DoubleNode<T> headNode;
+    int size = 0;
 };
 
 
-#endif //CPP_HOMEWORK_GIT_DOUBLELINKEDLIST_H

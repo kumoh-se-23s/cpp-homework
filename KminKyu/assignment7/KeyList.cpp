@@ -1,20 +1,20 @@
-#include "Pair.h"
+#include "KeyList.h"
 
 #include <bits/locale_facets_nonio.h>
 
 template <typename K, typename V>
-Pair<K,V>::Pair(const Pair &other)
+KeyList<K,V>::KeyList(const KeyList &other)
         : key(other.key),
           value(other.value) {
 }
 template <typename K, typename V>
-Pair<K,V>::Pair(Pair &&other) noexcept {
+KeyList<K,V>::KeyList(KeyList &&other) noexcept {
     key = other.key;
     value = other.value;
 }
 
 template <typename K, typename V>
-Pair<K,V>& Pair<K,V>::operator=(const Pair &other) {
+KeyList<K,V>& KeyList<K,V>::operator=(const KeyList &other) {
     if (this == &other)
         return *this;
 
@@ -31,7 +31,7 @@ Pair<K,V>& Pair<K,V>::operator=(const Pair &other) {
     return *this;
 }
 template <typename K, typename V>
-Pair<K,V>& Pair<K,V>::operator=(Pair &&other) noexcept {
+KeyList<K,V>& KeyList<K,V>::operator=(KeyList &&other) noexcept {
     if (this == &other)
         return *this;
 
@@ -50,15 +50,29 @@ Pair<K,V>& Pair<K,V>::operator=(Pair &&other) noexcept {
 }
 
 template<typename K, typename V>
-Pair<K, V>::~Pair() {
-
+V KeyList<K, V>::getValue() const {
+    return value;
 }
 
 template<typename K, typename V>
-K Pair<K, V>::getKey() const {
+K KeyList<K,V>::getKey() const {
+    return key;
 }
 
 template<typename K, typename V>
-V Pair<K, V>::getValue() const {
+LinkedList<V> KeyList<K, V>::getLinkedList() const {
+    return linkedList;
 }
+
+template<typename K, typename V>
+void KeyList<K, V>::setKey(const K &key) {
+    this->key = key;
+}
+
+template<typename K, typename V>
+void KeyList<K, V>::setValue(const V &value) {
+    this->value = value;
+}
+
+
 

@@ -1,13 +1,12 @@
 #pragma once
-#include "Node.h"
+#include "SingleNode.h"
 
 template <typename T>
 class SinglyLinkedList {
-    Node<T> head;
+    T key;
+    SingleNode<T> headNode;
     int size = 0;
 public:
 
 };
 
-
-#endif //CPP_HOMEWORK_GIT_LINKEDLIST_H

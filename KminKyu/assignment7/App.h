@@ -4,11 +4,11 @@
 #include "MyString.h"
 #include "Student.h"
 #include "SinglyLinkedList.h"
-#include "Pair.h"
+#include "KeyList.h"
 
 class App {
-    HashTable<MyString, SinglyLinkedList<Pair<MyString, Student>>> groupHashTable = nullptr;
-    HashTable<int, SinglyLinkedList<Pair<int, Student>>> stduentIdHashTable = nullptr;
+    HashTable<MyString, SinglyLinkedList<KeyList<MyString, Student>>> groupHashTable = nullptr;
+    HashTable<int, SinglyLinkedList<KeyList<int, Student>>> stduentIdHashTable = nullptr;
     ArrayList<Student> studentArrayList;
 };
 

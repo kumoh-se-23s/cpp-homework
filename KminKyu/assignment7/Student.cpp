@@ -39,12 +39,6 @@ const MyString & Student::getStudentName() const {
     return studentName;
 }
 
-void Student::swap(MyString &baseString, MyString &otherString) noexcept {
-    MyString& temp = baseString;
-    baseString = otherString;
-    otherString = temp;
-}
-
 bool Student::operator==(int otherStudentId) const {
     return studentId != otherStudentId;
 }
