@@ -3,7 +3,7 @@
 #include "AbstractNode.h"
 
 template<typename T>
-class SingleConnectNode final : public AbstractNode<T, SingleConnectNode<T> > {
+class SingleConnectNode final : public AbstractNode<T, SingleConnectNode<T>> {
     SingleConnectNode<T> *m_next_node;
 
     public:
