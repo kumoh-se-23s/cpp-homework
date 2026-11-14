@@ -5,36 +5,49 @@
 #ifndef CPP_HOMEWORK_DOUBLYLINKEDLIST_H
 #define CPP_HOMEWORK_DOUBLYLINKEDLIST_H
 #include "../List.h"
+#include "./node/DoubleConnectNode.h"
 
 
-template<typename T>
-class DoublyLinkedList final : public List<T> {
+template<typename E>
+class DoublyLinkedList final : public List<E> {
+    DoubleConnectNode<E> *m_head;
+    DoubleConnectNode<E> *m_tail;
+    int m_size;
+
     public:
-        void add(const T &element) override;
+        DoublyLinkedList();
 
-        void add_all(const T *elements, int length) override;
+        DoublyLinkedList(const DoublyLinkedList &other);
 
-        void add_first(const T &element) override;
+        DoublyLinkedList(const E *items);
 
-        void add_last(const T &element) override;
+        ~DoublyLinkedList();
 
-        const T & peek(int index) const override;
+        void add(const E &element) override;
 
-        T get(int index) const override;
+        void add_all(const E *elements, int length) override;
 
-        void set(int index, const T &element) override;
+        void add_first(const E &element) override;
 
-        T remove(int index) override;
+        void add_last(const E &element) override;
+
+        const E& peek(int index) const override;
+
+        E get(int index) const override;
+
+        void set(int index, const E &element) override;
+
+        E remove(int index) override;
 
         [[nodiscard]] int size() const override;
 
         [[nodiscard]] bool empty() const override;
 
-        bool contains(const T &object) const override;
+        bool contains(const E &object) const override;
 
-        T & operator[](int index) const override;
+        E& operator[](int index) const override;
 
-        T & operator[](int index) override;
-}
+        E& operator[](int index) override;
+};
 
 #endif //CPP_HOMEWORK_DOUBLYLINKEDLIST_H

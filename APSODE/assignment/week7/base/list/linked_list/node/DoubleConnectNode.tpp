@@ -7,7 +7,8 @@ DoubleConnectNode<T>::DoubleConnectNode(const T *item_ptr)
 }
 
 template<typename T>
-DoubleConnectNode<T>::DoubleConnectNode(const T *item_ptr, DoubleConnectNode<T> *next_node, DoubleConnectNode<T> *prev_node)
+DoubleConnectNode<T>::DoubleConnectNode(const T *item_ptr, DoubleConnectNode<T> *next_node,
+                                        DoubleConnectNode<T> *prev_node)
     : AbstractNode<T, DoubleConnectNode>(), m_next_node(next_node), m_prev_node(prev_node) {
 }
 

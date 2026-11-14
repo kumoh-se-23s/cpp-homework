@@ -3,7 +3,7 @@
 #include "AbstractNode.h"
 
 template<typename T>
-class SingleConnectNode final : public AbstractNode<T, SingleConnectNode<T>> {
+class SingleConnectNode final : public AbstractNode<T, SingleConnectNode<T> > {
     SingleConnectNode<T> *m_next_node;
 
     public:
@@ -22,8 +22,6 @@ class SingleConnectNode final : public AbstractNode<T, SingleConnectNode<T>> {
 
         bool has_next() override;
 };
-
-#include "AbstractNode.h"
 
 #include "SingleConnectNode.tpp"
 
