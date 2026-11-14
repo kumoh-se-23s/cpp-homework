@@ -73,6 +73,6 @@ class ArrayList final : public List<E> {
         void resize(int new_capacity);
 };
 
-#include "ArrayList.tpp"
+#include "../linked_list/ArrayList.tpp"
 
 #endif //ARRAYLIST_H
