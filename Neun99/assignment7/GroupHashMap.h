@@ -11,7 +11,7 @@ public:
     ~GroupHashMap();
 
     //연산자오버로딩
-    StudentNode* operator[](MyString group);
+    GroupHashNode& operator[](MyString group);
 private:
     static constexpr int DEFAULT_CAPACITY = 4;
     int capacity = DEFAULT_CAPACITY;

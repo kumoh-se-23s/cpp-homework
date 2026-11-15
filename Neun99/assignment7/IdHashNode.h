@@ -15,10 +15,13 @@ public:
     //setter
     void setId(int newId);
     void setHead(StudentNode* newHead);
+    void sizeUp();
+    void sizeDown();
 
     //기능
     bool isEmtpy() const;
 private:
     int id; //학번 년도
     StudentNode* head; //list head
+    int size;
 };

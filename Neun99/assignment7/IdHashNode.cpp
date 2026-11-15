@@ -4,11 +4,13 @@
 IdHashNode::IdHashNode() {
     id = -1;
     head = nullptr;
+    size = 0;
 }
 
 IdHashNode::IdHashNode(int id) {
     this->id = id;
     head = nullptr;
+    size = 0;
 }
 
 //getter-------------------------------------
@@ -29,7 +31,15 @@ void IdHashNode::setHead(StudentNode *newHead) {
     head = newHead;
 }
 
+void IdHashNode::sizeUp() {
+    size++;
+}
+
+void IdHashNode::sizeDown() {
+    size--;
+}
+
 //기능----------------------------------------
 bool IdHashNode::isEmtpy() const {
-    return head == nullptr;
+    return size == 0;
 }

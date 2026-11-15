@@ -15,12 +15,12 @@ GroupHashMap::~GroupHashMap() {
 }
 
 //연산자오버로딩-----------------------
-//인자로 받은 그룹의 head 꺼내기: 없으면 위치맞춰 만들어서 넘겨줌
-StudentNode *GroupHashMap::operator[](MyString group) {
+//인자로 받은 그룹의 노드 꺼내기: 없으면 위치맞춰 만들어서 넘겨줌
+GroupHashNode &GroupHashMap::operator[](MyString group) {
     int pos = getTargetPos(group);
     if (arr[pos].getId() != group)
         insertAt(group, pos);
-    return arr[pos].getHead();
+    return arr[pos];
 }
 
 
@@ -47,7 +47,8 @@ void GroupHashMap::copyArr(GroupHashNode *copy, GroupHashNode *src, int srcSize)
 
 void GroupHashMap::insertAt(MyString group, int pos) {
     //용량검사
-    if (size + 1 > capacity) {
+    if (size + 1 > capacity) { //용량 안 괜찮으면
+        //새로 할당
         GroupHashNode* newArr = new GroupHashNode[getEnoughCapacity(size + 1)];
 
         int idx;

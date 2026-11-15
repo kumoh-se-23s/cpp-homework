@@ -32,11 +32,11 @@ int IdHashMap::getMaxYear() const {
 
 //연산자오버로딩-----------------------
 //인자로 받은 년도의 head 꺼내기: 없으면 위치맞춰 만들어서 넘겨줌
-StudentNode *IdHashMap::operator[](int year) {
+IdHashNode &IdHashMap::operator[](int year) {
     if (size == 0) { //size 0일 때는 바로 만들고 리턴
         arr[0] = IdHashNode(year);
         size++;
-        return arr[0].getHead();
+        return arr[0];
     }
 
     //size 1 이상인 경우
@@ -44,15 +44,15 @@ StudentNode *IdHashMap::operator[](int year) {
 
     if (diff < 0) { //음수면 최소년도 갱신
         insertFront(year, diff);
-        return arr[0].getHead();
+        return arr[0];
     }
 
     if (diff < size) //범위 안이면 바로 return
-        return arr[diff].getHead();
+        return arr[diff];
 
     //size보다 크면 최대년도 갱신
     append(year, diff);
-    return arr[size].getHead();
+    return arr[size];
 }
 
 //private--------------------------

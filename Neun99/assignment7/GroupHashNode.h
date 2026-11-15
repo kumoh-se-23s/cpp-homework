@@ -15,10 +15,13 @@ public:
     //setter
     void setId(MyString newId);
     void setHead(StudentNode* newHead);
+    void sizeUp();
+    void sizeDown();
 
     //기능
     bool isEmpty() const;
 private:
     MyString id;
     StudentNode* head;
+    int size;
 };

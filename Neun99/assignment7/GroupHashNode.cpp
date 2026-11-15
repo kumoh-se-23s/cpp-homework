@@ -2,11 +2,13 @@
 
 GroupHashNode::GroupHashNode() {
     head = nullptr;
+    size = 0;
 }
 
 GroupHashNode::GroupHashNode(MyString group) {
     id = group;
     head = nullptr;
+    size = 0;
 }
 
 //getter------------------------------
@@ -27,7 +29,15 @@ void GroupHashNode::setHead(StudentNode *newHead) {
     head = newHead;
 }
 
+void GroupHashNode::sizeUp() {
+    size++;
+}
+
+void GroupHashNode::sizeDown() {
+    size--;
+}
+
 //기능-----------------------------------
 bool GroupHashNode::isEmpty() const {
-    return head == nullptr;
+    return size == 0;
 }

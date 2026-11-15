@@ -100,7 +100,12 @@ MyString &MyString::append(const char *cSubStr) {
 
 //append: str
 MyString &MyString::append(const MyString &subStr) {
-    appendChArr(subStr.str, subStr.size);
+    if (this == &subStr) { //자기 자신이 인자인 경우
+        MyString cpyStr = subStr;
+        appendChArr(cpyStr.str, cpyStr.size);
+    } else {
+        appendChArr(subStr.str, subStr.size);
+    }
     return *this;
 }
 
@@ -114,7 +119,12 @@ MyString &MyString::insert(int pos, const char *csubStr) {
 //insert: str
 MyString &MyString::insert(int pos, const MyString &subStr) {
     pos = normalizePos(pos);
-    insertChArr(subStr.str, subStr.size, pos);
+    if (this == &subStr) { //자기 자신이 인자인 경우
+        MyString cpyStr = subStr;
+        insertChArr(cpyStr.str, cpyStr.size, pos);
+    } else {
+        insertChArr(subStr.str, subStr.size, pos);
+    }
     return *this;
 }
 
@@ -130,7 +140,12 @@ MyString &MyString::replace(int pos, int len, const char *csubStr) {
 MyString &MyString::replace(int pos, int len, const MyString &subStr) {
     pos = normalizePos(pos);
     len = normalizeLen(len, pos);
-    replaceChArr(subStr.str, subStr.length(), pos, len);
+    if (this == &subStr) { //자기 자신이 인자인 경우
+        MyString cpyStr = subStr;
+        replaceChArr(cpyStr.str, cpyStr.size, pos, len);
+    } else {
+        replaceChArr(subStr.str, subStr.size, pos, len);
+    }
     return *this;
 }
 
