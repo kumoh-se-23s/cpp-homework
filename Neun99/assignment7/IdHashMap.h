@@ -12,13 +12,14 @@ public:
     ~IdHashMap();
 
     //getter
-    StudentNode* getHeadByKey(int year);
     int getMinYear() const;
     int getMaxYear() const;
 
+    //연산자 오버로딩
+    StudentNode* operator[](int year);
 private:
     static constexpr int DEFAULT_CAPACITY = 4;
-    int capacity;
+    int capacity = DEFAULT_CAPACITY;
     IdHashNode* arr;
     int size;
 

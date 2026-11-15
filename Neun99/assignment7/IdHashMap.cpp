@@ -3,7 +3,6 @@
 //생성자-----------------------------------
 //기본생성자
 IdHashMap::IdHashMap() {
-    capacity = DEFAULT_CAPACITY;
     arr = new IdHashNode[capacity];
     size = 0;
 }
@@ -20,9 +19,20 @@ IdHashMap::~IdHashMap() {
     delete[] arr;
 }
 
-//기능-------------------------------
+//getter-------------------------------
+//최소년도: 맨앞
+int IdHashMap::getMinYear() const {
+    return arr[0].getId();
+}
+
+//최대년도: 맨 뒤
+int IdHashMap::getMaxYear() const {
+    return arr[size - 1].getId();
+}
+
+//연산자오버로딩-----------------------
 //인자로 받은 년도의 head 꺼내기: 없으면 위치맞춰 만들어서 넘겨줌
-StudentNode *IdHashMap::getHeadByKey(int year) {
+StudentNode *IdHashMap::operator[](int year) {
     if (size == 0) { //size 0일 때는 바로 만들고 리턴
         arr[0] = IdHashNode(year);
         size++;
@@ -30,7 +40,7 @@ StudentNode *IdHashMap::getHeadByKey(int year) {
     }
 
     //size 1 이상인 경우
-    int diff = year - getMinYear(); //최소년도와의 차이
+    int diff = year - getMinYear(); //최소년도와의 차이가
 
     if (diff < 0) { //음수면 최소년도 갱신
         insertFront(year, diff);
@@ -43,16 +53,6 @@ StudentNode *IdHashMap::getHeadByKey(int year) {
     //size보다 크면 최대년도 갱신
     append(year, diff);
     return arr[size].getHead();
-}
-
-//최소년도: 맨앞
-int IdHashMap::getMinYear() const {
-    return arr[0].getId();
-}
-
-//최대년도: 맨 뒤
-int IdHashMap::getMaxYear() const {
-    return arr[size - 1].getId();
 }
 
 //private--------------------------

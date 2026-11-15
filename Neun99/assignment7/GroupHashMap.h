@@ -10,10 +10,18 @@ public:
     GroupHashMap(int minLength);
     ~GroupHashMap();
 
-    //getter
-    StudentNode* getHeadByKey(MyString group);
+    //연산자오버로딩
+    StudentNode* operator[](MyString group);
 private:
     static constexpr int DEFAULT_CAPACITY = 4;
-    int capacity;
+    int capacity = DEFAULT_CAPACITY;
+    GroupHashNode *arr;
+    int size;
 
+    void resize(int minLength);
+    int getEnoughCapacity(int minLength) const;
+    static void copyArr(GroupHashNode* copy, GroupHashNode* src, int srcSize);
+
+    void insertAt(MyString group, int pos);
+    int getTargetPos(MyString group) const;
 };
