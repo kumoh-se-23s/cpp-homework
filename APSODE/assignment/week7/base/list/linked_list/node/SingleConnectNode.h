@@ -4,23 +4,23 @@
 
 template<typename T>
 class SingleConnectNode final : public AbstractNode<T, SingleConnectNode<T> > {
-    SingleConnectNode<T> *m_next_node;
+    SingleConnectNode *m_next_node;
 
     public:
-        SingleConnectNode() = default;
+        SingleConnectNode();
 
-        SingleConnectNode(const T *item);
+        explicit SingleConnectNode(const T &item);
 
-        SingleConnectNode(const T *item, const SingleConnectNode<T> *next_node);
+        SingleConnectNode(const T &item, SingleConnectNode *next_node);
 
-        ~SingleConnectNode() = default;
+        ~SingleConnectNode() override = default;
 
 
-        SingleConnectNode<T>* next() const override;
+        SingleConnectNode* next() const override;
 
-        SingleConnectNode<T>* set_next(const SingleConnectNode<T> *next_node) override;
+        SingleConnectNode* set_next(SingleConnectNode *next_node) override;
 
-        bool has_next() override;
+        [[nodiscard]] bool has_next() const override;
 };
 
 #include "SingleConnectNode.tpp"

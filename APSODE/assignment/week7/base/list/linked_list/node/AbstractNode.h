@@ -1,37 +1,39 @@
 #ifndef ABSTRACTNODE_H
 #define ABSTRACTNODE_H
-#include <optional>
 
 template<typename T, typename N>
 class AbstractNode {
-    T* m_item;
+    T m_item;
 
     public:
-        std::optional<T> get() const {
-            if (m_item == nullptr) {
-                return std::optional<T>{};
-            }
-
-            return std::optional<T>(this->m_item);
+        T& get() {
+            return this->m_item;
         }
 
-        void set(const T* item) {
+        const T& get() const {
+            return this->m_item;
+        }
+
+        void set(const T &item) {
             this->m_item = item;
         }
 
         virtual N* next() const = 0;
 
-        virtual N* set_next(const N* next_node) = 0;
+        virtual N* set_next(N *next_node) = 0;
 
-        virtual bool has_next() = 0;
-
+        [[nodiscard]] virtual bool has_next() const = 0;
 
     protected:
-        AbstractNode() : m_item(nullptr) {}
+        AbstractNode()
+            : m_item() {
+        }
 
-        AbstractNode(const T* item) : m_item(item) {}
+        explicit AbstractNode(const T &item)
+            : m_item(item) {
+        }
 
-        ~AbstractNode() = default;
+        virtual ~AbstractNode() = default;
 };
 
 #endif //ABSTRACTNODE_H

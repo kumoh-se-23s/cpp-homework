@@ -4,33 +4,31 @@
 
 template<typename T>
 class DoubleConnectNode final : public AbstractNode<T, DoubleConnectNode<T> > {
-    DoubleConnectNode<T> *m_next_node;
-    DoubleConnectNode<T> *m_prev_node;
+    DoubleConnectNode *m_next_node;
+    DoubleConnectNode *m_prev_node;
 
     public:
-        DoubleConnectNode() = default;
+        DoubleConnectNode();
 
-        DoubleConnectNode(const T *item_ptr);
+        explicit DoubleConnectNode(const T &item);
 
-        DoubleConnectNode(const T *item_ptr, DoubleConnectNode<T> *next_node, DoubleConnectNode<T> *prev_node);
+        DoubleConnectNode(const T &item, DoubleConnectNode *next_node, DoubleConnectNode *prev_node);
 
-        ~DoubleConnectNode() = default;
-
-
-        DoubleConnectNode<T>* next() const override;
-
-        DoubleConnectNode<T>* set_next(const DoubleConnectNode<T> *next_node) override;
-
-        bool has_next() override;
+        ~DoubleConnectNode() override = default;
 
 
-        DoubleConnectNode<T>* prev() const;
+        DoubleConnectNode* next() const override;
 
-        DoubleConnectNode<T>* set_prev(const DoubleConnectNode<T> *prev_node);
+        DoubleConnectNode* set_next(DoubleConnectNode *next_node) override;
 
-        bool has_prev() const;
+        [[nodiscard]] bool has_next() const override;
 
-    private:
+
+        DoubleConnectNode* prev() const;
+
+        DoubleConnectNode* set_prev(DoubleConnectNode *prev_node);
+
+        [[nodiscard]] bool has_prev() const;
 };
 
 #include "DoubleConnectNode.tpp"

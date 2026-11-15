@@ -2,14 +2,18 @@
 
 
 template<typename T>
-DoubleConnectNode<T>::DoubleConnectNode(const T *item_ptr)
-    : AbstractNode<T, DoubleConnectNode>() {
+DoubleConnectNode<T>::DoubleConnectNode()
+    : AbstractNode<T, DoubleConnectNode>(), m_next_node(nullptr), m_prev_node(nullptr) {
 }
 
 template<typename T>
-DoubleConnectNode<T>::DoubleConnectNode(const T *item_ptr, DoubleConnectNode<T> *next_node,
-                                        DoubleConnectNode<T> *prev_node)
-    : AbstractNode<T, DoubleConnectNode>(), m_next_node(next_node), m_prev_node(prev_node) {
+DoubleConnectNode<T>::DoubleConnectNode(const T &item)
+    : AbstractNode<T, DoubleConnectNode>(item), m_next_node(nullptr), m_prev_node(nullptr) {
+}
+
+template<typename T>
+DoubleConnectNode<T>::DoubleConnectNode(const T &item, DoubleConnectNode *next_node, DoubleConnectNode *prev_node)
+    : AbstractNode<T, DoubleConnectNode>(item), m_next_node(next_node), m_prev_node(prev_node) {
 }
 
 template<typename T>
@@ -18,13 +22,13 @@ DoubleConnectNode<T>* DoubleConnectNode<T>::next() const {
 }
 
 template<typename T>
-DoubleConnectNode<T>* DoubleConnectNode<T>::set_next(const DoubleConnectNode<T> *next_node) {
+DoubleConnectNode<T>* DoubleConnectNode<T>::set_next(DoubleConnectNode *next_node) {
     this->m_next_node = next_node;
     return next_node;
 }
 
 template<typename T>
-bool DoubleConnectNode<T>::has_next() {
+bool DoubleConnectNode<T>::has_next() const {
     return this->m_next_node != nullptr;
 }
 
@@ -34,7 +38,7 @@ DoubleConnectNode<T>* DoubleConnectNode<T>::prev() const {
 }
 
 template<typename T>
-DoubleConnectNode<T>* DoubleConnectNode<T>::set_prev(const DoubleConnectNode<T> *prev_node) {
+DoubleConnectNode<T>* DoubleConnectNode<T>::set_prev(DoubleConnectNode *prev_node) {
     this->m_prev_node = prev_node;
     return prev_node;
 }
