@@ -87,6 +87,7 @@ void StudentTable::addStudent(Student student) {
         teamHashMap.put(groupId, ptr);
 
     }
+    ++studentCount;
 }
 
 void StudentTable::removeStudent(const int num) {
@@ -111,6 +112,11 @@ void StudentTable::removeStudent(const int num) {
             n = pn->sameYearNext;
             entry.value.removeNext(pn);
         }
+
+        if ((*studentPair)->data.value.getSize() == 0) {
+            studentList.remove(*studentPair);
+            studentHashMap.remove(year);
+        }
     }
 
     if (!n) return;
@@ -124,16 +130,20 @@ void StudentTable::removeStudent(const int num) {
                 break;
             }
         }
+        if ((*teamPair)->data.value.getSize() == 0) {
+            teamList.remove(*teamPair);
+            teamHashMap.remove(n->data.getGroupId());
+        }
     }
+    --studentCount;
 }
 
 MyString StudentTable::toString() const {
     MyString result;
     int min;
     int max;
-    int studentCount;
     int teamCount;
-    getStudentInfos(min, max, studentCount, teamCount);
+    getStudentInfos(min, max, teamCount);
     result.append("[Year:");
     result.append(MyString::toString(min));
     result.append("~");
@@ -186,9 +196,8 @@ void StudentTable::exportFile(const MyString &filename) const {
     std::ofstream out(filename.getData(), std::ios::trunc);
     int min;
     int max;
-    int studentCount;
     int teamCount;
-    getStudentInfos(min, max, studentCount, teamCount);
+    getStudentInfos(min, max, teamCount);
 
     out << min << " " << max << "\n" << studentCount << " " << teamCount << "\n";
     for (auto itl = studentList.begin(); itl.hasNext(); ++itl) {
@@ -199,20 +208,13 @@ void StudentTable::exportFile(const MyString &filename) const {
     }
 }
 
-void StudentTable::getStudentInfos(int &min, int &max, int &studentCount, int &teamCount) const {
-    min = INT_MAX;
-    max = INT_MIN;
-    studentCount = 0;
+void StudentTable::getStudentInfos(int &min, int &max, int &teamCount) const {
+    min = studentList.getHead() ? studentList.getHead()->data.key : 0;
+    max = studentList.getHead() ? studentList.getHead()->prev->data.key : 0;
     teamCount = teamList.getSize();
 
     if (teamList.getSize() > 0 && teamList.getHead()->data.key == Student::NO_GROUP) {
         --teamCount;
     }
 
-    for (auto itl = studentList.begin(); itl.hasNext(); ++itl) {
-        auto &value = (*itl)->data.value;
-        studentCount += value.getSize();
-        min = std::min(min, value.getSize() == 0 ? INT_MAX : (*itl)->data.key);
-        max = std::max(max, value.getSize() == 0 ? INT_MIN : (*itl)->data.key);
-    }
 }

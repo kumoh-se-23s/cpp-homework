@@ -19,6 +19,7 @@ class StudentTable {
     HashMap<int, RAIISharedPointer<DoubleNode<KeyValuePair<int, StudentSingleLinkedList>>>, DefaultHasher<int>> studentHashMap;
     GenericCircularLinkedList<KeyValuePair<MyString, TeamMemberCircularLinkedList>> teamList;
     HashMap<MyString, RAIISharedPointer<DoubleNode<KeyValuePair<MyString, TeamMemberCircularLinkedList>>>, StringHasher> teamHashMap;
+    int studentCount = 0;
 
     constexpr static int INITIAL_CAPACITY = 16;
 
@@ -43,7 +44,7 @@ public:
 
     void exportFile(const MyString & filename) const;
 
-    void getStudentInfos(int &min, int &max, int &studentCount, int &teamCount) const;
+    void getStudentInfos(int &min, int &max, int &teamCount) const;
 
 };
 
