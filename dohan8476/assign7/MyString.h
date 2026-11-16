@@ -65,6 +65,7 @@ class MyString {
 
         MyString& erase(int pos, int len);
 
+        const char* cStr() const;
 
     private:
         int size = 0;

@@ -15,7 +15,6 @@ class SinglyLinkedList {
         T* remove(int index);
         T* removeFirst();
 
-        void clear();
         int getSize() const;
         bool isEmpty() const;
         T* get(int index) const;
@@ -23,7 +22,9 @@ class SinglyLinkedList {
 
     private:
         T* head;
-        int size = 0;
+        int size;
+
+        bool outOfRange(int index) const;
 };
 
 #include "SinglyLinkedList.tpp"

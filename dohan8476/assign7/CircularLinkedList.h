@@ -5,27 +5,24 @@ class CircularLinkedList {
     public:
         CircularLinkedList();
         ~CircularLinkedList();
-        void add(T element);
-        void append(T element);
-        void insert(int index, T element);
-        void remove(T element);
-        void remove(int index);
-        void clear();
+        void add(T* newNode);
+        void append(T* newNode);
+        void insert(int index, T* newNode);
+        void insertAscend(T* newNode);
+
+        T* remove(T* target);
+        template <typename KeyType>
+        T* remove(const KeyType& element);
+        T* remove(int index);
+        T* removeFirst();
+
         int getSize() const;
         bool isEmpty() const;
-        T get(int index) const;
-        T getHead() const;
+        T* get(int index) const;
+        T* getHead() const;
     private:
-        struct Node{
-            T data;
-            Node* next;
-            Node* prev;
-            Node(T element) : data(element), next(nullptr), prev(nullptr) {}
-        };
-        Node* head;
-        int size = 0;
-
-        void removeFirst();
+        T* head;
+        int size;
 };
 
 #include "CircularLinkedList.tpp"

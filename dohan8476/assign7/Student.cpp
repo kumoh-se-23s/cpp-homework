@@ -2,17 +2,18 @@
 
 Student::Student() : studentID(0), studentName(""), teamID("-"){}
 
-Student::Student(int studentID, MyString studentName, MyString teamID) : studentID(studentID), studentName(studentName), teamID(teamID) {}
+Student::Student(int studentID, const MyString& studentName, const MyString& teamID)
+    : studentID(studentID), studentName(studentName), teamID(teamID) {}
 
 int Student::getStudentID() const {
     return this->studentID;
 }
 
-MyString Student::getStudentName() const{
+const MyString& Student::getStudentName() const{
     return this->studentName;
 }
 
-MyString Student::getTeamID() const{
+const MyString& Student::getTeamID() const{
     return this->teamID;
 }
 
@@ -20,11 +21,11 @@ void Student::setStudentID(int studentID) {
     this->studentID = studentID;
 }
 
-void Student::setStudentName(MyString studentName) {
+void Student::setStudentName(const MyString& studentName) {
     this->studentName = studentName;
 }
 
-void Student::setTeamID(MyString teamID) {
+void Student::setTeamID(const MyString& teamID) {
     this->teamID = teamID;
 }
 
@@ -42,4 +43,8 @@ bool Student::operator<(const Student &other) const {
 
 bool Student::operator==(const Student &other) const {
     return this->studentID == other.studentID;
+}
+
+bool Student::operator==(int otherID) const {
+    return this->studentID == otherID;
 }
