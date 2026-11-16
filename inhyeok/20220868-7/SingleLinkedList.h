@@ -106,9 +106,6 @@ public:
 
         RAIINode nextNext = NextGen::nextNode(next);
         NextGen::nextNode(node) = nextNext;
-
-        if (node == head) head = next;
-
         --size;
     }
 

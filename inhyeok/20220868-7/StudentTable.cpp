@@ -93,21 +93,29 @@ void StudentTable::removeStudent(const int num) {
     const int year = num / 10000;
 
     auto studentPair = studentHashMap[year];
-    RAIISharedPointer<StudentNode> pn;
+    RAIISharedPointer<StudentNode> n;
     if (studentPair) {
+        RAIISharedPointer<StudentNode> pn;
         KeyValuePair<int, StudentSingleLinkedList> &entry = (*studentPair)->data;
         for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
             if ((*it2)->data.getNum() == num) {
-                pn = *it2;
+                if (*it2 == entry.value.getHead()) {
+                    n = *it2;
+                    entry.value.removeFirst();
+                }
                 break;
             }
+            pn = *it2;
         }
-        entry.value.remove(pn);
+        if (pn) {
+            n = pn->sameYearNext;
+            entry.value.removeNext(pn);
+        }
     }
 
-    if (!pn) return;
+    if (!n) return;
 
-    auto teamPair = teamHashMap[pn->data.getGroupId()];
+    auto teamPair = teamHashMap[n->data.getGroupId()];
     if (teamPair) {
         KeyValuePair<MyString, TeamMemberCircularLinkedList> &entry = (*teamPair)->data;
         for (auto it2 = entry.value.begin(); it2.hasNext(); ++it2) {
