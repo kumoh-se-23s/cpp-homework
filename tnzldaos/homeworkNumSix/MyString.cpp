@@ -1,10 +1,13 @@
 #include "MyString.h"
+#include <cmath>
 
 //신경 써야 할 부분 
 //1.capacnity
 //2.size
 //3.배열
 //4.'\0'
+
+//capacity 계산 후 키우고 뒤로 밀고 넣기
 
 void MyString::resize() {
     capacity = capacity * 2;
@@ -17,6 +20,35 @@ void MyString::resize() {
     delete[] stringArr;
     stringArr = newStringArr;
     stringArr[size] = '\0';
+}
+
+int MyString::checkArrSize(const char* subStr) const {
+    int size = 0;
+    while(subStr[size] != '\0') {
+        size++;
+    }
+
+    return size;
+}
+
+void MyString::resetIfOutOfRange() {
+    delete[] stringArr;
+    capacity = 8;
+    size = 0;
+    stringArr = new char[capacity];
+    stringArr[0] = '\0';
+}
+
+int MyString::caculateCapacity(int inputCharArrSize) {
+    int need = size + inputCharArrSize + 1;          
+    int k = (int)ceil(log2(need / 8.0));
+    int newCapacity = k > 0 ? 8 << k : 8;
+
+    if(newCapacity < capacity) {
+        newCapacity = capacity;   
+    }
+
+    return newCapacity;
 }
 
 void MyString::appendChar(char inputChar) {
@@ -71,10 +103,13 @@ MyString::~MyString() {
 
 //----------------------------------------------------------------------
 
-void MyString::clear() {
+void MyString::reset() {
+    capacity = 8;
+    size = 0;
     delete[] stringArr;
 
     stringArr = new char[capacity];
+    stringArr[0] = '\0';
 }
 
 int MyString::length() const {
@@ -182,76 +217,76 @@ MyString MyString::substr(int pos, int len) const {
 }
 
 MyString& MyString::insert(int pos, const char* subStr) {
-    char* resultCharArr = new char[capacity];
+    if(pos > size || -pos > size) { 
+        resetIfOutOfRange();
+        return *this;
+    }
+    int inputCharArrSize = checkArrSize(subStr);
+    int newCapacity = caculateCapacity(inputCharArrSize);
 
-    pos = pos < 0 ? pos + size :(pos > size ? size : pos);
+    char* resultCharArr = new char[newCapacity];
 
-    int newSize = 0;
+    pos = pos < 0 ? pos + size : pos;
 
     for(int index = 0 ; index < pos ; index++) {
         resultCharArr[index] = stringArr[index];
-        newSize++;
     }
 
-    int inputCharArrSize = 0;
-    while(subStr[inputCharArrSize] != '\0') {
-        resultCharArr[pos + inputCharArrSize] = subStr[inputCharArrSize];
-        inputCharArrSize++;
-        newSize++;
+    int inputCharIndex = 0;
+    while(subStr[inputCharIndex] != '\0') {
+        resultCharArr[pos + inputCharIndex] = subStr[inputCharIndex];
+        inputCharIndex++;
     }
 
     for(int index = pos ; index < size ; index++) {
-        resultCharArr[pos + inputCharArrSize] = stringArr[index];
-        newSize++;
+        resultCharArr[pos + inputCharIndex] = stringArr[index];
+        inputCharIndex++;
     }
 
     delete[] stringArr;
     stringArr = resultCharArr;
-    size = newSize;
+    capacity = newCapacity;
+    size = size + inputCharArrSize;
+    stringArr[size] = '\0';
 
     return *this;
 }
 
 MyString& MyString::insert(int pos, const MyString& subStr) {
-    char* resultCharArr = new char[capacity];
+    if(pos > size || -pos > size) {
+        resetIfOutOfRange();
+        return *this;
+    }
+    int newCapacity = caculateCapacity(subStr.size);
 
-    pos = pos < 0 ? pos + size :(pos > size ? size : pos);
+    char* resultCharArr = new char[newCapacity];
+
+    pos = pos < 0 ? pos + size : pos;
 
     for(int index = 0 ; index < pos ; index++) {
         resultCharArr[index] = stringArr[index];
     }
 
-    for(int index = 0 ; index < size ; index++) {
-        resultCharArr[pos + index] = subStr.stringArr[index];
+    for(int index = 0 ; index < subStr.size ; index++) {
+        resultCharArr[pos + index] = subStr[index];
     }
 
     for(int index = pos ; index < size ; index++) {
-        resultCharArr[pos + subStr.size] = stringArr[index];
+        resultCharArr[subStr.size + index] = stringArr[index];
     }
 
     delete[] stringArr;
     stringArr = resultCharArr;
-
+    capacity = newCapacity;
+    size = size + subStr.size;
+    stringArr[size] = '\0';
+ 
     return *this;
-}
-
-MyString& MyString::replace(int pos, int len, const char* subStr) {
-    
-
-}
-
-MyString& MyString::replace(int pos, int len, const MyString& subStr) {
-
 }
 
 MyString& MyString::erase(int pos, int cnt) {
     if(pos >= size || -pos > size) {
-        delete[] stringArr;
-        capacity = 8;
-        size = 0;
-        stringArr = new char[capacity];
-        stringArr[0] = '\0';
-
+        resetIfOutOfRange();
         return *this;
     }
 
@@ -291,10 +326,48 @@ MyString& MyString::erase(int pos, int cnt) {
     return *this;
 }
 
-int MyString::stoi(const MyString& str, int pos, int base) {
+MyString& MyString::replace(int pos, int len, const char* subStr) {
+    if(pos >= size || -pos > size) {
+        resetIfOutOfRange();
+        return *this;
+    }
 
+    int realPos = pos;
+    if(pos < 0) {
+        realPos = pos + size - len + 1 < 0 ? 0 : pos + size - len + 1;
+    }
+
+    erase(pos, len);
+
+    if(realPos >= size) {
+        return insert(size, subStr);
+    } else {
+        return insert(realPos, subStr);
+    }
 }
 
+MyString& MyString::replace(int pos, int len, const MyString& subStr) {
+    if(pos >= size || -pos > size) {
+        resetIfOutOfRange();
+        return *this;
+    }
+
+    MyString copy(subStr);
+
+    int realPos = pos;
+    if(pos < 0) {
+        realPos = pos + size - len + 1 < 0 ? 0 : pos + size - len + 1;
+    }
+
+    erase(pos, len);
+
+    if(realPos >= size) {
+        return insert(size, copy);
+    } else {
+        return insert(realPos, copy);
+    }
+
+}
 
 const MyString MyString::operator+(const char* cstr2nd) const {
     MyString resultMyString = MyString();
@@ -331,6 +404,10 @@ const MyString MyString::operator+(const MyString& str2nd) const {
 }
 
 bool MyString::operator==(const MyString& str) const {
+    if(this == &str) {
+        return true;
+    }
+
     if(size != str.size) {
         return false;
     } else {
@@ -384,7 +461,7 @@ bool MyString::operator!=(const char* cstr2nd) const {
     return false;
 }
 
-MyString MyString::operator=(const MyString& srcStr) {
+MyString& MyString::operator=(const MyString& srcStr) {
     if(&srcStr == this) {
         return *this;
     }
@@ -400,7 +477,7 @@ MyString MyString::operator=(const MyString& srcStr) {
     return *this;
 }
 
-MyString MyString::operator=(MyString&& srcStr) noexcept {
+MyString& MyString::operator=(MyString&& srcStr) noexcept {
     if(this == &srcStr) {
         return *this;
     }
@@ -660,6 +737,40 @@ bool MyString::operator>=(const char* cstr2nd) const {
 
 //--------------------------------------------------------------------
 
+int stoi(const MyString& str, int pos, int base) {
+    if(pos >= str.length() || -pos > str.length()) {
+        return 0;
+    }
+
+    int result = 0;
+
+    for(int index = pos ; index < str.length() ; index++) { 
+        int intTypeValue;
+        
+        if(base >= 2 && base <= 10) {
+            if('0' <= str[index] && str[index] < '0' + base) {
+                intTypeValue = str[index] - '0';
+            } else {
+                return result;
+            }
+        } else if(base > 10 && base <= 36) {
+            if('0' <= str[index] && str[index] <= '9') {
+                intTypeValue = str[index] - '0';
+            } else if('a' <= str[index] && str[index] <= ('a' + (base - 11))) {
+                intTypeValue = str[index] - 'a' + 10;
+            } else {
+                return result;
+            }
+        } else {
+            return 0;
+        }
+        
+        result = result * base + intTypeValue;
+    }
+
+    return result;
+}
+
 ostream& operator<<(ostream& outputStream, const MyString& str) {
     for(int index = 0 ; index < str.length() ; index++) {
         outputStream << str[index];
@@ -669,33 +780,42 @@ ostream& operator<<(ostream& outputStream, const MyString& str) {
 }
 
 istream& operator>>(istream& inputStream, MyString& str) {
-    str.clear();
+    str.reset();
 
     bool isFirst = true;
     bool isRun = true;
     
     while (isRun) {
         char inputChar = inputStream.get();
+
+        if(inputStream.eof()) {
+            if(!isFirst) {
+                inputStream.clear();
+            }
+            return inputStream;
+        }
         
-        if((inputChar == ' ' || inputChar == '\t' || inputChar == '\n') && !isFirst) {
+        if(('!' > inputChar || inputChar > '~') && !isFirst) {
             isRun = false;
-        } else if ((inputChar == ' ' || inputChar == '\t' || inputChar == '\n') && isFirst) {
-            
-        } else {
+        } else if (('!' <= inputChar && inputChar <= '~')) {
             str.appendChar(inputChar);
             isFirst = false;
-        }
+        } 
     }
     
     return inputStream;  
 }
 
 istream& getline(istream& inputStream, MyString& str, char delim) {
-    str.clear();
+    str.reset();
 
     char inputChar = inputStream.get();
 
-    while (inputChar != delim && inputChar != '\n') {
+    while (inputChar != delim) {
+        if(inputStream.eof()) {
+            return inputStream;
+        }
+
         str.appendChar(inputChar);
 
         inputChar = inputStream.get();

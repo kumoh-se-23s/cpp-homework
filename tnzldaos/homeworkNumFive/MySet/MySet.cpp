@@ -111,16 +111,13 @@ MySet MySet::operator+(const MySet& inputMySet) const {
         }
     }
 
-    if(index1 == size && index2 < inputMySet.length()) {
-        for(index2 ; index2 < inputMySet.length() ; index2++) {
-            resultSet.appendElement(inputMySet.getElement(index2));
-        }
-    } 
-    else if (index2 == inputMySet.length() && index1 < size) {
-        for(index1 ; index1 < size ; index1++) {
-            resultSet.appendElement(arr[index1]);
-        }
+    for(index2 ; index2 < inputMySet.length() ; index2++) {
+        resultSet.appendElement(inputMySet.getElement(index2));
     }
+    for(index1 ; index1 < size ; index1++) {
+        resultSet.appendElement(arr[index1]);
+    }
+    
 
     return resultSet;
 }
@@ -172,10 +169,8 @@ MySet MySet::operator-(const MySet& inputMySet) const {
         }
     }
 
-    if (index2 == inputMySet.length() && index1 < size) {
-        for(index1 ; index1 < size ; index1++) {
-            resultSet.appendElement(arr[index1]);
-        }
+    for(index1 ; index1 < size ; index1++) {
+        resultSet.appendElement(arr[index1]);
     }
 
     return resultSet;
