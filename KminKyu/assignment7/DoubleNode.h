@@ -5,28 +5,16 @@
 #include "Node.h"
 
 template <typename T>
-class DoubleNode : public Node {
+class DoubleNode : public Node<T> {
     T item;
     DoubleNode<T> *prevNode = nullptr;
     DoubleNode<T> *nextNode = nullptr;
 public:
-    DoubleNode(const T &item, DoubleNode<T> *prevNode, DoubleNode<T> *nextNode)
-        : item(item),
-          prevNode(prevNode),
-          nextNode(nextNode) {
-    }
+    DoubleNode(const T &item, DoubleNode<T> *prevNode, DoubleNode<T> *nextNode);
 
-    DoubleNode(const DoubleNode &other)
-        : item(other.item),
-          prevNode(other.prevNode),
-          nextNode(other.nextNode) {
-    }
+    DoubleNode(const DoubleNode &other);
 
-    DoubleNode(DoubleNode &&other) noexcept
-        : item(std::move(other.item)),
-          prevNode(other.prevNode),
-          nextNode(other.nextNode) {
-    }
+    DoubleNode(DoubleNode &&other) noexcept;
 
     DoubleNode & operator=(const DoubleNode &other);
 

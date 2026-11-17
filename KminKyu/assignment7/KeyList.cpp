@@ -2,19 +2,21 @@
 
 #include <bits/locale_facets_nonio.h>
 
-template <typename K, typename V>
-KeyList<K,V>::KeyList(const KeyList &other)
-        : key(other.key),
-          value(other.value) {
+template <typename K, typename L>
+KeyList<K,L>::KeyList(const KeyList &other)
+    : key(other.key),
+      list(other.list) {
 }
-template <typename K, typename V>
-KeyList<K,V>::KeyList(KeyList &&other) noexcept {
+template <typename K, typename L>
+KeyList<K,L>::KeyList(KeyList &&other) noexcept {
     key = other.key;
-    value = other.value;
+    list= other.list;
+    other.key = nullptr;
+    other.list = nullptr;
 }
 
-template <typename K, typename V>
-KeyList<K,V>& KeyList<K,V>::operator=(const KeyList &other) {
+template <typename K, typename L>
+KeyList<K,L>& KeyList<K,L>::operator=(const KeyList &other) {
     if (this == &other)
         return *this;
 
@@ -22,16 +24,16 @@ KeyList<K,V>& KeyList<K,V>::operator=(const KeyList &other) {
         delete key;
     }
 
-    if (value != nullptr) {
-        delete value;
+    if (list != nullptr) {
+        delete list;
     }
 
     key = other.key;
-    value = other.value;
+    list = other.list;
     return *this;
 }
-template <typename K, typename V>
-KeyList<K,V>& KeyList<K,V>::operator=(KeyList &&other) noexcept {
+template <typename K, typename L>
+KeyList<K,L>& KeyList<K,L>::operator=(KeyList &&other) noexcept {
     if (this == &other)
         return *this;
 
@@ -39,39 +41,34 @@ KeyList<K,V>& KeyList<K,V>::operator=(KeyList &&other) noexcept {
         delete key;
     }
 
-    if (value != nullptr) {
-        delete value;
+    if (list != nullptr) {
+        delete list;
     }
 
     key = std::move(other.key);
-    value = std::move(other.value);
+    list = std::move(other.list);
 
     return *this;
 }
 
-template<typename K, typename V>
-V KeyList<K, V>::getValue() const {
-    return value;
-}
-
-template<typename K, typename V>
-K KeyList<K,V>::getKey() const {
+template<typename K, typename L>
+K KeyList<K,L>::getKey() const {
     return key;
 }
 
-template<typename K, typename V>
-LinkedList<V> KeyList<K, V>::getLinkedList() const {
-    return linkedList;
-}
-
-template<typename K, typename V>
-void KeyList<K, V>::setKey(const K &key) {
+template<typename K, typename L>
+void KeyList<K, L>::setKey(const K &key) {
     this->key = key;
 }
 
-template<typename K, typename V>
-void KeyList<K, V>::setValue(const V &value) {
-    this->value = value;
+template<typename K, typename L>
+L KeyList<K, L>::getList() const {
+    return list;
+}
+
+template<typename K, typename L>
+void KeyList<K, L>::setList(const L &List) {
+    this->list = List;
 }
 
 

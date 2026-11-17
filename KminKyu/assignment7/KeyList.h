@@ -2,16 +2,16 @@
 #include "LinkedList.h"
 
 
-template <typename K, typename V>
+template <typename K, typename L>
 class KeyList {
     K key;
-    LinkedList<V> linkedList;
+    L list;
 public:
     KeyList() = default;
 
-    KeyList(const K &key, LinkedList<V> linkedList): key(key),linkedList(linkedList) {}
+    KeyList(const K &key, L &list): key(key), list(list) {}
 
-    ~KeyList();
+    ~KeyList() = default;
 
     KeyList(const KeyList &other);
 
@@ -23,9 +23,11 @@ public:
 
     K getKey() const;
 
-    LinkedList<V> getLinkedList() const;
-
     void setKey(const K &key);
+
+    L getList() const;
+
+    void setList(const L &List);
 
 };
 

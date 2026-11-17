@@ -1,10 +1,10 @@
-#pragma once
+#ifndef SINGLENODE_H
+#define SINGLENODE_H
 
 #include "Node.h"
-#include <utility>
 
 template <typename T>
-class SingleNode : public Node {
+class SingleNode : public Node<T> {
     T item;
     SingleNode<T> *nextNode = nullptr;
 public:
@@ -18,7 +18,7 @@ public:
 
     SingleNode &operator=(SingleNode &&other) noexcept;
 
-    ~SingleNode() override = default;
+    ~SingleNode() override;
 
     const T& getItem() const;
 
@@ -31,3 +31,4 @@ public:
 };
 
 #include "SingleNode.tpp"
+#endif

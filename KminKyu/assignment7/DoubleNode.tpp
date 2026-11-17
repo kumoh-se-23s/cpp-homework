@@ -2,6 +2,29 @@
 #include "DoubleNode.h"
 
 template<typename T>
+DoubleNode<T>::DoubleNode(const T &item, DoubleNode<T> *prevNode, DoubleNode<T> *nextNode) {
+    this->item = item;
+    this->prevNode = prevNode;
+    this->nextNode = nextNode;
+}
+
+template<typename T>
+DoubleNode<T>::DoubleNode(const DoubleNode &other) {
+    this->item = other.item;
+    this->nextNode = other.nextNode;
+    this->prevNode = other.prevNode;
+}
+
+template<typename T>
+DoubleNode<T>::DoubleNode(DoubleNode &&other) noexcept {
+    this->item = std::move(other.item);
+    this->nextNode = other.nextNode;
+    this->prevNode = other.prevNode;
+    other.nextNode = nullptr;
+    other.prevNode = nullptr;
+}
+
+template<typename T>
 DoubleNode<T> & DoubleNode<T>::operator=(const DoubleNode &other) {
     if (this == &other)
         return *this;
