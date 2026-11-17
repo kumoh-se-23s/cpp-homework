@@ -22,10 +22,6 @@ StudentNode *StudentNode::getNextClassmate() const {
 }
 
 //setter-----------------------------------------------
-void StudentNode::setStudent(const Student &newStudent) {
-    student = newStudent;
-}
-
 void StudentNode::setNextTeammate(StudentNode *newNextTeammate) {
     nextTeammate = newNextTeammate;
 }

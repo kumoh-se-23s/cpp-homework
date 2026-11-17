@@ -9,14 +9,17 @@ public:
     //생성자
     IdHashMap();
     IdHashMap(int minLength);
+    IdHashMap(const IdHashMap& idHashMap);
     ~IdHashMap();
 
     //getter
     int getMinYear() const;
     int getMaxYear() const;
 
-    //연산자 오버로딩
-    IdHashNode& operator[](int year);
+    //기능
+    IdHashNode* operator[](int year) const;
+    IdHashNode* insert(int year);
+    void remove(int year);
 private:
     static constexpr int DEFAULT_CAPACITY = 4;
     int capacity = DEFAULT_CAPACITY;

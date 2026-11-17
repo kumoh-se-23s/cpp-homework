@@ -82,3 +82,4 @@ istream& getline(istream& in, MyString &str, char delim = '\n');
 //str[pos]부터의 숫자부분을 정수로 변환해 return
 //음수처리x, 적절한 내용 아닌 글자면 0
 int stoi(const MyString &str, int pos = 0, int base = 10);
+MyString itos(int val);

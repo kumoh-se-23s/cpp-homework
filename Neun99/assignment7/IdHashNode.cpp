@@ -4,13 +4,11 @@
 IdHashNode::IdHashNode() {
     id = -1;
     head = nullptr;
-    size = 0;
 }
 
 IdHashNode::IdHashNode(int id) {
     this->id = id;
     head = nullptr;
-    size = 0;
 }
 
 //getter-------------------------------------
@@ -31,15 +29,13 @@ void IdHashNode::setHead(StudentNode *newHead) {
     head = newHead;
 }
 
-void IdHashNode::sizeUp() {
-    size++;
-}
-
-void IdHashNode::sizeDown() {
-    size--;
-}
-
 //기능----------------------------------------
-bool IdHashNode::isEmtpy() const {
-    return size == 0;
+bool IdHashNode::isEmpty() const {
+    return head == nullptr;
+}
+
+void IdHashNode::deleteAll(StudentNode *node) {
+    if (node != nullptr)
+        deleteAll(node->getNextClassmate());
+    delete node;
 }

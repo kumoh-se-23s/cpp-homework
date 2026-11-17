@@ -4,6 +4,7 @@
 using namespace std;
 
 int main() {
-    unsigned int a = -3;
-    cout << a;
+    string str = string();
+    getline(cin, str);
+    cout << str;
 }

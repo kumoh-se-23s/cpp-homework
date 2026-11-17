@@ -4,7 +4,8 @@
 class Student {
 public:
     //생성자
-    Student(int newId, MyString newGroup, MyString newName);
+    Student();
+    Student(int newId, const MyString& newGroup, const MyString& newName);
 
     //getter
     int getId() const;
@@ -18,6 +19,4 @@ private:
     int id;
     MyString name;
     MyString group;
-
-    MyString idToString() const;
 };

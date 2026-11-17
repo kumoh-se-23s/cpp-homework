@@ -185,6 +185,28 @@ int stoi(const MyString &str, int pos, int base) {
     return result;
 }
 
+//int를 String에 대입
+MyString itos(int val) {
+    //길이 구하기
+    int length = 1;
+    for (int tempVal = val; tempVal > 9; tempVal /= 10) {
+        length++;
+    }
+
+    //char 배열 생성 및 넣기
+    char* charArr = new char[length + 1];
+    for (int tempVal = val, idx = length - 1; idx >= 0; idx--) {
+        charArr[idx] = tempVal % 10 + '0';
+        tempVal /= 10;
+    }
+    charArr[length] = '\0';
+
+    //MyString으로 감싼 뒤 배열 delete 후 리턴
+    MyString result = MyString(charArr);
+    delete[] charArr;
+    return result;
+}
+
 //연산자 오버로딩--------------------
 //+ cArr
 const MyString MyString::operator+(const char *cstr2nd) const {

@@ -9,25 +9,29 @@ public:
     StudentMultiList();
     ~StudentMultiList();
 
-    void printAll();
-    void insertStudent(int id, MyString group, MyString name);
-    void deleteStudent(int id);
+    MyString toStringForSave() const;
+    MyString toStringForPrint() const;
+    void insertStudent(int id, const MyString& group, const MyString& name);
+    bool removeStudent(int id);
 private:
+    int studentCnt;
     IdHashMap idMap;
     GroupHashMap groupMap;
-
-    //원형 더블 연결 처리
-    void teammateInsert(StudentNode* newNode);
-    void teammateDelete();
+    const MyString NO_GROUP = "-";
 
     //단일 연결 처리
     void classmateInsert(StudentNode* newNode);
-    void classmateInsertFront(StudentNode* newNode);
+    void classmateInsertFront(IdHashNode* idHash, StudentNode* newNode);
     void classmateInsertAfter(StudentNode* newNode, StudentNode* preNode);
-    void classmateInsertLast(StudentNode* newNode, StudentNode* preNode);
 
-    void classmateDelete(MyString group);
-    void classmateDeleteFront();
-    void classmateDeleteAfter(StudentNode* preNode);
-    void classmateDeleteLast(StudentNode* preNode);
+    StudentNode* classmateRemove(int id);
+    StudentNode* classmateRemoveFront(IdHashNode* idHash);
+    StudentNode* classmateRemoveAfter(StudentNode* preNode);
+    bool shouldRemoveHashNode(IdHashNode* idHash);
+
+    //원형 더블 연결 처리
+    void teammateInsert(StudentNode* newNode);
+    void teammateInsertFirst(GroupHashNode* groupHash, StudentNode* newNode);
+    void teammateInsertAfter(GroupHashNode* groupHash, StudentNode* newNode, StudentNode* preNode);
+    void teammateRemove(StudentNode* targetNode);
 };

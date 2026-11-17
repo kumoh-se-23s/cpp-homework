@@ -6,22 +6,19 @@ class GroupHashNode {
 public:
     //생성자
     GroupHashNode();
-    GroupHashNode(MyString group);
+    GroupHashNode(const MyString& group);
 
     //getter
-    MyString getId() const;
+    const MyString& getId() const;
     StudentNode* getHead() const;
 
     //setter
-    void setId(MyString newId);
+    void setId(const MyString& newId);
     void setHead(StudentNode* newHead);
-    void sizeUp();
-    void sizeDown();
 
     //기능
     bool isEmpty() const;
 private:
     MyString id;
     StudentNode* head;
-    int size;
 };

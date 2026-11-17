@@ -1,45 +1,23 @@
-/*
-Student: id, group, name을 가지고 있는 데이터클래스
--getId, getGroup, getName
--toString
+#include "StudentMultiList.h"
 
-StudentNode: student, *nextTeammate, *prevTeammate, *nextClassmate를 가지는 Node
--getStudent, getNextTeammate, getPrevTeammate, getNextClassmate
--setNextTeammate, setPrevTeammate, setNextClassmate
--toString
+int main() {
+    StudentMultiList a;
 
-StudentSinglyList: *nextClassmate만을 관리하는 자료구조
--findById(int id) (return StudentNode*)
--addNewStudent(StudentNode*) : 오름차순 삽입
--removeStudent(StudentNode*)
+    a.insertStudent(20220987, "G1", "Harley Kim");
+    a.insertStudent(20231555, "G1", "William Jin");
+    a.insertStudent(20221004, "G2", "Thomas Lee");
+    a.insertStudent(19980123, "G1", "Jenny Anh");
+    a.insertStudent(19980909, "G3", "Liam Son");
+    a.insertStudent(19990131, "G2", "Owen Park");
+    a.insertStudent(19981475, "-", "Aria Lee");
+    a.insertStudent(20230554, "G2", "Oliver Kim");
+    a.insertStudent(20240178, "G1", "Nora Kang");
 
-StudentCircularDoublyList: *nextTeammate와 *prevTeammate만을 관리하는 자료구조
--addNewStudent(StudentNode*) : 오름차순 삽입
--removeStudent(StudentNode*)
+    a.removeStudent(19980909);
 
-IdMap: int key(입학년도)와 StudentSinglyList를 가지는 맵
--findById(int id) (return StudentNode*)
--getKey, getList
+    a.insertStudent(20250907, "G3", "Rosa Jang");
 
-GroupMap: MySTring key(그룹명)와 StudentCircularDoublyList를 가지는 맵
--getKey, getList
-
-IdTable: IdMap들의 ArrayList
--getListById(int id)
--addNewStudent(StudentNode*)
--removeStudent(StudentNode*)
-
-GroupTable: GroupMap들의 ArrayList
--getListByGroup(MyString group)
--addNewStudent(StudentNode*)
--removeStudent(StudentNode*)
-
-StudentManager: StudentNode의 생성,삭제를 전담, IdTable과 GroupTable을 가지고 모든 자료구조 동작을 관리
--printAllStudent
--addNewStudent(int id, MyString group, MyString name)
--removeStudent(int id)
-
-ManageCircleApp: StudentManager를 가진 동작부 app
--runApp
-
-*/
+    cout << a.toStringForPrint() << endl;
+    cout << "-------------------" << endl;
+    cout << a.toStringForSave() << endl;
+}
