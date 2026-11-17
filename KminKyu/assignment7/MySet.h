@@ -1,14 +1,13 @@
 #pragma once
 #include<iostream>
 #include "KeyList.h"
-
+#include "Student.h"
 using namespace std;
 
 template <typename T>
 class MySet {
     using K = typename T::KeyType;
     T *array;
-    MySet<KeyList<int, LinkedList<Node<Node<Student>>>>
 
 
     int capacity;
