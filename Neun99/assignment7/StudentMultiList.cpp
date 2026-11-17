@@ -4,11 +4,11 @@ StudentMultiList::StudentMultiList() {
     studentCnt = 0;
 }
 
-//소멸자: StudentNode를 여기서 일괄 관리
+//소멸자: StudentNode를 여기서 일괄 제거
 StudentMultiList::~StudentMultiList() {
     //최소년도부터 최대년도까지 순회하며 delete
     for (int idx = idMap.getMinYear(); idx < idMap.getMaxYear(); idx++) {
-        idMap[idx]->deleteAll(idMap[idx]->getHead());
+        deleteAllStudent(idMap[idx]->getHead());
     }
 }
 
@@ -76,12 +76,13 @@ MyString StudentMultiList::toStringForPrint() const{
                     }
                 }
             }
-            result += ")\n";
+            result += ")\n"; //한 학생 끝
         }
     }
     return result;
 }
 
+//학생 추가
 void StudentMultiList::insertStudent(int id, const MyString &group, const MyString &name) {
     StudentNode* newNode = new StudentNode(id, group, name);
     classmateInsert(newNode);
@@ -90,6 +91,7 @@ void StudentMultiList::insertStudent(int id, const MyString &group, const MyStri
     studentCnt++; //TODO:동일학번일 때 교체해야 하면 classmateInsert를 bool리턴으로 하고 if문 걸어야 할듯
 }
 
+//학생 삭제
 bool StudentMultiList::removeStudent(int id) {
     StudentNode* targetNode = classmateRemove(id);
     if (targetNode != nullptr) {
@@ -98,7 +100,7 @@ bool StudentMultiList::removeStudent(int id) {
             teammateRemove(targetNode);
     }
     delete targetNode;
-    return targetNode != nullptr;
+    return targetNode != nullptr; //실제로 삭제되었는지 여부 리턴
 }
 
 //private-------------------------------------------------------------
@@ -191,9 +193,11 @@ void StudentMultiList::teammateInsert(StudentNode *newNode) {
     } else { //원소가 있으면
         StudentNode* preNode = groupHash->getHead();
         int id = newNode->getStudent().getId();
+
         if (preNode->getStudent().getId() > id) { //맨 앞이면 헤드 변경 및 preNode 조정
             groupHash->setHead(newNode);
             preNode = preNode->getPrevTeammate();
+
         } else { //아니면 자기 자리 탐색
             for (;preNode->getNextTeammate() != groupHash->getHead() && preNode->getNextTeammate()->getStudent().getId() < id;
             preNode = preNode->getNextTeammate()) {} //탐색하다가 자기 자리 이전에서 멈춤
@@ -236,4 +240,11 @@ void StudentMultiList::teammateRemove(StudentNode *targetNode) {
     }
     if (groupHash->isEmpty())
         groupMap.remove(group);
+}
+
+//모든 동기 노드 delete
+void StudentMultiList::deleteAllStudent(StudentNode *node) {
+    if (node != nullptr)
+        deleteAllStudent(node->getNextClassmate());
+    delete node;
 }

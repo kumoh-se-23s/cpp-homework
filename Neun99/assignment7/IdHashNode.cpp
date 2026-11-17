@@ -33,9 +33,3 @@ void IdHashNode::setHead(StudentNode *newHead) {
 bool IdHashNode::isEmpty() const {
     return head == nullptr;
 }
-
-void IdHashNode::deleteAll(StudentNode *node) {
-    if (node != nullptr)
-        deleteAll(node->getNextClassmate());
-    delete node;
-}

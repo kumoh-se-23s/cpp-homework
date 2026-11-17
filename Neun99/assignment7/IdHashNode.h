@@ -18,7 +18,6 @@ public:
 
     //기능
     bool isEmpty() const;
-    void deleteAll(StudentNode* node);
 private:
     int id; //학번 년도
     StudentNode* head; //list head

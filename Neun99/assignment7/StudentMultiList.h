@@ -34,4 +34,7 @@ private:
     void teammateInsertFirst(GroupHashNode* groupHash, StudentNode* newNode);
     void teammateInsertAfter(GroupHashNode* groupHash, StudentNode* newNode, StudentNode* preNode);
     void teammateRemove(StudentNode* targetNode);
+
+    //소멸자 재귀문
+    void deleteAllStudent(StudentNode* node);
 };
