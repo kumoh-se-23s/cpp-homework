@@ -1,6 +1,6 @@
 #include "StudentNode.h"
 
-StudentNode::StudentNode(int id, MyString group, MyString name) {
+StudentNode::StudentNode(int id, const MyString &group, const MyString &name) {
     student = Student(id, group, name);
 }
 
