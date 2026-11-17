@@ -27,6 +27,48 @@ class MyMultiLinkedList {
     Node *head = nullptr;
 
 public:
+    class Iterator {
+        Node *currentNode = nullptr;
+
+    public:
+        Iterator(Node *currentNode) : currentNode(currentNode) {
+        }
+
+        T &operator*() const {
+            return currentNode->object;
+        }
+
+        Iterator &stepHorizontal() {
+            currentNode = currentNode->down;
+            return *this;
+        }
+
+        Iterator &stepVertical() {
+            currentNode = currentNode->right;
+            return *this;
+        }
+
+        bool operator!=(const Iterator &iterator) const {
+            return iterator.currentNode != currentNode;
+        }
+    };
+
+    Iterator horizonalBegin() {
+        return Iterator(head);
+    };
+
+    Iterator horizonalEnd() {
+        return Iterator(head);
+    }
+
+    Iterator verticalBegin() {
+        return Iterator(head);
+    }
+
+    Iterator verticalEnd() {
+        return Iterator(nullptr);
+    }
+
     void sortedInsert(T object) {
         Node *inputNode = new Node(object);
 
@@ -91,7 +133,7 @@ public:
         }
 
         Node *prevNode = head;
-        Node* currentNode = head;
+        Node *currentNode = head;
 
         do {
             if (currentNode->object == studentId) {
@@ -101,7 +143,6 @@ public:
                 prevNode->down = currentNode->down;
 
                 delete currentNode;
-
             } else {
                 prevNode = currentNode;
                 currentNode = currentNode->down;

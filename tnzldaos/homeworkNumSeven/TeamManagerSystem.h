@@ -10,12 +10,13 @@ class TeamManagerSystem {
     string maxStudentId;
 
     string memberNum;
-    // string teamNum;
+    string teamNum;
 
     MyMultiLinkedList<Student> myLinkedList = MyMultiLinkedList<Student>();
 
 public:
-    TeamManagerSystem();
+    TeamManagerSystem() = default;
+    ~TeamManagerSystem() = default;
 
     void run();
 

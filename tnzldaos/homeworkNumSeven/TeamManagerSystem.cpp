@@ -5,8 +5,6 @@
 #include <map>
 using namespace std;
 
-TeamManagerSystem::TeamManagerSystem() = default;
-
 void TeamManagerSystem::run() {
     char input;
 
@@ -35,18 +33,17 @@ void TeamManagerSystem::run() {
 }
 
 void TeamManagerSystem::readFileToList(int argc, char *argv[]) {
-    // ifstream file(argv[1]);
-    //
-    // file >> minStudentId;
-    // file >> maxStudentId;
-    // file >> memberNum;
-    // file  >> teamNum;
-    //
-    // string line;
-    // while (getline(file,line)) {
-    //     map<string,string> inputMap;
-    //     inputMap.insert()
-    // }
+    ifstream file(argv[1]);
+
+    file >> minStudentId;
+    file >> maxStudentId;
+    file >> memberNum;
+
+    string line;
+    while (getline(file,line)) {
+        map<string,string> inputMap;
+        inputMap.insert()
+    }
 
     // std.txt 예제의 학생 9명 (파일 순서 그대로: 학번, 이름, 팀ID)
     Student student1 = Student("20220987", "Harley Kim", "G1");
