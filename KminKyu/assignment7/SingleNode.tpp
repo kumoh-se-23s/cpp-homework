@@ -1,6 +1,18 @@
 #pragma once
 #include "SingleNode.h"
 
+template<typename T>
+SingleNode<T>::SingleNode(const T &item, SingleNode<T> *nextNode) {
+}
+
+template<typename T>
+SingleNode<T>::SingleNode(const SingleNode &other) {
+}
+
+template<typename T>
+SingleNode<T>::SingleNode(SingleNode &&other) noexcept {
+}
+
 template <typename T>
 SingleNode<T>& SingleNode<T>::operator=(const SingleNode &other) {
     if (this == &other)
@@ -20,7 +32,7 @@ SingleNode<T>& SingleNode<T>::operator=(SingleNode &&other) noexcept {
 }
 
 template<typename T>
-T SingleNode<T>::getItem() const {
+const T &SingleNode<T>::getItem() const {
     return item;
 }
 

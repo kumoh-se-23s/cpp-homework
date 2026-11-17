@@ -1,9 +1,11 @@
 #ifndef DOUBLENODE_H
 #define DOUBLENODE_H
+
 #include <utility>
+#include "Node.h"
 
 template <typename T>
-class DoubleNode {
+class DoubleNode : public Node {
     T item;
     DoubleNode<T> *prevNode = nullptr;
     DoubleNode<T> *nextNode = nullptr;

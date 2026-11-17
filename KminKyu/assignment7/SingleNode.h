@@ -1,35 +1,31 @@
 #pragma once
-#include <algorithm>
+
+#include "Node.h"
+#include <utility>
 
 template <typename T>
-class SingleNode {
+class SingleNode : public Node {
     T item;
     SingleNode<T> *nextNode = nullptr;
 public:
-    SingleNode(const T &item, SingleNode<T> *nextNode)
-        : item(item),
-          nextNode(nextNode) {
-    }
+    SingleNode(const T &item, SingleNode<T> *nextNode);
 
-    SingleNode(const SingleNode &other)
-        : item(other.item),
-          nextNode(other.nextNode) {
-    }
+    SingleNode(const SingleNode &other);
 
-    SingleNode(SingleNode &&other) noexcept
-        : item(std::move(other.item)),
-          nextNode(other.nextNode) {
-    }
+    SingleNode(SingleNode &&other) noexcept;
 
-    SingleNode<T> &operator=(const SingleNode &other);
+    SingleNode &operator=(const SingleNode &other);
 
-    SingleNode<T> &operator=(SingleNode &&other) noexcept;
+    SingleNode &operator=(SingleNode &&other) noexcept;
 
-    ~SingleNode() = default;
+    ~SingleNode() override = default;
 
-    T getItem() const;
+    const T& getItem() const;
 
     void setItem(const T &item);
+
+    SingleNode<T> *getNext() const;
+    void setNext(SingleNode<T> *next);
 
 
 };
