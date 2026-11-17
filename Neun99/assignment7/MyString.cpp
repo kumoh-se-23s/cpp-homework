@@ -207,6 +207,27 @@ MyString itos(int val) {
     return result;
 }
 
+//delim 기준으로 분리
+void MyString::split(char delim, MyString *arr, int arrSize) {
+    int* delimPos = new int[arrSize - 1];
+
+    //delim 위치 탐색
+    for (int idx = 0, posIdx = 0; idx < size && posIdx < arrSize - 1; idx++) {
+        if (str[idx] == delim) {
+            delimPos[posIdx] = idx;
+            posIdx++;
+        }
+    }
+
+    //배열 할당
+    for (int idx = 0, pos = 0; idx < arrSize && pos < size; idx++) {
+        arr[idx] = substr(pos, delimPos[idx]);
+        pos = delimPos[idx] + 1;
+    }
+
+    delete[] delimPos;
+}
+
 //연산자 오버로딩--------------------
 //+ cArr
 const MyString MyString::operator+(const char *cstr2nd) const {

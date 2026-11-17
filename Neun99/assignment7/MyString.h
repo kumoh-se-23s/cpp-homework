@@ -29,6 +29,8 @@ public:
     MyString& replace(int pos, int len, const MyString &subStr);
     MyString& erase(int pos, int cnt);
 
+    void split(char delim, MyString* arr, int arrSize);
+
     void clear();
     //연산자 오버로딩-------------
     const MyString operator+(const char *cstr2nd) const;
