@@ -46,7 +46,9 @@ void StudentListManger::run() {
         } 
         else if (input == 'D') {
             int id;
+            cout << "input num" << endl;
             cin >> id;
+
             studentList.deleteStudent(id);
         } 
         else if (input == 'Q') {

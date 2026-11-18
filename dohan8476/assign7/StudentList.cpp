@@ -12,7 +12,7 @@ void StudentList::initYearRange(int minY, int maxY) {
 
 void StudentList::addStudent(const Student& std) {
     StudentNode* newNode = new StudentNode(std);
-    // cout << "[New StudentNode] " << newNode << " (ID: " << std.getStudentID() << ")" << endl;
+    cout << "[New StudentNode] " << newNode << " (ID: " << std.getStudentID() << ")" << endl;
 
     // 두 테이블에 동일한 노드 전달 후 연결
     yearTable.insert(newNode); // next 연결
@@ -21,14 +21,14 @@ void StudentList::addStudent(const Student& std) {
 }
 
 bool StudentList::deleteStudent(int studentID) {
-    // 연도 테이블에서 학번으로 찾아 분리
+    // 연도 테이블에서 학번으로 찾아 분리=
     StudentNode* target = yearTable.remove(studentID);
     if (target == nullptr) return false;
 
     // 팀 테이블에서 분리
     teamTable.remove(target);
 
-    // cout << "[Delete StudentNode] " << target << " (ID: " << studentID << ")" << endl;
+    cout << "[Delete StudentNode] " << target << " (ID: " << studentID << ")" << endl;
     delete target;
     studentCount--;
     return true;

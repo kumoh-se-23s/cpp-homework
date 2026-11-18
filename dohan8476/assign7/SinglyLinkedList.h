@@ -12,7 +12,7 @@ class SinglyLinkedList {
 
         template <typename KeyType>
         T* remove(const KeyType& element);
-        T* remove(int index);
+        T* removeAt(int index);
         T* removeFirst();
 
         int getSize() const;
@@ -119,7 +119,7 @@ bool SinglyLinkedList<T>::isEmpty() const {
 }
 
 template<typename T>
-T* SinglyLinkedList<T>::remove(const int index) {
+T* SinglyLinkedList<T>::removeAt(const int index) {
     if (index < 0 || index >= size || head == nullptr) {
         return nullptr;
     }

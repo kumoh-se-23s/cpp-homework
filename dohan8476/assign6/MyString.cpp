@@ -404,6 +404,10 @@ MyString &MyString::replace(int pos, int len, const char subStr[]) {
     return replaceHelper(pos, len, cstrlen(subStr), subStr);
 }
 
+MyString &MyString::erase(int pos, int len) {
+    return replaceHelper(pos, len, 0, "");
+}
+
 MyString &MyString::replaceHelper(int pos, int len, int strlen, const char srcStr[]) {
     pos = pos < 0 ? 0 : pos > size ? size : pos;
 
@@ -464,10 +468,6 @@ MyString &MyString::replaceHelper(int pos, int len, int strlen, const char srcSt
     size = newSize;
     str[size] = '\0';
     return *this;
-}
-
-MyString &MyString::erase(int pos, int len) {
-    return replaceHelper(pos, len, 0, "");
 }
 
 //------------------------------------------------------------

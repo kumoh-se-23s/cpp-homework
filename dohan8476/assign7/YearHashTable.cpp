@@ -24,7 +24,7 @@ void YearHashTable::init(int minY, int maxY) {
 
     if (capacity > 0) {
         buckets = new SinglyLinkedList<StudentNode>[capacity];
-        // cout << "[New YearHashTable Buckets Array] " << buckets << " (Cap: " << capacity << ")" << endl;
+        cout << "[New YearHashTable Buckets Array] " << buckets << " (Cap: " << capacity << ")" << endl;
     }
 }
 
@@ -36,7 +36,7 @@ void YearHashTable::resize(int newYear) {
     int newCap = newEnd - newBase + 1;
 
     SinglyLinkedList<StudentNode>* newBuckets = new SinglyLinkedList<StudentNode>[newCap];
-    // cout << "[New Expanded YearBuckets Array] " << newBuckets << endl;
+    cout << "[New resize YearBuckets Array] " << newBuckets << endl;
 
     if (buckets != nullptr) {
         for (int i = 0; i < capacity; ++i) {
@@ -78,7 +78,7 @@ void YearHashTable::insert(StudentNode* node) {
 
 StudentNode* YearHashTable::remove(int studentID) {
     int year = studentID / 10000;
-    if (capacity == 0 || year < baseYear || year >= baseYear + capacity) {
+    if (capacity == 0 || year < minYear || year > maxYear) {
         return nullptr;
     }
     //buck은 year로 remove는 stuID로

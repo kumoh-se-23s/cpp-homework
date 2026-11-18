@@ -5,9 +5,9 @@ using namespace std;
 
 TeamHashTable::TeamHashTable(int initCap) : capacity(initCap), groupCnt(0) {
     buckets = new CircularLinkedList<StudentNode>[capacity];
-    // cout << "[New TeamHashTable Buckets Array] " << buckets << endl;
+    cout << "[New TeamHashTable Buckets Array] " << buckets << endl;
     teamIDs = new MyString[capacity];
-    // cout << "[New TeamHashTable TeamIDs Array] " << teamIDs << endl;
+    cout << "[New TeamHashTable TeamIDs Array] " << teamIDs << endl;
 }
 
 TeamHashTable::~TeamHashTable() {
@@ -25,24 +25,37 @@ TeamHashTable::~TeamHashTable() {
 }
 
 void TeamHashTable::resize(int newCap) {
-    CircularLinkedList<StudentNode>* newBuckets = new CircularLinkedList<StudentNode>[newCap];
-    // cout << "[New resize TeamBuckets Array] " << newBuckets << endl;
-    MyString* newTeamIDs = new MyString[newCap];
-    // cout << "[New resize TeamIDs Array] " << newTeamIDs << endl;
+    int oldCap = capacity;
+    CircularLinkedList<StudentNode>* oldBuckets = buckets;
+    MyString* oldTeamIDs = teamIDs;
 
-    for (int i = 0; i < capacity; ++i) {
-        newBuckets[i].moveFrom(buckets[i]);
-        newTeamIDs[i] = teamIDs[i];
+    capacity = newCap;
+    CircularLinkedList<StudentNode>* newBuckets = new CircularLinkedList<StudentNode>[capacity];
+    cout << "[New resize TeamBuckets Array] " << newBuckets << endl;
+    MyString* newTeamIDs = new MyString[capacity];
+    cout << "[New resize TeamIDs Array] " << newTeamIDs << endl;
+
+    for (int i = 0; i < oldCap; ++i) {
+        if (oldTeamIDs[i] != "") {
+            int start = hash(oldTeamIDs[i]);
+            for (int j = 0; j < capacity; ++j) {
+                int idx = (start + j) % capacity;
+                if (newTeamIDs[idx] == "") {
+                    newTeamIDs[idx] = oldTeamIDs[i];
+                    newBuckets[idx].moveFrom(oldBuckets[i]);
+                    break;
+                }
+            }
+        }
     }
 
     // cout << "[Delete Old TeamBuckets Array] " << buckets << endl;
-    delete[] buckets;
+    delete[] oldBuckets;
     // cout << "[Delete Old TeamIDs Array] " << teamIDs << endl;
-    delete[] teamIDs;
+    delete[] oldTeamIDs;
 
     buckets = newBuckets;
     teamIDs = newTeamIDs;
-    capacity = newCap;
 }
 
 int TeamHashTable::hash(const MyString& teamID) const {
@@ -68,17 +81,19 @@ int TeamHashTable::find(const MyString& teamID) const {
 
 //teamID 받아서 버킷 만들기
 int TeamHashTable::createBucket(const MyString& teamID) {
-    for (int i = 0; i < capacity; i++) {
-        if (teamIDs[i] == "") {
-            teamIDs[i] = teamID;
-            return i;
-        }
+    if (groupCnt + 1 >= capacity) {
+        resize(capacity * 2);
     }
 
-    int oldCap = capacity;
-    resize(capacity * 2);
-    teamIDs[oldCap] = teamID;
-    return oldCap;
+    int start = hash(teamID);
+    for (int i = 0; i < capacity; i++) {
+        int idx = (start + i) % capacity;
+        if (teamIDs[idx] == "") {
+            teamIDs[idx] = teamID;
+            return idx;
+        }
+    }
+    return -1;
 }
 
 void TeamHashTable::insert(StudentNode* node) {
@@ -87,6 +102,7 @@ void TeamHashTable::insert(StudentNode* node) {
     int idx = find(node->data.getTeamID());
     //find 결과가 없으니 버킷 만들어야함
     if (idx == -1) {
+        cout << "[create New Team] " << node->data.getTeamID() << endl;
         idx = createBucket(node->data.getTeamID());
         groupCnt++;
     }
