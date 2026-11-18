@@ -35,7 +35,7 @@ public:
     DoubleNode<T> * getNextNode() const;
 
     void setNextNode(DoubleNode<T> *nextNode);
-
+    void test();
 };
 
 #include "DoubleNode.tpp"
