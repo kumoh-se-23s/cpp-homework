@@ -1,4 +1,5 @@
 #include "Student.h"
+#include "MyString.h"
 
 Student::Student(Student &&otherStudent) noexcept {
     this->studentGroup = otherStudent.studentGroup;
@@ -37,6 +38,14 @@ const MyString & Student::getStudentGroup() const {
 
 const MyString & Student::getStudentName() const {
     return studentName;
+}
+
+MyString Student::toString() const {
+    MyString result;
+    result += MyString::integerToString(studentId);
+    result += studentGroup;
+    result += studentName;
+    return result;
 }
 
 bool Student::operator==(int otherStudentId) const {

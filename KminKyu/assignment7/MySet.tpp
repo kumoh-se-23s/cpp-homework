@@ -1,3 +1,4 @@
+#pragma once
 #include "MySet.h"
 
 template <typename T>
@@ -85,11 +86,6 @@ MySet<T>& MySet<T>::operator=(MySet<T> &&otherSet) noexcept {
 }
 
 template <typename T>
-MySet<T> MySet<T>::operator+(const MySet<T> &otherSet) const {
-    return unionSet(otherSet);
-}
-
-template <typename T>
 int MySet<T>::getLength() const {
     return size;
 }
@@ -142,33 +138,7 @@ T MySet<T>::get(int index) const {
 }
 
 template <typename T>
-MySet<T> MySet<T>::unionSet(const MySet &otherSet) const {
-    MySet result = MySet();
-    int idx1st = 0, idx2nd = 0;
-    while (idx1st < this->size && idx2nd < otherSet.size) {
-        if (array[idx1st] < otherSet.array[idx2nd]) {
-            result.append(array[idx1st++]);
-        } else if (array[idx1st] > otherSet.array[idx2nd]) {
-            result.append(otherSet.array[idx2nd++]);
-        } else {
-            result.append(array[idx1st++]);
-            ++idx2nd;
-        }
-    }
-
-    while (idx1st < this->size) {
-        result.append(array[idx1st++]);
-    }
-
-    while (idx2nd < otherSet.size) {
-        result.append(otherSet.array[idx2nd++]);
-    }
-    return result;
-
-}
-
-template <typename T>
-void MySet<T>::append(const T& appendValue) {
+void MySet<T>::append(const V& appendValue) {
     if (size >= capacity) {
         resize();
     }
@@ -192,7 +162,6 @@ template <typename T>
 void MySet<T>::insert(const T& insertValue) {
     int index = binarySearch(0, this->size, insertValue);
 
-    if ()
 
     if (this->size + 1 > this->capacity) {
         resize();
@@ -220,8 +189,8 @@ int MySet<T>::binarySearch(int left, int right, const T& value) const {
     }
 
 }
-
-istream & operator>>(istream &in, MySet &mySet) {
+template <typename T>
+istream & operator>>(istream &in, MySet<T> &mySet) {
     mySet.clear();
     int input;
     do {
@@ -234,7 +203,8 @@ istream & operator>>(istream &in, MySet &mySet) {
     return in;
 }
 
-ostream & operator<<(ostream &out, const MySet &mySet) {
+template <typename T>
+ostream & operator<<(ostream &out, const MySet<T> &mySet) {
     out << "{";
     int index;
     for (index = 0; index < mySet.getLength(); ++index) {

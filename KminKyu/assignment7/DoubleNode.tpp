@@ -9,6 +9,10 @@ DoubleNode<T>::DoubleNode(const T &item, DoubleNode<T> *prevNode, DoubleNode<T> 
 }
 
 template<typename T>
+DoubleNode<T>::DoubleNode(const T &item) : Node<T>(item){
+}
+
+template<typename T>
 DoubleNode<T>::DoubleNode(const DoubleNode &other) {
     this->item = other.item;
     this->nextNode = other.nextNode;
@@ -17,7 +21,7 @@ DoubleNode<T>::DoubleNode(const DoubleNode &other) {
 
 template<typename T>
 DoubleNode<T>::DoubleNode(DoubleNode &&other) noexcept {
-    this->item = std::move(other.item);
+    std::swap(this->item , other.item);
     this->nextNode = other.nextNode;
     this->prevNode = other.prevNode;
     other.nextNode = nullptr;
@@ -38,7 +42,7 @@ template<typename T>
 DoubleNode<T> & DoubleNode<T>::operator=(DoubleNode &&other) noexcept {
     if (this == &other)
         return *this;
-    item = std::move(other.item);
+    swap(this->item, other.item);
     prevNode = other.prevNode;
     nextNode = other.nextNode;
     return *this;

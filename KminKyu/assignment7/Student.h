@@ -1,5 +1,5 @@
 #pragma once
-#include "../assignment6/MyString.h"
+#include "MyString.h"
 
 class Student {
     int studentId;
@@ -43,6 +43,8 @@ public:
     const MyString& getStudentGroup() const;
 
     const MyString& getStudentName() const;
+
+    MyString toString() const;
 };
 
 

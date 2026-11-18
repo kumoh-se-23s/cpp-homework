@@ -7,10 +7,12 @@
 template <typename T>
 class DoubleNode : public Node<T> {
     T item;
-    DoubleNode<T> *prevNode = nullptr;
-    DoubleNode<T> *nextNode = nullptr;
+    DoubleNode *prevNode = nullptr;
+    DoubleNode *nextNode = nullptr;
 public:
-    DoubleNode(const T &item, DoubleNode<T> *prevNode, DoubleNode<T> *nextNode);
+    DoubleNode(const T &item, DoubleNode<T> *prevNode, DoubleNode *nextNode);
+
+    DoubleNode(const T &item);
 
     DoubleNode(const DoubleNode &other);
 

@@ -1,12 +1,15 @@
-#ifndef CPP_HOMEWORK_GIT_NODE_H
-#define CPP_HOMEWORK_GIT_NODE_H
+#ifndef NODE_H
+#define NODE_H
+
 template <typename T>
 class Node {
-public:
+protected:
     T item;
-
-    virtual ~Node() = 0;
+    Node(const T &item) : item(item) {}
+    Node(const Node &) = default;
+    Node(Node &&) noexcept = default;
+public:
+    virtual ~Node() = default;
+    virtual const T& getItem() const = 0;
 };
-
-
-#endif
+#endif // NODE_H

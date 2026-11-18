@@ -1,23 +1,24 @@
 #pragma once
 
+#include <algorithm>
 #include "SingleNode.h"
+#include "Node.h"
 
 template<typename T>
-SingleNode<T>::SingleNode(const T &item, SingleNode<T> *nextNode) {
-    this->item = item;
-    this->nextNode = nextNode;
-}
+SingleNode<T>::SingleNode(const T &item, SingleNode<T> *nextNode)
+    : Node<T>(item), nextNode(nextNode) {}
 
 template<typename T>
-SingleNode<T>::SingleNode(const SingleNode &other) {
-    this->item = other.item;
-    this->nextNode = other.nextNode;
-}
+SingleNode<T>::SingleNode(const T &item)
+    : Node<T>(item) {}
 
 template<typename T>
-SingleNode<T>::SingleNode(SingleNode &&other) noexcept {
-    item = std::move(other.item);
-    nextNode = other.nextNode;
+SingleNode<T>::SingleNode(const SingleNode &other)
+    : Node<T>(other), nextNode(other.nextNode) {}
+
+template<typename T>
+SingleNode<T>::SingleNode(SingleNode &&other) noexcept
+    : Node<T>(std::move(other)), nextNode(other.nextNode) {
     other.nextNode = nullptr;
 }
 
@@ -25,7 +26,7 @@ template <typename T>
 SingleNode<T>& SingleNode<T>::operator=(const SingleNode &other) {
     if (this == &other)
         return *this;
-    item = other.item;
+    this->item = other.item;
     nextNode = other.nextNode;
     return *this;
 }
@@ -34,14 +35,9 @@ template <typename T>
 SingleNode<T>& SingleNode<T>::operator=(SingleNode &&other) noexcept {
     if (this == &other)
         return *this;
-    item = std::move(other.item);
+    this->item = std::move(other.item);
     nextNode = other.nextNode;
     return *this;
-}
-
-template<typename T>
-SingleNode<T>::~SingleNode() {
-    delete item;
 }
 
 template<typename T>
@@ -56,7 +52,7 @@ void SingleNode<T>::setNext(SingleNode<T> *next) {
 
 template<typename T>
 const T &SingleNode<T>::getItem() const {
-    return item;
+    return this->item;
 }
 
 template<typename T>

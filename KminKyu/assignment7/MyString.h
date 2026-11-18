@@ -99,6 +99,10 @@ public:
 
     void clear();
 
+    static MyString integerToString(int integer);
+
+    MyString& trim();
+
 private:
 
     void resize();

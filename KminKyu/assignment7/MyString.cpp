@@ -368,6 +368,28 @@ void MyString::clear() {
 
 }
 
+MyString MyString::integerToString(int integer) {
+    MyString result = MyString();
+    int number;
+    for (number = 1; integer / number >= 10; number *= 10) {}
+
+    for (; number > 0; number /= 10) {
+        result.append(integer/number + '0');
+    }
+    return result;
+}
+
+MyString & MyString::trim() {
+    int startIndex;
+    int endIndex;
+    for (endIndex = size - 1; charArray[endIndex]  == ' ' && endIndex >= 0; --endIndex) {
+    }
+    for (startIndex = 0; startIndex < endIndex && charArray[endIndex] == ' '; ++startIndex) {
+    }
+    *this = substr(startIndex, endIndex - startIndex);
+    return *this;
+}
+
 void MyString::resize() {
     if (capacity == 0) {
         resize(DEFAULT_CAPACITY);

@@ -1,27 +1,29 @@
-//
-// Created by lhetl on 2026-11-17.
-//
-
-#ifndef CPP_HOMEWORK_GIT_NESTEDSINGLENODE_H
-#define CPP_HOMEWORK_GIT_NESTEDSINGLENODE_H
-#include "DoubleNode.h"
+#ifndef NESTEDSINGLENODE_H
+#define NESTEDSINGLENODE_H
 #include "SingleNode.h"
+#include "Node.h"
 
 template <typename T>
-class NestedSingleNode : public SingleNode<DoubleNode<T>> {
+class NestedSingleNode : public SingleNode<Node<T>> {
 public:
-    NestedSingleNode(const DoubleNode<T> &item, SingleNode<DoubleNode<T>> *nextNode)
-        : SingleNode<DoubleNode<T>>(item, nextNode) {
+    ~NestedSingleNode() = default;
+
+    NestedSingleNode(const Node<T> &item, SingleNode<Node<T>> *nextNode)
+        : SingleNode<Node<T>>(item, nextNode) {
     }
 
-    explicit NestedSingleNode(const SingleNode<DoubleNode<T>> &other)
-        : SingleNode<DoubleNode<T>>(other) {
+    NestedSingleNode(const SingleNode<Node<T>> &other)
+        : SingleNode<Node<T>>(other) {
     }
 
-    explicit NestedSingleNode(SingleNode<DoubleNode<T>> &&other)
-        : SingleNode<DoubleNode<T>>(other) {
+    NestedSingleNode(SingleNode<Node<T>> &&other)
+        : SingleNode<Node<T>>(other) {
     }
+
+    const T& getUnravelItem();
 };
 
 
-#endif //CPP_HOMEWORK_GIT_NESTEDSINGLENODE_H
+
+#include "NestedSingleNode.tpp"
+#endif

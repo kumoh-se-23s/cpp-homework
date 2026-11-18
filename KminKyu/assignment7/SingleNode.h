@@ -1,34 +1,33 @@
 #ifndef SINGLENODE_H
 #define SINGLENODE_H
-
 #include "Node.h"
 
+
 template <typename T>
-class SingleNode : public Node<T> {
-    T item;
-    SingleNode<T> *nextNode = nullptr;
+class SingleNode : public Node<T>{
+
+    SingleNode *nextNode = nullptr;
 public:
-    SingleNode(const T &item, SingleNode<T> *nextNode);
+    SingleNode(const T &item, SingleNode *nextNode);
+
+    SingleNode(const T &item);
 
     SingleNode(const SingleNode &other);
 
     SingleNode(SingleNode &&other) noexcept;
 
+    // ~SingleNode() = default;
     SingleNode &operator=(const SingleNode &other);
 
     SingleNode &operator=(SingleNode &&other) noexcept;
 
-    ~SingleNode() override;
-
-    const T& getItem() const;
+    const T& getItem() const override;
 
     void setItem(const T &item);
 
-    SingleNode<T> *getNext() const;
-    void setNext(SingleNode<T> *next);
+    SingleNode *getNext() const;
 
-
+    void setNext(SingleNode *next);
 };
-
 #include "SingleNode.tpp"
 #endif

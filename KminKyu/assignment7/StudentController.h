@@ -1,19 +1,16 @@
 #ifndef CPP_HOMEWORK_GIT_STUDENTCONTROLLER_H
 #define CPP_HOMEWORK_GIT_STUDENTCONTROLLER_H
 #include "CircularDoublyLinkedList.h"
-#include "DoubleNode.h"
 #include "MySet.h"
 #include "SinglyLinkedList.h"
 #include "Student.h"
-#include "KeyList.h"
+#include "KeyArray.h"
+#include "NestedSingleNode.h"
 
 class StudentController {
-    using GroupNode = DoubleNode<Student>;
-    using GroupList = KeyList<MyString, CircularDoublyLinkedList<Student>>;
-    using IdList = KeyList<int, SinglyLinkedList<GroupNode>>;
+    using GroupList = KeyArray<MyString, CircularDoublyLinkedList<Student>>;
+    using IdList = KeyArray<int, SinglyLinkedList<NestedSingleNode<Student>>>;
 
-    MySet<IdList> idList;
-    MySet<GroupList> groupList;
 
 private:
     static int getYear(int studentId);
