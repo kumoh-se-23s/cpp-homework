@@ -16,11 +16,11 @@ class SingleConnectNode final : public AbstractNode<T, SingleConnectNode<T> > {
         ~SingleConnectNode() override = default;
 
 
-        SingleConnectNode* next() const override;
+        SingleConnectNode* next() const;
 
-        SingleConnectNode* set_next(SingleConnectNode *next_node) override;
+        SingleConnectNode* set_next(SingleConnectNode *next_node);
 
-        [[nodiscard]] bool has_next() const override;
+        [[nodiscard]] bool has_next() const;
 };
 
 #include "SingleConnectNode.tpp"

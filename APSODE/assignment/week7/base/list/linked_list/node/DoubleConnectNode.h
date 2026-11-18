@@ -17,11 +17,11 @@ class DoubleConnectNode final : public AbstractNode<T, DoubleConnectNode<T> > {
         ~DoubleConnectNode() override = default;
 
 
-        DoubleConnectNode* next() const override;
+        DoubleConnectNode* next() const;
 
-        DoubleConnectNode* set_next(DoubleConnectNode *next_node) override;
+        DoubleConnectNode* set_next(DoubleConnectNode *next_node);
 
-        [[nodiscard]] bool has_next() const override;
+        [[nodiscard]] bool has_next() const;
 
 
         DoubleConnectNode* prev() const;

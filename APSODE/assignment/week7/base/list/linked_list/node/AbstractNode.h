@@ -18,12 +18,6 @@ class AbstractNode {
             this->m_item = item;
         }
 
-        virtual N* next() const = 0;
-
-        virtual N* set_next(N *next_node) = 0;
-
-        [[nodiscard]] virtual bool has_next() const = 0;
-
     protected:
         AbstractNode()
             : m_item() {
