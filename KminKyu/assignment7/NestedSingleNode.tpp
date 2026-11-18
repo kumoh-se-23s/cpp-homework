@@ -9,20 +9,30 @@ const T& NestedSingleNode<T>::getUnravelItem() {
 }
 template<typename T>
 bool NestedSingleNode<T>::operator==(const NestedSingleNode &otherNode) const {
-    return this->item.item == otherNode.item.item;
+    return this->item.getItem() == otherNode.item.getItem();
 }
 
 template<typename T>
 bool NestedSingleNode<T>::operator!=(const NestedSingleNode &otherNode) const {
-    return this->item.item != otherNode.item.item;
+    return this->item.getItem() != otherNode.item.getItem();
 }
 
 template<typename T>
 bool NestedSingleNode<T>::operator<(const NestedSingleNode &otherNode) const {
-    return this->item.item < otherNode.item.item;
+    return this->item.getItem() < otherNode.item.getItem();
 }
 
 template<typename T>
 bool NestedSingleNode<T>::operator>(const NestedSingleNode &otherNode) const {
-    return this->item.item > otherNode.item.item;
+    return this->item.getItem() > otherNode.item.getItem();
+}
+
+template<typename T>
+bool NestedSingleNode<T>::operator>=(const NestedSingleNode &otherNode) const {
+    return this->item.getItem() >= otherNode.item.getItem();
+}
+
+template<typename T>
+bool NestedSingleNode<T>::operator<=(const NestedSingleNode &otherNode) const {
+    return this->item.getItem() <= otherNode.item.getItem();
 }

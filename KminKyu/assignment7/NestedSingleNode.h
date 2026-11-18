@@ -25,7 +25,9 @@ public:
     bool operator==(const NestedSingleNode& otherNode) const;
     bool operator!=(const NestedSingleNode& otherNode) const;
     bool operator<(const NestedSingleNode& otherNode) const;
-    bool operator>(const NestedSingleNode& otherNode) const ;
+    bool operator>(const NestedSingleNode& otherNode) const;
+    bool operator<=(const NestedSingleNode& otherNode) const;
+    bool operator>=(const NestedSingleNode& otherNode) const;
 };
 
 #include "NestedSingleNode.tpp"

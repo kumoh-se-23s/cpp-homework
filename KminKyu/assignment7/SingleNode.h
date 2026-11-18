@@ -8,6 +8,8 @@ class SingleNode : public Node<T>{
 
     SingleNode *nextNode = nullptr;
 public:
+    SingleNode() = default;
+
     SingleNode(const T &item, SingleNode *nextNode);
 
     SingleNode(const T &item);

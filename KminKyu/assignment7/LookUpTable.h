@@ -1,7 +1,5 @@
 #ifndef KEYLIST_H
 #define KEYLIST_H
-#include "LinkedList.h"
-
 
 template <typename K, typename V>
 struct Entry {
@@ -15,7 +13,7 @@ class LookUpTable {
 
     int size = 0;
 
-    const static int DEFAULT_CAPACITY = 4;
+    static constexpr int DEFAULT_CAPACITY = 4;
 
     int capacity = DEFAULT_CAPACITY;
 
@@ -37,12 +35,16 @@ public:
 
     void resize();
 
-    Entry<K, V> getEntry(K key) const;
+    Entry<K, V>& getEntry(K key) const;
 
-    void setList(const LinkedList<V> &List);
+    const V& getValue(K Key) const;
 
+    void putIfAbsent(K key, V value) ;
+
+    void insert(int index, K key, V value);
+private:
+    int binarySearch(int left, int right, K key) const;
 };
-
 
 #include "LookUpTable.tpp"
 
