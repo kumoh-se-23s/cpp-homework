@@ -9,6 +9,7 @@ public:
     GroupHashMap();
     GroupHashMap(int minLength);
     GroupHashMap(const GroupHashMap& groupHashMap);
+    GroupHashMap& operator=(const GroupHashMap& groupHashMap);
     ~GroupHashMap();
 
     //getter

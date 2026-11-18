@@ -1,6 +1,6 @@
 #include "ManageCircleApp.h"
 
-int main() {
+int main(int argc, char *args[]) {
     ManageCircleApp app;
-    app.run();
+    app.run(args[1]);
 }

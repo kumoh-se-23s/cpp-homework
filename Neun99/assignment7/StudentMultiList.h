@@ -7,6 +7,8 @@
 class StudentMultiList {
 public:
     StudentMultiList();
+    StudentMultiList(int yearCnt, int groupCnt);
+    StudentMultiList& operator=(const StudentMultiList& list);
     ~StudentMultiList();
 
     MyString toStringForSave() const;

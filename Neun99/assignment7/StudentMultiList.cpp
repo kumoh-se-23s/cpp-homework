@@ -4,12 +4,28 @@ StudentMultiList::StudentMultiList() {
     studentCnt = 0;
 }
 
+StudentMultiList::StudentMultiList(int yearCnt, int groupCnt) {
+    idMap = IdHashMap(yearCnt);
+    groupMap = GroupHashMap(groupCnt);
+    studentCnt = 0;
+}
+
 //소멸자: StudentNode를 여기서 일괄 제거
 StudentMultiList::~StudentMultiList() {
     //최소년도부터 최대년도까지 순회하며 delete
     for (int idx = idMap.getMinYear(); idx < idMap.getMaxYear(); idx++) {
         deleteAllStudent(idMap[idx]->getHead());
     }
+}
+
+//대입연산자
+StudentMultiList &StudentMultiList::operator=(const StudentMultiList &list) {
+    if (this != &list) {
+        idMap = list.idMap;
+        groupMap = list.groupMap;
+        studentCnt = list.studentCnt;
+    }
+    return *this;
 }
 
 //기능-------------------------------------
@@ -48,25 +64,28 @@ MyString StudentMultiList::toStringForPrint() const{
     result += itos(studentCnt);
 
     result += "] [Group Count:";
-    result += itos(groupMap.getSize()) + "]\n";;
+    result += itos(groupMap.getSize()) + "]\n";
 
-    //최소년도부터 최대년도까지 순회
+    if (studentCnt == 0) //학생 없으면 바로 return
+        return result;
+
     for (int idx = idMap.getMinYear(); idx <= idMap.getMaxYear(); idx++) {
         //한 년도당 모든 학생 순회
-        for (StudentNode* indexNode = idMap[idx]->getHead(); indexNode != nullptr; indexNode = indexNode->getNextClassmate()) {
+        for (StudentNode *indexNode = idMap[idx]->getHead(); indexNode != nullptr;
+             indexNode = indexNode->getNextClassmate()) {
             result += indexNode->getStudent().toString();
-            result += "(";
+            result += " (";
 
             //그룹이 있으면 자신 뒤부터 앞까지 출력
             if (indexNode->getStudent().getGroup() != NO_GROUP) {
-
                 //그룹명
                 result += "[";
                 result += indexNode->getStudent().getGroup() + "]";
 
                 //그룹원 정보
-                StudentNode* groupIdxNode = indexNode->getNextTeammate();
-                if (groupIdxNode != indexNode) { //팀에 혼자가 아니면 순회하며 전부 출력
+                StudentNode *groupIdxNode = indexNode->getNextTeammate();
+                if (groupIdxNode != indexNode) {
+                    //팀에 혼자가 아니면 순회하며 전부 출력
                     result += " ";
                     result += groupIdxNode->getStudent().toString();
                     groupIdxNode = groupIdxNode->getNextTeammate();
@@ -79,6 +98,7 @@ MyString StudentMultiList::toStringForPrint() const{
             result += ")\n"; //한 학생 끝
         }
     }
+
     return result;
 }
 

@@ -24,6 +24,22 @@ IdHashMap::IdHashMap(const IdHashMap &idHashMap) {
     }
 }
 
+//대입연산자
+IdHashMap &IdHashMap::operator=(const IdHashMap &idHashMap) {
+    if (this != &idHashMap) {
+        size = idHashMap.size;
+        capacity = getEnoughCapacity(size);
+        IdHashNode* newArr = new IdHashNode[capacity];
+        for (int idx = 0; idx < size; idx++) {
+            newArr[idx] = idHashMap.arr[idx];
+        }
+        delete[] arr;
+        arr = newArr;
+    }
+
+    return *this;
+}
+
 //소멸자
 IdHashMap::~IdHashMap() {
     delete[] arr;
@@ -32,11 +48,15 @@ IdHashMap::~IdHashMap() {
 //getter-------------------------------
 //최소년도: 맨앞
 int IdHashMap::getMinYear() const {
+    if (size == 0)
+        return 0;
     return arr[0].getId();
 }
 
 //최대년도: 맨 뒤
 int IdHashMap::getMaxYear() const {
+    if (size == 0)
+        return 0;
     return arr[size - 1].getId();
 }
 

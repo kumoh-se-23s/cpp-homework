@@ -42,4 +42,4 @@ add_executable(practice_ground practice_ground/testzone.cpp)
 
 #add_executable(assignment6 assignment6/main.cpp assignment6/MyString.cpp)
 
-add_executable(assignment7 assignment7/main.cpp assignment7/Student.cpp assignment7/StudentNode.cpp assignment7/IdHashNode.cpp assignment7/GroupHashNode.cpp assignment7/IdHashMap.cpp assignment7/GroupHashMap.cpp assignment7/StudentMultiList.cpp assignment7/MyString.cpp)
+add_executable(assignment7 assignment7/main.cpp assignment7/Student.cpp assignment7/StudentNode.cpp assignment7/IdHashNode.cpp assignment7/GroupHashNode.cpp assignment7/IdHashMap.cpp assignment7/GroupHashMap.cpp assignment7/StudentMultiList.cpp assignment7/MyString.cpp assignment7/ManageCircleApp.cpp)

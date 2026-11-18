@@ -10,6 +10,7 @@ public:
     IdHashMap();
     IdHashMap(int minLength);
     IdHashMap(const IdHashMap& idHashMap);
+    IdHashMap& operator=(const IdHashMap& idHashMap);
     ~IdHashMap();
 
     //getter

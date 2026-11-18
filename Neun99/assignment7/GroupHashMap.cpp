@@ -20,6 +20,22 @@ GroupHashMap::GroupHashMap(const GroupHashMap& groupHashMap) {
     }
 }
 
+//대입연산자
+GroupHashMap &GroupHashMap::operator=(const GroupHashMap &groupHashMap) {
+    if (this != &groupHashMap) {
+        size = groupHashMap.size;
+        capacity = getEnoughCapacity(size);
+        GroupHashNode* newArr = new GroupHashNode[capacity];
+        for (int idx = 0; idx < size; idx++) {
+            newArr[idx] = groupHashMap.arr[idx];
+        }
+        delete[] arr;
+        arr = newArr;
+    }
+
+    return *this;
+}
+
 GroupHashMap::~GroupHashMap() {
     delete[] arr;
 }

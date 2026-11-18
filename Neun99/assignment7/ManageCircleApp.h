@@ -3,15 +3,16 @@
 
 class ManageCircleApp {
 public:
-    void run();
+    void run(char* file);
 private:
     StudentMultiList studentList;
     bool isRunning;
     static constexpr int INPUT_ARR_SIZE = 3;
 
-    // void readFile(); //TODO:파일스트림 인자
     void handleInput(char input);
 
+    void readFile(char* file);
     void insertStudent();
     void deleteStudent();
+    void saveFile(const char* file);
 };

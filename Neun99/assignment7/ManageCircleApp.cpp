@@ -1,13 +1,47 @@
 #include "ManageCircleApp.h"
+#include <fstream>
+#include <limits>
+//TODO: 제출 전 체크용 cout 전부 제거
 
-void ManageCircleApp::run() {
+void ManageCircleApp::run(char* file) {
+    readFile(file);
+
     isRunning = true;
     while (isRunning) {
         char input;
         cin >> input;
-
+        if (cin.peek() != EOF)
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         handleInput(input);
     }
+
+    saveFile(file);
+}
+
+void ManageCircleApp::readFile(char* file) {
+    ifstream inStream;
+    inStream.open(file);
+
+    int minYear;
+    int maxYear;
+    int studentCnt;
+    int groupCnt;
+
+    inStream >> minYear >> maxYear;
+    inStream >> studentCnt >> groupCnt;
+    studentList = StudentMultiList(maxYear - minYear, groupCnt);
+    MyString* inputArr = new MyString[INPUT_ARR_SIZE];
+
+    if (studentCnt != 0) {
+        while (!inStream.fail()) {
+            inStream >> inputArr[0] >> inputArr[1];
+            getline(inStream, inputArr[2]);
+            studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim());
+        }
+    }
+
+    inStream.close();
+    delete[] inputArr;
 }
 
 void ManageCircleApp::handleInput(char input) {
@@ -43,13 +77,12 @@ void ManageCircleApp::handleInput(char input) {
 }
 
 void ManageCircleApp::insertStudent() {
-    MyString userInput;
-    getline(cin, userInput);
-
     MyString* inputArr = new MyString[INPUT_ARR_SIZE];
-    userInput.split(' ', inputArr, INPUT_ARR_SIZE);
+    cin >> inputArr[0];
+    cin >> inputArr[1];
+    getline(cin, inputArr[2]);
 
-    studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2]);
+    studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim());
 
     delete[] inputArr;
 }
@@ -60,4 +93,12 @@ void ManageCircleApp::deleteStudent() {
 
     if (!studentList.removeStudent(userInput))
         cout << "Delete failed: invalid Id" << endl;
+}
+
+void ManageCircleApp::saveFile(const char *file) {
+    ofstream outStream;
+    outStream.open(file);
+
+    outStream << studentList.toStringForSave();
+    outStream.close();
 }

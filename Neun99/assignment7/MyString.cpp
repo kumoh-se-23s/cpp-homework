@@ -207,25 +207,13 @@ MyString itos(int val) {
     return result;
 }
 
-//delim 기준으로 분리
-void MyString::split(char delim, MyString *arr, int arrSize) {
-    int* delimPos = new int[arrSize - 1];
+MyString MyString::trim() const {
+    int startIdx;
+    int endIdx;
 
-    //delim 위치 탐색
-    for (int idx = 0, posIdx = 0; idx < size && posIdx < arrSize - 1; idx++) {
-        if (str[idx] == delim) {
-            delimPos[posIdx] = idx;
-            posIdx++;
-        }
-    }
-
-    //배열 할당
-    for (int idx = 0, pos = 0; idx < arrSize && pos < size; idx++) {
-        arr[idx] = substr(pos, delimPos[idx]);
-        pos = delimPos[idx] + 1;
-    }
-
-    delete[] delimPos;
+    for (startIdx = 0; startIdx < size && str[startIdx] == ' '; startIdx++) {}
+    for (endIdx = size; endIdx >= 0 && str[endIdx] == ' '; endIdx--) {}
+    return substr(startIdx, endIdx - startIdx);
 }
 
 //연산자 오버로딩--------------------
@@ -372,7 +360,7 @@ istream& operator>>(istream& in, MyString& str) {
     }
 
     //입력된 스트림 끝이라 못읽었으면 실패 flag 올려서 호출부에 끝났다고 알리기
-    if (str.length() == 0)
+    if (inputCode == EOF) //str.length() == 0
         in.setstate(ios_base::failbit);
     return in;
 }
@@ -391,7 +379,7 @@ istream& getline(istream& in, MyString& str, char delim) {
     //delim 제거
     if (inputCode == delim)
         in.ignore();
-    else if (str.length() == 0) //입력된 스트림 끝이라 못읽었으면 실패 flag
+    else if (inputCode == EOF) //입력된 스트림 끝이라 못읽었으면 실패 flag
         in.setstate(ios_base::failbit);
 
     return in;
