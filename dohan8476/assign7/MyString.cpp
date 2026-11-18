@@ -554,6 +554,6 @@ int MyString::calcCapacity(int targetSize) const{
 }
 
 
-const char *MyString::cStr() const {
+const char *MyString::getStr() const {
     return str;
 }
