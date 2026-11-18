@@ -6,36 +6,48 @@
 
 template<typename T>
 class MultiConnectNode final : public AbstractNode<T, MultiConnectNode<T>> {
-    SingleConnectNode<T> *m_row_node;
-    DoubleConnectNode<T> *m_column_node;
+    MultiConnectNode m_row_next;
+    MultiConnectNode m_row_prev;
+
+    MultiConnectNode m_column_next;
+    MultiConnectNode m_column_prev;
 
     public:
         MultiConnectNode();
 
         explicit MultiConnectNode(const T &item);
 
-
-        MultiConnectNode(const RowNode &row_node, const ColumnNode &column_node);
+        MultiConnectNode(const MultiConnectNode &row_node, const MultiConnectNode &column_node);
 
         MultiConnectNode(const T &item,
-                         const RowNode &row_node, const ColumnNode &column_node);
-
-        MultiConnectNode(const MultiConnectNode &other_node);
+                         const MultiConnectNode &row_node, const MultiConnectNode &column_node);
 
         ~MultiConnectNode() override = default;
 
 
-        MultiConnectNode* next() const override;
+        MultiConnectNode* row_next() const;
 
-        MultiConnectNode* set_next(MultiConnectNode *next_node) override;
+        MultiConnectNode* set_row_next(MultiConnectNode *next_node);
 
-        [[nodiscard]] bool has_next() const override;
+        [[nodiscard]] bool has_row_next() const;
 
-        MultiConnectNode* prev() const;
+        MultiConnectNode* row_prev() const;
 
-        MultiConnectNode* set_prev(MultiConnectNode *prev_node);
+        MultiConnectNode* set_row_prev(MultiConnectNode *prev_node);
 
-        [[nodiscard]] bool has_prev() const;
+        [[nodiscard]] bool has_row_prev() const;
+
+        MultiConnectNode* column_next() const;
+
+        MultiConnectNode* set_column_next(MultiConnectNode *next_node);
+
+        [[nodiscard]] bool has_column_next() const;
+
+        MultiConnectNode* column_prev() const;
+
+        MultiConnectNode* set_column_prev(MultiConnectNode *prev_node);
+
+        [[nodiscard]] bool has_column_prev() const;
 
     private:
 };
