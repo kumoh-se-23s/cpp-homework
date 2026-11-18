@@ -16,18 +16,16 @@ public:
 
     SingleNode(SingleNode &&other) noexcept;
 
-    // ~SingleNode() = default;
+    ~SingleNode() override = default;
+
     SingleNode &operator=(const SingleNode &other);
 
     SingleNode &operator=(SingleNode &&other) noexcept;
-
-    const T& getItem() const override;
-
-    void setItem(const T &item);
 
     SingleNode *getNext() const;
 
     void setNext(SingleNode *next);
 };
+
 #include "SingleNode.tpp"
 #endif

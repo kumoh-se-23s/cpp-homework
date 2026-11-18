@@ -1,11 +1,12 @@
 #pragma once
 
 #include <algorithm>
-#include "SingleNode.h"
 #include "Node.h"
+template<typename T>
+class SingleNode;
 
 template<typename T>
-SingleNode<T>::SingleNode(const T &item, SingleNode<T> *nextNode)
+SingleNode<T>::SingleNode(const T &item, SingleNode *nextNode)
     : Node<T>(item), nextNode(nextNode) {}
 
 template<typename T>
@@ -50,13 +51,5 @@ void SingleNode<T>::setNext(SingleNode<T> *next) {
     this->nextNode = next;
 }
 
-template<typename T>
-const T &SingleNode<T>::getItem() const {
-    return this->item;
-}
 
-template<typename T>
-void SingleNode<T>::setItem(const T &item) {
-    this->item = item;
-}
 

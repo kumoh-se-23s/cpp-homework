@@ -2,7 +2,7 @@
 #include "MyString.h"
 #include "Student.h"
 #include "SinglyLinkedList.h"
-#include "KeyArray.h"
+#include "LookUpTable.h"
 
 class App {
 };

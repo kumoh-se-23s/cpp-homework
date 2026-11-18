@@ -10,7 +10,8 @@
 #include <utility>
 #include <vector>
 
-// private 멤버(array, size, capacity, append, binarySearch)를 직접 검사하기 위한 트릭.
+// private 멤버(array, size, capacit#include "LinkedList.tpp"
+y, append, binarySearch)를 직접 검사하기 위한 트릭.
 // 표준 헤더를 모두 include 한 "뒤", MySet.h 를 include 하기 "전"에 정의해야 한다.
 //  - array/capacity/size 는 "private:" 키워드 없이 class 기본 접근으로 private 이므로
 //    #define private public 만으로는 열리지 않는다. class -> struct 로 바꿔 기본 접근을 public 으로 만든다.

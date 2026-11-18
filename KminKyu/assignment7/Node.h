@@ -1,15 +1,27 @@
 #ifndef NODE_H
 #define NODE_H
+#include <algorithm>
 
 template <typename T>
 class Node {
 protected:
     T item;
-    Node(const T &item) : item(item) {}
-    Node(const Node &) = default;
-    Node(Node &&) noexcept = default;
+
 public:
+    Node(const T &item) : item(item) {}
+
+    Node(const Node &other) : item(other.item) {}
+
+    Node(Node &&other) noexcept : item(std::move(other.item)) {}
+
     virtual ~Node() = default;
-    virtual const T& getItem() const = 0;
+
+    const T& getItem() const;
+
+    T& getItem();
+
+    void setItem(T &item);
 };
+
+#include "Node.tpp"
 #endif // NODE_H

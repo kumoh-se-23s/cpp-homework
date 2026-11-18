@@ -6,11 +6,13 @@
 
 template <typename T>
 class DoubleNode : public Node<T> {
-    T item;
+
     DoubleNode *prevNode = nullptr;
     DoubleNode *nextNode = nullptr;
+
 public:
-    DoubleNode(const T &item, DoubleNode<T> *prevNode, DoubleNode *nextNode);
+
+    DoubleNode(const T &item, DoubleNode *prevNode, DoubleNode *nextNode);
 
     DoubleNode(const T &item);
 
@@ -18,25 +20,20 @@ public:
 
     DoubleNode(DoubleNode &&other) noexcept;
 
-    DoubleNode & operator=(const DoubleNode &other);
+    ~DoubleNode() override = default;
 
-    DoubleNode & operator=(DoubleNode &&other) noexcept;
+    DoubleNode &operator=(const DoubleNode &other);
 
-    ~DoubleNode() = default;
+    DoubleNode &operator=(DoubleNode &&other) noexcept;
 
-    T getItem() const;
+    const DoubleNode *getPrevNode() const;
 
-    void setItem(const T &item);
+    void setPrevNode(DoubleNode *prevNode);
 
-    DoubleNode<T> * getPrevNode() const;
+    const DoubleNode *getNextNode() const;
 
-    void setPrevNode(DoubleNode<T> *prevNode);
-
-    DoubleNode<T> * getNextNode() const;
-
-    void setNextNode(DoubleNode<T> *nextNode);
+    void setNextNode(DoubleNode *nextNode);
 };
 
 #include "DoubleNode.tpp"
-
 #endif // DOUBLENODE_H
