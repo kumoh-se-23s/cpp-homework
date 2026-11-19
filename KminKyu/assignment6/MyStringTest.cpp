@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include "MyString.h"
+#include "OldMyString.h"
 
 // =====================================================================
 // 검증 방식

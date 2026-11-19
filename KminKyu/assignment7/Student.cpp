@@ -2,8 +2,8 @@
 #include "MyString.h"
 
 Student::Student(Student &&otherStudent) noexcept {
-    this->studentGroup = otherStudent.studentGroup;
-    this->studentName = otherStudent.studentName;
+    this->studentGroup = std::move(otherStudent.studentGroup);
+    this->studentName = std::move(otherStudent.studentName);
     this->studentId = otherStudent.studentId;
 }
 
@@ -22,8 +22,8 @@ Student& Student::operator=(const Student &otherStudent) {
 }
 
 Student& Student::operator=(Student &&otherStudent) noexcept {
-    this->studentGroup = otherStudent.studentGroup;
-    this->studentName = otherStudent.studentName;
+    this->studentGroup = std::move(otherStudent.studentGroup);
+    this->studentName = std::move(otherStudent.studentName);
     this->studentId = otherStudent.studentId;
     return *this;
 }
@@ -40,27 +40,43 @@ const MyString & Student::getStudentName() const {
     return studentName;
 }
 
+bool Student::isGroupEmpty() const {
+    return studentGroup == "-";
+}
+
 MyString Student::toString() const {
     MyString result;
     result += MyString::integerToString(studentId);
-    result += studentGroup;
     result += studentName;
+    result += " (";
+    if (!isGroupEmpty()) {
+        result += "[";
+        result += studentGroup;
+        result += "]";
+    }
     return result;
 }
 
-bool Student::operator==(int otherStudentId) const {
-    return studentId != otherStudentId;
+bool Student::operator==(const Student &otherStudent) const {
+    return studentId == otherStudent.studentId;
 }
 
-bool Student::operator!=(int otherStudentId) const {
-    return studentId != otherStudentId;
+bool Student::operator!=(const Student &otherStudent) const {
+    return studentId != otherStudent.studentId;
 }
 
-bool Student::operator<(int otherStudentId) const {
-    return studentId < otherStudentId;
+bool Student::operator<(const Student &otherStudent) const {
+    return studentId < otherStudent.studentId;
 }
 
-bool Student::operator>(int otherStudentId) const {
-    return studentId > otherStudentId;
+bool Student::operator>(const Student &otherStudent) const {
+    return studentId > otherStudent.studentId;
 }
 
+
+bool Student::operator<=(const Student &otherStudent) const {
+    return studentId <= otherStudent.studentId;
+}
+bool Student::operator>=(const Student &otherStudent) const {
+    return studentId >= otherStudent.studentId;
+}

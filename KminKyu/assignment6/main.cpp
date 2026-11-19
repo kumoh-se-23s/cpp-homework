@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "MyString.h"
+#include "OldMyString.h"
 using namespace std;
 
 int main(){

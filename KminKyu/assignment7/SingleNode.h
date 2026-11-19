@@ -1,5 +1,6 @@
 #ifndef SINGLENODE_H
 #define SINGLENODE_H
+#include "MyString.h"
 #include "Node.h"
 
 
@@ -14,19 +15,20 @@ public:
 
     SingleNode(const T &item);
 
-    SingleNode(const SingleNode &other);
+    SingleNode(const SingleNode &other) = delete;
 
     SingleNode(SingleNode &&other) noexcept;
 
     ~SingleNode() override = default;
 
-    SingleNode &operator=(const SingleNode &other);
+    SingleNode &operator=(const SingleNode &other) = delete;
 
     SingleNode &operator=(SingleNode &&other) noexcept;
 
     SingleNode *getNext() const;
 
     void setNext(SingleNode *next);
+
 };
 
 #include "SingleNode.tpp"

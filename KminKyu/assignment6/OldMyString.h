@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-class MyString {
+class OldMyString {
     constexpr static int DEFAULT_CAPACITY = 8;
 
 
@@ -12,21 +12,21 @@ class MyString {
     int capacity = 0;
 
 public:
-    MyString();
+    OldMyString();
 
-    MyString(const MyString &srcStr);
+    OldMyString(const OldMyString &srcStr);
 
-    MyString(const char *cstr2nd);
+    OldMyString(const char *cstr2nd);
 
-    MyString(MyString &&srcStr) noexcept;
+    OldMyString(OldMyString &&srcStr) noexcept;
 
-    ~MyString();
+    ~OldMyString();
 
-    MyString &operator =(const MyString &srcStr);
+    OldMyString &operator =(const OldMyString &srcStr);
 
-    MyString &operator =(MyString &&srcStr) noexcept;
+    OldMyString &operator =(OldMyString &&srcStr) noexcept;
 
-    MyString &operator =(const char *cstr2nd);
+    OldMyString &operator =(const char *cstr2nd);
 
     int length() const;
 
@@ -42,13 +42,13 @@ public:
 
     const char &operator [](int pos) const;
 
-    MyString operator +(const char *cstr2nd) const;
+    OldMyString operator +(const char *cstr2nd) const;
 
-    MyString operator +(const MyString &str2nd) const;
+    OldMyString operator +(const OldMyString &str2nd) const;
 
-    bool operator ==(const MyString &str) const;
+    bool operator ==(const OldMyString &str) const;
 
-    bool operator !=(const MyString &str) const;
+    bool operator !=(const OldMyString &str) const;
 
     bool operator ==(const char *cstr2nd) const;
 
@@ -56,27 +56,27 @@ public:
 
     int find(const char *cSubStr, int pos = 0) const;
 
-    int find(const MyString &subStr, int pos = 0) const;
+    int find(const OldMyString &subStr, int pos = 0) const;
 
-    MyString substr(int pos, int len) const;
+    OldMyString substr(int pos, int len) const;
 
-    MyString &operator +=(const char *cstr2nd);
+    OldMyString &operator +=(const char *cstr2nd);
 
-    MyString &operator +=(const MyString &str);
+    OldMyString &operator +=(const OldMyString &str);
 
-    MyString &append(char appendChr);
+    OldMyString &append(char appendChr);
 
-    MyString &append(const char *cstr2nd);
+    OldMyString &append(const char *cstr2nd);
 
-    MyString &append(const MyString &str);
+    OldMyString &append(const OldMyString &str);
 
-    bool operator <(const MyString &str) const;
+    bool operator <(const OldMyString &str) const;
 
-    bool operator >(const MyString &str) const;
+    bool operator >(const OldMyString &str) const;
 
-    bool operator <=(const MyString &str) const;
+    bool operator <=(const OldMyString &str) const;
 
-    bool operator >=(const MyString &str) const;
+    bool operator >=(const OldMyString &str) const;
 
 
     bool operator <(const char *cstr2nd) const;
@@ -87,15 +87,15 @@ public:
 
     bool operator >=(const char *cstr2nd) const;
 
-    MyString &insert(int pos, const char *subStr);
+    OldMyString &insert(int pos, const char *subStr);
 
-    MyString &insert(int pos, const MyString &subStr);
+    OldMyString &insert(int pos, const OldMyString &subStr);
 
-    MyString &replace(int pos, int len, const char *subStr);
+    OldMyString &replace(int pos, int len, const char *subStr);
 
-    MyString &replace(int pos, int len, const MyString &subStr);
+    OldMyString &replace(int pos, int len, const OldMyString &subStr);
 
-    MyString &erase(int pos, int cnt);
+    OldMyString &erase(int pos, int cnt);
 
     void clear();
 
@@ -106,11 +106,11 @@ private:
     void resize(int reCapacity);
 
     //배열 길이를 구해서 인자로 private 메소드 -> 따로 nullptr 체크는 하지 않음
-    MyString &insert(int pos, const char *subStr, int subStrSize);
+    OldMyString &insert(int pos, const char *subStr, int subStrSize);
 
-    MyString &replace(int pos, int len, const char *subStr, int subStrSize);
+    OldMyString &replace(int pos, int len, const char *subStr, int subStrSize);
 
-    MyString &append(const char *cstr2nd, int cstr2ndSize);
+    OldMyString &append(const char *cstr2nd, int cstr2ndSize);
 
     static int getCharArraySize(const char *str2nd);
 
@@ -134,13 +134,13 @@ private:
     static int calcInitialCapacity(int arraySize);
 };
 
-std::ostream &operator <<(std::ostream &os, const MyString &str);
+std::ostream &operator <<(std::ostream &os, const OldMyString &str);
 
-std::istream &operator >>(std::istream &is, MyString &str);
+std::istream &operator >>(std::istream &is, OldMyString &str);
 
-std::istream &getline(std::istream &is, MyString &str, char delim = '\n');
+std::istream &getline(std::istream &is, OldMyString &str, char delim = '\n');
 
-int stoi(const MyString &str, int pos = 0, int base = 10);
+int stoi(const OldMyString &str, int pos = 0, int base = 10);
 
 //stoi에서 범위 안 알파벳을 int값으로 바꿔주는 메소드
 int changeAlphabetToInt(char alphabet);

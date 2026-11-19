@@ -5,13 +5,24 @@ class CircularDoublyLinkedList;
 
 template<typename T>
 CircularDoublyLinkedList<T>::CircularDoublyLinkedList(DoubleNode<T> *head) {
-    DoubleNode<T> *now = head;
-    while (now->nextNode != nullptr && now->nextNode != head) {
-        ++this->size;
+    //헤드가 비어있는 경우
+    if (head == nullptr) {
+        this->head = nullptr;
+        this->size = 0;
+        return;
     }
-    if (now->nextNode == nullptr) {
-        now->nextNode = head;
-        head->prevNode = now;
+
+    DoubleNode<T> *now = head;
+    this->size = 1;
+
+    while (now->getNext() != nullptr && now->getNext() != head) {
+        ++size;
+        now = now->getNext();
+
+    }
+    if (now->getNext() == nullptr) {
+        now->setNext(head);
+        head->setPrev(now);
     }
     this->head = head;
 }
@@ -32,7 +43,7 @@ CircularDoublyLinkedList<T>::~CircularDoublyLinkedList() {
 }
 
 template<typename T>
-CircularDoublyLinkedList<T> & CircularDoublyLinkedList<T>::operator=(CircularDoublyLinkedList &&otherLinkedList)  noexcept {
+CircularDoublyLinkedList<T> & CircularDoublyLinkedList<T>::operator=(CircularDoublyLinkedList &&otherLinkedList) noexcept {
     if (this == &otherLinkedList) {
         return *this;
     }
@@ -48,52 +59,129 @@ CircularDoublyLinkedList<T> & CircularDoublyLinkedList<T>::operator=(CircularDou
 }
 
 template<typename T>
-DoubleNode<T> *CircularDoublyLinkedList<T>::getHead() {
+DoubleNode<T> *CircularDoublyLinkedList<T>::getHead() const {
     return head;
 }
 
 template<typename T>
-int CircularDoublyLinkedList<T>::getSize() {
+int CircularDoublyLinkedList<T>::getSize() const {
     return size;
 }
 
 template<typename T>
-const DoubleNode<T> *CircularDoublyLinkedList<T>::add(T item) {
-    DoubleNode<T> *now = head;
+DoubleNode<T> *CircularDoublyLinkedList<T>::add(DoubleNode<T> *node) {
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    if ((node->getNext() != nullptr && node->getNext() != node) || (node->getPrev() != nullptr && node->getPrev() != node)) {
+        return this->addAll(node);
+    } else {
+        return addNode(node);
+    }
+}
+
+template<typename T>
+DoubleNode<T> *CircularDoublyLinkedList<T>::add(const T& item) {
+
     DoubleNode<T> *node = new DoubleNode<T>(item);
+    return addNode(node);
+}
 
-    //노드가 1개도 없는 경우
-    if (size == 0) {
-        head = node;
-        node->nextNode = head;
-        node->prevNode = head;
-        return head;
+template<typename T>
+DoubleNode<T> *CircularDoublyLinkedList<T>::addAll(DoubleNode<T> *node) {
+
+    DoubleNode<T> *now = node;
+    while (now->getPrev() != nullptr && now->getPrev() != node) {
+        now = now->getPrev();
+    }
+    if (now->getPrev() != nullptr) {
+        now->getPrev()->setNext(nullptr);
     }
 
-    while (now->nextNode != head && now->item <= item) {
-        now = now->nextNode;
+    while (now != nullptr) {
+        DoubleNode<T> *next = now->getNext();
+        now->setPrev(nullptr);
+        now->setNext(nullptr);
+        addNode(now);
+        now = next;
     }
-
-    now->prevNode->nextNode = node;
-    node->prevNode = now->prevNode;
-    node->nextNode = now;
-    now->prevNode = node;
-
-    ++size;
 
     return node;
 }
 
 template<typename T>
-DoubleNode<T> *CircularDoublyLinkedList<T>::find(T item) {
+DoubleNode<T> *CircularDoublyLinkedList<T>::addNode(DoubleNode<T> *node) {
+    DoubleNode<T> *now = head;
+
+    //노드가 1개도 없는 경우
+    if (size == 0) {
+        head = node;
+        node->setNext(head);
+        node->setPrev(head);
+        ++size;
+        return head;
+    }
+
+    do {
+        if (now->getItem() > node->getItem()) {
+            break;
+        }
+        now = now->getNext();
+
+    } while (now != head);
+
+    node->setPrev(now->getPrev());
+    node->setNext(now);
+    now->getPrev()->setNext(node);
+    now->setPrev(node);
+
+    //헤드 앞에 추가한 경우
+    if (node->getItem() < head->getItem()) {
+        head = node;
+    }
+
+    ++size;
+
+    return node;
+
+}
+template<typename T>
+const DoubleNode<T> *CircularDoublyLinkedList<T>::find(const T &item) const {
     if (size == 0) {
         return nullptr;
     }
     DoubleNode<T> *now = head;
-    while (now->nextNode != head && now->item < item) {
-        now = now->nextNode;
+    do {
+        if (now->getItem() >= item) {
+            break;
+        }
+        now = now->getNext();
+
+    } while (now != head);
+
+    if (now->getItem() == item) {
+        return now;
+    } else {
+        return nullptr;
     }
-    if (now->item == item) {
+}
+
+template<typename T>
+DoubleNode<T> *CircularDoublyLinkedList<T>::find(const T &item) {
+    if (size == 0) {
+        return nullptr;
+    }
+    DoubleNode<T> *now = head;
+    do {
+        if (now->getItem() >= item) {
+            break;
+        }
+        now = now->getNext();
+
+    } while (now != head);
+
+    if (now->getItem() == item) {
         return now;
     } else {
         return nullptr;
@@ -102,32 +190,52 @@ DoubleNode<T> *CircularDoublyLinkedList<T>::find(T item) {
 
 
 template<typename T>
-bool CircularDoublyLinkedList<T>::remove(T item) {
+bool CircularDoublyLinkedList<T>::remove(const T &item) {
     if (size == 0) {
         return false;
     }
     DoubleNode<T> *now = head;
-    while (now->nextNode != head && now->item != item) {
-        now = now->nextNode;
+    do {
+        if (now->getItem() == item) {
+            break;
+        }
+        now = now->getNext();
+
+    } while (now != head);
+
+    if (now->getItem() != item) {
+        return false;
     }
-    if (now->item == item) {
-        now->prevNode->nextNode = now->nextNode;
-        now->nextNode->prevNode = now->prevNode;
-        delete now;
-        --size;
-        return true;
+    now->getPrev()->setNext(now->getNext());
+    now->getNext()->setPrev(now->getPrev());
+
+    if (size == 1) {
+        head = nullptr;
+    } else if (now == head) {
+        head = now->getNext();
     }
-    return false;
+
+    delete now;
+    --size;
+    return true;
 }
 
 
 template<typename T>
 void CircularDoublyLinkedList<T>::clear() {
-    DoubleNode<T> *now = head;
-    while (now != nullptr) {
-        DoubleNode<T> *temp = now;
-        now = now->nextNode;
-        delete temp;
-        temp = nullptr;
+    if (head == nullptr) {
+        return;
     }
+
+    DoubleNode<T> *now = head->getNext();
+    while (now != head) {
+        DoubleNode<T> *deleteNode = now;
+        now = now->getNext();
+        delete deleteNode;
+    }
+    delete head;
+    head = nullptr;
+    size = 0;
 }
+
+

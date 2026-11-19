@@ -45,7 +45,7 @@ LookUpTable<K, V>::~LookUpTable() {
 
 template<typename K, typename V>
 LookUpTable<K, V>& LookUpTable<K, V>::operator=(const LookUpTable &other) {
-    if (this == other) {
+    if (this == &other) {
         return *this;
     }
 
@@ -64,7 +64,7 @@ LookUpTable<K, V>& LookUpTable<K, V>::operator=(const LookUpTable &other) {
 
 template<typename K, typename V>
 LookUpTable<K, V> &LookUpTable<K, V>::operator=(LookUpTable &&other) noexcept {
-    if (this == other) {
+    if (this == &other) {
         return *this;
     }
     delete[] entryArray;
@@ -93,50 +93,86 @@ void LookUpTable<K, V>::resize() {
 
 
 template<typename K, typename V>
-Entry<K, V> & LookUpTable<K, V>::getEntry(K key) const {
+Entry<K, V> *LookUpTable<K, V>::findEntry(const K& key){
     int index = binarySearch(0, size, key);
 
-    if (index != -1) {
-        return entryArray[index];
-    } else {
-        return Entry(K(), V());
+    if (index >= size || entryArray[index].key != key) {
+        return nullptr;
     }
+    return entryArray + index;
 }
 
-template<typename K, typename V>
-const V &LookUpTable<K, V>::getValue(K key) const {
-    return getEntry(key).value;
-}
 
 template<typename K, typename V>
-void LookUpTable<K, V>::putIfAbsent(K key, V value) {
+const Entry<K, V>* LookUpTable<K, V>::findEntry(const K& key) const {
     int index = binarySearch(0, size, key);
-
-    if (index != -1) {
-        getEntry(key).value = value;
-    } else {
-        insert(index, key, value);
+    if (index >= size || entryArray[index].key != key) {
+        return nullptr;
     }
+    return entryArray + index;
 }
 
 template<typename K, typename V>
-void LookUpTable<K, V>::insert(int index, K key, V value) {
-    index = std::max(0, index);
-    index = std::min(index, size - 1);
-
-    if (this->size + 1 > this->capacity) {
-        resize();
+const V &LookUpTable<K, V>::getValue(const K& key) const {
+    const Entry<K, V>* entry = findEntry(key);
+    if (entry == nullptr) {
+        static const V defaultValue{};
+        return defaultValue;
     }
+    return entry->value;
+}
 
+template<typename K, typename V>
+const V &LookUpTable<K, V>::getByIndex(int index) const {
+    if (index < 0 || index >= size) {
+        static const V defaultValue{};
+        return defaultValue;
+    }
+    return entryArray[index].value;
+}
+
+template<typename K, typename V>
+void LookUpTable<K, V>::removeByKey(const K &key) const {
     for (int nowIdx = this->size; nowIdx > index; --nowIdx) {
-        entryArray[nowIdx] = entryArray[nowIdx - 1];
+        entryArray[nowIdx] = std::move(entryArray[nowIdx - 1]);
     }
     entryArray[index] = Entry(key, value);
     ++this->size;
 }
 
+
+template<typename K, typename V>
+const V &LookUpTable<K, V>::insert(int index, const K& key, const V& value) {
+    if (this->size + 1 > this->capacity) {
+        resize();
+    }
+
+    for (int nowIdx = this->size; nowIdx > index; --nowIdx) {
+        entryArray[nowIdx] = std::move(entryArray[nowIdx - 1]);
+    }
+    entryArray[index] = Entry(key, value);
+    ++this->size;
+    return entryArray[index];
+}
+
+template<typename K, typename V>
+const V &LookUpTable<K, V>::insert(const K& key, const V& value) {
+    int index = binarySearch(0, size, key);
+    return insert(index, key, value);
+}
+
+template<typename K, typename V>
+int LookUpTable<K, V>::getSize() const {
+    return size;
+}
+
+template<typename K, typename V>
+int LookUpTable<K, V>::getCapacity() const {
+    return capacity;
+}
+
 template <typename K, typename V>
-int LookUpTable<K, V>::binarySearch(int left, int right, K key) const {
+int LookUpTable<K, V>::binarySearch(int left, int right, const K& key) const {
     if (left >= right) {
         return std::min(left, right);
     }

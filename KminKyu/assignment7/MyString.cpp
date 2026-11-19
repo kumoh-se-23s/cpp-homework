@@ -140,7 +140,7 @@ int MyString::find(const char *subStr, int pos) const {
 }
 
 int MyString::find(const MyString& subStr, int pos) const {
-    if (subStr == nullptr) {
+    if (subStr.charArray == nullptr) {
         return -1;
     }
     return rabinKarp(subStr.charArray, positionNormalize(pos), subStr.size);
@@ -351,7 +351,7 @@ MyString& MyString::erase(int pos, int cnt) {
 
     cnt = lengthNormalize(pos, cnt);
 
-    for (int index = pos; index < size; ++index) {
+    for (int index = pos; index < size - cnt; ++index) {
         charArray[index] = charArray[index + cnt];
     }
     size -= cnt;
@@ -370,11 +370,17 @@ void MyString::clear() {
 
 MyString MyString::integerToString(int integer) {
     MyString result = MyString();
+    if (integer < 0) {
+        result.append("-");
+        integer *= -1;
+    }
+
     int number;
     for (number = 1; integer / number >= 10; number *= 10) {}
 
     for (; number > 0; number /= 10) {
         result.append(integer/number + '0');
+        integer %= number;
     }
     return result;
 }
@@ -382,11 +388,11 @@ MyString MyString::integerToString(int integer) {
 MyString & MyString::trim() {
     int startIndex;
     int endIndex;
-    for (endIndex = size - 1; charArray[endIndex]  == ' ' && endIndex >= 0; --endIndex) {
+    for (endIndex = size - 1; endIndex >= 0 && charArray[endIndex]  == ' ' ; --endIndex) {
     }
-    for (startIndex = 0; startIndex < endIndex && charArray[endIndex] == ' '; ++startIndex) {
+    for (startIndex = 0; startIndex < endIndex && charArray[startIndex] == ' '; ++startIndex) {
     }
-    *this = substr(startIndex, endIndex - startIndex);
+    *this = substr(startIndex, endIndex - startIndex + 1);
     return *this;
 }
 
@@ -412,6 +418,9 @@ void MyString::resize(int reCapacity) {
 }
 
 int MyString::getCharArraySize(const char *str2nd) {
+    if (str2nd == nullptr) {
+        return 0;
+    }
     int cnt;
     for (cnt = 0; str2nd[cnt] != '\0'; ++cnt) {}
     return cnt;
@@ -429,8 +438,14 @@ char *MyString::copyCharArray(const char *baseStr, int baseStrSize) {
 
 //생성자, 대입연산자에서만 사용하는 깊은복사 및 size, capacity 설정
 void MyString::copyString(const char *copyStr, int copyStrCapacity) {
+    if (copyStr == nullptr) {
+        copyStr = "";
+        copyStrCapacity = DEFAULT_CAPACITY;
+    }
+
     char *result;
-    if (this->capacity < copyStrCapacity) {
+
+    if (this->charArray == nullptr || this->capacity < copyStrCapacity) {
         result = new char[max(copyStrCapacity, 0) + 1];
     } else {
         result = this->charArray;
@@ -455,27 +470,17 @@ int MyString::compare(const char *str2nd) const {
     }
 
     int index;
-
     for (index = 0; this->charArray[index] != '\0' && str2nd[index] != '\0'; ++index) {
         unsigned char thisChar = this->charArray[index];
         unsigned char str2ndChar = str2nd[index];
         if (thisChar != str2ndChar) {
             return thisChar - str2ndChar;
         }
-        // if (thisChar < str2ndChar) {
-        //     return -1;
-        // } else if (thisChar > str2ndChar) {
-        //     return 1;
-        // }
     }
-    return this->charArray[index] - str2nd[index];
-    // if (this->charArray[index] != '\0') {
-    //     return 1;
-    // } else if (str2nd[index] != '\0') {
-    //     return -1;
-    // } else {
-    //     return 0;
-    // }
+
+    return static_cast<unsigned char>(this->charArray[index])
+        - static_cast<unsigned char>(str2nd[index]);
+
 }
 
 int MyString::rabinKarp(const char *subStr, int pos, int subStrSize) const {

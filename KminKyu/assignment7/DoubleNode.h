@@ -16,23 +16,23 @@ public:
 
     DoubleNode(const T &item);
 
-    DoubleNode(const DoubleNode &other);
+    DoubleNode(const DoubleNode &other) = delete;
 
     DoubleNode(DoubleNode &&other) noexcept;
 
     ~DoubleNode() override = default;
 
-    DoubleNode &operator=(const DoubleNode &other);
+    DoubleNode &operator=(const DoubleNode &other) = delete;
 
     DoubleNode &operator=(DoubleNode &&other) noexcept;
 
-    const DoubleNode *getPrevNode() const;
+    DoubleNode *getPrev() const;
 
-    void setPrevNode(DoubleNode *prevNode);
+    void setPrev(DoubleNode *prevNode);
 
-    const DoubleNode *getNextNode() const;
+    DoubleNode *getNext() const;
 
-    void setNextNode(DoubleNode *nextNode);
+    void setNext(DoubleNode *nextNode);
 };
 
 #include "DoubleNode.tpp"

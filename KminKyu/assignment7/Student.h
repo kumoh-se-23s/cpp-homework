@@ -30,19 +30,25 @@ public:
 
     Student &operator=(Student &&otherStudent) noexcept;
 
-    bool operator ==(int otherStudentId) const;
+    bool operator ==(const Student &otherStudent) const;
 
-    bool operator !=(int otherStudentId) const;
+    bool operator !=(const Student &otherStudent) const;
 
-    bool operator <(int otherStudentId) const;
+    bool operator <(const Student &otherStudent) const;
 
-    bool operator >(int otherStudentId) const;
+    bool operator >(const Student &otherStudent) const;
+
+    bool operator <=(const Student &otherStudent) const;
+
+    bool operator >=(const Student &otherStudent) const;
 
     int getStudentId() const;
 
     const MyString& getStudentGroup() const;
 
     const MyString& getStudentName() const;
+
+    bool isGroupEmpty() const;
 
     MyString toString() const;
 };

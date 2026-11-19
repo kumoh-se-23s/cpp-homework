@@ -14,22 +14,10 @@ SingleNode<T>::SingleNode(const T &item)
     : Node<T>(item) {}
 
 template<typename T>
-SingleNode<T>::SingleNode(const SingleNode &other)
-    : Node<T>(other), nextNode(other.nextNode) {}
-
-template<typename T>
 SingleNode<T>::SingleNode(SingleNode &&other) noexcept
-    : Node<T>(std::move(other)), nextNode(other.nextNode) {
+    : Node<T>(std::move(other)) {
+    this->nextNode = other.nextNode;
     other.nextNode = nullptr;
-}
-
-template <typename T>
-SingleNode<T>& SingleNode<T>::operator=(const SingleNode &other) {
-    if (this == &other)
-        return *this;
-    this->item = other.item;
-    nextNode = other.nextNode;
-    return *this;
 }
 
 template <typename T>
@@ -50,6 +38,7 @@ template<typename T>
 void SingleNode<T>::setNext(SingleNode<T> *next) {
     this->nextNode = next;
 }
+
 
 
 

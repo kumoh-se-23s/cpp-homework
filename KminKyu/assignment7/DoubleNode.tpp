@@ -11,11 +11,7 @@ template<typename T>
 DoubleNode<T>::DoubleNode(const T &item) : DoubleNode(item, nullptr, nullptr) {}
 
 template<typename T>
-DoubleNode<T>::DoubleNode(const DoubleNode &other) : DoubleNode(other.item, other.prevNode, other.nextNode) {}
-
-template<typename T>
-DoubleNode<T>::DoubleNode(DoubleNode &&other) noexcept : Node<T>() {
-    std::swap(this->item, other.item);
+DoubleNode<T>::DoubleNode(DoubleNode &&other) noexcept : Node<T>(std::move(other)) {
     this->nextNode = other.nextNode;
     this->prevNode = other.prevNode;
     other.nextNode = nullptr;
@@ -23,44 +19,36 @@ DoubleNode<T>::DoubleNode(DoubleNode &&other) noexcept : Node<T>() {
 }
 
 template<typename T>
-DoubleNode<T> & DoubleNode<T>::operator=(const DoubleNode &other) {
-    if (this == &other) {
-        return *this;
-    }
-    this->item = other.item;
-    prevNode = other.prevNode;
-    nextNode = other.nextNode;
-
-    return *this;
-}
-
-template<typename T>
 DoubleNode<T> & DoubleNode<T>::operator=(DoubleNode &&other) noexcept {
-    if (this == &other) {
-        return *this;
+    if (this != &other) {
+        this->item = std::move(other.item);
+        prevNode = other.prevNode;
+        nextNode = other.nextNode;
+
+        other.prevNode = nullptr;
+        other.nextNode = nullptr;
+
     }
-    swap(this->item, other.item);
-    prevNode = other.prevNode;
-    nextNode = other.nextNode;
+
     return *this;
 }
 
 template<typename T>
-const DoubleNode<T> *DoubleNode<T>::getPrevNode() const {
+DoubleNode<T> *DoubleNode<T>::getPrev() const {
     return prevNode;
 }
 
 template<typename T>
-void DoubleNode<T>::setPrevNode(DoubleNode *prevNode) {
+void DoubleNode<T>::setPrev(DoubleNode *prevNode) {
     this->prevNode = prevNode;
 }
 
 template<typename T>
-const DoubleNode<T> *DoubleNode<T>::getNextNode() const {
+DoubleNode<T> *DoubleNode<T>::getNext() const {
     return nextNode;
 }
 
 template<typename T>
-void DoubleNode<T>::setNextNode(DoubleNode *nextNode) {
+void DoubleNode<T>::setNext(DoubleNode *nextNode) {
     this->nextNode = nextNode;
 }

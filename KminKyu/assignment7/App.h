@@ -1,9 +1,11 @@
 #pragma once
-#include "MyString.h"
-#include "Student.h"
-#include "SinglyLinkedList.h"
-#include "LookUpTable.h"
+#include <iosfwd>
 
+using namespace std;
 class App {
+    ifstream inStream;
+    ofstream outStream;
+
+
 };
 

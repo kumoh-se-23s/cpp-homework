@@ -1,5 +1,6 @@
-#ifndef KEYLIST_H
-#define KEYLIST_H
+#ifndef LOOKUPTABLE_H
+#define LOOKUPTABLE_H
+#include "MyString.h"
 
 template <typename K, typename V>
 struct Entry {
@@ -35,17 +36,31 @@ public:
 
     void resize();
 
-    Entry<K, V>& getEntry(K key) const;
+    Entry<K, V> *findEntry(const K &key);
 
-    const V& getValue(K Key) const;
+    const Entry<K, V> *findEntry(const K &key) const;
 
-    void putIfAbsent(K key, V value) ;
+    const V &getValue(const K &key) const;
 
-    void insert(int index, K key, V value);
+    const V &getByIndex(int index) const;
+
+    void removeByKey(const K &key) const;
+
+    void setValue(const K& key, const V& value);
+
+    const V &insert(const K& key, const V& value);
+
+    int getSize() const;
+
+    int getCapacity() const;
+
 private:
-    int binarySearch(int left, int right, K key) const;
+    int binarySearch(int left, int right, const K& key) const;
+
+    const V &insert(int index, const K& key, const V& value);
+
 };
 
 #include "LookUpTable.tpp"
 
-#endif // KEYLIST_H
+#endif // LOOKUPTABLE_H

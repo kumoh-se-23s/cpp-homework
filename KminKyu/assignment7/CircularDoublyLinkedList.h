@@ -21,21 +21,27 @@ public:
 
     CircularDoublyLinkedList &operator=(CircularDoublyLinkedList &&otherLinkedList) noexcept;
 
-    DoubleNode<T> *getHead();
+    DoubleNode<T> *getHead() const;
 
-    int getSize();
+    int getSize() const;
 
-    const DoubleNode<T> *addFirst(T item);
+    DoubleNode<T> *add(DoubleNode<T> *node);
 
-    const DoubleNode<T> *add(T item);
+    DoubleNode<T> *add(const T& item);
 
-    DoubleNode<T> *find(T item);
+    const DoubleNode<T> *find(const T& item) const;
 
-    bool remove(T item);
+    DoubleNode<T> *find(const T& item);
 
-    bool removeFirst(T item);
+    bool remove(const T& item);
 
     void clear();
+private:
+    //정렬되지 않은 여러개의 노드가 들어오는것을 가정
+    DoubleNode<T> *addAll(DoubleNode<T> *node);
+
+    DoubleNode<T> *addNode(DoubleNode<T> *node);
+
 };
 
 #include "CircularDoublyLinkedList.tpp"
