@@ -148,12 +148,9 @@ E SinglyLinkedList<E>::remove(int index) {
 
 template<typename E>
 void SinglyLinkedList<E>::clear() {
-    SingleConnectNode<E> *current_node = this->m_head;
-
-    while (current_node != nullptr) {
-        SingleConnectNode<E> *next_node = current_node->next();
+    for (SingleConnectNode<E> *current_node = this->m_head, *next_node = nullptr; current_node != nullptr; current_node = next_node) {
+        next_node = current_node->next();
         delete current_node;
-        current_node = next_node;
     }
 
     this->m_head = nullptr;

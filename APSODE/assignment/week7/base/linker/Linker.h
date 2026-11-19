@@ -2,12 +2,12 @@
 #define LINKER_H
 #include <functional>
 
-#include "../list/linked_list/node/AbstractNode.h"
+#include "../../core/LinkerConcept.h"
 
 template<
     typename Node,
-    typename LinkPolicy,
-    typename ComparePolicy
+    LinkPolicyFor<Node> LinkPolicy,
+    NodeComparator<Node> ComparePolicy
 >
 class Linker {
     Node* m_head;
@@ -38,15 +38,15 @@ class Linker {
 
         void take(Linker& other);
 
-        Node* find(std::function<bool(Node* node)> predicate) const;
+        Node* find_if(std::function<bool(const Node *node)> pred) const;
 
-        void for_each(std::function<void(Node* node)> consumer) const;
+        void for_each(std::function<void(Node *node)> visit) const;
 
-        void for_each(const Node* start, std::function<bool(Node* node)> consumer) const;
+        void for_each(const Node* start, std::function<void(const Node *node)> visit) const;
 
 
     private:
-        Node* find_insert_pos(const Node* target) const;
+        Node* find_insert_position(const Node* node) const;
 
         static Node* step(const Node* node, const Node* stop);
 };
