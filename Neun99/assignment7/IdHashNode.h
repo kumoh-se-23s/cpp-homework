@@ -1,7 +1,7 @@
 #pragma once
 #include "StudentNode.h"
 
-//학번의 년도와 해당 기수의 list head를 쌍으로 가지는 해시노드
+//년도를 key로, 년도의 첫번째 학생의 주소를 value로 가지는 해시노드
 class IdHashNode {
 public:
     //생성자

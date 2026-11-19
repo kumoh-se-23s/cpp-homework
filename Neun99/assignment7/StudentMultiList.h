@@ -13,7 +13,7 @@ public:
 
     MyString toStringForSave() const;
     MyString toStringForPrint() const;
-    void insertStudent(int id, const MyString& group, const MyString& name);
+    bool insertStudent(int id, const MyString& group, const MyString& name);
     bool removeStudent(int id);
 private:
     int studentCnt;
@@ -21,22 +21,24 @@ private:
     GroupHashMap groupMap;
     const MyString NO_GROUP = "-";
 
+    static int getYearOfId(int id);
+
     //단일 연결 처리
-    void classmateInsert(StudentNode* newNode);
-    void classmateInsertFront(IdHashNode* idHash, StudentNode* newNode);
-    void classmateInsertAfter(StudentNode* newNode, StudentNode* preNode);
+    bool classmateInsert(StudentNode* newNode);
+    static void classmateInsertFront(IdHashNode* idHash, StudentNode* newNode);
+    static void classmateInsertAfter(StudentNode* newNode, StudentNode* preNode);
 
     StudentNode* classmateRemove(int id);
-    StudentNode* classmateRemoveFront(IdHashNode* idHash);
-    StudentNode* classmateRemoveAfter(StudentNode* preNode);
-    bool shouldRemoveHashNode(IdHashNode* idHash);
+    static StudentNode* classmateRemoveFront(IdHashNode* idHash);
+    static StudentNode* classmateRemoveAfter(StudentNode* preNode);
+    bool shouldRemoveHashNode(const IdHashNode * idHash) const;
 
     //원형 더블 연결 처리
     void teammateInsert(StudentNode* newNode);
-    void teammateInsertFirst(GroupHashNode* groupHash, StudentNode* newNode);
-    void teammateInsertAfter(GroupHashNode* groupHash, StudentNode* newNode, StudentNode* preNode);
-    void teammateRemove(StudentNode* targetNode);
+    static void teammateInsertFirst(GroupHashNode* groupHash, StudentNode* newNode);
+    static void teammateInsertAfter(StudentNode *newNode, StudentNode *preNode);
+    void teammateRemove(const StudentNode * targetNode);
 
-    //소멸자 재귀문
-    void deleteAllStudent(StudentNode* node);
+    // 소멸자 재귀문
+    static void deleteAllStudent(const StudentNode * node);
 };

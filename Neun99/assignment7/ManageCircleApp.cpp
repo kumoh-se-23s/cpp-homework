@@ -1,9 +1,8 @@
 #include "ManageCircleApp.h"
 #include <fstream>
 #include <limits>
-//TODO: 제출 전 체크용 cout 전부 제거
 
-void ManageCircleApp::run(char* file) {
+void ManageCircleApp::run(const char *file) {
     readFile(file);
 
     isRunning = true;
@@ -18,7 +17,7 @@ void ManageCircleApp::run(char* file) {
     saveFile(file);
 }
 
-void ManageCircleApp::readFile(char* file) {
+void ManageCircleApp::readFile(const char *file) {
     ifstream inStream;
     inStream.open(file);
 
@@ -82,7 +81,8 @@ void ManageCircleApp::insertStudent() {
     cin >> inputArr[1];
     getline(cin, inputArr[2]);
 
-    studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim());
+    if(!studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim()))
+        cout << "Insert failed: existing Id" << endl;
 
     delete[] inputArr;
 }
@@ -95,7 +95,7 @@ void ManageCircleApp::deleteStudent() {
         cout << "Delete failed: invalid Id" << endl;
 }
 
-void ManageCircleApp::saveFile(const char *file) {
+void ManageCircleApp::saveFile(const char *file) const {
     ofstream outStream;
     outStream.open(file);
 

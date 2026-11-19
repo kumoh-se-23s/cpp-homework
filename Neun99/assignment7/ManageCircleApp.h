@@ -3,7 +3,7 @@
 
 class ManageCircleApp {
 public:
-    void run(char* file);
+    void run(const char* file);
 private:
     StudentMultiList studentList;
     bool isRunning;
@@ -11,8 +11,8 @@ private:
 
     void handleInput(char input);
 
-    void readFile(char* file);
+    void readFile(const char* file);
     void insertStudent();
     void deleteStudent();
-    void saveFile(const char* file);
+    void saveFile(const char* file) const;
 };

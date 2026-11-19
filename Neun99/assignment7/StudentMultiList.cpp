@@ -39,6 +39,9 @@ MyString StudentMultiList::toStringForSave() const{
     //학생 수, 그룹 수
     result += itos(studentCnt) + " " + itos(groupMap.getSize());
 
+    if (studentCnt == 0) //학생 없으면 바로 return
+        return result;
+
     //최소년도부터 최대년도까지 순회
     for (int idx = idMap.getMinYear(); idx <= idMap.getMaxYear(); idx++) {
         //한 년도당 모든 학생 순회
@@ -71,8 +74,7 @@ MyString StudentMultiList::toStringForPrint() const{
 
     for (int idx = idMap.getMinYear(); idx <= idMap.getMaxYear(); idx++) {
         //한 년도당 모든 학생 순회
-        for (StudentNode *indexNode = idMap[idx]->getHead(); indexNode != nullptr;
-             indexNode = indexNode->getNextClassmate()) {
+        for (StudentNode *indexNode = idMap[idx]->getHead(); indexNode != nullptr; indexNode = indexNode->getNextClassmate()) {
             result += indexNode->getStudent().toString();
             result += " (";
 
@@ -84,8 +86,7 @@ MyString StudentMultiList::toStringForPrint() const{
 
                 //그룹원 정보
                 StudentNode *groupIdxNode = indexNode->getNextTeammate();
-                if (groupIdxNode != indexNode) {
-                    //팀에 혼자가 아니면 순회하며 전부 출력
+                if (groupIdxNode != indexNode) { //팀에 혼자가 아니면 순회하며 전부 출력
                     result += " ";
                     result += groupIdxNode->getStudent().toString();
                     groupIdxNode = groupIdxNode->getNextTeammate();
@@ -103,12 +104,14 @@ MyString StudentMultiList::toStringForPrint() const{
 }
 
 //학생 추가
-void StudentMultiList::insertStudent(int id, const MyString &group, const MyString &name) {
+bool StudentMultiList::insertStudent(int id, const MyString &group, const MyString &name) {
     StudentNode* newNode = new StudentNode(id, group, name);
-    classmateInsert(newNode);
+    if (!classmateInsert(newNode)) //중복 id로 insert 실패 시 바로 false 리턴
+        return false;
     if (group != NO_GROUP)
         teammateInsert(newNode);
-    studentCnt++; //TODO:동일학번일 때 교체해야 하면 classmateInsert를 bool리턴으로 하고 if문 걸어야 할듯
+    studentCnt++;
+    return true; 
 }
 
 //학생 삭제
@@ -123,23 +126,35 @@ bool StudentMultiList::removeStudent(int id) {
     return targetNode != nullptr; //실제로 삭제되었는지 여부 리턴
 }
 
-//private-------------------------------------------------------------
-//classmate포인터 처리: 단일 연결리스트-------------------------
-//insert
-void StudentMultiList::classmateInsert(StudentNode *newNode) {
+// private-------------------------------------------------------------
+int StudentMultiList::getYearOfId(int id) {
+    return id / 10000;
+}
+
+// classmate포인터 처리: 단일 연결리스트-------------------------
+//insert, 이미 존재하는 학생이면 추가하지 않고 false 리턴
+bool StudentMultiList::classmateInsert(StudentNode *newNode) {
     int id = newNode->getStudent().getId();
-    IdHashNode* idHash = idMap[id/10000];
+    IdHashNode* idHash = idMap[getYearOfId(id)];
     if (idHash == nullptr)
-        idHash = idMap.insert(id/10000);
+        idHash = idMap.insert(getYearOfId(id));
 
     if (idHash->getHead() == nullptr || idHash->getHead()->getStudent().getId() > id) { //비었거나 첫 값이면 바로 넣기
         classmateInsertFront(idHash, newNode);
     } else { //아니면 순회 돌면서 자리 찾아 넣기
         StudentNode* preNode = idHash->getHead();
-        for (;preNode->getNextClassmate() != nullptr && preNode->getNextClassmate()->getStudent().getId() < id;
-            preNode = preNode->getNextClassmate()) {}
+        if (preNode->getStudent().getId() == id) //첫 값 비교, 같으면 false
+            return false;
+        for (;preNode->getNextClassmate() != nullptr; preNode = preNode->getNextClassmate()) {
+            int compareId = preNode->getNextClassmate()->getStudent().getId();
+            if (compareId == id) //이미 존재하면 false
+                return false;
+            if (compareId > id) //자리 찾으면 탈출
+                break;
+        }
         classmateInsertAfter(newNode, preNode);
     }
+    return true;
 }
 
 //맨 앞에 연결 추가
@@ -157,7 +172,7 @@ void StudentMultiList::classmateInsertAfter(StudentNode *newNode, StudentNode *p
 //remove
 //인자 노드 찾아서 연결 제거하고 노드 주소 리턴
 StudentNode *StudentMultiList::classmateRemove(int id) {
-    IdHashNode* idHash = idMap[id/10000];
+    IdHashNode* idHash = idMap[getYearOfId(id)];
     if (idHash == nullptr || idHash->isEmpty()) //없는 id면
         return nullptr;
 
@@ -165,7 +180,7 @@ StudentNode *StudentMultiList::classmateRemove(int id) {
         StudentNode* targetNode = idHash->getHead();
         classmateRemoveFront(idHash);
         if (shouldRemoveHashNode(idHash))
-            idMap.remove(id/10000);
+            idMap.remove(getYearOfId(id));
         return targetNode;
     }
 
@@ -175,7 +190,7 @@ StudentNode *StudentMultiList::classmateRemove(int id) {
             StudentNode* targetNode = preNode->getNextClassmate();
             classmateRemoveAfter(preNode);
             if (shouldRemoveHashNode(idHash))
-                idMap.remove(id/10000);
+                idMap.remove(getYearOfId(id));
             return targetNode;
         }
     }
@@ -196,7 +211,7 @@ StudentNode *StudentMultiList::classmateRemoveAfter(StudentNode *preNode) {
     return temp;
 }
 
-bool StudentMultiList::shouldRemoveHashNode(IdHashNode *idHash) {
+bool StudentMultiList::shouldRemoveHashNode(const IdHashNode *idHash) const {
     return idHash->isEmpty() && (idHash->getId() == idMap.getMinYear() || idHash->getId() == idMap.getMaxYear());
 }
 
@@ -223,7 +238,7 @@ void StudentMultiList::teammateInsert(StudentNode *newNode) {
             preNode = preNode->getNextTeammate()) {} //탐색하다가 자기 자리 이전에서 멈춤
         }
 
-        teammateInsertAfter(groupHash, newNode, preNode); //이후 insert
+        teammateInsertAfter(newNode, preNode); //이후 insert
     }
 }
 
@@ -235,7 +250,7 @@ void StudentMultiList::teammateInsertFirst(GroupHashNode *groupHash, StudentNode
 }
 
 //인자로 받은 노드 뒤에 추가
-void StudentMultiList::teammateInsertAfter(GroupHashNode *groupHash, StudentNode *newNode, StudentNode *preNode) {
+void StudentMultiList::teammateInsertAfter(StudentNode *newNode, StudentNode *preNode) {
     preNode->getNextTeammate()->setPrevTeammate(newNode);
     newNode->setPrevTeammate(preNode);
     newNode->setNextTeammate(preNode->getNextTeammate());
@@ -243,7 +258,7 @@ void StudentMultiList::teammateInsertAfter(GroupHashNode *groupHash, StudentNode
 }
 
 //remove:: StudentNode 삭제는 위에서 하고 연결만 끊기
-void StudentMultiList::teammateRemove(StudentNode *targetNode) {
+void StudentMultiList::teammateRemove(const StudentNode *targetNode) {
     MyString group = targetNode->getStudent().getGroup();
     GroupHashNode* groupHash = groupMap[group];
 
@@ -263,7 +278,7 @@ void StudentMultiList::teammateRemove(StudentNode *targetNode) {
 }
 
 //모든 동기 노드 delete
-void StudentMultiList::deleteAllStudent(StudentNode *node) {
+void StudentMultiList::deleteAllStudent(const StudentNode *node) {
     if (node != nullptr)
         deleteAllStudent(node->getNextClassmate());
     delete node;

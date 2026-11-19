@@ -94,26 +94,26 @@ IdHashNode *IdHashMap::insert(int year) {
 
 //제거: 맨 앞이나 맨 뒤일 경우만 작동
 void IdHashMap::remove(int year) {
-    if (size > 0) { //비었으면 지울것도 없으므로 작동 x
-        int diff = year - getMinYear();
-        if (diff == 0) { //맨 앞이면 최소년도 갱신
-            //현재 유의미한 최소년도 탐색
-            int cnt = 1;
-            for (; cnt < size && arr[cnt].isEmpty(); cnt++) {}
+    if (size == 0) //비었으면 지울것도 없으므로 작동 x
+        return;
 
-            //배열 갱신
-            for (int idx = 0; idx < size - cnt; idx++) {
-                arr[idx] = arr[idx + cnt];
-            }
+    if (year == getMinYear()) { // 맨 앞이면 최소년도 갱신
+        // 현재 유의미한 최소년도 탐색
+        int cnt = 1;
+        for (; cnt < size && arr[cnt].isEmpty(); cnt++) {}
 
-            size -= cnt;
-        } else if (diff == size - 1) { // 맨 뒤면 최대년도 갱신
-            //현재 유의미한 최대년도 탐색
-            int cnt = 1;
-            for (; cnt < size && arr[size - cnt - 1].isEmpty(); cnt++) {}
-
-            size -= cnt;
+        // 배열 갱신
+        for (int idx = 0; idx < size - cnt; idx++) {
+            arr[idx] = arr[idx + cnt];
         }
+
+        size -= cnt;
+    } else if (year == getMaxYear()) { // 맨 뒤면 최대년도 갱신
+        // 현재 유의미한 최대년도 탐색
+        int cnt = 1;
+        for (; cnt < size && arr[size - cnt - 1].isEmpty(); cnt++) {}
+        size -= cnt;
+
     }
 }
 

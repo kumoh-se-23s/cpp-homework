@@ -4,7 +4,6 @@
 using namespace std;
 
 int main() {
-    string str = string();
-    getline(cin, str);
-    cout << str;
+    double result = (10 + 100) + 0.05 * 200;
+    cout << result;
 }
