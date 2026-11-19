@@ -19,6 +19,6 @@ class Policy {
         static void reset(MultiConnectNode<T> *node);
 };
 
-#include "Poilicy.tpp"
+#include "Policy.tpp"
 
 #endif //CPP_HOMEWORK_POILICY_H

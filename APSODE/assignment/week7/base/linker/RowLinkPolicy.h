@@ -1,7 +1,7 @@
 #ifndef ROW_LINK_POLICY_H
 #define ROW_LINK_POLICY_H
 
-#include "Poilicy.h"
+#include "Policy.h"
 
 template<typename T>
 class RowLinkPolicy final : public Policy<T, RowLinkPolicy<T> > {

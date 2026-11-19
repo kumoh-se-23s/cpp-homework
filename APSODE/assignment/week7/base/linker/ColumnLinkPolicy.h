@@ -1,7 +1,7 @@
 #ifndef COLUMN_LINK_POLICY_H
 #define COLUMN_LINK_POLICY_H
 
-#include "Poilicy.h"
+#include "Policy.h"
 
 template<typename T>
 class ColumnLinkPolicy final : public Policy<T, ColumnLinkPolicy<T> > {
