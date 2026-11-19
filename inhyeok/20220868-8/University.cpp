@@ -34,12 +34,18 @@ bool University::insert(RAIIUniquePointer<AdStudent> v) {
 }
 
 void University::remove(const MyString &idOrPhone) {
-    if (keyToStudent.containsKey(idOrPhone)) {
-        students.remove(*keyToStudent[idOrPhone]);
+    if (auto ptr = keyToStudent[idOrPhone]) {
+        students.remove(*ptr);
+        phoneNumberToStudent.remove((*ptr)->data->phone);
         keyToStudent.remove(idOrPhone);
-    } else if (phoneNumberToStudent.containsKey(idOrPhone)) {
-        students.remove(*phoneNumberToStudent[idOrPhone]);
-        phoneNumberToStudent.remove(idOrPhone);
+    } else {
+        ptr = phoneNumberToStudent[idOrPhone];
+        if (ptr) {
+            auto &v = *ptr;
+            students.remove(*ptr);
+            phoneNumberToStudent.remove(idOrPhone);
+            keyToStudent.remove((*ptr)->data->key);
+        }
     }
 }
 

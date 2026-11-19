@@ -6,6 +6,8 @@
 MyString::MyString(const int initialCapacity) {
     data = new char[initialCapacity];
     capacity = initialCapacity;
+    if (data) data[0] = '\0';
+
 }
 
 MyString::MyString(const char *str) {
