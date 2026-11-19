@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     int temp1 = 4;
     DoubleNode<int> temp2 = DoubleNode(temp1);
     SingleNode<DoubleNode<int>> *temp3 = new SingleNode(temp2);

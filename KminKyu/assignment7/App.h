@@ -1,11 +1,24 @@
 #pragma once
-#include <iosfwd>
 
-using namespace std;
+
+#include "MyStringFileIO.h"
+#include "StudentController.h"
+
 class App {
-    ifstream inStream;
-    ofstream outStream;
+    StudentController controller;
+    MyStringFileIO fileIO;
 
 
+public:
+    explicit App(const char *argv);
+
+    int run();
+
+private:
+    bool loadFromFile();
+    bool saveToFile();
+    void insertToFile(MyString &str));
+    void insert();
+    void remove();;
 };
 
