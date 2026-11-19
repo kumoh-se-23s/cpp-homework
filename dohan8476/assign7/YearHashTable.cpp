@@ -24,7 +24,7 @@ void YearHashTable::init(int minY, int maxY) {
 
     if (capacity > 0) {
         buckets = new SinglyLinkedList<StudentNode>[capacity];
-        cout << "[New YearHashTable Buckets Array] " << buckets << " (Cap: " << capacity << ")" << endl;
+        // cout << "[New YearHashTable Buckets Array] " << buckets << " (Cap: " << capacity << ")" << endl;
     }
 }
 
@@ -36,7 +36,7 @@ void YearHashTable::resize(int newYear) {
     int newCap = newEnd - newBase + 1;
 
     SinglyLinkedList<StudentNode>* newBuckets = new SinglyLinkedList<StudentNode>[newCap];
-    cout << "[New resize YearBuckets Array] " << newBuckets << endl;
+    // cout << "[New resize YearBuckets Array] " << newBuckets << endl;
 
     if (buckets != nullptr) {
         for (int i = 0; i < capacity; ++i) {
@@ -137,4 +137,24 @@ const SinglyLinkedList<StudentNode> &YearHashTable::getBucketByYear(int year) co
 
 int YearHashTable::hash(int year) const {
     return year - baseYear;
+}
+
+bool YearHashTable::isExist(int studentID) const {
+    if (buckets == nullptr || capacity == 0) return false;
+
+    // year 기준
+    int year = studentID / 10000;
+    if (year < minYear || year > maxYear) return false;
+
+    // year이 범위안이면 해시값 가지고 돌면서 탐색
+    // 정렬이니가 binary search도 가능할려나
+    int idx = hash(year);
+    if (idx < 0 || idx >= capacity) return false;
+
+    StudentNode* curr = buckets[idx].getHead();
+    while (curr != nullptr) {
+        if (*curr == studentID) return true;
+        curr = curr->next;
+    }
+    return false;
 }

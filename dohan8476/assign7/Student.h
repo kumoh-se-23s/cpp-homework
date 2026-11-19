@@ -3,6 +3,7 @@
 #include "MyString.h"
 
 class Student {
+    //생각해보니까 이거 MyString하고 앞 4자리만 가져오는게 맞는거 같은데 너무 멀리 와버렷다
     int studentID;
     MyString studentName;
     MyString teamID;

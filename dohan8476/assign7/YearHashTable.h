@@ -24,6 +24,8 @@ class YearHashTable {
         SinglyLinkedList<StudentNode>& getBucketByYear(int year);
         const SinglyLinkedList<StudentNode>& getBucketByYear(int year) const;
 
+        bool isExist(int studentID) const;
+
     private:
         int hash(int year) const;
         void resize(int newYear);

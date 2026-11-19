@@ -470,6 +470,24 @@ MyString &MyString::erase(int pos, int len) {
     return replaceHelper(pos, len, 0, "");
 }
 
+MyString &MyString::trim() {
+    //앞공백
+    int start = 0;
+    while (start < size && isWhitespace(str[start])) {
+        start++;
+    }
+    //뒷공백
+    int end = size;
+    while (end > start && isWhitespace(str[end - 1])) {
+        end--;
+    }
+
+    if (end < size) erase(end, size - end);
+    if (start > 0) erase(0, start);
+
+    return *this;
+}
+
 //------------------------------------------------------------
 // 3-4.  문자열을 숫자로 변환하는 stoi(일반 함수)
 //------------------------------------------------------------

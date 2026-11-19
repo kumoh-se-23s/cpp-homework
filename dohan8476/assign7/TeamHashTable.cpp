@@ -5,9 +5,9 @@ using namespace std;
 
 TeamHashTable::TeamHashTable(int initCap) : capacity(initCap), groupCnt(0) {
     buckets = new CircularLinkedList<StudentNode>[capacity];
-    cout << "[New TeamHashTable Buckets Array] " << buckets << endl;
+    // cout << "[New TeamHashTable Buckets Array] " << buckets << endl;
     teamIDs = new MyString[capacity];
-    cout << "[New TeamHashTable TeamIDs Array] " << teamIDs << endl;
+    // cout << "[New TeamHashTable TeamIDs Array] " << teamIDs << endl;
 }
 
 TeamHashTable::~TeamHashTable() {
@@ -31,9 +31,9 @@ void TeamHashTable::resize(int newCap) {
 
     capacity = newCap;
     CircularLinkedList<StudentNode>* newBuckets = new CircularLinkedList<StudentNode>[capacity];
-    cout << "[New resize TeamBuckets Array] " << newBuckets << endl;
+    // cout << "[New resize TeamBuckets Array] " << newBuckets << endl;
     MyString* newTeamIDs = new MyString[capacity];
-    cout << "[New resize TeamIDs Array] " << newTeamIDs << endl;
+    // cout << "[New resize TeamIDs Array] " << newTeamIDs << endl;
 
     for (int i = 0; i < oldCap; ++i) {
         if (oldTeamIDs[i] != "") {
@@ -70,6 +70,8 @@ int TeamHashTable::hash(const MyString& teamID) const {
 }
 
 int TeamHashTable::find(const MyString& teamID) const {
+    if (teamID == "") return -1;
+
     int start = hash(teamID);
     for (int i = 0; i < capacity; i++) {
         int idx = (start + i) % capacity;
@@ -88,7 +90,7 @@ int TeamHashTable::createBucket(const MyString& teamID) {
     int start = hash(teamID);
     for (int i = 0; i < capacity; i++) {
         int idx = (start + i) % capacity;
-        if (teamIDs[idx] == "") {
+        if (teamIDs[idx] == "" || teamIDs[idx] == "-") {
             teamIDs[idx] = teamID;
             return idx;
         }
@@ -102,8 +104,11 @@ void TeamHashTable::insert(StudentNode* node) {
     int idx = find(node->data.getTeamID());
     //find 결과가 없으니 버킷 만들어야함
     if (idx == -1) {
-        cout << "[create New Team] " << node->data.getTeamID() << endl;
+        // cout << "[create New Team] " << node->data.getTeamID() << endl;
         idx = createBucket(node->data.getTeamID());
+    }
+    //team에 재가입
+    if (buckets[idx].isEmpty()) {
         groupCnt++;
     }
     buckets[idx].insertAscend(node);
@@ -115,11 +120,11 @@ void TeamHashTable::remove(StudentNode* node) {
     int idx = find(node->data.getTeamID());
     if (idx == -1) return;
 
-    buckets[idx].remove(node);
+    StudentNode* removed = buckets[idx].remove(node);
 
-    if (buckets[idx].isEmpty()) {
+    if (removed != nullptr && buckets[idx].isEmpty()) {
+        teamIDs[idx] = "-"; // 삭제 마킹
         groupCnt--;
-        teamIDs[idx] = "";
     }
 }
 

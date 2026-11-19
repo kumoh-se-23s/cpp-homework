@@ -34,7 +34,7 @@ int Student::getYear() const {
 }
 
 bool Student::hasTeam() const {
-    return teamID != "" || teamID != "-";
+    return teamID != "" && teamID != "-";
 }
 
 bool Student::operator<(const Student &other) const {

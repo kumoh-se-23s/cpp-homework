@@ -13,47 +13,68 @@ static char toUpper(char c) {
     return c;
 }
 
+static bool isDigit(const char c) {
+    return '0' <= c && c <= '9';
+}
+
+static bool isAllDigits(const MyString& s) {
+    for (int i = 0; i < s.length(); i++) {
+        if (!isDigit(s[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool isValidStudentID(const MyString& s) {
+    if (s.length() != 8 || !isAllDigits(s)) return false;
+    int year = stoi(s) / 10000;
+    return 1900 <= year && year <= 2100;
+}
+
 void StudentListManger::run() {
     if (!FileIO::loadFile(filename.getStr(), studentList)) {
         cout << "Error loading file." << endl;
         return;
     }
 
-    char input;
+    MyString input;
     while (cin >> input) {
-        input = toUpper(input);
-        if (input == 'L') {
-            studentList.printList();
-        } 
-        else if (input == 'I') {
-            int id;
-            MyString teamID;
-            MyString name;
+        if (input.length() != 1) continue;
 
-            cin >> id >> teamID;
+        switch (toUpper(input[0] )) {
+            case 'L':
+                studentList.printList();
+                break;
 
-            char c;
-            while (cin.get(c) && (c == ' ' || c == '\t')) {}
-            if (cin) cin.putback(c);
+            case 'I': {
+                MyString stuID, teamID, name;
+                if (!(cin >> stuID >> teamID)) break;
+                getline(cin, name);
+                name.trim();
 
-            getline(cin, name);
-            if (!name.isEmpty() && name[name.length() - 1] == '\r') {
-                name.erase(name.length() - 1, 1);
+                if (isValidStudentID(stuID) && !name.isEmpty()) {
+                    studentList.addStudent(Student(stoi(stuID), name, teamID));
+                }
+                break;
             }
 
-            Student newStd(id, name, teamID);
-            studentList.addStudent(newStd);
-        } 
-        else if (input == 'D') {
-            int id;
-            cout << "input num" << endl;
-            cin >> id;
+            case 'D': {
+                MyString idStr;
+                if (!(cin >> idStr)) break;
 
-            studentList.deleteStudent(id);
-        } 
-        else if (input == 'Q') {
-            FileIO::saveFile(filename.getStr(), studentList);
-            break;
+                if (isValidStudentID(idStr)) {
+                    studentList.deleteStudent(stoi(idStr));
+                }
+                break;
+            }
+
+            case 'Q':
+                FileIO::saveFile(filename.getStr(), studentList);
+                return;
+
+            default:
+                cout << input << " is not a valid command." << endl;
         }
     }
 }

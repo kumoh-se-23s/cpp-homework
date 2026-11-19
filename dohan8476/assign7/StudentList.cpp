@@ -6,18 +6,25 @@ using namespace std;
 StudentList::StudentList() : studentCount(0) {}
 StudentList::~StudentList() {}
 
-void StudentList::initYearRange(int minY, int maxY) {
-    yearTable.init(minY, maxY);
+void StudentList::initYearRange(int minYear, int maxYear) {
+    yearTable.init(minYear, maxYear);
 }
 
 void StudentList::addStudent(const Student& std) {
-    StudentNode* newNode = new StudentNode(std);
-    cout << "[New StudentNode] " << newNode << " (ID: " << std.getStudentID() << ")" << endl;
+    if (yearTable.isExist(std.getStudentID())) {
+        return;
+    }
 
-    // 두 테이블에 동일한 노드 전달 후 연결
-    yearTable.insert(newNode); // next 연결
-    teamTable.insert(newNode); // nextTeam, prevTeam 연결
-    studentCount++;
+    int year = std.getYear();
+    if (1900 <= year && year <= 2100) {
+        StudentNode* newNode = new StudentNode(std);
+        // cout << "[New StudentNode] " << newNode << " (ID: " << std.getStudentID() << ")" << endl;
+
+        // 두 테이블에 동일한 노드 전달 후 연결
+        yearTable.insert(newNode); // next 연결
+        teamTable.insert(newNode); // nextTeam, prevTeam 연결
+        studentCount++;
+    }
 }
 
 bool StudentList::deleteStudent(int studentID) {
@@ -25,26 +32,28 @@ bool StudentList::deleteStudent(int studentID) {
     StudentNode* target = yearTable.remove(studentID);
     if (target == nullptr) return false;
 
-    // 팀 테이블에서 분리
-    teamTable.remove(target);
+    // 팀이 존재하면 테이블에서 분리
+    if (target->data.hasTeam()) {
+        teamTable.remove(target);
+    }
 
-    cout << "[Delete StudentNode] " << target << " (ID: " << studentID << ")" << endl;
+    // cout << "[Delete StudentNode] " << target << " (ID: " << studentID << ")" << endl;
     delete target;
     studentCount--;
     return true;
 }
 
 void StudentList::printList() const {
-    int minY = yearTable.getMinYear();
-    int maxY = yearTable.getMaxYear();
+    int minYear = yearTable.getMinYear();
+    int maxYear = yearTable.getMaxYear();
 
-    cout << "[Year:" << minY << "~" << maxY << "] "
+    cout << "[Year:" << minYear << "~" << maxYear << "] "
          << "[Student Count:" << studentCount << "] "
          << "[Group Count: " << teamTable.getGroupCount() << "]" << endl;
 
-    if (studentCount == 0 || minY > maxY) return;
+    if (studentCount == 0 || minYear > maxYear) return;
 
-    for (int year = minY; year <= maxY; ++year) {
+    for (int year = minYear; year <= maxYear; ++year) {
         const SinglyLinkedList<StudentNode>& bucket = yearTable.getBucketByYear(year);
         StudentNode* curr = bucket.getHead();
 
