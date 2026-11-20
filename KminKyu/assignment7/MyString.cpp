@@ -388,9 +388,9 @@ MyString MyString::integerToString(int integer) {
 MyString & MyString::trim() {
     int startIndex;
     int endIndex;
-    for (endIndex = size - 1; endIndex >= 0 && charArray[endIndex]  == ' ' ; --endIndex) {
+    for (endIndex = size - 1; endIndex >= 0 && isspace(static_cast<unsigned char>(charArray[endIndex])); --endIndex) {
     }
-    for (startIndex = 0; startIndex < endIndex && charArray[startIndex] == ' '; ++startIndex) {
+    for (startIndex = 0; startIndex < endIndex && isspace(static_cast<unsigned char>(charArray[startIndex])); ++startIndex) {
     }
     *this = substr(startIndex, endIndex - startIndex + 1);
     return *this;
@@ -446,7 +446,9 @@ void MyString::copyString(const char *copyStr, int copyStrCapacity) {
     char *result;
 
     if (this->charArray == nullptr || this->capacity < copyStrCapacity) {
-        result = new char[max(copyStrCapacity, 0) + 1];
+        this->capacity = std::max(copyStrCapacity, 0);
+        result = new char[this->capacity + 1];
+
     } else {
         result = this->charArray;
     }
@@ -461,7 +463,7 @@ void MyString::copyString(const char *copyStr, int copyStrCapacity) {
         delete[] charArray;
         this->charArray = result;
     }
-    this->capacity = copyStrCapacity;
+
 }
 
 int MyString::compare(const char *str2nd) const {
@@ -609,7 +611,7 @@ int stoi(const MyString &str, int pos, int base) {
     if (pos < 0) {
         pos = 0;
     } else if (pos > str.length()) {
-        pos = std::max(str.length(), pos);
+        pos = std::min(str.length(), pos);
     }
     if (base < MIN_BASE) {
         base = MIN_BASE;

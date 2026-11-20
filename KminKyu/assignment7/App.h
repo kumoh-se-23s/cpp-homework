@@ -19,7 +19,7 @@ private:
     bool loadFromFile();
     bool saveToFile();
     void insertToFile(MyString &str);
-    void insert();
-    void remove();;
+    int insert();
+    int remove();;
 };
 

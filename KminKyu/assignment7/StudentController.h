@@ -25,6 +25,15 @@ public:
 
     StudentController(int minYear, int maxYear, int studentCount, int groupCount);
 
+    ~StudentController();
+
+    StudentController(const StudentController &) = delete;
+
+    StudentController(StudentController &&other) noexcept;
+
+    StudentController &operator=(const StudentController &) = delete;
+
+    StudentController &operator=(StudentController &&other) noexcept;
 
     void insertStudent(int studentId, const MyString &studentGroup, const MyString &studentName);
 
@@ -37,6 +46,8 @@ public:
 
 private:
     static int getYear(int studentId);
+
+    void clearNoGroupNode();
 };
 
 std::ostream& operator<<(std::ostream& out, const StudentController& studentController);

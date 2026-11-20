@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <map>
 #include <random>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -12,18 +13,18 @@
 // =====================================================================
 // StudentController 통합 및 차분(differential) 테스트
 //
-//  - 빈 컨트롤러 / 단일 삽입 / 학번(연도·번호) 정렬 출력
-//  - 그룹원 원형 연결 출력 (1명 단독 그룹, 다수 그룹, "-" 무소속)
+//  - 빈 컨트롤러 / 단일 삽입 / 중복 학번 무시 / 학번(연도·번호) 정렬 출력
+//  - 헤더 출력([Year:min~max] [Student Count:N] [Group Count: M]) 및 toString() 파일 포맷
+//  - 그룹원 원형 연결 출력 (1명 단독 그룹([G]), 다수 그룹([G] ...), "-" 무소속(()))
 //  - 삭제 경계값 (빈 상태, 없는 연도/학번, 그룹 head/중간/tail/마지막, "-" 삭제, 재삽입)
 //  - LookUpTable 용량 확장(DEFAULT_CAPACITY 초과) 및 커스텀 생성자
 //  - std::map 기반 참조 모델과 무작위 삽입/삭제를 비교하는 차분(differential) 테스트
 //
 //  전제 조건 (위반 시 테스트 제외):
-//   - 동일 학번의 중복 삽입
 //   - 음수 학번
 //
-//  메모리 오류(Use-After-Free, Double Free, "-" 노드 누수)는
-//  반드시 AddressSanitizer(-fsanitize=address,undefined) 와 함께 실행해서 확인할 것.
+//  메모리 오류(Use-After-Free, Double Free)는
+//  AddressSanitizer(-fsanitize=address,undefined) 와 함께 실행해서 확인할 것.
 // =====================================================================
 
 namespace {
@@ -36,6 +37,9 @@ namespace {
     class ReferenceController {
     public:
         void insertStudent(const int id, const std::string &group, const std::string &name) {
+            if (students_.find(id) != students_.end()) {
+                return;
+            }
             students_[id] = StudentRecord{id, group, name};
         }
 
@@ -60,12 +64,18 @@ namespace {
             }
 
             std::ostringstream oss;
+            const int minYear = students_.empty() ? 0 : (students_.begin()->first / 10000);
+            const int maxYear = students_.empty() ? 0 : (students_.rbegin()->first / 10000);
+            oss << "[Year:" << minYear << '~' << maxYear
+                << "] [Student Count:" << students_.size()
+                << "] [Group Count: " << groups.size() << "]\n";
+
             for (const auto &[id, record] : students_) {
                 oss << record.id << ' ' << record.name << '(';
                 if (record.group != "-") {
+                    oss << '[' << record.group << ']';
                     const auto &members = groups[record.group];
                     if (members.size() > 1) {
-                        oss << " [" << record.group << "] ";
                         std::size_t selfIdx = 0;
                         for (std::size_t i = 0; i < members.size(); ++i) {
                             if (members[i]->id == record.id) {
@@ -75,14 +85,33 @@ namespace {
                         }
                         for (std::size_t offset = 1; offset < members.size(); ++offset) {
                             const StudentRecord *member = members[(selfIdx + offset) % members.size()];
-                            oss << member->id << ' ' << member->name;
+                            oss << ' ' << member->id << ' ' << member->name;
                             if (offset + 1 < members.size()) {
-                                oss << " - ";
+                                oss << " -";
                             }
                         }
                     }
                 }
                 oss << ")\n";
+            }
+            return oss.str();
+        }
+
+        std::string expectedToString() const {
+            std::set<std::string> groupNames;
+            for (const auto &[id, record] : students_) {
+                if (record.group != "-") {
+                    groupNames.insert(record.group);
+                }
+            }
+
+            std::ostringstream oss;
+            const int minYear = students_.empty() ? 0 : (students_.begin()->first / 10000);
+            const int maxYear = students_.empty() ? 0 : (students_.rbegin()->first / 10000);
+            oss << minYear << ' ' << maxYear << '\n'
+                << students_.size() << ' ' << groupNames.size() << '\n';
+            for (const auto &[id, record] : students_) {
+                oss << record.id << ' ' << record.group << ' ' << record.name << '\n';
             }
             return oss.str();
         }
@@ -97,8 +126,15 @@ namespace {
         return os.str();
     }
 
+    std::string to_std_string(const MyString &sequence) {
+        std::ostringstream os;
+        os << sequence;
+        return os.str();
+    }
+
     void expect_same(const StudentController &actual, const ReferenceController &expected) {
         EXPECT_EQ(expected.expectedOutput(), stream_output(actual));
+        EXPECT_EQ(expected.expectedToString(), to_std_string(actual.toString()));
     }
 
     void insert_both(StudentController &actual, ReferenceController &expected,
@@ -117,17 +153,25 @@ namespace {
 // 기본 삽입 및 정렬 출력
 // ---------------------------------------------------------------------
 
-TEST(StudentControllerBasic, EmptyControllerOutputsEmptyString) {
+TEST(StudentControllerBasic, EmptyControllerOutputsHeaderOnly) {
     const StudentController controller;
     const ReferenceController expected;
     expect_same(controller, expected);
 }
-
 TEST(StudentControllerBasic, InsertSingleStudent) {
     StudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20220001, "G1", "Alice");
+    expect_same(controller, expected);
+}
+
+TEST(StudentControllerBasic, DuplicateStudentIdIsIgnored) {
+    StudentController controller;
+    ReferenceController expected;
+
+    insert_both(controller, expected, 20220001, "G1", "Alice");
+    insert_both(controller, expected, 20220001, "G2", "Duplicate");
     expect_same(controller, expected);
 }
 
@@ -218,7 +262,7 @@ TEST(StudentControllerDelete, DeleteHeadMiddleTailAndLastFromGroup) {
     delete_both(controller, expected, 20230001);
     expect_same(controller, expected);
 
-    // tail 삭제 (1명만 남아 그룹 출력 생략)
+    // tail 삭제 (1명만 남아 [Alpha]만 출력)
     delete_both(controller, expected, 20230004);
     expect_same(controller, expected);
 
@@ -268,7 +312,7 @@ TEST(StudentControllerGrowth, InsertBeyondDefaultCapacityYearsAndGroups) {
     StudentController controller;
     ReferenceController expected;
 
-    // DEFAULT_CAPACITY(8) 를 넘도록 20개 연도 / 12개 그룹 삽입
+    // DEFAULT_CAPACITY(4) 를 넘도록 20개 연도 / 12개 그룹 삽입
     for (int i = 0; i < 20; ++i) {
         const int studentId = (2005 + i) * 10000 + i + 1;
         const std::string group = (i % 5 == 0) ? "-" : ("G" + std::to_string(i % 12));

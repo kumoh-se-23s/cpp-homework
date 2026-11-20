@@ -17,6 +17,30 @@ StudentController::StudentController(int minYear, int maxYear, int studentCount,
     this->studentCount = 0;
 }
 
+StudentController::~StudentController() {
+    clearNoGroupNode();
+}
+
+StudentController::StudentController(StudentController &&other) noexcept {
+    this->studentIdList = std::move(other.studentIdList);
+    this->studentGroupList = std::move(other.studentGroupList);
+    this->studentCount = other.studentCount;
+
+    other.studentCount = 0;
+}
+
+StudentController & StudentController::operator=(StudentController &&other) noexcept {
+    if (this != &other) {
+        clearNoGroupNode();
+        this->studentIdList = std::move(other.studentIdList);
+        this->studentGroupList = std::move(other.studentGroupList);
+        this->studentCount = other.studentCount;
+
+        other.studentCount = 0;
+    }
+    return *this;
+}
+
 void StudentController::insertStudent(int studentId, const MyString &studentGroup, const MyString &studentName) {
     int idKey = getYear(studentId);
     Student newStudent = Student(studentId, studentGroup, studentName);
@@ -85,7 +109,13 @@ void StudentController::deleteStudent(int studentId) {
     Student targetStudent = deleteIdNode->getItem().getUnravelItem();
 
     singleLinkedList->remove(deleteIdNode->getItem());
+
+    //링크드리스트의 값이 비었을시 제거
+    if (singleLinkedList->getSize() == 0) {
+        studentIdList.removeByKey(idKey);
+    }
     --studentCount;
+
     if (targetStudent.isGroupEmpty()) {
         delete targetDoubleNode;
         return;
@@ -143,6 +173,24 @@ int StudentController::getYear(int studentId) {
     return studentId / 10000;
 }
 
+//그룹이 없는 학생들은 종료 시 삭제가 되지 않음 -> 별도로 저장하여 삭제 or 소멸자에서 찾아서 삭제
+void StudentController::clearNoGroupNode() {
+    for (int index = 0; index < studentIdList.getSize(); ++index) {
+        const IdLinkedList *list = studentIdList.at(index)->getValue();
+        //리스트가 차있는 경우만 반복
+        if (list != nullptr) {
+            IdNode *now = list->getHead();
+            while (now != nullptr) {
+                const DoubleNode<Student> *item = now->getItem().getNode();
+                if (item != nullptr && item->getItem().isGroupEmpty()) {
+                    delete item;
+                }
+                now = now->getNext();
+            }
+        }
+    }
+}
+
 std::ostream &operator<<(std::ostream &out, const NestedDoubleNode<Student> &nested) {
     const DoubleNode<Student> *doubleNode = nested.getNode();
     if (doubleNode == nullptr) {
@@ -154,11 +202,11 @@ std::ostream &operator<<(std::ostream &out, const NestedDoubleNode<Student> &nes
     if (!student.isGroupEmpty()) {
         out << "[" << student.getStudentGroup() << "]";
         const DoubleNode<Student> *now = doubleNode->getNext();
-        while (now != doubleNode) {
+        while (now != nullptr && now != doubleNode) {
             out << " ";
             out << now->getItem();
             now = now->getNext();
-            if (now != doubleNode) {
+            if (now != nullptr && now != doubleNode) {
                 out << " -";
             }
         }

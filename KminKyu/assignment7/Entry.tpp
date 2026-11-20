@@ -37,12 +37,18 @@ V *Entry<K, V>::getValue() const {
 
 template<typename K, typename V>
 MyString Entry<K, V>::toString() const requires HasToString<V> {
-    return value->toString();
+    MyString result = MyString();
+    if (value != nullptr) {
+        result += value->toString();
+    }
+    return result;
 }
 
 template<typename K, typename V>
 std::ostream & operator<<(std::ostream &out, const Entry<K, V> &entry) {
-    out << *entry.getValue();
+    if (entry.getValue() != nullptr) {
+        out << *entry.getValue();
+    }
     return out;
 }
 

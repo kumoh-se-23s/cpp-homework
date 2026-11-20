@@ -189,6 +189,7 @@ TEST(DoubleNodeBasic, MoveConstructorAndMoveAssignment) {
 TEST(NestedDoubleNodeBasic, ConstructFromDoubleNodePointerAndUnravel) {
     DoubleNode<int> inner(42);
     NestedDoubleNode<int> nested(&inner);
+    EXPECT_EQ(&inner, nested.getNode());
     EXPECT_EQ(42, nested.getUnravelItem());
     EXPECT_EQ(&inner.getItem(), &nested.getUnravelItem());
 }
@@ -251,17 +252,16 @@ TEST(NestedDoubleNodeCompare, OrderingAndEquality) {
     EXPECT_TRUE(small >= same);
 }
 
-TEST(NestedDoubleNodeToString, SingleCircularNodePrintsOnlySelf) {
+TEST(NestedDoubleNodeToString, SingleCircularNodeDelegatesToOwnItem) {
     DoubleNode<PrintableItem> only(PrintableItem{1, MyString("solo")});
     only.setNext(&only);
     only.setPrev(&only);
 
     const NestedDoubleNode<PrintableItem> nested(&only);
-    const std::string output = to_std_string(nested.toString());
-    EXPECT_NE(std::string::npos, output.find("solo"));
+    EXPECT_EQ("solo", to_std_string(nested.toString()));
 }
 
-TEST(NestedDoubleNodeToString, CircularGroupPrintsAllMembersWithoutInfiniteLoop) {
+TEST(NestedDoubleNodeToString, CircularGroupDelegatesOnlyToPointedNode) {
     DoubleNode<PrintableItem> a(PrintableItem{1, MyString("Alice")});
     DoubleNode<PrintableItem> b(PrintableItem{2, MyString("Bob")});
     DoubleNode<PrintableItem> c(PrintableItem{3, MyString("Charlie")});
@@ -273,7 +273,13 @@ TEST(NestedDoubleNodeToString, CircularGroupPrintsAllMembersWithoutInfiniteLoop)
     const NestedDoubleNode<PrintableItem> nested(&b);
     const std::string output = to_std_string(nested.toString());
 
-    EXPECT_NE(std::string::npos, output.find("Bob"));
-    EXPECT_NE(std::string::npos, output.find("Charlie"));
-    EXPECT_NE(std::string::npos, output.find("Alice"));
+    EXPECT_EQ("Bob", output);
+    EXPECT_EQ(std::string::npos, output.find("Alice"));
+    EXPECT_EQ(std::string::npos, output.find("Charlie"));
+}
+
+TEST(NestedDoubleNodeToString, NullNodeReturnsEmptyString) {
+    const NestedDoubleNode<PrintableItem> nested(nullptr);
+    EXPECT_EQ(nullptr, nested.getNode());
+    EXPECT_EQ("", to_std_string(nested.toString()));
 }

@@ -23,7 +23,10 @@ SingleNode<T>& SingleNode<T>::operator=(SingleNode &&other) noexcept {
     if (this == &other)
         return *this;
     this->item = std::move(other.item);
+
     nextNode = other.nextNode;
+    other.nextNode = nullptr;
+
     return *this;
 }
 

@@ -12,23 +12,15 @@ LookUpTable<K, V>::LookUpTable() {
 
 template<typename K, typename V>
 LookUpTable<K, V>::LookUpTable(int capacity) {
-    if (capacity <=0) {
-        LookUpTable();
+    if (capacity <= 0) {
+        this->entryArray = new Entry<K, V>[DEFAULT_CAPACITY];
+        this->size = 0;
+        this->capacity = DEFAULT_CAPACITY;
     } else {
         this->capacity = capacity;
         this->entryArray = new Entry<K, V>[capacity];
         this->size = 0;
     }
-}
-
-template<typename K, typename V>
-LookUpTable<K, V>::LookUpTable(const LookUpTable &other) {
-    this->capacity = other.capacity;
-    this->entryArray = new Entry<K, V>[other.capacity];
-    for (int index = 0; index < other.size; ++index) {
-        this->entryArray[index] = std::move(other.entryArray[index]);
-    }
-    this->size = other.size;
 }
 
 template<typename K, typename V>
@@ -47,24 +39,6 @@ LookUpTable<K, V>::~LookUpTable() {
     delete[] entryArray;
 }
 
-template<typename K, typename V>
-LookUpTable<K, V>& LookUpTable<K, V>::operator=(const LookUpTable &other) {
-    if (this == &other) {
-        return *this;
-    }
-
-    if (this->capacity < other.capacity) {
-        this->capacity = other.capacity;
-        delete[] entryArray;
-        this->entryArray = new Entry<K, V>[other.capacity];
-    }
-
-    for (int index = 0; index < other.size; ++index) {
-        this->entryArray[index] = other.entryArray[index];
-    }
-    this->size = other.size;
-    return *this;
-}
 
 template<typename K, typename V>
 LookUpTable<K, V> &LookUpTable<K, V>::operator=(LookUpTable &&other) noexcept {
@@ -136,10 +110,15 @@ const Entry<K, V>* LookUpTable<K, V>::at(int index) const {
 template<typename K, typename V>
 void LookUpTable<K, V>::removeByKey(const K &key) {
     int pos = binarySearch(0, size, key);
+    if (pos < 0 ||pos >= size || entryArray[pos].getKey() != key) {
+        return;
+    }
     for (int index = pos;  index < size - 1; ++index) {
         entryArray[index] = std::move(entryArray[index + 1]);
     }
     --size;
+    //마지막값 살아있음 -> 바로 제거
+    entryArray[size] = Entry<K, V>();
 }
 
 
@@ -159,6 +138,9 @@ void LookUpTable<K, V>::insert(int index, const K& key, V *value) {
 template<typename K, typename V>
 void LookUpTable<K, V>::insert(const K& key, V *value) {
     int index = binarySearch(0, size, key);
+    if (index < size && entryArray[index].getKey() == key) {
+        return;
+    }
     insert(index, key, value);
 }
 

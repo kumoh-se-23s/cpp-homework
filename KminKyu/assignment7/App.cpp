@@ -7,7 +7,9 @@ using namespace std;
 App::App() : controller(), fileIO(nullptr) {}
 
 App::App(int argc, char* argv[]) : fileIO(argc > 1 ? argv[1] : nullptr) {
-    loadFromFile();
+    if (!loadFromFile()) {
+        fileIO.closeRead();
+    }
 }
 
 void App::start() {
@@ -37,12 +39,10 @@ int App::run(MyString command) {
             return 1;
         case 'i':
         case 'I':
-            insert();
-            return 1;
+            return insert();
         case 'd':
         case 'D':
-            remove();
-            return 1;
+            return remove();
         case 'Q':
         case 'q':
             return 0;
@@ -53,7 +53,6 @@ int App::run(MyString command) {
 
 bool App::loadFromFile() {
     if (!fileIO.openRead()) {
-        cout << "fileRead";
         controller = StudentController();
         return false;
     }
@@ -119,21 +118,43 @@ void App::insertToFile(MyString &str) {
     fileIO.writeLine(str);
 }
 
-void App::insert() {
+int App::insert() {
     int studentId;
+
+    if (!(cin >> studentId)) {
+        if (!cin.eof()) {
+            cin.clear();
+            MyString skip;
+            getline(cin, skip);
+        }
+        return -1;
+    }
+
     MyString studentGroup;
     MyString studentName;
-    cin >> studentId;
+
     cin >> studentGroup;
     getline(cin, studentName);
 
     controller.insertStudent(studentId, studentGroup, studentName.trim());
+    return 1;
 }
 
-void App::remove() {
+int App::remove() {
     int studentId;
-    cin >> studentId;
+
+    if (!(cin >> studentId)) {
+        if (!cin.eof()) {
+            cin.clear();
+            MyString skip;
+            getline(cin, skip);
+        }
+        return -1;
+    }
+
     MyString clear;
     getline(cin, clear);
     controller.deleteStudent(studentId);
+
+    return 1;
 }

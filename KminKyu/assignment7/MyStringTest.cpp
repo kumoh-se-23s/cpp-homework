@@ -1503,6 +1503,7 @@ TEST(MyStringFind, StartBeyondLengthIsTreatedAsLastPosition) {
     expect_find_same("hello", pattern, 6);     // 마지막 위치부터 찾으므로 -1
     pattern[0] = 'o';
     expect_find_same("hello", pattern, 5);
+    delete[] pattern;
 }
 
 TEST(MyStringFind, StartAtLastCharacter) {

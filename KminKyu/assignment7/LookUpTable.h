@@ -24,13 +24,13 @@ public:
 
     LookUpTable(int capacity);
 
-    LookUpTable(const LookUpTable &other);
+    LookUpTable(const LookUpTable &other) = delete;
 
     LookUpTable(LookUpTable &&other) noexcept;
 
     ~LookUpTable();
 
-    LookUpTable & operator=(const LookUpTable &other);
+    LookUpTable & operator=(const LookUpTable &other) = delete;
 
     LookUpTable & operator=(LookUpTable &&other) noexcept;
 

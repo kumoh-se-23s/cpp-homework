@@ -20,8 +20,8 @@ public:
 
     Student(int studentId, const MyString &studentName)
         : studentId(studentId),
-        studentName(studentName),
-        studentGroup("-") {
+        studentGroup("-"),
+        studentName(studentName) {
     }
 
     ~Student() = default;

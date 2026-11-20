@@ -250,18 +250,18 @@ MyString CircularDoublyLinkedList<T>::toString() const {
         result += now->toString();
         result += "\n";
         now = now->getNext();
-    } while (now == head);
+    } while (now != head);
     return result;
 }
 template<typename T>
 std::ostream & operator<<(std::ostream &out, const CircularDoublyLinkedList<T> &doublyLinkedList) {
-    if (doublyLinkedList.size == 0) {
+    if (doublyLinkedList.getSize() == 0) {
         return out;
     }
     DoubleNode<T> *now = doublyLinkedList.getHead();
     do {
         out << now->getItem();
-        out << ")\n";
+        out << "\n";
         now = now->getNext();
     } while(now != doublyLinkedList.getHead());
     return out;
