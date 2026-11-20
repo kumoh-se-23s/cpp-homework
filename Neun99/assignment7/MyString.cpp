@@ -214,13 +214,19 @@ MyString itos(int val) {
     return result;
 }
 
+//whitespace 판별 (내부용, >>에서도 사용하므로 비멤버)
+static bool isWhiteSpace(int chCode) {
+    return chCode == ' ' || chCode == '\n' || chCode == '\t' || chCode == '\r';
+}
+
+//앞뒤 공백 정리
 MyString MyString::trim() const {
     int startIdx;
     int endIdx;
 
-    for (startIdx = 0; startIdx < size && str[startIdx] == ' '; startIdx++) {}
-    for (endIdx = size - 1; endIdx >= 0 && str[endIdx] == ' '; endIdx--) {}
-    return substr(startIdx, endIdx - startIdx);
+    for (startIdx = 0; startIdx < size && isWhiteSpace(str[startIdx]); startIdx++) {}
+    for (endIdx = size - 1; endIdx >= 0 && isWhiteSpace(str[endIdx]); endIdx--) {}
+    return substr(startIdx, endIdx - startIdx + 1);
 }
 
 //연산자 오버로딩--------------------
@@ -337,11 +343,6 @@ ostream &operator<<(ostream &out, const MyString &str) {
         out << str[idx];
     }
     return out;
-}
-
-//whitespace 판별
-static bool isWhiteSpace(int chCode) {
-    return chCode == ' ' || chCode == '\n' || chCode == '\t' || chCode == '\r';
 }
 
 //입력
@@ -480,9 +481,10 @@ const MyString MyString::plusImpl(const char *chArr, int chArrSize) const {
     }
 
     for (; idx < newSize; idx++) { //뒷부분
-        result[idx] = chArr[idx - size];
+        result.str[idx] = chArr[idx - size];
     }
     result.size = newSize;
+    result.str[newSize] = '\0';
 
     return result;
 }

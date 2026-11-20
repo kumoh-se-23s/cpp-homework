@@ -53,10 +53,13 @@ int GroupHashMap::getSize() const {
 //기능-----------------------
 //용량 미리 확장
 void GroupHashMap::presetCapacity(int minLength) {
-    capacity = getEnoughCapacity(minLength);
-    GroupHashNode* newArr = new GroupHashNode[capacity];
-    copyArr(newArr, arr, size);
-    size = 0;
+    if (minLength > capacity) {
+        capacity = getEnoughCapacity(minLength);
+        GroupHashNode* newArr = new GroupHashNode[capacity];
+        copyArr(newArr, arr, size);
+        delete[] arr;
+        arr = newArr;
+    }
 }
 
 // 인자로 받은 그룹 없으면 위치맞춰 만들어서 넘겨줌

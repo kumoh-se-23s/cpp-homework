@@ -7,11 +7,12 @@ void ManageCircleApp::run(const char *file) {
 
     isRunning = true;
     while (isRunning) {
-        char input;
-        cin >> input;
-        if (cin.peek() != EOF)
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        handleInput(input);
+        MyString input;
+        getline(cin, input);
+        if (input.length() == 1) //입력이 한글자일 때만
+            handleInput(input[0]);
+        else
+            cout << "Invalid Input: not a char" << endl;
     }
 
     saveFile(file);
@@ -74,20 +75,24 @@ void ManageCircleApp::handleInput(char input) {
 
 void ManageCircleApp::insertStudent() {
     MyString inputArr[INPUT_ARR_SIZE];
-    cin >> inputArr[0];
-    cin >> inputArr[1];
-    getline(cin, inputArr[2]);
+    cin >> inputArr[ID_IDX];
+    cin >> inputArr[GROUP_IDX];
+    getline(cin, inputArr[NAME_IDX]);
 
-    if(!studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim()))
+    if(!studentList.insertStudent(stoi(inputArr[ID_IDX]), inputArr[GROUP_IDX], inputArr[NAME_IDX].trim()))
         cout << "Insert failed: existing Id" << endl;
 }
 
 void ManageCircleApp::deleteStudent() {
     int userInput;
     cin >> userInput;
-
-    if (!studentList.removeStudent(userInput))
+    if (cin.fail()) { //입력 이상하면 무시
+        cin.clear();
+        cout << "Invalid input." << endl;
+    } else if (!studentList.removeStudent(userInput)) { //제거 시도, 성공하면 넘어가고 실패하면 안내
         cout << "Delete failed: invalid Id" << endl;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); //cin으로 받았으니 버퍼 청소
 }
 
 void ManageCircleApp::saveFile(const char *file) const {

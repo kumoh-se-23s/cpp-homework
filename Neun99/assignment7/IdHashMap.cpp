@@ -64,10 +64,13 @@ int IdHashMap::getMaxYear() const {
 //기능----------------------
 //용량 미리 확장
 void IdHashMap::presetCapacity(int minLength) {
-    capacity = getEnoughCapacity(minLength);
-    IdHashNode* newArr = new IdHashNode[capacity];
-    copyArr(newArr, arr, size);
-    size = 0;
+    if (minLength > capacity) {
+        capacity = getEnoughCapacity(minLength);
+        IdHashNode* newArr = new IdHashNode[capacity];
+        copyArr(newArr, arr, size);
+        delete[] arr;
+        arr = newArr;
+    }
 }
 
 IdHashNode *IdHashMap::insert(int year) {
@@ -141,7 +144,7 @@ void IdHashMap::insertFront(int year, int diff) {
     int newSize = size + diff; //바뀔 사이즈
 
     //용량체크
-    if (newSize > capacity) { //부족한 경우, 복사 횟수 줄이기 위해 resize 호출 x
+    if (newSize > capacity) { //부족한 경우
         capacity = getEnoughCapacity(newSize);
         IdHashNode* newArr = new IdHashNode[capacity];
 
@@ -179,7 +182,7 @@ void IdHashMap::append(int year, int diff) {
     int newSize = diff + 1; //새 사이즈
 
     if (newSize > capacity) //용량체크
-        resize(newSize);
+        presetCapacity(newSize);
 
     //넣기
     for (int idx = newSize - 1; idx >= size; idx--, year--) {

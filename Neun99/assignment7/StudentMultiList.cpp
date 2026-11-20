@@ -7,8 +7,10 @@ StudentMultiList::StudentMultiList() {
 //소멸자: StudentNode를 여기서 일괄 제거
 StudentMultiList::~StudentMultiList() {
     //최소년도부터 최대년도까지 순회하며 delete
-    for (int idx = idMap.getMinYear(); idx <= idMap.getMaxYear(); idx++) {
-        deleteAllStudent(idMap[idx]->getHead());
+    if (studentCnt > 0) {
+        for (int idx = idMap.getMinYear(); idx <= idMap.getMaxYear(); idx++) {
+            deleteAllStudent(idMap[idx]->getHead());
+        }
     }
 }
 
