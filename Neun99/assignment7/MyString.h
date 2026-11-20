@@ -7,6 +7,7 @@ class MyString {
 public:
     //생성자--------------------
     MyString(); //초기 8byte, 빈 문자열
+    MyString(int minLength);
     MyString(const MyString &srcStr); //복사생성자
     MyString(const char *cstr2nd); //cstring 복사생성자
     ~MyString(); //소멸자
@@ -71,6 +72,7 @@ private:
     void substitute(const char *chArr, int newSize);
     int findChArr(const char *chArr, int arrSize, int pos) const;
     MyString subStrImpl(int pos, int len) const;
+    const MyString plusImpl(const char *chArr, int chArrSize) const;
     void appendChArr(const char *chArr, int chArrSize);
     void insertChArr(const char *chArr, int chArrSize, int pos);
     void replaceChArr(const char *chArr, int chArrSize, int pos, int len);
@@ -81,7 +83,5 @@ private:
 ostream& operator<<(ostream& out, const MyString &str);
 istream& operator>>(istream& in, MyString &str);
 istream& getline(istream& in, MyString &str, char delim = '\n');
-//str[pos]부터의 숫자부분을 정수로 변환해 return
-//음수처리x, 적절한 내용 아닌 글자면 0
 int stoi(const MyString &str, int pos = 0, int base = 10);
 MyString itos(int val);

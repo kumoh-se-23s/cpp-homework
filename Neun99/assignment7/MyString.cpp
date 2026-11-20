@@ -9,7 +9,14 @@ MyString::MyString() {
     str[size] = '\0';
 }
 
-//복사생성자: str
+MyString::MyString(int minLength) {
+    capacity = getEnoughCapacity(minLength);
+    str = new char[capacity];
+    size = 0;
+    str[size] = '\0';
+}
+
+// 복사생성자: str
 MyString::MyString(const MyString &srcStr) {
     size = srcStr.size;
     capacity = getEnoughCapacity(size); //기본값에서 2배씩 늘려가며 최소용량 잡기
@@ -219,16 +226,12 @@ MyString MyString::trim() const {
 //연산자 오버로딩--------------------
 //+ cArr
 const MyString MyString::operator+(const char *cstr2nd) const {
-    MyString result = *this;
-    result.appendChArr(cstr2nd, getLengthOfChArr(cstr2nd));
-    return result;
+    return plusImpl(cstr2nd, getLengthOfChArr(cstr2nd));
 }
 
 //+ str
 const MyString MyString::operator+(const MyString &str2nd) const {
-    MyString result = *this;
-    result.appendChArr(str2nd.str, str2nd.size);
-    return result;
+    return plusImpl(str2nd.str, str2nd.size);
 }
 
 //+= cArr
@@ -243,8 +246,7 @@ MyString &MyString::operator+=(const MyString &str2nd) {
 
 //= cArr
 MyString &MyString::operator=(const char *cstr2nd) {
-    int cLength = getLengthOfChArr(cstr2nd);
-    substitute(cstr2nd, cLength);
+    substitute(cstr2nd, getLengthOfChArr(cstr2nd));
     return *this;
 }
 
@@ -468,9 +470,7 @@ int MyString::findChArr(const char *chArr, int arrSize, int pos) const{
 
 //subStr 동작부
 MyString MyString::subStrImpl(int pos, int len) const {
-    MyString result;
-    if (len >= DEFAULT_CAPACITY)
-        result.resize(len);
+    MyString result = MyString(len);
     for (int idx = 0; idx < len; idx++) {
         result.str[idx] = str[idx + pos];
     }
@@ -480,7 +480,25 @@ MyString MyString::subStrImpl(int pos, int len) const {
     return result;
 }
 
-//한 글자 붙이기
+//+ 동작부
+const MyString MyString::plusImpl(const char *chArr, int chArrSize) const {
+    int newSize = size + chArrSize;
+    MyString result = MyString(newSize);
+
+    int idx;
+    for (idx = 0; idx < size; idx++) { //앞부분
+        result.str[idx] = str[idx];
+    }
+
+    for (; idx < newSize; idx++) { //뒷부분
+        result[idx] = chArr[idx - size];
+    }
+    result.size = newSize;
+
+    return result;
+}
+
+// 한 글자 붙이기
 void MyString::appendCh(char ch) {
     if (size + 1>= capacity)
         resize(size + 1);
