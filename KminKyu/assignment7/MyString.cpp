@@ -581,7 +581,7 @@ istream& operator>>(istream& is, MyString& str) {
     }
 
     if (input == EOF) {
-        is.clear();
+        is.clear(std::ios::eofbit);
     } else {
         is.putback(static_cast<char>(input));
     }

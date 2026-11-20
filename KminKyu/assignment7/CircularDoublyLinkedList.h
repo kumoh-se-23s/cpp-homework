@@ -17,9 +17,9 @@ public:
 
     ~CircularDoublyLinkedList();
 
-    CircularDoublyLinkedList(const CircularDoublyLinkedList &singlyLinkedList) = delete;
+    CircularDoublyLinkedList(const CircularDoublyLinkedList &scircularLinkedList) = delete;
 
-    CircularDoublyLinkedList(CircularDoublyLinkedList &&singlyLinkedList) noexcept;
+    CircularDoublyLinkedList(CircularDoublyLinkedList &&circularLinkedList) noexcept;
 
     CircularDoublyLinkedList &operator=(const CircularDoublyLinkedList &otherLinkedList) = delete;
 
