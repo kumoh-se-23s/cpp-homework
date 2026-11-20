@@ -18,7 +18,6 @@ public:
 private:
     bool loadFromFile();
     bool saveToFile();
-    void insertToFile(MyString &str);
     int insert();
     int remove();;
 };

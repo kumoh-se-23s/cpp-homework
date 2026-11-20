@@ -114,9 +114,6 @@ bool App::saveToFile() {
     return true;
 }
 
-void App::insertToFile(MyString &str) {
-    fileIO.writeLine(str);
-}
 
 int App::insert() {
     int studentId;
