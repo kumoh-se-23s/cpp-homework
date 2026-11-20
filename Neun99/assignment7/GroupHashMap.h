@@ -7,7 +7,6 @@ class GroupHashMap {
 public:
     //생성자
     GroupHashMap();
-    GroupHashMap(int minLength);
     GroupHashMap(const GroupHashMap& groupHashMap);
     GroupHashMap& operator=(const GroupHashMap& groupHashMap);
     ~GroupHashMap();
@@ -17,6 +16,7 @@ public:
     int getSize() const;
 
     //기능
+    void presetCapacity(int minLength);
     GroupHashNode* insert(const MyString& group);
     void remove(const MyString& group);
 private:
@@ -25,7 +25,6 @@ private:
     GroupHashNode *arr;
     int size;
 
-    void resize(int minLength);
     int getEnoughCapacity(int minLength) const;
     static void copyArr(GroupHashNode* copy, GroupHashNode* src, int srcSize);
 

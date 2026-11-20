@@ -7,10 +7,10 @@
 class StudentMultiList {
 public:
     StudentMultiList();
-    StudentMultiList(int yearCnt, int groupCnt);
     StudentMultiList& operator=(const StudentMultiList& list);
     ~StudentMultiList();
 
+    void presetCapacities(int yearCnt, int groupCnt);
     MyString toStringForSave() const;
     MyString toStringForPrint() const;
     bool insertStudent(int id, const MyString& group, const MyString& name);

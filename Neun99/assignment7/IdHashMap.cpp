@@ -7,13 +7,6 @@ IdHashMap::IdHashMap() {
     size = 0;
 }
 
-//길이 받는 생성자
-IdHashMap::IdHashMap(int minLength) {
-    capacity = getEnoughCapacity(minLength);
-    arr = new IdHashNode[capacity];
-    size = 0;
-}
-
 //복사생성자
 IdHashMap::IdHashMap(const IdHashMap &idHashMap) {
     size = idHashMap.size;
@@ -46,6 +39,14 @@ IdHashMap::~IdHashMap() {
 }
 
 //getter-------------------------------
+//인자로 받은 년도의 노드 꺼내기: 없으면 nullptr
+IdHashNode *IdHashMap::operator[](int year) const{
+    int diff = year - getMinYear(); //최소년도와의 차이가
+    if (diff >= 0 && diff < size) //범위 안이면 바로 return
+        return &arr[diff];
+    return nullptr; //아니면 nullptr
+}
+
 //최소년도: 맨앞
 int IdHashMap::getMinYear() const {
     if (size == 0)
@@ -60,17 +61,17 @@ int IdHashMap::getMaxYear() const {
     return arr[size - 1].getId();
 }
 
-//연산자오버로딩-----------------------
-//인자로 받은 년도의 노드 꺼내기: 없으면 nullptr
-IdHashNode *IdHashMap::operator[](int year) const{
-    int diff = year - getMinYear(); //최소년도와의 차이가
-    if (diff >= 0 && diff < size) //범위 안이면 바로 return
-        return &arr[diff];
-    return nullptr; //아니면 nullptr
+//기능----------------------
+//용량 미리 확장
+void IdHashMap::presetCapacity(int minLength) {
+    capacity = getEnoughCapacity(minLength);
+    IdHashNode* newArr = new IdHashNode[capacity];
+    copyArr(newArr, arr, size);
+    size = 0;
 }
 
 IdHashNode *IdHashMap::insert(int year) {
-    if (size == 0) { //size 0일 때는 바로 만들고 리턴
+    if (size == 0) { //size 0일 때는 바로 넣고 리턴
         arr[0] = IdHashNode(year);
         size++;
         return &arr[0];
@@ -118,15 +119,6 @@ void IdHashMap::remove(int year) {
 }
 
 //private--------------------------
-//resize
-void IdHashMap::resize(int minLength) {
-    capacity = getEnoughCapacity(minLength);
-    IdHashNode* newArr = new IdHashNode[capacity];
-    copyArr(newArr, arr, size);
-    delete[] arr;
-    arr = newArr;
-}
-
 //capacity 2배씩 늘리며 인자를 담을 수 있는 capacity 찾기
 int IdHashMap::getEnoughCapacity(int minLength) const {
     int result;

@@ -5,11 +5,6 @@ GroupHashMap::GroupHashMap() {
     size = 0;
 }
 
-GroupHashMap::GroupHashMap(int minLength) {
-    arr = new GroupHashNode[getEnoughCapacity(minLength)];
-    size = 0;
-}
-
 //복사생성자
 GroupHashMap::GroupHashMap(const GroupHashMap& groupHashMap) {
     size = groupHashMap.size;
@@ -36,6 +31,7 @@ GroupHashMap &GroupHashMap::operator=(const GroupHashMap &groupHashMap) {
     return *this;
 }
 
+//소멸자
 GroupHashMap::~GroupHashMap() {
     delete[] arr;
 }
@@ -55,7 +51,15 @@ int GroupHashMap::getSize() const {
 }
 
 //기능-----------------------
-//인자로 받은 그룹 없으면 위치맞춰 만들어서 넘겨줌
+//용량 미리 확장
+void GroupHashMap::presetCapacity(int minLength) {
+    capacity = getEnoughCapacity(minLength);
+    GroupHashNode* newArr = new GroupHashNode[capacity];
+    copyArr(newArr, arr, size);
+    size = 0;
+}
+
+// 인자로 받은 그룹 없으면 위치맞춰 만들어서 넘겨줌
 GroupHashNode *GroupHashMap::insert(const MyString &group) {
     int pos = getTargetPos(group);
     if (pos >= size || arr[pos].getId() != group)
@@ -74,14 +78,6 @@ void GroupHashMap::remove(const MyString &group) {
 }
 
 //private-----------------------------
-void GroupHashMap::resize(int minLength) {
-    capacity = getEnoughCapacity(minLength);
-    GroupHashNode* newArr = new GroupHashNode[capacity];
-    copyArr(newArr, arr, size);
-    delete[] arr;
-    arr = newArr;
-}
-
 int GroupHashMap::getEnoughCapacity(int minLength) const {
     int result;
     for (result = capacity; result < minLength; result *= 2) {}

@@ -28,8 +28,8 @@ void ManageCircleApp::readFile(const char *file) {
 
     inStream >> minYear >> maxYear;
     inStream >> studentCnt >> groupCnt;
-    studentList = StudentMultiList(maxYear - minYear, groupCnt);
-    MyString* inputArr = new MyString[INPUT_ARR_SIZE];
+    studentList.presetCapacities(maxYear - minYear + 1, groupCnt);
+    MyString* inputArr = new MyString[INPUT_ARR_SIZE]; //TODO: 정적배열로
 
     if (studentCnt != 0) {
         while (!inStream.fail()) {

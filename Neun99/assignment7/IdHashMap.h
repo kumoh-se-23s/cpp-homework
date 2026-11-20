@@ -8,17 +8,17 @@ class IdHashMap {
 public:
     //생성자
     IdHashMap();
-    IdHashMap(int minLength);
     IdHashMap(const IdHashMap& idHashMap);
     IdHashMap& operator=(const IdHashMap& idHashMap);
     ~IdHashMap();
 
     //getter
+    IdHashNode* operator[](int year) const;
     int getMinYear() const;
     int getMaxYear() const;
 
     //기능
-    IdHashNode* operator[](int year) const;
+    void presetCapacity(int minLength);
     IdHashNode* insert(int year);
     void remove(int year);
 private:
@@ -27,7 +27,6 @@ private:
     IdHashNode* arr;
     int size;
 
-    void resize(int minLength);
     int getEnoughCapacity(int minLength) const;
     static void copyArr(IdHashNode* copy, IdHashNode* src, int srcSize);
 

@@ -4,12 +4,6 @@ StudentMultiList::StudentMultiList() {
     studentCnt = 0;
 }
 
-StudentMultiList::StudentMultiList(int yearCnt, int groupCnt) {
-    idMap = IdHashMap(yearCnt);
-    groupMap = GroupHashMap(groupCnt);
-    studentCnt = 0;
-}
-
 //소멸자: StudentNode를 여기서 일괄 제거
 StudentMultiList::~StudentMultiList() {
     //최소년도부터 최대년도까지 순회하며 delete
@@ -29,7 +23,13 @@ StudentMultiList &StudentMultiList::operator=(const StudentMultiList &list) {
 }
 
 //기능-------------------------------------
-//파일 저장용 toString
+// 용량 사전 확장
+void StudentMultiList::presetCapacities(int yearCnt, int groupCnt) {
+    idMap.presetCapacity(yearCnt);
+    groupMap.presetCapacity(groupCnt);
+}
+
+// 파일 저장용 toString
 MyString StudentMultiList::toStringForSave() const{
     MyString result;
 
@@ -111,7 +111,7 @@ bool StudentMultiList::insertStudent(int id, const MyString &group, const MyStri
     if (group != NO_GROUP)
         teammateInsert(newNode);
     studentCnt++;
-    return true; 
+    return true;
 }
 
 //학생 삭제
@@ -139,12 +139,12 @@ bool StudentMultiList::classmateInsert(StudentNode *newNode) {
     if (idHash == nullptr)
         idHash = idMap.insert(getYearOfId(id));
 
-    if (idHash->getHead() == nullptr || idHash->getHead()->getStudent().getId() > id) { //비었거나 첫 값이면 바로 넣기
+    StudentNode* preNode = idHash->getHead();
+    if (preNode == nullptr || preNode->getStudent().getId() > id) { //비었거나 첫 값이면 바로 넣기
         classmateInsertFront(idHash, newNode);
+    } else if (preNode->getStudent().getId() == id) { //첫 값 비교, 같으면 false
+        return false;
     } else { //아니면 순회 돌면서 자리 찾아 넣기
-        StudentNode* preNode = idHash->getHead();
-        if (preNode->getStudent().getId() == id) //첫 값 비교, 같으면 false
-            return false;
         for (;preNode->getNextClassmate() != nullptr; preNode = preNode->getNextClassmate()) {
             int compareId = preNode->getNextClassmate()->getStudent().getId();
             if (compareId == id) //이미 존재하면 false
