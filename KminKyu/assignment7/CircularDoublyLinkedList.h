@@ -1,5 +1,9 @@
 #ifndef CIRCULARDOUBLYLINKEDLIST_H
 #define CIRCULARDOUBLYLINKEDLIST_H
+
+#include <iostream>
+#include <utility>
+
 #include "DoubleNode.h"
 
 template <typename T>

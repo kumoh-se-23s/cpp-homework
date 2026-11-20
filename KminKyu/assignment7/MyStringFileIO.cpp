@@ -1,57 +1,70 @@
-// #include "MyStringFileIO.h"
-// #include "MyString.h"
-//
-// MyStringFileIO::MyStringFileIO(const char *filePath) : filePath(filePath) {}
-//
-// MyStringFileIO::~MyStringFileIO() {
-//     closeAll();
-// }
-//
-// bool MyStringFileIO::openInput() {
-//     closeInput();
-//     inFile.open(filePath);
-//     return inFile.is_open();
-// }
-//
-// bool MyStringFileIO::openOutput() {
-//     closeOutput();
-//     // outFile.open(filePath.c_str());
-//     return outFile.is_open();
-// }
-//
-// bool MyStringFileIO::readLine(char *buffer, int bufferSize) {
-//     if (!inFile.is_open()) {
-//         return false;
-//     }
-//     if (!inFile.getline(buffer, bufferSize)) {
-//         return false;
-//     }
-//     // std::size_t len = std::strlen(buffer);
-//     if (len > 0 && buffer[len - 1] == '\r') {
-//         buffer[len - 1] = '\0';
-//     }
-//     return true;
-// }
-//
-// void MyStringFileIO::write(const MyString &content) {
-//     if (outFile.is_open()) {
-//         outFile << content;
-//     }
-// }
-//
-// void MyStringFileIO::closeInput() {
-//     if (inFile.is_open()) {
-//         inFile.close();
-//     }
-// }
-//
-// void MyStringFileIO::closeOutput() {
-//     if (outFile.is_open()) {
-//         outFile.close();
-//     }
-// }
-//
-// void MyStringFil#include "Concept.h"eIO::closeAll() {
-//     closeInput();
-//     closeOutput();
-// }
+#include "MyStringFileIO.h"
+#include <fstream>
+
+
+MyStringFileIO::MyStringFileIO() : MyStringFileIO(nullptr) {}
+
+MyStringFileIO::MyStringFileIO(const char *path) {
+    filePath = path;
+}
+
+MyStringFileIO::~MyStringFileIO() {
+    closeRead();
+    closeWrite();
+}
+
+bool MyStringFileIO::openRead() {
+    if (!isPath()) {
+        return false;
+    }
+    closeRead();
+    in.open(filePath);
+    return in.is_open();
+}
+
+bool MyStringFileIO::openWrite() {
+    if (!isPath()) {
+        return false;
+    }
+    closeWrite();
+    out.open(filePath);
+    return out.is_open();
+}
+
+void MyStringFileIO::closeRead() {
+    if (in.is_open()) {
+        in.close();
+    }
+}
+
+void MyStringFileIO::closeWrite() {
+    if (out.is_open()) {
+        out.close();
+    }
+}
+
+ifstream& MyStringFileIO::getIn() {
+    return in;
+}
+
+ofstream& MyStringFileIO::getOut() {
+    return out;
+}
+
+bool MyStringFileIO::readLine(MyString &line) {
+    if (!in.is_open()) {
+        return false;
+    }
+    getline(in, line);
+    return !in.fail();
+}
+
+void MyStringFileIO::writeLine(const MyString &line) {
+    if (out.is_open()) {
+        out << line << '\n';
+    }
+}
+
+bool MyStringFileIO::isPath() const {
+    return filePath != nullptr && filePath[0] != '\0';
+}

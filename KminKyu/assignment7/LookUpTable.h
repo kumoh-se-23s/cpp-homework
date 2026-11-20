@@ -1,6 +1,9 @@
 #ifndef LOOKUPTABLE_H
 #define LOOKUPTABLE_H
+
 #include <iostream>
+#include <utility>
+
 #include "Entry.h"
 #include "MyString.h"
 

@@ -4,21 +4,26 @@
 
 using namespace std;
 
-App::App() {
-    controller = StudentController();
+App::App() : controller(), fileIO(nullptr) {}
 
+App::App(int argc, char* argv[]) : fileIO(argc > 1 ? argv[1] : nullptr) {
+    loadFromFile();
 }
 
 void App::start() {
+
     int result = 1;
     while (result != 0) {
         MyString command;
-        getline(cin, command);
+        if (!getline(cin, command)) {
+            break;
+        }
         result = run(command.trim());
         if (result == -1) {
             cout << "Invalid Input\n";
         }
     }
+    saveToFile();
 }
 
 int App::run(MyString command) {
@@ -46,16 +51,85 @@ int App::run(MyString command) {
     }
 }
 
+bool App::loadFromFile() {
+    if (!fileIO.openRead()) {
+        cout << "fileRead";
+        controller = StudentController();
+        return false;
+    }
+
+    ifstream &in = fileIO.getIn();
+    MyString skip;
+
+    int minYear = 0, maxYear = 0, studentCount = 0, groupCount = 0;
+
+    //기본 정보가 실패하면 버퍼클리어
+    if (!(in >> minYear >> maxYear)) {
+        if (!in.eof()) {
+            in.clear();
+        } else {
+            return false;
+        }
+    }
+    getline(in, skip);
+
+    if (!(in >> studentCount >> groupCount)){
+        if (!in.eof()) {
+            in.clear();
+        } else {
+            return false;
+        }
+    }
+    getline(in, skip);
+
+    controller = StudentController(minYear, maxYear, studentCount, groupCount);
+
+    int studentId;
+    MyString studentGroup;
+    MyString studentName;
+
+    while (!in.eof()) {
+        if (in >> studentId >> studentGroup) {
+            getline(in, studentName);
+            controller.insertStudent(studentId, studentGroup, studentName.trim());
+        } else {
+            //파일이 종료된 상태가 아니면 버퍼 클리어
+            if (!in.eof()) {
+                in.clear();
+                getline(in, skip);
+            }
+        }
+    }
+
+    fileIO.closeRead();
+    return true;
+}
+
+bool App::saveToFile() {
+    if (!fileIO.openWrite()) {
+        return false;
+    }
+
+    fileIO.getOut() << controller.toString();
+    fileIO.closeWrite();
+    return true;
+}
+
+void App::insertToFile(MyString &str) {
+    fileIO.writeLine(str);
+}
+
 void App::insert() {
     int studentId;
     MyString studentGroup;
     MyString studentName;
     cin >> studentId;
     cin >> studentGroup;
-    getline(cin,studentName);
+    getline(cin, studentName);
 
     controller.insertStudent(studentId, studentGroup, studentName.trim());
 }
+
 void App::remove() {
     int studentId;
     cin >> studentId;
@@ -63,7 +137,3 @@ void App::remove() {
     getline(cin, clear);
     controller.deleteStudent(studentId);
 }
-
-
-
-

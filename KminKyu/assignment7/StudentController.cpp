@@ -1,38 +1,67 @@
-#include "StudentController.h"
 #include <iostream>
 
+#include "StudentController.h"
+
+
 StudentController::StudentController() {
-    studentGroupList = Group(DEFAULT_CAPACITY);
-    studentIdList = Id(DEFAULT_CAPACITY);
+    studentGroupList = Group();
+    studentIdList = Id();
+
+    this->studentCount = 0;
 }
 
 StudentController::StudentController(int minYear, int maxYear, int studentCount, int groupCount) {
     studentGroupList = Group(groupCount);
     studentIdList = Id(std::min(studentCount, (maxYear - minYear + 1)));
+
+    this->studentCount = 0;
 }
 
 void StudentController::insertStudent(int studentId, const MyString &studentGroup, const MyString &studentName) {
     int idKey = getYear(studentId);
     Student newStudent = Student(studentId, studentGroup, studentName);
-    DoubleNode<Student> *resultNode;
-    if (studentGroup == "-") {
-        resultNode = new DoubleNode(newStudent);
-    } else if (!studentGroupList.isEntry(studentGroup)) {
+    IdLinkedList *idLinkedList = studentIdList.getValue(idKey);
+    CircularDoublyLinkedList<Student> *groupLinkedList = nullptr;
 
-        CircularDoublyLinkedList<Student> *linkedList = new CircularDoublyLinkedList(new DoubleNode(newStudent));
-        studentGroupList.insert(studentGroup, linkedList);
-        resultNode = linkedList->getHead();
-    } else {
-        resultNode = studentGroupList.findEntry(studentGroup)->getValue()->add(newStudent);
+    if (studentGroup != "-") {
+        groupLinkedList = studentGroupList.getValue(studentGroup);
     }
+
+    //학번 중복여부 확인
+    if (idLinkedList != nullptr) {
+        DoubleNode<Student> searchNode = DoubleNode(newStudent);
+        if (idLinkedList->find(NestedDoubleNode(&searchNode)) != nullptr) {
+            return;
+        }
+    }
+
+    DoubleNode<Student> *resultNode;
+
+    //그룹을 찾을 수 없는 경우 / 존재하는 경우
+    if (groupLinkedList == nullptr) {
+        //그룹이 없는 경우 / 새로 추가하는 경우
+        if (studentGroup == "-") {
+            resultNode = new DoubleNode(newStudent);
+        } else {
+            CircularDoublyLinkedList<Student> *linkedList = new CircularDoublyLinkedList(new DoubleNode(newStudent));
+            studentGroupList.insert(studentGroup, linkedList);
+            resultNode = linkedList->getHead();
+        }
+
+    } else {
+        resultNode = studentGroupList.getValue(studentGroup)->add(newStudent);
+    }
+
     NestedDoubleNode<Student> nestedDoubleNode = NestedDoubleNode(resultNode);
 
-    if (!studentIdList.isEntry(idKey)) {
+    //존재하지않는 id인 경우 / 존재하는 경우
+    if (idLinkedList == nullptr) {
         IdLinkedList *linkedList = new SinglyLinkedList(new SingleNode(nestedDoubleNode));
         studentIdList.insert(idKey, linkedList);
     } else {
-        studentIdList.findEntry(idKey)->getValue()->add(nestedDoubleNode);
+        idLinkedList->add(nestedDoubleNode);
     }
+    ++studentCount;
 
 }
 
@@ -56,7 +85,7 @@ void StudentController::deleteStudent(int studentId) {
     Student targetStudent = deleteIdNode->getItem().getUnravelItem();
 
     singleLinkedList->remove(deleteIdNode->getItem());
-
+    --studentCount;
     if (targetStudent.isGroupEmpty()) {
         delete targetDoubleNode;
         return;
@@ -65,15 +94,48 @@ void StudentController::deleteStudent(int studentId) {
     CircularDoublyLinkedList<Student> *doubleLinkedList = studentGroupList.getValue(targetStudent.getStudentGroup());
     if (doubleLinkedList != nullptr) {
         doubleLinkedList->remove(targetStudent);
+        if (doubleLinkedList->getSize() == 0) {
+            studentGroupList.removeByKey(targetStudent.getStudentGroup());
+        }
     }
 
 }
 
 MyString StudentController::toString() const {
-    return studentIdList.toString();
+    MyString result = MyString();
+    int lastIndex = studentIdList.getSize();
+    if (lastIndex == 0) {
+        result += "0 0";
+    } else {
+        result += MyString::integerToString(studentIdList.at(0)->getKey());
+        result += " ";
+        result += MyString::integerToString(studentIdList.at(lastIndex - 1)->getKey());
+    }
+    result += "\n";
+
+    result += MyString::integerToString(studentCount);
+    result += " ";
+    result += MyString::integerToString(studentGroupList.getSize());
+    result += "\n";
+    result += studentIdList.toString();
+    return result;
 }
 
 void StudentController::print(std::ostream &out) const {
+    int lastIndex = studentIdList.getSize();
+    out << "[Year:";
+    if (lastIndex == 0) {
+        out << "0~0";
+    } else {
+        out << MyString::integerToString(studentIdList.at(0)->getKey());
+        out << "~";
+        out << MyString::integerToString(studentIdList.at(lastIndex - 1)->getKey());
+    }
+    out << "] [Student Count:";
+    out << MyString::integerToString(studentCount);
+    out << "] [Group Count: ";
+    out << MyString::integerToString(studentGroupList.getSize());
+    out << "]\n";
     out << studentIdList;
 }
 
@@ -89,16 +151,17 @@ std::ostream &operator<<(std::ostream &out, const NestedDoubleNode<Student> &nes
 
     const Student &student = doubleNode->getItem();
     out << student << "(";
-    if (!student.isGroupEmpty() && doubleNode->getNext() != doubleNode) {
-        out << " [" << student.getStudentGroup() << "] ";
+    if (!student.isGroupEmpty()) {
+        out << "[" << student.getStudentGroup() << "]";
         const DoubleNode<Student> *now = doubleNode->getNext();
-        do {
+        while (now != doubleNode) {
+            out << " ";
             out << now->getItem();
             now = now->getNext();
             if (now != doubleNode) {
-                out << " - ";
+                out << " -";
             }
-        } while (now != doubleNode);
+        }
     }
     out << ")\n";
     return out;

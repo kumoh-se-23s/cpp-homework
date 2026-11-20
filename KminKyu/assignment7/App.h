@@ -1,17 +1,17 @@
 #pragma once
 
-
 #include "MyStringFileIO.h"
 #include "StudentController.h"
 
 class App {
     StudentController controller;
-    // MyStringFileIO fileIO;
+    MyStringFileIO fileIO;
 
 
 public:
     App();
-    // App(const char *argv);
+    App(int argc, char* argv[]);
+
     void start();
     int run(MyString command);
 

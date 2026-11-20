@@ -1,26 +1,38 @@
 #pragma once
+
 #include <fstream>
 #include "MyString.h"
 
 using namespace std;
+
 class MyStringFileIO {
-    MyString filePath;
-    std::ifstream inFile;
-    std::ofstream outFile;
+    const char *filePath = nullptr;
+    ifstream in;
+    ofstream out;
+
 public:
-    MyStringFileIO(const char *filePath);
+    MyStringFileIO();
+
+    MyStringFileIO(const char *path);
+
     ~MyStringFileIO();
 
+    bool openRead();
 
-    bool openInput();
-    bool openOutput();
+    bool openWrite();
 
-    bool readLine(char *buffer, int bufferSize);
-    void write(const MyString &studentStr);
+    void closeRead();
 
-    void closeInput();
-    void closeOutput();
-    void closeAll();
+    void closeWrite();
+
+    ifstream& getIn();
+
+    ofstream& getOut();
+
+    bool readLine(MyString &line);
+
+    void writeLine(const MyString &line);
+
+    bool isPath() const;
 };
-
 

@@ -1,5 +1,9 @@
 #ifndef SINGLENODE_H
 #define SINGLENODE_H
+
+#include <iostream>
+#include <utility>
+
 #include "MyString.h"
 #include "Node.h"
 

@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+
 #include "CircularDoublyLinkedList.h"
 #include "SinglyLinkedList.h"
 #include "Student.h"
@@ -16,7 +18,7 @@ class StudentController {
 
     Group studentGroupList;
 
-    constexpr static int DEFAULT_CAPACITY = 8;
+    int studentCount = 0;
 
 public:
     StudentController();

@@ -12,9 +12,13 @@ LookUpTable<K, V>::LookUpTable() {
 
 template<typename K, typename V>
 LookUpTable<K, V>::LookUpTable(int capacity) {
-    this->capacity = capacity;
-    this->entryArray = new Entry<K, V>[capacity];
-    this->size = 0;
+    if (capacity <=0) {
+        LookUpTable();
+    } else {
+        this->capacity = capacity;
+        this->entryArray = new Entry<K, V>[capacity];
+        this->size = 0;
+    }
 }
 
 template<typename K, typename V>

@@ -2,6 +2,8 @@
 #define ENTRY_H
 
 #include  <iostream>
+#include <utility>
+
 #include "Concept.h"
 #include "MyString.h"
 

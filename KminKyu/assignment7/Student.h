@@ -1,6 +1,8 @@
 #pragma once
-#include "MyString.h"
+
 #include <iostream>
+
+#include "MyString.h"
 
 class Student {
     int studentId;
@@ -14,16 +16,6 @@ public:
         studentGroup(studentGroup),
         studentName(studentName) {
     }
-    // Student(const MyString& studentId, const MyString &studentGroup, const MyString &studentName)
-    //     : studentId(stoi(studentId, 10)),
-    //     studentGroup(studentGroup),
-    //     studentName(studentName) {
-    // }
-    // Student(const MyString& studentId, const MyString &studentName)
-    //     : studentId(stoi(studentId, 10)),
-    //     studentGroup("-"),
-    //     studentName(studentName) {
-    // }
 
 
     Student(int studentId, const MyString &studentName)

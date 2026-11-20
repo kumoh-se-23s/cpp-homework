@@ -1,7 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include "Node.h"
 template<typename T>
 class SingleNode;
 

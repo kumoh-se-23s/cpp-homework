@@ -590,22 +590,13 @@ istream& operator>>(istream& is, MyString& str) {
 istream& getline(istream& is, MyString& str, char delim) {
     str.clear();
     int input = is.get();
-    //
-    //앞 공백 제거 코드 -> 실제 string과 다른 작동이므로 테스트에서 버그가 나서 잠깐보류
-    //
-    // while (input != EOF && isspace(input)) {
-    //     input = is.get();
-    // }
-    // if (input == EOF) {
-    //     return is;
-    // }
 
     while (input != EOF && static_cast<char>(input) != delim) {
         str.append(static_cast<char>(input));
         input = is.get();
     }
     if (input == EOF && !str.isEmpty()) {
-        is.clear();
+        is.clear(std::ios::eofbit);
     }
     return is;
 }

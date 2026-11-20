@@ -2,6 +2,7 @@
 #define DOUBLENODE_H
 
 #include <utility>
+
 #include "Node.h"
 
 template <typename T>
