@@ -29,18 +29,15 @@ void ManageCircleApp::readFile(const char *file) {
     inStream >> minYear >> maxYear;
     inStream >> studentCnt >> groupCnt;
     studentList.presetCapacities(maxYear - minYear + 1, groupCnt);
-    MyString* inputArr = new MyString[INPUT_ARR_SIZE]; //TODO: 정적배열로
+    MyString inputArr[INPUT_ARR_SIZE];
 
-    if (studentCnt != 0) {
-        while (!inStream.fail()) {
-            inStream >> inputArr[0] >> inputArr[1];
-            getline(inStream, inputArr[2]);
-            studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim());
-        }
+    for (int cnt = 0; cnt < studentCnt; cnt++) {
+        inStream >> inputArr[0] >> inputArr[1];
+        getline(inStream, inputArr[2]);
+        studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim());
     }
 
     inStream.close();
-    delete[] inputArr;
 }
 
 void ManageCircleApp::handleInput(char input) {
@@ -76,15 +73,13 @@ void ManageCircleApp::handleInput(char input) {
 }
 
 void ManageCircleApp::insertStudent() {
-    MyString* inputArr = new MyString[INPUT_ARR_SIZE];
+    MyString inputArr[INPUT_ARR_SIZE];
     cin >> inputArr[0];
     cin >> inputArr[1];
     getline(cin, inputArr[2]);
 
     if(!studentList.insertStudent(stoi(inputArr[0]), inputArr[1], inputArr[2].trim()))
         cout << "Insert failed: existing Id" << endl;
-
-    delete[] inputArr;
 }
 
 void ManageCircleApp::deleteStudent() {

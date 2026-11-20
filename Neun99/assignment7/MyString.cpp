@@ -219,7 +219,7 @@ MyString MyString::trim() const {
     int endIdx;
 
     for (startIdx = 0; startIdx < size && str[startIdx] == ' '; startIdx++) {}
-    for (endIdx = size; endIdx >= 0 && str[endIdx] == ' '; endIdx--) {}
+    for (endIdx = size - 1; endIdx >= 0 && str[endIdx] == ' '; endIdx--) {}
     return substr(startIdx, endIdx - startIdx);
 }
 
@@ -355,15 +355,10 @@ istream& operator>>(istream& in, MyString& str) {
     }
 
     //이후 append
-    char ch;
-    for (;!isWhiteSpace(inputCode) && inputCode != EOF; inputCode = in.peek()) {
+    for (char ch; !isWhiteSpace(inputCode) && inputCode != EOF; inputCode = in.peek()) {
         in.get(ch);
         str.appendCh(ch);
     }
-
-    //입력된 스트림 끝이라 못읽었으면 실패 flag 올려서 호출부에 끝났다고 알리기
-    if (inputCode == EOF) //str.length() == 0
-        in.setstate(ios_base::failbit);
     return in;
 }
 
@@ -371,19 +366,13 @@ istream& operator>>(istream& in, MyString& str) {
 istream& getline(istream& in, MyString& str, char delim) {
     str.clear(); //초기화
 
-    int inputCode = in.peek();
-    for (; inputCode != delim && inputCode != EOF; inputCode = in.peek()) {
+    for (int inputCode = in.peek(); inputCode != delim && inputCode != EOF; inputCode = in.peek()) {
         char ch;
         in.get(ch);
         str.appendCh(ch);
     }
 
-    //delim 제거
-    if (inputCode == delim)
-        in.ignore();
-    else if (inputCode == EOF) //입력된 스트림 끝이라 못읽었으면 실패 flag
-        in.setstate(ios_base::failbit);
-
+    in.ignore(numeric_limits<streamsize>::max(),delim);
     return in;
 }
 

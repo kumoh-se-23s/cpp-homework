@@ -7,19 +7,9 @@ StudentMultiList::StudentMultiList() {
 //소멸자: StudentNode를 여기서 일괄 제거
 StudentMultiList::~StudentMultiList() {
     //최소년도부터 최대년도까지 순회하며 delete
-    for (int idx = idMap.getMinYear(); idx < idMap.getMaxYear(); idx++) {
+    for (int idx = idMap.getMinYear(); idx <= idMap.getMaxYear(); idx++) {
         deleteAllStudent(idMap[idx]->getHead());
     }
-}
-
-//대입연산자
-StudentMultiList &StudentMultiList::operator=(const StudentMultiList &list) {
-    if (this != &list) {
-        idMap = list.idMap;
-        groupMap = list.groupMap;
-        studentCnt = list.studentCnt;
-    }
-    return *this;
 }
 
 //기능-------------------------------------
@@ -106,8 +96,10 @@ MyString StudentMultiList::toStringForPrint() const{
 //학생 추가
 bool StudentMultiList::insertStudent(int id, const MyString &group, const MyString &name) {
     StudentNode* newNode = new StudentNode(id, group, name);
-    if (!classmateInsert(newNode)) //중복 id로 insert 실패 시 바로 false 리턴
+    if (!classmateInsert(newNode)) { //중복 id로 insert 실패 시 바로 false 리턴
+        delete newNode;
         return false;
+    }
     if (group != NO_GROUP)
         teammateInsert(newNode);
     studentCnt++;

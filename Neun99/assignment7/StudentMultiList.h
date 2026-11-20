@@ -7,7 +7,6 @@
 class StudentMultiList {
 public:
     StudentMultiList();
-    StudentMultiList& operator=(const StudentMultiList& list);
     ~StudentMultiList();
 
     void presetCapacities(int yearCnt, int groupCnt);
