@@ -72,13 +72,15 @@ void StudentList::printList(ostream& os) const {
 
                 // 다음 팀원
                 StudentNode* teamCurr = curr->nextTeam;
-                // 맨 처음 팀원은 - 출력하면 안됨
-                os << " " << teamCurr->data.getStudentID() << " " << teamCurr->data.getStudentName();
-                teamCurr = teamCurr->nextTeam;
-
-                while (teamCurr != nullptr && teamCurr != curr) {
-                    os << " - " << teamCurr->data.getStudentID() << " " << teamCurr->data.getStudentName();
+                if (teamCurr != nullptr && teamCurr != curr) {
+                    // 맨 처음 팀원은 공백만 출력
+                    os << " " << teamCurr->data.getStudentID() << " " << teamCurr->data.getStudentName();
                     teamCurr = teamCurr->nextTeam;
+
+                    while (teamCurr != nullptr && teamCurr != curr) {
+                        os << " - " << teamCurr->data.getStudentID() << " " << teamCurr->data.getStudentName();
+                        teamCurr = teamCurr->nextTeam;
+                    }
                 }
             }
             os << ")" << endl;
