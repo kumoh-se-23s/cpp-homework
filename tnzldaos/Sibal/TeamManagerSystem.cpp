@@ -326,8 +326,10 @@ void TeamManagerSystem::countInformation(int &minYear, int &maxYear, int &studen
             maxYear = year;
         }
 
-        for (Node<Student> *current = keyValue.getValue(); current != nullptr; current = current->getNextNode()) {
+        Node<Student> *current = keyValue.getValue();
+        while (current != nullptr) {
             studentCount++;
+            current = current->getNextNode();
         }
     }
 
@@ -365,10 +367,13 @@ void TeamManagerSystem::saveFile() {
             continue;
         }
 
-        for (Node<Student> *current = keyValue->getValue(); current != nullptr; current = current->getNextNode()) {
+        Node<Student> *current = keyValue->getValue();
+        while (current != nullptr) {
             const Student &student = current->getObject();
 
             file << student.getId() << " " << student.getTeamName() << " " << student.getName() << endl;
+
+            current = current->getNextNode();
         }
     }
 }
