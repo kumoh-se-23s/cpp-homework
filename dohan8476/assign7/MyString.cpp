@@ -7,7 +7,9 @@
 
 //1-1. default 생성자
 MyString::MyString() {
-    str = new char[DEFAULT_CAPACITY];
+    size = 0;
+    capacity = DEFAULT_CAPACITY;
+    str = new char[capacity];
     str[0] = '\0';
 }
 //1-2. 복사 생성자
@@ -23,6 +25,7 @@ MyString::MyString(const MyString& srcStr){
 }
 
 MyString::MyString(int newCapacity) {
+    size = 0;
     capacity = calcCapacity(newCapacity);
     str = new char[capacity];
     str[0] = '\0';

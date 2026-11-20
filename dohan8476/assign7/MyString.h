@@ -69,8 +69,8 @@ class MyString {
         const char* getStr() const;
 
     private:
-        int size = 0;
-        int capacity = DEFAULT_CAPACITY;
+        int size;
+        int capacity;
         char *str = nullptr;
 
         void resize(int newCapacity);
