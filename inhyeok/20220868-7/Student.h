@@ -11,7 +11,7 @@ class Student {
     MyString groupId;
 public:
 
-    inline static const MyString NO_GROUP = "";
+    inline static const MyString NO_GROUP = "-";
 
     explicit Student(int num, MyString string = "", MyString groupId = NO_GROUP);
 
