@@ -77,9 +77,9 @@ bool StudentRegistry::remove(const MyString &uid) {
 }
 
 void StudentRegistry::print(std::ostream &output_stream) const {
-    output_stream << "[Year:" << this->m_list.min_row_key() << '~' << this->m_list.max_row_key() << "] "
-            << "[Student Count:" << this->student_count() << "] "
-            << "[Group Count: " << this->team_count() << "]\n";
+    output_stream << "[Year : " << this->m_list.min_row_key() << '~' << this->m_list.max_row_key() << "] "
+            << "[Student Count :" << this->student_count() << "] "
+            << "[Group Count : " << this->team_count() << "]\n";
 
     this->m_list.for_each([this, &output_stream](const Student &student) {
         this->print_line(output_stream, student);
