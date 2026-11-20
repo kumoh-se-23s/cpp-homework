@@ -7,14 +7,14 @@
 #include "Student.h"
 
 class TeamManagerSystem {
-    MyArrayList<KeyValuePair<string, MySinglyLinkedList<Node<Student> > > > yearsList;
-
-    MyArrayList<KeyValuePair<string, Node<Student> > > *yearArrayList = nullptr;
+    //연도별 리스트 -> 각 리스트가 그 연도 학생 노드의 주인
+    MyArrayList<KeyValuePair<string, MySinglyLinkedList<Node<Student> > > > *yearArrayList = nullptr;
+    //팀별 head -> 노드를 빌려 쓰기만 함 (지우지 않음)
     MyArrayList<KeyValuePair<string, Node<Student> > > *teamArrayList = nullptr;
 
     string fileName;
 
-    void linkToYearList(MyArrayList<KeyValuePair<string, Node<Student> > > *yearArrayList,
+    bool linkToYearList(MyArrayList<KeyValuePair<string, MySinglyLinkedList<Node<Student> > > > *yearArrayList,
                         const string &year, Node<Student> *studentNode);
 
     void linkToTeamList(MyArrayList<KeyValuePair<string, Node<Student> > > *teamArrayList,

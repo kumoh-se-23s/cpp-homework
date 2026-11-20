@@ -15,16 +15,9 @@ using namespace std;
 
 TeamManagerSystem::~TeamManagerSystem() {
     if (yearArrayList != nullptr) {
+        //연도 리스트를 지우면 리스트 소멸자가 그 안의 노드를 모두 지움
         for (int index = 0; index < yearArrayList->getSize(); index++) {
-            Node<Student> *current = yearArrayList->get(index).getValue();
-
-            while (current != nullptr) {
-                Node<Student> *next = current->getNextNode();
-
-                delete current;
-
-                current = next;
-            }
+            delete yearArrayList->get(index).getValue();
         }
 
         delete yearArrayList;
@@ -94,7 +87,7 @@ void TeamManagerSystem::initializeProgram(int argc, char *argv[]) {
         return;
     }
 
-    yearArrayList = new MyArrayList<KeyValuePair<string, Node<Student> > >();
+    yearArrayList = new MyArrayList<KeyValuePair<string, MySinglyLinkedList<Node<Student> > > >();
     teamArrayList = new MyArrayList<KeyValuePair<string, Node<Student> > >();
 
     string line;
@@ -118,26 +111,26 @@ void TeamManagerSystem::initializeProgram(int argc, char *argv[]) {
     }
 }
 
-//년도 ArrayList 연결
-void TeamManagerSystem::linkToYearList(MyArrayList<KeyValuePair<string, Node<Student> > > *yearArrayList,
+//년도 ArrayList 연결 -> 넣었으면 true (이제 노드의 주인은 그 연도 리스트)
+bool TeamManagerSystem::linkToYearList(MyArrayList<KeyValuePair<string, MySinglyLinkedList<Node<Student> > > > *yearArrayList,
                                        const string &year, Node<Student> *studentNode) {
     Comparator<Student> comparator;
 
-    KeyValuePair<string, Node<Student> > *keyValue = yearArrayList->findObject(year);
+    KeyValuePair<string, MySinglyLinkedList<Node<Student> > > *keyValue = yearArrayList->findObject(year);
 
     if (keyValue != nullptr) {
-        //헤더를 가져옴
-        Node<Student> *headNode = keyValue->getValue();
-
-        //헤더를 가져와서 넣음으로써 SinglyLinkedList 만듦
-        MySinglyLinkedList<Node<Student> > studentIdList = MySinglyLinkedList<Node<Student> >(headNode);
-        studentIdList.sortedInsert(studentNode, comparator);
-
-        keyValue->setValue(studentIdList.getHead());
-    } else {
-        KeyValuePair<string, Node<Student> > newKeyValue = KeyValuePair<string, Node<Student> >(year, studentNode);
-        yearArrayList->append(newKeyValue);
+        //이미 있는 연도 리스트에 바로 넣음
+        return keyValue->getValue()->sortedInsert(studentNode, comparator);
     }
+
+    //처음 나온 연도 -> 리스트를 새로 만들어 보관
+    MySinglyLinkedList<Node<Student> > *studentIdList = new MySinglyLinkedList<Node<Student> >();
+    studentIdList->sortedInsert(studentNode, comparator);
+
+    KeyValuePair<string, MySinglyLinkedList<Node<Student> > > newKeyValue = KeyValuePair<string, MySinglyLinkedList<Node<Student> > >(year, studentIdList);
+    yearArrayList->append(newKeyValue);
+
+    return true;
 }
 
 void TeamManagerSystem::linkToTeamList(MyArrayList<KeyValuePair<string, Node<Student> > > *teamArrayList,
@@ -175,13 +168,13 @@ void TeamManagerSystem::printStudentList() {
             << "] [Group Count: " << groupCount << "]" << endl;
 
     for (int year = minYear; year <= maxYear; year++) {
-        KeyValuePair<string, Node<Student> > *keyValue = yearArrayList->findObject(to_string(year));
+        KeyValuePair<string, MySinglyLinkedList<Node<Student> > > *keyValue = yearArrayList->findObject(to_string(year));
 
         if (keyValue == nullptr) {
             continue;
         }
 
-        for (Node<Student> *current = keyValue->getValue(); current != nullptr; current = current->getNextNode()) {
+        for (Node<Student> *current = keyValue->getValue()->getHead(); current != nullptr; current = current->getNextNode()) {
             printStudent(current);
         }
     }
@@ -218,14 +211,14 @@ Node<Student> *TeamManagerSystem::findStudentNode(const string &studentId) {
         return nullptr;
     }
 
-    KeyValuePair<string, Node<Student> > *keyValue = yearArrayList->findObject(studentId.substr(0, 4));
+    KeyValuePair<string, MySinglyLinkedList<Node<Student> > > *keyValue = yearArrayList->findObject(studentId.substr(0, 4));
 
     if (keyValue == nullptr) {
         return nullptr;
     }
 
-    Node<Student> *current = keyValue->getValue();
-    while (current == nullptr) {
+    Node<Student> *current = keyValue->getValue()->getHead();
+    while (current != nullptr) {
         if (current->getObject().getId() == studentId) {
             return current;
         }
@@ -241,7 +234,7 @@ void TeamManagerSystem::insertStudent(const string &studentId, const string &tea
     }
 
     if (yearArrayList == nullptr) {
-        yearArrayList = new MyArrayList<KeyValuePair<string, Node<Student> > >();
+        yearArrayList = new MyArrayList<KeyValuePair<string, MySinglyLinkedList<Node<Student> > > >();
     }
     if (teamArrayList == nullptr) {
         teamArrayList = new MyArrayList<KeyValuePair<string, Node<Student> > >();
@@ -254,7 +247,12 @@ void TeamManagerSystem::insertStudent(const string &studentId, const string &tea
     Student *student = new Student(studentId, teamName, studentName);
     Node<Student> *studentNode = new Node<Student>(student);
 
-    linkToYearList(yearArrayList, studentId.substr(0, 4), studentNode);
+    //연도 리스트에 못 넣었으면 주인이 없으므로 여기서 지움
+    if (!linkToYearList(yearArrayList, studentId.substr(0, 4), studentNode)) {
+        delete studentNode;
+        return;
+    }
+
     linkToTeamList(teamArrayList, teamName, studentNode);
 }
 
@@ -265,24 +263,25 @@ void TeamManagerSystem::deleteStudent(const string &studentId) {
 
     string year = studentId.substr(0, 4);
 
-    KeyValuePair<string, Node<Student> > *yearKeyValue = yearArrayList->findObject(year);
+    KeyValuePair<string, MySinglyLinkedList<Node<Student> > > *yearKeyValue = yearArrayList->findObject(year);
 
     if (yearKeyValue == nullptr) {
         return;
     }
 
-    MySinglyLinkedList<Node<Student> > studentIdList = MySinglyLinkedList<Node<Student> >(yearKeyValue->getValue());
+    MySinglyLinkedList<Node<Student> > *studentIdList = yearKeyValue->getValue();
 
-    Node<Student> *removedNode = studentIdList.remove(studentId);
+    //리스트에서 빼냄 -> 이제 removedNode를 지울 책임은 여기 있음
+    Node<Student> *removedNode = studentIdList->remove(studentId);
 
     if (removedNode == nullptr) {
         return;
     }
 
-    if (studentIdList.getHead() == nullptr) {
+    //연도에 학생이 없으면 빈 리스트를 지우고 배열에서도 뺌
+    if (studentIdList->getHead() == nullptr) {
+        delete studentIdList;
         yearArrayList->remove(year);
-    } else {
-        yearKeyValue->setValue(studentIdList.getHead());
     }
 
     string teamName = removedNode->getObject().getTeamName();
@@ -316,7 +315,7 @@ void TeamManagerSystem::countInformation(int &minYear, int &maxYear, int &studen
     }
 
     for (int index = 0; index < yearArrayList->getSize(); index++) {
-        KeyValuePair<string, Node<Student> > &keyValue = yearArrayList->get(index);
+        KeyValuePair<string, MySinglyLinkedList<Node<Student> > > &keyValue = yearArrayList->get(index);
         int year = stoi(keyValue.getKey());
 
         if (index == 0 || year < minYear) {
@@ -326,7 +325,7 @@ void TeamManagerSystem::countInformation(int &minYear, int &maxYear, int &studen
             maxYear = year;
         }
 
-        Node<Student> *current = keyValue.getValue();
+        Node<Student> *current = keyValue.getValue()->getHead();
         while (current != nullptr) {
             studentCount++;
             current = current->getNextNode();
@@ -361,13 +360,13 @@ void TeamManagerSystem::saveFile() {
     file << studentCount << " " << groupCount << endl;
 
     for (int year = minYear; year <= maxYear; year++) {
-        KeyValuePair<string, Node<Student> > *keyValue = yearArrayList->findObject(to_string(year));
+        KeyValuePair<string, MySinglyLinkedList<Node<Student> > > *keyValue = yearArrayList->findObject(to_string(year));
 
         if (keyValue == nullptr) {
             continue;
         }
 
-        Node<Student> *current = keyValue->getValue();
+        Node<Student> *current = keyValue->getValue()->getHead();
         while (current != nullptr) {
             const Student &student = current->getObject();
 
