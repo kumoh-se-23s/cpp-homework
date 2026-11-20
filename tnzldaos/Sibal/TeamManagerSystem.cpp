@@ -224,10 +224,12 @@ Node<Student> *TeamManagerSystem::findStudentNode(const string &studentId) {
         return nullptr;
     }
 
-    for (Node<Student> *current = keyValue->getValue(); current != nullptr; current = current->getNextNode()) {
+    Node<Student> *current = keyValue->getValue();
+    while (current == nullptr) {
         if (current->getObject().getId() == studentId) {
             return current;
         }
+        current = current->getNextNode();
     }
 
     return nullptr;
