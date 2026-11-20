@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 template<typename T>
 class SinglyLinkedList;
 
@@ -214,11 +214,20 @@ MyString SinglyLinkedList<T>::toString() const {
 
     while (now != nullptr) {
         result += now->toString();
-        result += ")\n";
+        result += "\n";
         now = now->getNext();
-
     }
     return result;
+}
+template<typename T>
+std::ostream & operator<<(std::ostream &out, const SinglyLinkedList<T> &singlyLinkedList) {
+    SingleNode<T> *now = singlyLinkedList.getHead();
+
+    while (now != nullptr) {
+        out << now->getItem();
+        now = now->getNext();
+    }
+    return out;
 }
 
 

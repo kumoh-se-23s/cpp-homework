@@ -44,19 +44,6 @@ bool Student::isGroupEmpty() const {
     return studentGroup == "-";
 }
 
-MyString Student::toString() const {
-    MyString result;
-    result += MyString::integerToString(studentId);
-    result += studentName;
-    result += " (";
-    if (!isGroupEmpty()) {
-        result += "[";
-        result += studentGroup;
-        result += "]";
-    }
-    return result;
-}
-
 bool Student::operator==(const Student &otherStudent) const {
     return studentId == otherStudent.studentId;
 }
@@ -79,4 +66,24 @@ bool Student::operator<=(const Student &otherStudent) const {
 }
 bool Student::operator>=(const Student &otherStudent) const {
     return studentId >= otherStudent.studentId;
+}
+
+MyString Student::toString() const {
+    MyString result;
+    result += MyString::integerToString(studentId);
+
+    result += " ";
+
+    result += studentGroup;
+
+    result += " ";
+
+    result += studentName;
+
+    return result;
+}
+
+std::ostream &operator<<(std::ostream &out, const Student &student) {
+    out << student.getStudentId() << " " << student.getStudentName();
+    return out;
 }

@@ -1,12 +1,9 @@
 #ifndef LOOKUPTABLE_H
 #define LOOKUPTABLE_H
+#include <iostream>
+#include "Entry.h"
 #include "MyString.h"
 
-template <typename K, typename V>
-struct Entry {
-    K key;
-    V value;
-};
 template <typename K, typename V>
 class LookUpTable {
 
@@ -36,30 +33,36 @@ public:
 
     void resize();
 
+    const Entry<K, V> *at(int index) const;
+
     Entry<K, V> *findEntry(const K &key);
 
     const Entry<K, V> *findEntry(const K &key) const;
 
-    const V &getValue(const K &key) const;
+    V *getValue(const K &key) const;
 
-    const V &getByIndex(int index) const;
+    void removeByKey(const K &key);
 
-    void removeByKey(const K &key) const;
-
-    void setValue(const K& key, const V& value);
-
-    const V &insert(const K& key, const V& value);
+    void insert(const K& key, V* value);
 
     int getSize() const;
 
     int getCapacity() const;
 
+    MyString toString() const;
+
+    bool isEntry(const K& key);
+
 private:
     int binarySearch(int left, int right, const K& key) const;
 
-    const V &insert(int index, const K& key, const V& value);
-
+    void insert(int index, const K& key, V* value);
 };
+
+template <typename K, typename V>
+std::ostream &operator<<(std::ostream &out, const LookUpTable<K, V>& lookUpTable);
+
+
 
 #include "LookUpTable.tpp"
 

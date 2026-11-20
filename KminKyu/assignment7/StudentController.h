@@ -6,7 +6,9 @@
 #include "NestedDoubleNode.h"
 
 class StudentController {
-    using Id = LookUpTable<int, SinglyLinkedList<NestedDoubleNode<Student>>>;
+    using IdNode = SingleNode<NestedDoubleNode<Student>>;
+    using IdLinkedList = SinglyLinkedList<NestedDoubleNode<Student>>;
+    using Id = LookUpTable<int, IdLinkedList>;
 
     using Group = LookUpTable<MyString, CircularDoublyLinkedList<Student>>;
 
@@ -18,7 +20,8 @@ class StudentController {
 
 public:
     StudentController();
-    StudentController();
+
+    StudentController(int minYear, int maxYear, int studentCount, int groupCount);
 
 
     void insertStudent(int studentId, const MyString &studentGroup, const MyString &studentName);
@@ -28,9 +31,12 @@ public:
 
     MyString toString() const;
 
+    void print(std::ostream& out) const;
+
 private:
-     static int getYear(int studentId);
+    static int getYear(int studentId);
 };
 
 std::ostream& operator<<(std::ostream& out, const StudentController& studentController);
 
+std::ostream &operator<<(std::ostream &out, const NestedDoubleNode<Student> &nested);

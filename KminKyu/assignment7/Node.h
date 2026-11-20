@@ -1,15 +1,11 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <algorithm>
 #include <utility>
+#include <iostream>
 
+#include "Concept.h"
 #include "MyString.h"
-
-template <typename T>
-concept HasToString = requires(const T &t) {
-    { t.toString() } -> std::convertible_to<MyString>;
-};
 
 template <typename T>
 class Node {
@@ -38,6 +34,9 @@ public:
 
     MyString toString() const requires HasToString<T>;
 };
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const Node<T>& node);
+
 
 #include "Node.tpp"
 #endif // NODE_H

@@ -33,6 +33,7 @@ public:
     DoubleNode *getNext() const;
 
     void setNext(DoubleNode *nextNode);
+    
 };
 
 #include "DoubleNode.tpp"

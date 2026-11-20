@@ -1,87 +1,69 @@
 #include "App.h"
 #include <iostream>
-#include <sstream>
+#include <fstream>
 
 using namespace std;
 
-int App::run(const char *argv[]) {
-    char command = '\0';
-    while (command != 'Q' || command == 'q') {
-        cin >> command;
-        switch (command) {
-            case 'L':
-            case 'l':
-                cout << this-> controller;
-            case 'i':
-            case 'I':
-                insert();
-            case 'd':
-            case 'D':
-                remove();
+App::App() {
+    controller = StudentController();
 
-        }
-    }
-    return 0;
 }
 
-bool App::loadFromFile(const char *filePath) {
-    if (!fileIO.openInput(filePath)) {
-        return false;
-    }
-
-    char line[LINE_BUFFER_SIZE];
-
-    // 1번째 줄: 최저년도 최고년도 (스킵)
-    if (!fileIO.readLine(line, LINE_BUFFER_SIZE)) {
-        fileIO.closeInput();
-        return true;
-    }
-
-    // 2번째 줄: 회원수 팀수
-    int count = 0;
-    int groupCount = 0;
-    if (fileIO.readLine(line, LINE_BUFFER_SIZE)) {
-        std::istringstream countStream(line);
-        countStream >> count >> groupCount;
-    }
-
-    // 3번째 줄~: 회원수만큼 즉시 정렬 삽입
-    for (int i = 0; i < count; ++i) {
-        if (!fileIO.readLine(line, LINE_BUFFER_SIZE)) {
-            break;
+void App::start() {
+    int result = 1;
+    while (result != 0) {
+        MyString command;
+        getline(cin, command);
+        result = run(command.trim());
+        if (result == -1) {
+            cout << "Invalid Input\n";
         }
-        parseAndInsert(line);
     }
-
-    fileIO.closeInput();
-    return true;
 }
 
-void App::parseAndInsert(const char *line) {
-    std::istringstream iss(line);
-    int studentId = 0;
-    char groupBuf[128] = {};
-    char nameBuf[256] = {};
-
-    if (!(iss >> studentId >> groupBuf)) {
-        return;
+int App::run(MyString command) {
+    if (command.length() != 1) {
+        return -1;
     }
-
-    iss >> std::ws;
-    iss.getline(nameBuf, sizeof(nameBuf));
-
-    controller.insertStudent(studentId, MyString(groupBuf), MyString(nameBuf));
+    switch (command.at(0)) {
+        case 'L':
+        case 'l':
+            cout << this->controller;
+            return 1;
+        case 'i':
+        case 'I':
+            insert();
+            return 1;
+        case 'd':
+        case 'D':
+            remove();
+            return 1;
+        case 'Q':
+        case 'q':
+            return 0;
+        default:
+            return -1;
+    }
 }
 
 void App::insert() {
-    cin >> item;
-        
+    int studentId;
+    MyString studentGroup;
+    MyString studentName;
     cin >> studentId;
-    cin >> group();
-    cin
+    cin >> studentGroup;
+    getline(cin,studentName);
+
+    controller.insertStudent(studentId, studentGroup, studentName.trim());
 }
-void App::remove() {}
-App::App(const char *argv) {
+void App::remove() {
+    int studentId;
+    cin >> studentId;
+    MyString clear;
+    getline(cin, clear);
+    controller.deleteStudent(studentId);
 }
+
+
 
 

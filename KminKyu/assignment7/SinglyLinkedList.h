@@ -1,7 +1,7 @@
 #ifndef SINGLYLINKEDLIST_H
 #define SINGLYLINKEDLIST_H
 #include "SingleNode.h"
-
+#include <iostream>
 template <typename T>
 class SinglyLinkedList {
     SingleNode<T> *head = nullptr;
@@ -48,7 +48,11 @@ private:
     SingleNode<T> *addNode(SingleNode<T> *node);
 
     bool removeFirst(const T& item);
+
 };
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const SinglyLinkedList<T>& singlyLinkedList);
 
 #include "SinglyLinkedList.tpp"
 #endif // SINGLYLINKEDLIST_H

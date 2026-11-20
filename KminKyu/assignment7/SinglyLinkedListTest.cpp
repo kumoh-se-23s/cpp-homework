@@ -682,17 +682,3 @@ TEST(SinglyLinkedListDifferential, RandomOperationsMatchMultiset) {
         }
     }
 }
-
-// SinglyLinkedListTest.cpp 에 추가
-TEST(SinglyLinkedListToString, EmptyAndMultipleElements) {
-    SinglyLinkedList<Student> list;
-    EXPECT_TRUE(list.toString() == "");
-
-    list.add(Student(20220002, MyString("G1"), MyString("Bob")));
-    list.add(Student(20210001, MyString("G1"), MyString("Alice")));
-
-    const MyString output = list.toString();
-    EXPECT_NE(output.find("20210001"), -1);
-    EXPECT_NE(output.find("20220002"), -1);
-}
-

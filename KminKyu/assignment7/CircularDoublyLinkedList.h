@@ -36,6 +36,9 @@ public:
     bool remove(const T& item);
 
     void clear();
+
+    MyString toString() const;
+
 private:
     //정렬되지 않은 여러개의 노드가 들어오는것을 가정
     DoubleNode<T> *addAll(DoubleNode<T> *node);
@@ -43,6 +46,7 @@ private:
     DoubleNode<T> *addNode(DoubleNode<T> *node);
 
 };
-
+template<typename T>
+std::ostream &operator<<(std::ostream &out, const CircularDoublyLinkedList<T> &doublyLinkedList);
 #include "CircularDoublyLinkedList.tpp"
 #endif // CIRCULARDOUBLYLINKEDLIST_H

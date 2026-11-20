@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 template<typename T>
 class Node;
 
@@ -37,4 +37,9 @@ void Node<T>::setItem(const T &item) {
 template <typename T>
     MyString Node<T>::toString() const requires HasToString<T> {
     return item.toString();
+}
+template<typename T>
+std::ostream &operator<<(std::ostream &out, const Node<T> &node) {
+    out << node.getItem();
+    return out;
 }

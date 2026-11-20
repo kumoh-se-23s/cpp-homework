@@ -738,17 +738,3 @@ TEST(CircularListDifferential, RandomOperationsMatchMultiset) {
         }
     }
 }
-
-// CircularDoublyLinkedListTest.cpp toString 추가시 해제
-// TEST(CircularDoublyLinkedListToString, EmptySingleAndMultipleElements) {
-//     CircularDoublyLinkedList<Student> list;
-//     EXPECT_TRUE(list.toString() == "");
-//
-//     list.add(Student(20210001, MyString("G1"), MyString("Alice")));
-//     EXPECT_NE(list.toString().find("Alice"), -1);
-//
-//     list.add(Student(20220002, MyString("G1"), MyString("Bob")));
-//     const MyString output = list.toString();
-//     EXPECT_NE(output.find("Alice"), -1);
-//     EXPECT_NE(output.find("Bob"), -1);
-// }

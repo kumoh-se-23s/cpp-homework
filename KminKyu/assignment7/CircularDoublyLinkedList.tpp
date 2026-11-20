@@ -238,4 +238,32 @@ void CircularDoublyLinkedList<T>::clear() {
     size = 0;
 }
 
+template<typename T>
+MyString CircularDoublyLinkedList<T>::toString() const {
+    MyString result = MyString();
+    if (size == 0) {
+        return result;
+    }
+    DoubleNode<T> *now = head;
+
+    do {
+        result += now->toString();
+        result += "\n";
+        now = now->getNext();
+    } while (now == head);
+    return result;
+}
+template<typename T>
+std::ostream & operator<<(std::ostream &out, const CircularDoublyLinkedList<T> &doublyLinkedList) {
+    if (doublyLinkedList.size == 0) {
+        return out;
+    }
+    DoubleNode<T> *now = doublyLinkedList.getHead();
+    do {
+        out << now->getItem();
+        out << ")\n";
+        now = now->getNext();
+    } while(now != doublyLinkedList.getHead());
+    return out;
+}
 
