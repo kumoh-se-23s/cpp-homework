@@ -79,6 +79,9 @@ void App::handleInsert() {
     if (isValidStudentID(stuID) && !name.isEmpty()) {
         studentList.addStudent(Student(stoi(stuID), name, teamID));
     }
+    else {
+        cout << "invalid input" << endl;
+    }
 }
 
 void App::handleDelete() {
@@ -87,5 +90,8 @@ void App::handleDelete() {
 
     if (isValidStudentID(idStr)) {
         studentList.deleteStudent(stoi(idStr));
+    }
+    else {
+        cout << "invalid input" << endl;
     }
 }

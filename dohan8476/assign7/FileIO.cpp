@@ -25,7 +25,13 @@ bool FileIO::loadFile(const char* filename, StudentList& list) {
     int minYear = 0, maxYear = 0;
     int totalStudents = 0, totalGroups = 0;
 
-    if (!(fin >> minYear >> maxYear) || !(fin >> totalStudents >> totalGroups)) {
+    if (!(fin >> minYear)) {
+        bool isEmptyFile = fin.eof();
+        fin.close();
+        return isEmptyFile;
+    }
+
+    if (!(fin >> maxYear) || !(fin >> totalStudents >> totalGroups)) {
         fin.close();
         return false;
     }

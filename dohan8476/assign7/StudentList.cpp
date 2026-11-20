@@ -50,8 +50,8 @@ std::ostream& operator<<(std::ostream& os, const StudentList& studentList) {
 }
 
 void StudentList::printList(ostream& os) const {
-    int minYear = yearTable.getMinYear();
-    int maxYear = yearTable.getMaxYear();
+    int minYear = getMinYear();
+    int maxYear = getMaxYear();
 
     os << "[Year:" << minYear << "~" << maxYear << "] "
          << "[Student Count:" << studentCount << "] "
@@ -87,12 +87,13 @@ void StudentList::printList(ostream& os) const {
     }
 }
 
+// StudentList.cpp
 int StudentList::getMinYear() const {
-    return yearTable.getMinYear();
+    return studentCount > 0 ? yearTable.getMinYear() : 0;
 }
 
 int StudentList::getMaxYear() const {
-    return yearTable.getMaxYear();
+    return studentCount > 0 ? yearTable.getMaxYear() : 0;
 }
 
 int StudentList::getStudentCount() const {
