@@ -1,10 +1,10 @@
 #pragma once
 
 template<typename T>
-class SinglyLinkedList;
+class OldSinglyLinkedList;
 
 template<typename T>
-SinglyLinkedList<T>::SinglyLinkedList(SingleNode<T> *head) {
+OldSinglyLinkedList<T>::OldSinglyLinkedList(OldSingleNode<T> *head) {
 
     //헤더를 nullptr 넣은 경우
     if (head == nullptr) {
@@ -13,7 +13,7 @@ SinglyLinkedList<T>::SinglyLinkedList(SingleNode<T> *head) {
         return;
     }
 
-    SingleNode<T> *now = head;
+    OldSingleNode<T> *now = head;
     this-> size = 1;
 
     while (now->getNext() != nullptr) {
@@ -25,7 +25,7 @@ SinglyLinkedList<T>::SinglyLinkedList(SingleNode<T> *head) {
 
 
 template<typename T>
-SinglyLinkedList<T>::SinglyLinkedList(SinglyLinkedList &&singlyLinkedList) noexcept {
+OldSinglyLinkedList<T>::OldSinglyLinkedList(OldSinglyLinkedList &&singlyLinkedList) noexcept {
     this->head = singlyLinkedList.head;
     this->size = singlyLinkedList.size;
 
@@ -34,12 +34,12 @@ SinglyLinkedList<T>::SinglyLinkedList(SinglyLinkedList &&singlyLinkedList) noexc
 }
 
 template<typename T>
-SinglyLinkedList<T>::~SinglyLinkedList() {
+OldSinglyLinkedList<T>::~OldSinglyLinkedList() {
     clear();
 }
 
 template<typename T>
-SinglyLinkedList<T> &SinglyLinkedList<T>::operator=(SinglyLinkedList &&otherLinkedList)  noexcept {
+OldSinglyLinkedList<T> &OldSinglyLinkedList<T>::operator=(OldSinglyLinkedList &&otherLinkedList)  noexcept {
     if (this == &otherLinkedList) {
         return *this;
     }
@@ -55,17 +55,17 @@ SinglyLinkedList<T> &SinglyLinkedList<T>::operator=(SinglyLinkedList &&otherLink
 }
 
 template<typename T>
-SingleNode<T> *SinglyLinkedList<T>::getHead() const {
+OldSingleNode<T> *OldSinglyLinkedList<T>::getHead() const {
     return head;
 }
 
 template<typename T>
-int SinglyLinkedList<T>::getSize() const {
+int OldSinglyLinkedList<T>::getSize() const {
     return size;
 }
 
 template<typename T>
-SingleNode<T> * SinglyLinkedList<T>::addFirst(SingleNode<T> *node) {
+OldSingleNode<T> * OldSinglyLinkedList<T>::addFirst(OldSingleNode<T> *node) {
     node->setNext(head);
     this->head = node;
     ++size;
@@ -73,12 +73,12 @@ SingleNode<T> * SinglyLinkedList<T>::addFirst(SingleNode<T> *node) {
 }
 
 template<typename T>
-SingleNode<T> * SinglyLinkedList<T>::addNode(SingleNode<T> *node) {
+OldSingleNode<T> * OldSinglyLinkedList<T>::addNode(OldSingleNode<T> *node) {
     if (this->size == 0 || node->getItem() < head->getItem()) {
         return this->addFirst(node);
     }
 
-    SingleNode<T> *now = head;
+    OldSingleNode<T> *now = head;
 
     while (now->getNext() != nullptr && now->getNext()->getItem() <= node->getItem()) {
         now = now->getNext();
@@ -92,11 +92,11 @@ SingleNode<T> * SinglyLinkedList<T>::addNode(SingleNode<T> *node) {
 }
 
 template<typename T>
-SingleNode<T> * SinglyLinkedList<T>::addAll(SingleNode<T> *node) {
+OldSingleNode<T> * OldSinglyLinkedList<T>::addAll(OldSingleNode<T> *node) {
 
-    SingleNode<T> *now = node;
+    OldSingleNode<T> *now = node;
     while (now != nullptr) {
-        SingleNode<T> *next = now->getNext();
+        OldSingleNode<T> *next = now->getNext();
         now->setNext(nullptr);
         addNode(now);
         now = next;
@@ -105,7 +105,7 @@ SingleNode<T> * SinglyLinkedList<T>::addAll(SingleNode<T> *node) {
     return node;
 }
 template<typename T>
-SingleNode<T> *SinglyLinkedList<T>::add(SingleNode<T> *node) {
+OldSingleNode<T> *OldSinglyLinkedList<T>::add(OldSingleNode<T> *node) {
     if (node == nullptr) {
         return nullptr;
     }
@@ -118,17 +118,17 @@ SingleNode<T> *SinglyLinkedList<T>::add(SingleNode<T> *node) {
 }
 
 template<typename T>
-SingleNode<T> *SinglyLinkedList<T>::add(const T& item) {
-    SingleNode<T> *node = new SingleNode<T>(item);
+OldSingleNode<T> *OldSinglyLinkedList<T>::add(const T& item) {
+    OldSingleNode<T> *node = new OldSingleNode<T>(item);
     return addNode(node);
 }
 
 template<typename T>
-const SingleNode<T> *SinglyLinkedList<T>::find(const T& item) const {
+const OldSingleNode<T> *OldSinglyLinkedList<T>::find(const T& item) const {
     if (size == 0) {
         return nullptr;
     }
-    SingleNode<T> *now = head;
+    OldSingleNode<T> *now = head;
     while (now->getNext() != nullptr && now->getItem() < item) {
         now = now->getNext();
     }
@@ -140,11 +140,11 @@ const SingleNode<T> *SinglyLinkedList<T>::find(const T& item) const {
 }
 
 template<typename T>
-SingleNode<T> * SinglyLinkedList<T>::find(const T &item) {
+OldSingleNode<T> * OldSinglyLinkedList<T>::find(const T &item) {
     if (size == 0) {
         return nullptr;
     }
-    SingleNode<T> *now = head;
+    OldSingleNode<T> *now = head;
     while (now->getNext() != nullptr && now->getItem() < item) {
         now = now->getNext();
     }
@@ -156,11 +156,11 @@ SingleNode<T> * SinglyLinkedList<T>::find(const T &item) {
 }
 
 template<typename T>
-bool SinglyLinkedList<T>::removeFirst(const T& item) {
+bool OldSinglyLinkedList<T>::removeFirst(const T& item) {
     if (head->getItem() != item) {
         return false;
     }
-    SingleNode<T> *node = head;
+    OldSingleNode<T> *node = head;
     head = head->getNext();
     delete node;
     --size;
@@ -168,15 +168,15 @@ bool SinglyLinkedList<T>::removeFirst(const T& item) {
 }
 
 template<typename T>
-bool SinglyLinkedList<T>::remove(const T& item) {
+bool OldSinglyLinkedList<T>::remove(const T& item) {
     if (size == 0) {
         return false;
     } else if (size == 1 || head->getItem() >= item) {
         return removeFirst(item);
     }
 
-    SingleNode<T> *deleteNode = head->getNext();
-    SingleNode<T> *prev = head;
+    OldSingleNode<T> *deleteNode = head->getNext();
+    OldSingleNode<T> *prev = head;
     while (deleteNode->getNext() != nullptr && deleteNode->getItem() < item) {
         prev = deleteNode;
         deleteNode = deleteNode->getNext();
@@ -192,13 +192,13 @@ bool SinglyLinkedList<T>::remove(const T& item) {
 }
 
 template<typename T>
-void SinglyLinkedList<T>::clear() {
+void OldSinglyLinkedList<T>::clear() {
     if (head == nullptr) {
         return;
     }
-    SingleNode<T> *now = head;
+    OldSingleNode<T> *now = head;
     while (now != nullptr) {
-        SingleNode<T> *deleteNode = now;
+        OldSingleNode<T> *deleteNode = now;
         now = now->getNext();
         delete deleteNode;
     }
@@ -208,9 +208,9 @@ void SinglyLinkedList<T>::clear() {
 }
 
 template<typename T>
-MyString SinglyLinkedList<T>::toString() const {
-    MyString result = MyString();
-    SingleNode<T> *now = head;
+OOldMyString OldSinglyLinkedList<T>::toString() const {
+    OOldMyString result = OOldMyString();
+    OldSingleNode<T> *now = head;
 
     while (now != nullptr) {
         result += now->toString();
@@ -220,8 +220,8 @@ MyString SinglyLinkedList<T>::toString() const {
     return result;
 }
 template<typename T>
-std::ostream & operator<<(std::ostream &out, const SinglyLinkedList<T> &singlyLinkedList) {
-    SingleNode<T> *now = singlyLinkedList.getHead();
+std::ostream & operator<<(std::ostream &out, const OldSinglyLinkedList<T> &singlyLinkedList) {
+    OldSingleNode<T> *now = singlyLinkedList.getHead();
 
     while (now != nullptr) {
         out << now->getItem();

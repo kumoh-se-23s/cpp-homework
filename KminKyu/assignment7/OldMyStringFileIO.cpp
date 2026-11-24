@@ -1,19 +1,19 @@
-#include "MyStringFileIO.h"
+#include "OldMyStringFileIO.h"
 #include <fstream>
 
 
-MyStringFileIO::MyStringFileIO() : MyStringFileIO(nullptr) {}
+OldMyStringFileIO::OldMyStringFileIO() : OldMyStringFileIO(nullptr) {}
 
-MyStringFileIO::MyStringFileIO(const char *path) {
+OldMyStringFileIO::OldMyStringFileIO(const char *path) {
     filePath = path;
 }
 
-MyStringFileIO::~MyStringFileIO() {
+OldMyStringFileIO::~OldMyStringFileIO() {
     closeRead();
     closeWrite();
 }
 
-bool MyStringFileIO::openRead() {
+bool OldMyStringFileIO::openRead() {
     if (!isPath()) {
         return false;
     }
@@ -22,7 +22,7 @@ bool MyStringFileIO::openRead() {
     return in.is_open();
 }
 
-bool MyStringFileIO::openWrite() {
+bool OldMyStringFileIO::openWrite() {
     if (!isPath()) {
         return false;
     }
@@ -31,27 +31,27 @@ bool MyStringFileIO::openWrite() {
     return out.is_open();
 }
 
-void MyStringFileIO::closeRead() {
+void OldMyStringFileIO::closeRead() {
     if (in.is_open()) {
         in.close();
     }
 }
 
-void MyStringFileIO::closeWrite() {
+void OldMyStringFileIO::closeWrite() {
     if (out.is_open()) {
         out.close();
     }
 }
 
-ifstream& MyStringFileIO::getIn() {
+ifstream& OldMyStringFileIO::getIn() {
     return in;
 }
 
-ofstream& MyStringFileIO::getOut() {
+ofstream& OldMyStringFileIO::getOut() {
     return out;
 }
 
-bool MyStringFileIO::readLine(MyString &line) {
+bool OldMyStringFileIO::readLine(OOldMyString &line) {
     if (!in.is_open()) {
         return false;
     }
@@ -59,12 +59,12 @@ bool MyStringFileIO::readLine(MyString &line) {
     return !in.fail();
 }
 
-void MyStringFileIO::writeLine(const MyString &line) {
+void OldMyStringFileIO::writeLine(const OOldMyString &line) {
     if (out.is_open()) {
         out << line << '\n';
     }
 }
 
-bool MyStringFileIO::isPath() const {
+bool OldMyStringFileIO::isPath() const {
     return filePath != nullptr && filePath[0] != '\0';
 }

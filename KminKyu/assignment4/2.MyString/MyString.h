@@ -1,17 +1,17 @@
 #pragma once
 #include<iostream>
 
-class MyString {
+class OOldMyString {
 public:
-    MyString();
+    OOldMyString();
 
-    MyString(const MyString &srcStr);
+    OOldMyString(const OOldMyString &srcStr);
 
-    MyString(const char str2nd[]);
+    OOldMyString(const char str2nd[]);
 
-    MyString& operator =(const MyString &srcStr);
+    OOldMyString& operator =(const OOldMyString &srcStr);
 
-    MyString& operator =(const char str2nd[]);
+    OOldMyString& operator =(const char str2nd[]);
 
     int length() const;
 
@@ -23,19 +23,19 @@ public:
 
     char operator[](int pos) const;
 
-    const MyString operator +(const char str2nd[]) const;
+    const OOldMyString operator +(const char str2nd[]) const;
 
-    const MyString operator +(const MyString& str2nd) const;
+    const OOldMyString operator +(const OOldMyString& str2nd) const;
 
-    bool operator ==(const MyString &str) const;
+    bool operator ==(const OOldMyString &str) const;
 
-    bool operator !=(const MyString &str) const;
+    bool operator !=(const OOldMyString &str) const;
 
     int find(const char subStr[], int pos=0) const;
 
-    int find(const MyString &subStr, int pos=0) const;
+    int find(const OOldMyString &subStr, int pos=0) const;
 
-    MyString substr(int pos, int len) const;
+    OOldMyString substr(int pos, int len) const;
 
     void append(char appendChr);
 
@@ -55,6 +55,6 @@ private:
     static bool isSame(const char str1st[], const char str2nd[], int start, int end);
 };
 
-std::ostream& operator <<(std::ostream& os, const MyString &str);
-std::istream& operator >>(std::istream& is, MyString &str);
-std::istream& getline(std::istream& is, MyString &str, char delim='\n');
+std::ostream& operator <<(std::ostream& os, const OOldMyString &str);
+std::istream& operator >>(std::istream& is, OOldMyString &str);
+std::istream& getline(std::istream& is, OOldMyString &str, char delim='\n');

@@ -3,25 +3,25 @@
 #include <cctype>
 #include <cstdio>
 #include <utility>
-#include "MyString.h"
+#include "OOldMyString.h"
 
 using namespace std;
 
-MyString::MyString() {
+OOldMyString::OOldMyString() {
     copyString("", DEFAULT_CAPACITY);
 }
 
-MyString::MyString(const MyString& srcStr) {
+OOldMyString::OOldMyString(const OOldMyString& srcStr) {
     copyString(srcStr.charArray, srcStr.getCapacity());
 }
 
-MyString::MyString(const char *cstr2nd) {
+OOldMyString::OOldMyString(const char *cstr2nd) {
     int cstr2ndSize = getCharArraySize(cstr2nd);
     copyString(cstr2nd, calcInitialCapacity(cstr2ndSize));
 
 }
 
-MyString::MyString(MyString &&srcStr) noexcept {
+OOldMyString::OOldMyString(OOldMyString &&srcStr) noexcept {
 
     this->charArray = srcStr.charArray;
     this->size = srcStr.size;
@@ -32,18 +32,18 @@ MyString::MyString(MyString &&srcStr) noexcept {
     srcStr.capacity = 0;
 }
 
-MyString::~MyString() {
+OOldMyString::~OOldMyString() {
     delete[] charArray;
 }
 
-MyString& MyString::operator =(const MyString& srcStr) {
+OOldMyString& OOldMyString::operator =(const OOldMyString& srcStr) {
     if (this != &srcStr){
         copyString(srcStr.charArray, srcStr.capacity);
     }
     return *this;
 }
 
-MyString& MyString::operator =(MyString &&srcStr) noexcept {
+OOldMyString& OOldMyString::operator =(OOldMyString &&srcStr) noexcept {
     if (this == &srcStr) {
         return *this;
     }
@@ -63,7 +63,7 @@ MyString& MyString::operator =(MyString &&srcStr) noexcept {
     return *this;
 }
 
-MyString& MyString::operator =(const char *str2nd) {
+OOldMyString& OOldMyString::operator =(const char *str2nd) {
     if (charArray != str2nd) {
         int str2ndSize = getCharArraySize(str2nd);
         copyString(str2nd, calcInitialCapacity(str2ndSize));
@@ -71,67 +71,67 @@ MyString& MyString::operator =(const char *str2nd) {
     return *this;
 }
 
-int MyString::length() const {
+int OOldMyString::length() const {
     return size;
 }
 
-bool MyString::isEmpty() const {
+bool OOldMyString::isEmpty() const {
     return size == 0;
 }
 
-int MyString::getCapacity() const {
+int OOldMyString::getCapacity() const {
     return capacity;
 }
 
-char& MyString::at(int pos) {
+char& OOldMyString::at(int pos) {
     if (0 <= pos && pos < size) {
         return charArray[pos];
     }
     return charArray[size];
 }
 
-const char & MyString::at(int pos) const {
+const char & OOldMyString::at(int pos) const {
     if (0 <= pos && pos < size) {
         return charArray[pos];
     }
     return charArray[size];
 }
 
-char& MyString::operator [](int pos) {
+char& OOldMyString::operator [](int pos) {
     return at(pos);
 }
 
-const char& MyString::operator [](int pos) const {
+const char& OOldMyString::operator [](int pos) const {
     return at(pos);
 }
 
-MyString MyString::operator +(const char *cstr2nd) const {
-    MyString result = MyString(charArray);
+OOldMyString OOldMyString::operator +(const char *cstr2nd) const {
+    OOldMyString result = OOldMyString(charArray);
     return result.append(cstr2nd);
 }
 
-MyString MyString::operator +(const MyString& str2nd) const {
-    MyString result = MyString(charArray);
+OOldMyString OOldMyString::operator +(const OOldMyString& str2nd) const {
+    OOldMyString result = OOldMyString(charArray);
     return result.append(str2nd.charArray, str2nd.size);
 }
 
-bool MyString::operator ==(const MyString& str) const {
+bool OOldMyString::operator ==(const OOldMyString& str) const {
     return compare(str.charArray) == 0;
 }
 
-bool MyString::operator !=(const MyString& str) const {
+bool OOldMyString::operator !=(const OOldMyString& str) const {
     return !(*this == str);
 }
 
-bool MyString::operator ==(const char *cstr2nd) const {
+bool OOldMyString::operator ==(const char *cstr2nd) const {
     return compare(cstr2nd) == 0;
 }
 
-bool MyString::operator !=(const char *cstr2nd) const {
+bool OOldMyString::operator !=(const char *cstr2nd) const {
     return !(*this == cstr2nd);
 }
 
-int MyString::find(const char *subStr, int pos) const {
+int OOldMyString::find(const char *subStr, int pos) const {
     if (subStr == nullptr) {
         return -1;
     }
@@ -139,15 +139,15 @@ int MyString::find(const char *subStr, int pos) const {
     return rabinKarp(subStr, positionNormalize(pos), getCharArraySize(subStr));
 }
 
-int MyString::find(const MyString& subStr, int pos) const {
+int OOldMyString::find(const OOldMyString& subStr, int pos) const {
     if (subStr.charArray == nullptr) {
         return -1;
     }
     return rabinKarp(subStr.charArray, positionNormalize(pos), subStr.size);
 }
 
-MyString MyString::substr(int pos, int len) const {
-    MyString result = MyString();
+OOldMyString OOldMyString::substr(int pos, int len) const {
+    OOldMyString result = OOldMyString();
     if (pos < 0) {
         int temp = max(pos - len + size + 1, 0);
         len =  (pos + size + 1) - temp;
@@ -164,15 +164,15 @@ MyString MyString::substr(int pos, int len) const {
     return result;
 }
 
-MyString& MyString::operator +=(const char *cstr2nd) {
+OOldMyString& OOldMyString::operator +=(const char *cstr2nd) {
     return append(cstr2nd);
 }
 
-MyString& MyString::operator +=(const MyString &str) {
+OOldMyString& OOldMyString::operator +=(const OOldMyString &str) {
     return append(str.charArray, str.size);
 }
 
-MyString& MyString::append(char appendChr) {
+OOldMyString& OOldMyString::append(char appendChr) {
     if (size >= capacity) {
         resize();
     }
@@ -183,14 +183,14 @@ MyString& MyString::append(char appendChr) {
     return *this;
 }
 
-MyString &MyString::append(const char *cstr2nd) {
+OOldMyString &OOldMyString::append(const char *cstr2nd) {
     if (cstr2nd == nullptr) {
         return *this;
     }
     return this->append(cstr2nd, getCharArraySize(cstr2nd));
 }
 
-MyString & MyString::append(const char *cstr2nd, int cstr2ndSize) {
+OOldMyString & OOldMyString::append(const char *cstr2nd, int cstr2ndSize) {
 
     char *copyStr = nullptr;
 
@@ -215,47 +215,47 @@ MyString & MyString::append(const char *cstr2nd, int cstr2ndSize) {
 
     return *this;
 }
-MyString& MyString::append(const MyString &str) {
+OOldMyString& OOldMyString::append(const OOldMyString &str) {
     return this->append(str.charArray, str.size);
 }
 
-bool MyString::operator <(const MyString &str) const {
+bool OOldMyString::operator <(const OOldMyString &str) const {
     return compare(str.charArray) < 0;
 }
 
-bool MyString::operator >(const MyString &str) const {
+bool OOldMyString::operator >(const OOldMyString &str) const {
     return compare(str.charArray) > 0;
 }
 
-bool MyString::operator <=(const MyString &str) const {
+bool OOldMyString::operator <=(const OOldMyString &str) const {
     return compare(str.charArray) <= 0;
 }
 
-bool MyString::operator >=(const MyString &str) const {
+bool OOldMyString::operator >=(const OOldMyString &str) const {
     return compare(str.charArray) >= 0;
 }
 
-bool MyString::operator <(const char *cstr2nd) const {
+bool OOldMyString::operator <(const char *cstr2nd) const {
     return compare(cstr2nd) < 0;
 }
 
-bool MyString::operator >(const char *cstr2nd) const {
+bool OOldMyString::operator >(const char *cstr2nd) const {
     return compare(cstr2nd) > 0;
 }
 
-bool MyString::operator <=(const char *cstr2nd) const {
+bool OOldMyString::operator <=(const char *cstr2nd) const {
     return compare(cstr2nd) <= 0;
 }
 
-bool MyString::operator >=(const char *cstr2nd) const {
+bool OOldMyString::operator >=(const char *cstr2nd) const {
     return compare(cstr2nd) >= 0;
 }
 
-MyString& MyString::insert(int pos, const char *subStr) {
+OOldMyString& OOldMyString::insert(int pos, const char *subStr) {
     return insert(pos, subStr, getCharArraySize(subStr));
 
 }
-MyString & MyString::insert(int pos, const char *subStr, int subStrSize) {
+OOldMyString & OOldMyString::insert(int pos, const char *subStr, int subStrSize) {
     if (subStr == nullptr) {
         return *this;
     }
@@ -290,18 +290,18 @@ MyString & MyString::insert(int pos, const char *subStr, int subStrSize) {
     return *this;
 }
 
-MyString& MyString::insert(int pos, const MyString &subStr) {
+OOldMyString& OOldMyString::insert(int pos, const OOldMyString &subStr) {
     return insert(pos, subStr.charArray, subStr.size);
 }
 
-MyString& MyString::replace(int pos, int len, const char *subStr) {
+OOldMyString& OOldMyString::replace(int pos, int len, const char *subStr) {
     return replace(pos, len, subStr, getCharArraySize(subStr));
 }
 
-MyString& MyString::replace(int pos, int len, const MyString &subStr) {
+OOldMyString& OOldMyString::replace(int pos, int len, const OOldMyString &subStr) {
     return replace(pos, len, subStr.charArray, subStr.size);
 }
-MyString & MyString::replace(int pos, int len, const char *subStr, int subStrSize) {
+OOldMyString & OOldMyString::replace(int pos, int len, const char *subStr, int subStrSize) {
     if (subStr == nullptr) {
         return *this;
     }
@@ -346,7 +346,7 @@ MyString & MyString::replace(int pos, int len, const char *subStr, int subStrSiz
     return *this;
 }
 
-MyString& MyString::erase(int pos, int cnt) {
+OOldMyString& OOldMyString::erase(int pos, int cnt) {
     pos = positionNormalize(pos);
 
     cnt = lengthNormalize(pos, cnt);
@@ -360,7 +360,7 @@ MyString& MyString::erase(int pos, int cnt) {
 
 }
 
-void MyString::clear() {
+void OOldMyString::clear() {
     size = 0;
     if (charArray != nullptr) {
         charArray[0] = '\0';
@@ -368,8 +368,8 @@ void MyString::clear() {
 
 }
 
-MyString MyString::integerToString(int integer) {
-    MyString result = MyString();
+OOldMyString OOldMyString::integerToString(int integer) {
+    OOldMyString result = OOldMyString();
     if (integer < 0) {
         result.append("-");
         integer *= -1;
@@ -385,7 +385,7 @@ MyString MyString::integerToString(int integer) {
     return result;
 }
 
-MyString & MyString::trim() {
+OOldMyString & OOldMyString::trim() {
     int startIndex;
     int endIndex;
     for (endIndex = size - 1; endIndex >= 0 && isspace(static_cast<unsigned char>(charArray[endIndex])); --endIndex) {
@@ -396,7 +396,7 @@ MyString & MyString::trim() {
     return *this;
 }
 
-void MyString::resize() {
+void OOldMyString::resize() {
     if (capacity == 0) {
         resize(DEFAULT_CAPACITY);
     } else {
@@ -404,7 +404,7 @@ void MyString::resize() {
     }
 }
 
-void MyString::resize(int reCapacity) {
+void OOldMyString::resize(int reCapacity) {
     this->capacity = reCapacity;
     char *result = new char[reCapacity + 1];
 
@@ -417,7 +417,7 @@ void MyString::resize(int reCapacity) {
     charArray = result;
 }
 
-int MyString::getCharArraySize(const char *str2nd) {
+int OOldMyString::getCharArraySize(const char *str2nd) {
     if (str2nd == nullptr) {
         return 0;
     }
@@ -426,7 +426,7 @@ int MyString::getCharArraySize(const char *str2nd) {
     return cnt;
 }
 
-char *MyString::copyCharArray(const char *baseStr, int baseStrSize) {
+char *OOldMyString::copyCharArray(const char *baseStr, int baseStrSize) {
     char *resultStr = new char[baseStrSize + 1];
     for (int index = 0; index < baseStrSize; ++index) {
         resultStr[index] = baseStr[index];
@@ -437,7 +437,7 @@ char *MyString::copyCharArray(const char *baseStr, int baseStrSize) {
 
 
 //생성자, 대입연산자에서만 사용하는 깊은복사 및 size, capacity 설정
-void MyString::copyString(const char *copyStr, int copyStrCapacity) {
+void OOldMyString::copyString(const char *copyStr, int copyStrCapacity) {
     if (copyStr == nullptr) {
         copyStr = "";
         copyStrCapacity = DEFAULT_CAPACITY;
@@ -466,7 +466,7 @@ void MyString::copyString(const char *copyStr, int copyStrCapacity) {
 
 }
 
-int MyString::compare(const char *str2nd) const {
+int OOldMyString::compare(const char *str2nd) const {
     if (str2nd == nullptr) {
         return 1;
     }
@@ -485,7 +485,7 @@ int MyString::compare(const char *str2nd) const {
 
 }
 
-int MyString::rabinKarp(const char *subStr, int pos, int subStrSize) const {
+int OOldMyString::rabinKarp(const char *subStr, int pos, int subStrSize) const {
 
     if (subStrSize == 0) {
         return pos;
@@ -521,7 +521,7 @@ int MyString::rabinKarp(const char *subStr, int pos, int subStrSize) const {
     return -1;
 }
 
-int MyString::positionNormalize(int pos) const {
+int OOldMyString::positionNormalize(int pos) const {
     if (pos < 0) {
         pos = 0;
     } else if (pos > size) {
@@ -530,7 +530,7 @@ int MyString::positionNormalize(int pos) const {
     return pos;
 }
 
-int MyString::lengthNormalize(int pos, int len) const {
+int OOldMyString::lengthNormalize(int pos, int len) const {
     if (len > size - pos || len < 0) {
         return size - pos;
     }
@@ -538,7 +538,7 @@ int MyString::lengthNormalize(int pos, int len) const {
 }
 
 
-bool MyString::isSame(const char *str1st, const char *str2nd, int start, int end) {
+bool OOldMyString::isSame(const char *str1st, const char *str2nd, int start, int end) {
     for (int index = start; index <= end; ++index) {
         if (str1st[index] != str2nd[index - start]) {
             return false;
@@ -547,7 +547,7 @@ bool MyString::isSame(const char *str1st, const char *str2nd, int start, int end
     return true;
 }
 
-int MyString::calcInitialCapacity(int arraySize) {
+int OOldMyString::calcInitialCapacity(int arraySize) {
     if (arraySize <= DEFAULT_CAPACITY) {
         return DEFAULT_CAPACITY;
     }
@@ -557,14 +557,14 @@ int MyString::calcInitialCapacity(int arraySize) {
 }
 
 
-ostream& operator<<(ostream& os, const MyString& str){
+ostream& operator<<(ostream& os, const OOldMyString& str){
     for (int index = 0; index < str.length(); ++index) {
         os << str[index];
     }
     return os;
 }
 
-istream& operator>>(istream& is, MyString& str) {
+istream& operator>>(istream& is, OOldMyString& str) {
     str.clear();
 
     int input = is.get();
@@ -589,7 +589,7 @@ istream& operator>>(istream& is, MyString& str) {
     return is;
 }
 
-istream& getline(istream& is, MyString& str, char delim) {
+istream& getline(istream& is, OOldMyString& str, char delim) {
     str.clear();
     int input = is.get();
 
@@ -603,7 +603,7 @@ istream& getline(istream& is, MyString& str, char delim) {
     return is;
 }
 
-int stoi(const MyString &str, int pos, int base) {
+int stoi(const OOldMyString &str, int pos, int base) {
     constexpr int MAX_BASE = 36;
     constexpr int MIN_BASE = 2;
 

@@ -3,23 +3,23 @@
 
 using namespace std;
 
-MyString::MyString() {
+OOldMyString::OOldMyString() {
     this->charArray[0] = '\0';
     this->size = 0;
     this->capacity = MAX_STR_SIZE;
 }
 
-MyString::MyString(const MyString& srcStr) {
+OOldMyString::OOldMyString(const OOldMyString& srcStr) {
     this->capacity = MAX_STR_SIZE;
     setString(srcStr.charArray);
 }
 
-MyString::MyString(const char str2nd[]) {
+OOldMyString::OOldMyString(const char str2nd[]) {
     this->capacity = MAX_STR_SIZE;
     setString(str2nd);
 }
 
-MyString& MyString::operator=(const MyString& srcStr) {
+OOldMyString& OOldMyString::operator=(const OOldMyString& srcStr) {
     if (this == &srcStr){
         return *this;
     }
@@ -27,45 +27,45 @@ MyString& MyString::operator=(const MyString& srcStr) {
     return *this;
 }
 
-MyString& MyString::operator=(const char str2nd[]) {
+OOldMyString& OOldMyString::operator=(const char str2nd[]) {
     setString(str2nd);
     return *this;
 }
 
-int MyString::length() const {
+int OOldMyString::length() const {
     return size;
 }
 
-bool MyString::empty() const {
+bool OOldMyString::empty() const {
     return size == 0;
 }
 
-char MyString::at(int pos) const {
+char OOldMyString::at(int pos) const {
     if (0 <= pos && pos < size) {
         return charArray[pos];
     }
     return '\0';
 }
 
-char MyString::operator[](int pos) const {
+char OOldMyString::operator[](int pos) const {
     return at(pos);
 }
 
-const MyString MyString::operator+(const char str2nd[]) const {
-    MyString result = MyString(charArray);
+const OOldMyString OOldMyString::operator+(const char str2nd[]) const {
+    OOldMyString result = OOldMyString(charArray);
     result.append(str2nd);
     return result;
 }
 
-const MyString MyString::operator+(const MyString& str2nd) const {
+const OOldMyString OOldMyString::operator+(const OOldMyString& str2nd) const {
     return *this + str2nd.charArray;
 }
 
-bool MyString::operator!=(const MyString& str) const {
+bool OOldMyString::operator!=(const OOldMyString& str) const {
     return !(*this == str);
 }
 
-bool MyString::operator==(const MyString& str) const {
+bool OOldMyString::operator==(const OOldMyString& str) const {
     if (str.size != this->size) {
         return false;
     }
@@ -77,18 +77,18 @@ bool MyString::operator==(const MyString& str) const {
     return true;
 }
 
-int MyString::find(const char subStr[], int pos) const {
+int OOldMyString::find(const char subStr[], int pos) const {
     int subLength = 0;
     while (subStr[subLength] != '\0') ++subLength;
     return rabinKarp(subStr, pos, subLength);
 }
 
-int MyString::find(const MyString& subStr, int pos) const {
+int OOldMyString::find(const OOldMyString& subStr, int pos) const {
     return rabinKarp(subStr.charArray, pos, subStr.size);
 }
 
-MyString MyString::substr(int pos, int len) const {
-    MyString result = MyString();
+OOldMyString OOldMyString::substr(int pos, int len) const {
+    OOldMyString result = OOldMyString();
     pos = pos < 0 ? 0 : pos;
 
     if (pos >= size){
@@ -103,37 +103,37 @@ MyString MyString::substr(int pos, int len) const {
     return result;
 }
 
-int MyString::getCapacity() const {
+int OOldMyString::getCapacity() const {
     return capacity;
 }
 
-void MyString::append(char appendChr) {
+void OOldMyString::append(char appendChr) {
     if (size < capacity) {
         charArray[size] = appendChr;
         charArray[++size] = '\0';
     }
 }
 
-void MyString::append(const char appendStr[]) {
+void OOldMyString::append(const char appendStr[]) {
     for (int index = 0; appendStr[index] != '\0' && size < capacity; ++index) {
         charArray[size++] = appendStr[index];
     }
     charArray[size] = '\0';
 }
 
-void MyString::clear() {
+void OOldMyString::clear() {
     size = 0;
     charArray[0] = '\0';
 }
 
-void MyString::setString(const char str2nd[]) {
+void OOldMyString::setString(const char str2nd[]) {
     for (size = 0; str2nd[size] != '\0' && size < capacity; ++size) {
         charArray[size] = str2nd[size];
     }
     charArray[size] = '\0';
 }
 
-int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
+int OOldMyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
     pos = pos < 0 ? 0 : pos;
     if (subStrLength == 0 || subStrLength + pos > size) {
         return -1;
@@ -163,7 +163,7 @@ int MyString::rabinKarp(const char subStr[], int pos, int subStrLength) const {
 
 }
 
-bool MyString::isSame(const char str1st[], const char str2nd[], int start, int end) {
+bool OOldMyString::isSame(const char str1st[], const char str2nd[], int start, int end) {
     for (int index = start; index <= end; ++index) {
         if (str1st[index] != str2nd[index - start]) {
             return false;
@@ -172,18 +172,18 @@ bool MyString::isSame(const char str1st[], const char str2nd[], int start, int e
     return true;
 }
 
-ostream& operator<<(ostream& os, const MyString& str){
+ostream& operator<<(ostream& os, const OOldMyString& str){
     for (int index = 0; index < str.length(); ++index) {
         os << str.at(index);
     }
     return os;
 }
 
-istream& operator>>(istream& is, MyString& str) {
+istream& operator>>(istream& is, OOldMyString& str) {
     str.clear();
     char input;
     is.get(input);
-    
+
     while (!is.fail() && isspace(input)) {
         is.get(input);
     }
@@ -196,7 +196,7 @@ istream& operator>>(istream& is, MyString& str) {
     return is;
 }
 
-istream& getline(istream& is, MyString& str, char delim) {
+istream& getline(istream& is, OOldMyString& str, char delim) {
     str.clear();
     char input;
     while (is.get(input) && input != delim && input != EOF) {

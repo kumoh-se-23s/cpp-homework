@@ -170,8 +170,8 @@ int LookUpTable<K, V>::binarySearch(int left, int right, const K& key) const {
 }
 
 template<typename K, typename V>
-MyString LookUpTable<K, V>::toString() const {
-    MyString result = MyString();
+OOldMyString LookUpTable<K, V>::toString() const {
+    OOldMyString result = OOldMyString();
     for (int index = 0; index < size; ++index) {
         result += entryArray[index].toString();
     }

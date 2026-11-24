@@ -1,22 +1,22 @@
-#include "App.h"
+#include "OldApp.h"
 #include <iostream>
 #include <fstream>
 
 using namespace std;
 
-App::App() : controller(), fileIO(nullptr) {}
+OldApp::OldApp() : controller(), fileIO(nullptr) {}
 
-App::App(int argc, char* argv[]) : fileIO(argc > 1 ? argv[1] : nullptr) {
+OldApp::OldApp(int argc, char* argv[]) : fileIO(argc > 1 ? argv[1] : nullptr) {
     if (!loadFromFile()) {
         fileIO.closeRead();
     }
 }
 
-void App::start() {
+void OldApp::start() {
 
     int result = 1;
     while (result != 0) {
-        MyString command;
+        OOldMyString command;
         if (!getline(cin, command)) {
             break;
         }
@@ -28,7 +28,7 @@ void App::start() {
     saveToFile();
 }
 
-int App::run(MyString command) {
+int OldApp::run(OOldMyString command) {
     if (command.length() != 1) {
         return -1;
     }
@@ -51,14 +51,14 @@ int App::run(MyString command) {
     }
 }
 
-bool App::loadFromFile() {
+bool OldApp::loadFromFile() {
     if (!fileIO.openRead()) {
-        controller = StudentController();
+        controller = OldStudentController();
         return false;
     }
 
     ifstream &in = fileIO.getIn();
-    MyString skip;
+    OOldMyString skip;
 
     int minYear = 0, maxYear = 0, studentCount = 0, groupCount = 0;
 
@@ -81,11 +81,11 @@ bool App::loadFromFile() {
     }
     getline(in, skip);
 
-    controller = StudentController(minYear, maxYear, studentCount, groupCount);
+    controller = OldStudentController(minYear, maxYear, studentCount, groupCount);
 
     int studentId;
-    MyString studentGroup;
-    MyString studentName;
+    OOldMyString studentGroup;
+    OOldMyString studentName;
 
     while (!in.eof()) {
         if (in >> studentId >> studentGroup) {
@@ -104,7 +104,7 @@ bool App::loadFromFile() {
     return true;
 }
 
-bool App::saveToFile() {
+bool OldApp::saveToFile() {
     if (!fileIO.openWrite()) {
         return false;
     }
@@ -115,20 +115,20 @@ bool App::saveToFile() {
 }
 
 
-int App::insert() {
+int OldApp::insert() {
     int studentId;
 
     if (!(cin >> studentId)) {
         if (!cin.eof()) {
             cin.clear();
-            MyString skip;
+            OOldMyString skip;
             getline(cin, skip);
         }
         return -1;
     }
 
-    MyString studentGroup;
-    MyString studentName;
+    OOldMyString studentGroup;
+    OOldMyString studentName;
 
     cin >> studentGroup;
     getline(cin, studentName);
@@ -137,19 +137,19 @@ int App::insert() {
     return 1;
 }
 
-int App::remove() {
+int OldApp::remove() {
     int studentId;
 
     if (!(cin >> studentId)) {
         if (!cin.eof()) {
             cin.clear();
-            MyString skip;
+            OOldMyString skip;
             getline(cin, skip);
         }
         return -1;
     }
 
-    MyString clear;
+    OOldMyString clear;
     getline(cin, clear);
     controller.deleteStudent(studentId);
 

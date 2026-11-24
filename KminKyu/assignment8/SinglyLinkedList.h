@@ -60,5 +60,6 @@ std::ostream& operator<<(std::ostream& out, const SinglyLinkedList<T>& singlyLin
 
 template <typename T>
 std::ofstream& operator<<(std::ofstream& out, const SinglyLinkedList<T>& singlyLinkedList);
+
 #include "SinglyLinkedList.tpp"
 #endif // SINGLYLINKEDLIST_H

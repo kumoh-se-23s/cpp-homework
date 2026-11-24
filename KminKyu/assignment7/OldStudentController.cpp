@@ -1,27 +1,27 @@
 #include <iostream>
 
-#include "StudentController.h"
+#include "OldStudentController.h"
 
 
-StudentController::StudentController() {
+OldStudentController::OldStudentController() {
     studentGroupList = Group();
     studentIdList = Id();
 
     this->studentCount = 0;
 }
 
-StudentController::StudentController(int minYear, int maxYear, int studentCount, int groupCount) {
+OldStudentController::OldStudentController(int minYear, int maxYear, int studentCount, int groupCount) {
     studentGroupList = Group(groupCount);
     studentIdList = Id(std::min(studentCount, (maxYear - minYear + 1)));
 
     this->studentCount = 0;
 }
 
-StudentController::~StudentController() {
+OldStudentController::~OldStudentController() {
     clearNoGroupNode();
 }
 
-StudentController::StudentController(StudentController &&other) noexcept {
+OldStudentController::OldStudentController(OldStudentController &&other) noexcept {
     this->studentIdList = std::move(other.studentIdList);
     this->studentGroupList = std::move(other.studentGroupList);
     this->studentCount = other.studentCount;
@@ -29,7 +29,7 @@ StudentController::StudentController(StudentController &&other) noexcept {
     other.studentCount = 0;
 }
 
-StudentController & StudentController::operator=(StudentController &&other) noexcept {
+OldStudentController & OldStudentController::operator=(OldStudentController &&other) noexcept {
     if (this != &other) {
         clearNoGroupNode();
         this->studentIdList = std::move(other.studentIdList);
@@ -41,7 +41,7 @@ StudentController & StudentController::operator=(StudentController &&other) noex
     return *this;
 }
 
-void StudentController::insertStudent(int studentId, const MyString &studentGroup, const MyString &studentName) {
+void OldStudentController::insertStudent(int studentId, const OOldMyString &studentGroup, const OOldMyString &studentName) {
     int idKey = getYear(studentId);
     Student newStudent = Student(studentId, studentGroup, studentName);
     IdLinkedList *idLinkedList = studentIdList.getValue(idKey);
@@ -80,7 +80,7 @@ void StudentController::insertStudent(int studentId, const MyString &studentGrou
 
     //존재하지않는 id인 경우 / 존재하는 경우
     if (idLinkedList == nullptr) {
-        IdLinkedList *linkedList = new SinglyLinkedList(new SingleNode(nestedDoubleNode));
+        IdLinkedList *linkedList = new OldSinglyLinkedList(new OldSingleNode(nestedDoubleNode));
         studentIdList.insert(idKey, linkedList);
     } else {
         idLinkedList->add(nestedDoubleNode);
@@ -89,7 +89,7 @@ void StudentController::insertStudent(int studentId, const MyString &studentGrou
 
 }
 
-void StudentController::deleteStudent(int studentId) {
+void OldStudentController::deleteStudent(int studentId) {
     int idKey = getYear(studentId);
     IdLinkedList *singleLinkedList = studentIdList.getValue(idKey);
 
@@ -131,50 +131,50 @@ void StudentController::deleteStudent(int studentId) {
 
 }
 
-MyString StudentController::toString() const {
-    MyString result = MyString();
+OOldMyString OldStudentController::toString() const {
+    OOldMyString result = OOldMyString();
     int lastIndex = studentIdList.getSize();
     if (lastIndex == 0) {
         result += "0 0";
     } else {
-        result += MyString::integerToString(studentIdList.at(0)->getKey());
+        result += OOldMyString::integerToString(studentIdList.at(0)->getKey());
         result += " ";
-        result += MyString::integerToString(studentIdList.at(lastIndex - 1)->getKey());
+        result += OOldMyString::integerToString(studentIdList.at(lastIndex - 1)->getKey());
     }
     result += "\n";
 
-    result += MyString::integerToString(studentCount);
+    result += OOldMyString::integerToString(studentCount);
     result += " ";
-    result += MyString::integerToString(studentGroupList.getSize());
+    result += OOldMyString::integerToString(studentGroupList.getSize());
     result += "\n";
     result += studentIdList.toString();
     return result;
 }
 
-void StudentController::print(std::ostream &out) const {
+void OldStudentController::print(std::ostream &out) const {
     int lastIndex = studentIdList.getSize();
     out << "[Year:";
     if (lastIndex == 0) {
         out << "0~0";
     } else {
-        out << MyString::integerToString(studentIdList.at(0)->getKey());
+        out << OOldMyString::integerToString(studentIdList.at(0)->getKey());
         out << "~";
-        out << MyString::integerToString(studentIdList.at(lastIndex - 1)->getKey());
+        out << OOldMyString::integerToString(studentIdList.at(lastIndex - 1)->getKey());
     }
     out << "] [Student Count:";
-    out << MyString::integerToString(studentCount);
+    out << OOldMyString::integerToString(studentCount);
     out << "] [Group Count: ";
-    out << MyString::integerToString(studentGroupList.getSize());
+    out << OOldMyString::integerToString(studentGroupList.getSize());
     out << "]\n";
     out << studentIdList;
 }
 
-int StudentController::getYear(int studentId) {
+int OldStudentController::getYear(int studentId) {
     return studentId / 10000;
 }
 
 //그룹이 없는 학생들은 종료 시 삭제가 되지 않음 -> 별도로 저장하여 삭제 or 소멸자에서 찾아서 삭제
-void StudentController::clearNoGroupNode() {
+void OldStudentController::clearNoGroupNode() {
     for (int index = 0; index < studentIdList.getSize(); ++index) {
         const IdLinkedList *list = studentIdList.at(index)->getValue();
         //리스트가 차있는 경우만 반복
@@ -214,7 +214,7 @@ std::ostream &operator<<(std::ostream &out, const NestedDoubleNode<Student> &nes
     out << ")\n";
     return out;
 }
-std::ostream &operator<<(std::ostream &out, const StudentController &controller) {
+std::ostream &operator<<(std::ostream &out, const OldStudentController &controller) {
     controller.print(out);
     return out;
 }

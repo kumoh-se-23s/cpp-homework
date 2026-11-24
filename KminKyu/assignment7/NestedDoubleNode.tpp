@@ -37,9 +37,9 @@ bool NestedDoubleNode<T>::operator<=(const NestedDoubleNode &otherNode) const {
     return this->node->getItem() <= otherNode.node->getItem();
 }
 template<typename T>
-MyString NestedDoubleNode<T>::toString() const {
+OOldMyString NestedDoubleNode<T>::toString() const {
     if (node == nullptr) {
-        return MyString("");
+        return OOldMyString("");
     }
     return node->toString();
 }

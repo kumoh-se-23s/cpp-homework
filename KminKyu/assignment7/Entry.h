@@ -5,7 +5,7 @@
 #include <utility>
 
 #include "Concept.h"
-#include "MyString.h"
+#include "OOldMyString.h"
 
 template <typename K, typename V>
 class Entry {
@@ -26,7 +26,7 @@ public:
 
     Entry &operator=(Entry &&other) noexcept;
 
-    MyString toString() const requires HasToString<V>;
+    OOldMyString toString() const requires HasToString<V>;
 
     const K& getKey() const;
 

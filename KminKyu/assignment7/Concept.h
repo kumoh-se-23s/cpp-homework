@@ -4,11 +4,11 @@
 
 #include <concepts>
 
-#include "MyString.h"
+#include "OOldMyString.h"
 
 template <typename T>
 concept HasToString = requires(const T &t) {
-    { t.toString() } -> std::convertible_to<MyString>;
+    { t.toString() } -> std::convertible_to<OOldMyString>;
 };
 
 #endif

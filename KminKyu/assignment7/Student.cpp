@@ -2,7 +2,7 @@
 #include <utility>
 
 #include "Student.h"
-#include "MyString.h"
+#include "OOldMyString.h"
 
 Student::Student(Student &&otherStudent) noexcept {
     this->studentGroup = std::move(otherStudent.studentGroup);
@@ -35,11 +35,11 @@ int Student::getStudentId() const {
     return studentId;
 }
 
-const MyString & Student::getStudentGroup() const {
+const OOldMyString & Student::getStudentGroup() const {
     return studentGroup;
 }
 
-const MyString & Student::getStudentName() const {
+const OOldMyString & Student::getStudentName() const {
     return studentName;
 }
 
@@ -71,9 +71,9 @@ bool Student::operator>=(const Student &otherStudent) const {
     return studentId >= otherStudent.studentId;
 }
 
-MyString Student::toString() const {
-    MyString result;
-    result += MyString::integerToString(studentId);
+OOldMyString Student::toString() const {
+    OOldMyString result;
+    result += OOldMyString::integerToString(studentId);
 
     result += " ";
 

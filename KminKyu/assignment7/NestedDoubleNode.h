@@ -25,7 +25,7 @@ public:
 
     bool operator>=(const NestedDoubleNode &otherNode) const;
 
-    MyString toString() const;
+    OOldMyString toString() const;
 
 };
 

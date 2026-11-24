@@ -29,7 +29,7 @@
 namespace {
     const std::size_t MAX_LEN = 15;
 
-    std::string to_std_string(const MyString &sequence) {
+    std::string to_std_string(const OOldMyString &sequence) {
         std::ostringstream stream;
         stream << sequence;
         return stream.str();
@@ -44,7 +44,7 @@ namespace {
     }
 
     // MyString 과 std::string 의 내용/길이/비어있음 여부가 모두 같은지 확인
-    void expect_same(const MyString &actual, const std::string &expected) {
+    void expect_same(const OOldMyString &actual, const std::string &expected) {
         EXPECT_EQ(expected, to_std_string(actual));
         EXPECT_EQ(static_cast<int>(expected.size()), actual.length());
         EXPECT_EQ(expected.empty(), actual.empty());
@@ -83,11 +83,11 @@ namespace {
     // MyString 과 std::string 으로 같은 위치에서 find 했을 때 결과가 같은지 확인 (세 오버로드 모두)
     void expect_find_same(const char *text, const char *pattern, const int start) {
         const int expected = expected_find(limit(text), pattern, start);
-        const MyString string(text);
+        const OOldMyString string(text);
 
-        EXPECT_EQ(expected, string.find(MyString(pattern), start))
+        EXPECT_EQ(expected, string.find(OOldMyString(pattern), start))
             << "[MyString] text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
-        EXPECT_EQ(expected, string.find(MyString(pattern), start))
+        EXPECT_EQ(expected, string.find(OOldMyString(pattern), start))
             << "[CharSequence] text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
         EXPECT_EQ(expected, string.find(pattern, start))
             << "[char array] text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
@@ -95,8 +95,8 @@ namespace {
 
     // ==, != 결과가 std::string 과 같은지 확인
     void expect_compare_same(const char *left, const char *right) {
-        const MyString a(left);
-        const MyString b(right);
+        const OOldMyString a(left);
+        const OOldMyString b(right);
         const std::string sa = limit(left);
         const std::string sb = limit(right);
 
@@ -137,7 +137,7 @@ namespace {
             }
 
             // operator>> : 읽은 값과 스트림 상태/위치가 std 쪽과 같은지 확인
-            std::string word(MyString &target) {
+            std::string word(OOldMyString &target) {
                 mine >> target;
                 const std::string expected = read_word(ref);
                 if (!ref.fail()) {
@@ -148,12 +148,12 @@ namespace {
             }
 
             std::string word() {
-                MyString target;
+                OOldMyString target;
                 return word(target);
             }
 
             // getline : 읽은 값과 스트림 상태/위치가 std 쪽과 같은지 확인
-            std::string line(MyString &target, const char delim = '\n') {
+            std::string line(OOldMyString &target, const char delim = '\n') {
                 ::getline(mine, target, delim);
                 const std::string expected = read_line(ref, delim);
                 if (!ref.fail()) {
@@ -164,7 +164,7 @@ namespace {
             }
 
             std::string line(const char delim = '\n') {
-                MyString target;
+                OOldMyString target;
                 return line(target, delim);
             }
 
@@ -193,7 +193,7 @@ namespace {
     // 스트림 상태를 확인하지 않고 지정한 횟수만큼 읽는다.
     std::vector<std::string> collect_words_of_mystring(const std::string &text, const std::size_t count) {
         std::istringstream stream(text);
-        MyString word;
+        OOldMyString word;
         std::vector<std::string> words;
         for (std::size_t index = 0; index < count; ++index) {
             stream >> word;
@@ -214,7 +214,7 @@ namespace {
 
     std::vector<std::string> collect_lines_of_mystring(const std::string &text, const std::size_t count) {
         std::istringstream stream(text);
-        MyString line;
+        OOldMyString line;
         std::vector<std::string> lines;
         for (std::size_t index = 0; index < count; ++index) {
             ::getline(stream, line);
@@ -239,7 +239,7 @@ namespace {
 // =====================================================================
 
 TEST(MyStringConstructor, DefaultCreatesEmptyString) {
-    const MyString string;
+    const OOldMyString string;
     const std::string expected;
 
     expect_same(string, expected);
@@ -248,26 +248,26 @@ TEST(MyStringConstructor, DefaultCreatesEmptyString) {
 TEST(MyStringConstructor, FromCharArray) {
     const char *text = "hello";
 
-    expect_same(MyString(text), limit(text));
+    expect_same(OOldMyString(text), limit(text));
 }
 
 TEST(MyStringConstructor, FromLongCharArrayIsTruncated) {
     const char *text = "1234567890123456789";
 
-    expect_same(MyString(text), limit(text));
+    expect_same(OOldMyString(text), limit(text));
 }
 
 TEST(MyStringConstructor, FromCharSequence) {
-    const MyString sequence("sequence");
-    const MyString string(sequence);
+    const OOldMyString sequence("sequence");
+    const OOldMyString string(sequence);
 
     expect_same(string, to_std_string(sequence));
     EXPECT_TRUE(string == sequence);
 }
 
 TEST(MyStringConstructor, CopyCopiesContent) {
-    const MyString original("copy");
-    const MyString copied(original);
+    const OOldMyString original("copy");
+    const OOldMyString copied(original);
     const std::string ref_original = "copy";
     const std::string ref_copied(ref_original);
 
@@ -280,7 +280,7 @@ TEST(MyStringConstructor, CopyCopiesContent) {
 // =====================================================================
 
 TEST(MyStringInherited, AtMatchesStdString) {
-    const MyString string("abc");
+    const OOldMyString string("abc");
     const std::string ref = "abc";
 
     for (std::size_t index = 0; index < ref.size(); ++index) {
@@ -290,8 +290,8 @@ TEST(MyStringInherited, AtMatchesStdString) {
 
 
 TEST(MyStringInherited, CanBeUsedThroughCharSequenceReference) {
-    const MyString string("base");
-    const MyString &reference = string;
+    const OOldMyString string("base");
+    const OOldMyString &reference = string;
     const std::string ref = "base";
 
     EXPECT_EQ(static_cast<int>(ref.size()), reference.length());
@@ -300,10 +300,10 @@ TEST(MyStringInherited, CanBeUsedThroughCharSequenceReference) {
 }
 
 TEST(MyStringInherited, PlusResultCanBeStoredAsCharSequence) {
-    const MyString string("1234567890");
+    const OOldMyString string("1234567890");
     const std::string ref = limit(std::string("1234567890") + "abcdefghij");
 
-    const MyString result = string + "abcdefghij";
+    const OOldMyString result = string + "abcdefghij";
 
     EXPECT_EQ(ref, to_std_string(result));
 }
@@ -327,15 +327,15 @@ TEST(MyStringEquality, DifferentLength) {
 }
 
 TEST(MyStringEquality, Self) {
-    const MyString a("self");
+    const OOldMyString a("self");
     const std::string ref = "self";
 
     EXPECT_EQ(ref == ref, a == a);
 }
 
 TEST(MyStringEquality, TwoEmptyStrings) {
-    const MyString a;
-    const MyString b;
+    const OOldMyString a;
+    const OOldMyString b;
     const std::string ra;
     const std::string rb;
 
@@ -347,8 +347,8 @@ TEST(MyStringEquality, TwoEmptyStrings) {
 // =====================================================================
 
 TEST(MyStringAssignment, CopiesContent) {
-    MyString a("source");
-    MyString b("target");
+    OOldMyString a("source");
+    OOldMyString b("target");
     std::string ra = "source";
     std::string rb = "target";
 
@@ -360,8 +360,8 @@ TEST(MyStringAssignment, CopiesContent) {
 }
 
 TEST(MyStringAssignment, FromEmptyMakesTargetEmpty) {
-    MyString empty;
-    MyString target("something");
+    OOldMyString empty;
+    OOldMyString target("something");
     std::string ref_empty;
     std::string ref_target = "something";
 
@@ -372,8 +372,8 @@ TEST(MyStringAssignment, FromEmptyMakesTargetEmpty) {
 }
 
 TEST(MyStringAssignment, ToSelfKeepsContent) {
-    MyString a("self");
-    MyString &reference = a;
+    OOldMyString a("self");
+    OOldMyString &reference = a;
     std::string ra = "self";
     std::string &ref_reference = ra;
 
@@ -384,9 +384,9 @@ TEST(MyStringAssignment, ToSelfKeepsContent) {
 }
 
 TEST(MyStringAssignment, ReturnsReferenceForChaining) {
-    MyString a("chain");
-    MyString b;
-    MyString c;
+    OOldMyString a("chain");
+    OOldMyString b;
+    OOldMyString c;
     std::string ra = "chain";
     std::string rb;
     std::string rc;
@@ -405,32 +405,32 @@ TEST(MyStringAssignment, ReturnsReferenceForChaining) {
 // =====================================================================
 
 TEST(MyStringPlus, WithMyString) {
-    const MyString a("abc");
-    const MyString b("def");
+    const OOldMyString a("abc");
+    const OOldMyString b("def");
 
     expect_same(a + b, limit(std::string("abc") + std::string("def")));
 }
 
 TEST(MyStringPlus, WithCharSequence) {
-    const MyString a("abc");
-    const MyString b("def");
+    const OOldMyString a("abc");
+    const OOldMyString b("def");
 
     expect_same(a + b, limit(std::string("abc") + to_std_string(b)));
 }
 
 TEST(MyStringPlus, WithCharArray) {
-    const MyString a("abc");
+    const OOldMyString a("abc");
 
     expect_same(a + "def", limit(std::string("abc") + "def"));
 }
 
 TEST(MyStringPlus, DoesNotModifyOperands) {
-    const MyString a("abc");
-    const MyString b("def");
+    const OOldMyString a("abc");
+    const OOldMyString b("def");
     const std::string ra = "abc";
     const std::string rb = "def";
 
-    const MyString result = a + b;
+    const OOldMyString result = a + b;
     const std::string ref_result = ra + rb;
     (void) result;
     (void) ref_result;
@@ -440,8 +440,8 @@ TEST(MyStringPlus, DoesNotModifyOperands) {
 }
 
 TEST(MyStringPlus, WithEmpty) {
-    const MyString a("abc");
-    const MyString empty;
+    const OOldMyString a("abc");
+    const OOldMyString empty;
     const std::string ra = "abc";
     const std::string re;
 
@@ -450,41 +450,41 @@ TEST(MyStringPlus, WithEmpty) {
 }
 
 TEST(MyStringPlus, TruncatesAtMaxLength) {
-    const MyString a("1234567890");
-    const MyString b("abcdefghij");
+    const OOldMyString a("1234567890");
+    const OOldMyString b("abcdefghij");
 
     expect_same(a + b, limit(std::string("1234567890") + "abcdefghij"));
 }
 
 TEST(MyStringPlus, CharArrayTruncatesAtMaxLength) {
-    const MyString a("1234567890");
+    const OOldMyString a("1234567890");
 
     expect_same(a + "abcdefghij", limit(std::string("1234567890") + "abcdefghij"));
 }
 
 TEST(MyStringPlus, CanBeChained) {
-    const MyString a("a");
-    const MyString b("b");
+    const OOldMyString a("a");
+    const OOldMyString b("b");
 
     expect_same(a + b + "c", limit(std::string("a") + "b" + "c"));
 }
 
 TEST(MyStringPlus, ExactlyMaxLengthIsNotTruncated) {
-    const MyString a("12345678");
-    const MyString b("1234567");
+    const OOldMyString a("12345678");
+    const OOldMyString b("1234567");
 
     expect_same(a + b, limit(std::string("12345678") + "1234567"));
 }
 
 TEST(MyStringPlus, OneOverMaxLengthIsTruncated) {
-    const MyString a("12345678");
-    const MyString b("12345678");
+    const OOldMyString a("12345678");
+    const OOldMyString b("12345678");
 
     expect_same(a + b, limit(std::string("12345678") + "12345678"));
 }
 
 TEST(MyStringPlus, SelfConcatenation) {
-    const MyString a("ab");
+    const OOldMyString a("ab");
     const std::string ra = "ab";
 
     expect_same(a + a, ra + ra);
@@ -492,15 +492,15 @@ TEST(MyStringPlus, SelfConcatenation) {
 }
 
 TEST(MyStringPlus, EmptyCharArray) {
-    const MyString a("abc");
+    const OOldMyString a("abc");
 
     expect_same(a + "", std::string("abc") + "");
 }
 
 TEST(MyStringPlus, AssignedResultMatchesDirectResult) {
-    const MyString a("abc");
-    const MyString b("def");
-    MyString assigned;
+    const OOldMyString a("abc");
+    const OOldMyString b("def");
+    OOldMyString assigned;
     std::string ref_assigned;
 
     assigned = a + b;
@@ -515,12 +515,12 @@ TEST(MyStringPlus, MatchesStdStringForManyCombinations) {
 
     for (const char *left: samples) {
         for (const char *right: samples) {
-            const MyString a(left);
-            const MyString b(right);
+            const OOldMyString a(left);
+            const OOldMyString b(right);
             const std::string expected = limit(std::string(left) + right);
 
             expect_same(a + b, expected);
-            expect_same(a + MyString(right), expected);
+            expect_same(a + OOldMyString(right), expected);
             expect_same(a + right, expected);
         }
     }
@@ -551,7 +551,7 @@ TEST(MyStringInputOperator, TruncatesLongInput) {
 
 TEST(MyStringInputOperator, OverwritesExistingContent) {
     StreamPair in("new");
-    MyString string("previous");
+    OOldMyString string("previous");
 
     in.word(string);
 }
@@ -559,8 +559,8 @@ TEST(MyStringInputOperator, OverwritesExistingContent) {
 TEST(MyStringInputOperator, ReturnsStreamForChaining) {
     std::istringstream input("a b");
     std::istringstream ref("a b");
-    MyString first;
-    MyString second;
+    OOldMyString first;
+    OOldMyString second;
 
     std::istream &returned = (input >> first);
     returned >> second;
@@ -634,29 +634,29 @@ TEST(MyStringInputOperator, MatchesStdStringForVariousInputs) {
 TEST(MyStringBoundary, ExactlyMaxLengthIsKept) {
     const char *text = "123456789012345";
 
-    expect_same(MyString(text), limit(text));
-    EXPECT_EQ(static_cast<int>(MAX_LEN), MyString(text).length());
+    expect_same(OOldMyString(text), limit(text));
+    EXPECT_EQ(static_cast<int>(MAX_LEN), OOldMyString(text).length());
 }
 
 TEST(MyStringBoundary, OneOverMaxLengthIsTruncated) {
     const char *text = "1234567890123456";
 
-    expect_same(MyString(text), limit(text));
+    expect_same(OOldMyString(text), limit(text));
 }
 
 TEST(MyStringBoundary, EmptyCharArrayCreatesEmptyString) {
-    expect_same(MyString(""), std::string(""));
+    expect_same(OOldMyString(""), std::string(""));
 }
 
 TEST(MyStringBoundary, SingleCharacter) {
-    expect_same(MyString("a"), std::string("a"));
+    expect_same(OOldMyString("a"), std::string("a"));
 }
 
 TEST(MyStringBoundary, LengthIsContentLengthNotCapacity) {
     // 과제 조건: 전체 용량이 아니라 문자열 자체의 길이를 반환
     const std::string ref = "abc";
 
-    EXPECT_EQ(static_cast<int>(ref.size()), MyString("abc").length());
+    EXPECT_EQ(static_cast<int>(ref.size()), OOldMyString("abc").length());
 }
 
 TEST(MyStringBoundary, EveryLengthFromZeroToTwentyMatches) {
@@ -664,7 +664,7 @@ TEST(MyStringBoundary, EveryLengthFromZeroToTwentyMatches) {
 
     for (int length = 0; length <= 20; ++length) {
         SCOPED_TRACE("length: " + std::to_string(length));
-        expect_same(MyString(text.c_str()), limit(text));
+        expect_same(OOldMyString(text.c_str()), limit(text));
         text += static_cast<char>('a' + length);
     }
 }
@@ -720,7 +720,7 @@ TEST(MyStringOutputOperator, PrintsSameAsStdString) {
         std::ostringstream mine;
         std::ostringstream ref;
 
-        mine << MyString(text);
+        mine << OOldMyString(text);
         ref << limit(text);
 
         EXPECT_EQ(ref.str(), mine.str()) << "text: \"" << text << "\"";
@@ -731,15 +731,15 @@ TEST(MyStringOutputOperator, DoesNotAppendNewline) {
     std::ostringstream mine;
     std::ostringstream ref;
 
-    mine << MyString("abc");
+    mine << OOldMyString("abc");
     ref << std::string("abc");
 
     EXPECT_EQ(ref.str().find('\n'), mine.str().find('\n'));
 }
 
 TEST(MyStringOutputOperator, CanBeChainedWithOtherOutput) {
-    const MyString a("abc");
-    const MyString b("def");
+    const OOldMyString a("abc");
+    const OOldMyString b("def");
     const std::string ra = "abc";
     const std::string rb = "def";
     std::ostringstream mine;
@@ -752,7 +752,7 @@ TEST(MyStringOutputOperator, CanBeChainedWithOtherOutput) {
 }
 
 TEST(MyStringOutputOperator, PrintsConcatenatedResult) {
-    const MyString a("abc");
+    const OOldMyString a("abc");
     std::ostringstream mine;
     std::ostringstream ref;
 
@@ -766,7 +766,7 @@ TEST(MyStringOutputOperator, PrintsTruncatedContent) {
     std::ostringstream mine;
     std::ostringstream ref;
 
-    mine << MyString("1234567890123456789");
+    mine << OOldMyString("1234567890123456789");
     ref << limit("1234567890123456789");
 
     EXPECT_EQ(ref.str(), mine.str());
@@ -775,7 +775,7 @@ TEST(MyStringOutputOperator, PrintsTruncatedContent) {
 TEST(MyStringOutputOperator, ReturnsStreamForChaining) {
     std::ostringstream stream;
 
-    std::ostream &returned = (stream << MyString("a"));
+    std::ostream &returned = (stream << OOldMyString("a"));
 
     EXPECT_EQ(&stream, &returned);
 }
@@ -792,7 +792,7 @@ TEST(MyStringGetLine, ReadsWholeLineIncludingSpaces) {
 
 TEST(MyStringGetLine, DoesNotIncludeDelimiter) {
     StreamPair in("abc\n");
-    MyString string;
+    OOldMyString string;
 
     in.line(string);
 
@@ -856,7 +856,7 @@ TEST(MyStringGetLine, DiscardsCharactersBeyondLimit) {
 
 TEST(MyStringGetLine, OverwritesExistingContent) {
     StreamPair in("new\n");
-    MyString string("previous");
+    OOldMyString string("previous");
 
     in.line(string);
 }
@@ -864,8 +864,8 @@ TEST(MyStringGetLine, OverwritesExistingContent) {
 TEST(MyStringGetLine, ReturnsStreamForChaining) {
     std::istringstream input("a\nb\n");
     std::istringstream ref("a\nb\n");
-    MyString first;
-    MyString second;
+    OOldMyString first;
+    OOldMyString second;
 
     std::istream &returned = ::getline(input, first);
     ::getline(returned, second);
@@ -895,92 +895,92 @@ TEST(MyStringGetLine, MatchesStdStringForVariousInputs) {
 // =====================================================================
 
 TEST(MyStringSubstr, FromStart) {
-    const MyString string("hello world");
+    const OOldMyString string("hello world");
 
     expect_same(string.substr(0, 5), std_substr("hello world", 0, 5));
 }
 
 TEST(MyStringSubstr, FromMiddle) {
-    const MyString string("hello world");
+    const OOldMyString string("hello world");
 
     expect_same(string.substr(6, 5), std_substr("hello world", 6, 5));
 }
 
 TEST(MyStringSubstr, SingleCharacter) {
-    const MyString string("abc");
+    const OOldMyString string("abc");
 
     expect_same(string.substr(1, 1), std_substr("abc", 1, 1));
 }
 
 TEST(MyStringSubstr, WholeString) {
-    const MyString string("abcde");
+    const OOldMyString string("abcde");
 
     expect_same(string.substr(0, 5), std_substr("abcde", 0, 5));
 }
 
 TEST(MyStringSubstr, LastCharacter) {
-    const MyString string("abcde");
+    const OOldMyString string("abcde");
 
     expect_same(string.substr(4, 1), std_substr("abcde", 4, 1));
 }
 
 TEST(MyStringSubstr, ZeroLength) {
-    const MyString string("hello");
+    const OOldMyString string("hello");
 
     expect_same(string.substr(2, 0), std_substr("hello", 2, 0));
 }
 
 // len 이 남은 길이보다 길면 끝까지만 반환 (std::string::substr 과 동일)
 TEST(MyStringSubstr, LengthBeyondEndStopsAtEnd) {
-    const MyString string("hello world");
+    const OOldMyString string("hello world");
 
     expect_same(string.substr(6, 100), std_substr("hello world", 6, 100));
 }
 
 TEST(MyStringSubstr, LengthOneBeyondEndStopsAtEnd) {
-    const MyString string("abc");
+    const OOldMyString string("abc");
 
     expect_same(string.substr(1, 3), std_substr("abc", 1, 3));
 }
 
 // 음수 pos 는 0 으로 취급
 TEST(MyStringSubstr, NegativePositionIsTreatedAsZero) {
-    const MyString string("hello");
+    const OOldMyString string("hello");
 
     expect_same(string.substr(-3, 2), std_substr("hello", -3, 2));
 }
 
 TEST(MyStringSubstr, VeryNegativePositionIsTreatedAsZero) {
-    const MyString string("hello");
+    const OOldMyString string("hello");
 
     expect_same(string.substr(-100, 5), std_substr("hello", -100, 5));
 }
 
 // 문자열 범위 밖이면 빈 문자열
 TEST(MyStringSubstr, PositionBeyondEndGivesEmpty) {
-    const MyString string("hello");
+    const OOldMyString string("hello");
 
     expect_same(string.substr(10, 2), std_substr("hello", 10, 2));
 }
 
 TEST(MyStringSubstr, PositionAtEndGivesEmpty) {
     // std::string::substr(size(), n) 도 빈 문자열을 반환
-    const MyString string("hello");
+    const OOldMyString string("hello");
 
     expect_same(string.substr(5, 3), std::string("hello").substr(5, 3));
 }
 
 TEST(MyStringSubstr, EmptySourceGivesEmpty) {
-    const MyString empty;
+    const OOldMyString empty;
 
     expect_same(empty.substr(0, 3), std::string().substr(0, 3));
 }
 
 TEST(MyStringSubstr, DoesNotModifyOriginal) {
-    const MyString string("hello");
+    const OOldMyString string("hello");
     const std::string ref = "hello";
 
-    const MyString result = string.substr(1, 3);
+    const OOldMyString result = string.substr(1, 3);
     const std::string ref_result = ref.substr(1, 3);
     (void) result;
     (void) ref_result;
@@ -990,7 +990,7 @@ TEST(MyStringSubstr, DoesNotModifyOriginal) {
 
 
 TEST(MyStringSubstr, FromMaxLengthString) {
-    const MyString string("123456789012345");
+    const OOldMyString string("123456789012345");
 
     expect_same(string.substr(10, 5), std_substr("123456789012345", 10, 5));
     expect_same(string.substr(14, 1), std_substr("123456789012345", 14, 1));
@@ -1000,7 +1000,7 @@ TEST(MyStringSubstr, MatchesStdStringForManyRanges) {
     const char *texts[] = {"", "a", "hello world", "123456789012345"};
 
     for (const char *text: texts) {
-        const MyString string(text);
+        const OOldMyString string(text);
         const std::string ref = text;
 
         for (int pos = -3; pos <= static_cast<int>(ref.size()) + 3; ++pos) {
@@ -1013,7 +1013,7 @@ TEST(MyStringSubstr, MatchesStdStringForManyRanges) {
 }
 
 TEST(MyStringSubstr, CanBeConcatenated) {
-    const MyString string("hello world");
+    const OOldMyString string("hello world");
     const std::string ref = "hello world";
 
     expect_same(string.substr(0, 5) + string.substr(5, 6), ref.substr(0, 5) + ref.substr(5, 6));
@@ -1157,18 +1157,18 @@ TEST(MyStringFind, PatternAtEveryPosition) {
 }
 
 TEST(MyStringFind, DoesNotModifyString) {
-    const MyString string("hello");
+    const OOldMyString string("hello");
     const std::string ref = "hello";
 
-    string.find(MyString("ll"), 0);
+    string.find(OOldMyString("ll"), 0);
     (void) ref.find("ll", 0);
 
     expect_same(string, ref);
 }
 
 TEST(MyStringFind, DoesNotModifyPattern) {
-    const MyString string("hello");
-    const MyString pattern("ll");
+    const OOldMyString string("hello");
+    const OOldMyString pattern("ll");
     const std::string ref_pattern = "ll";
 
     string.find(pattern, 0);
@@ -1177,63 +1177,63 @@ TEST(MyStringFind, DoesNotModifyPattern) {
 }
 
 TEST(MyStringFind, StringCanBeUsedAsItsOwnPattern) {
-    const MyString string("hello");
+    const OOldMyString string("hello");
     const std::string ref = "hello";
 
     EXPECT_EQ(static_cast<int>(ref.find(ref, 0)), string.find(string, 0));
 }
 
 TEST(MyStringFind, OnConcatenatedResult) {
-    const MyString a("hello ");
-    const MyString b("world");
+    const OOldMyString a("hello ");
+    const OOldMyString b("world");
     const std::string joined = std::string("hello ") + "world";
 
-    const MyString result = a + b;
+    const OOldMyString result = a + b;
 
-    EXPECT_EQ(expected_find(joined, "world", 0), result.find(MyString("world"), 0));
-    EXPECT_EQ(expected_find(joined, "o w", 0), result.find(MyString("o w"), 0));
+    EXPECT_EQ(expected_find(joined, "world", 0), result.find(OOldMyString("world"), 0));
+    EXPECT_EQ(expected_find(joined, "o w", 0), result.find(OOldMyString("o w"), 0));
 }
 
 TEST(MyStringFind, OnSubstrResult) {
-    const MyString string("hello world");
+    const OOldMyString string("hello world");
     const std::string ref = std_substr("hello world", 6, 5);
 
-    const MyString part = string.substr(6, 5);
+    const OOldMyString part = string.substr(6, 5);
 
-    EXPECT_EQ(expected_find(ref, "rl", 0), part.find(MyString("rl"), 0));
-    EXPECT_EQ(expected_find(ref, "hello", 0), part.find(MyString("hello"), 0));
+    EXPECT_EQ(expected_find(ref, "rl", 0), part.find(OOldMyString("rl"), 0));
+    EXPECT_EQ(expected_find(ref, "hello", 0), part.find(OOldMyString("hello"), 0));
 }
 
 TEST(MyStringFind, OnAssignedString) {
-    const MyString source("find me");
-    MyString target("other");
+    const OOldMyString source("find me");
+    OOldMyString target("other");
     std::string ref = "other";
 
     target = source;
     ref = "find me";
 
-    EXPECT_EQ(expected_find(ref, "me", 0), target.find(MyString("me"), 0));
+    EXPECT_EQ(expected_find(ref, "me", 0), target.find(OOldMyString("me"), 0));
 }
 
 TEST(MyStringFind, OnInputString) {
     StreamPair in("needle haystack");
-    MyString first;
-    MyString second;
+    OOldMyString first;
+    OOldMyString second;
 
     const std::string ref_first = in.word(first);
     const std::string ref_second = in.word(second);
 
-    EXPECT_EQ(expected_find(ref_second, "st", 0), second.find(MyString("st"), 0));
-    EXPECT_EQ(expected_find(ref_first, "st", 0), first.find(MyString("st"), 0));
+    EXPECT_EQ(expected_find(ref_second, "st", 0), second.find(OOldMyString("st"), 0));
+    EXPECT_EQ(expected_find(ref_first, "st", 0), first.find(OOldMyString("st"), 0));
 }
 
 TEST(MyStringFind, OnGetLineString) {
     StreamPair in("find in line\n");
-    MyString line;
+    OOldMyString line;
 
     const std::string ref_line = in.line(line);
 
-    EXPECT_EQ(expected_find(ref_line, "in", 0), line.find(MyString("in"), 0));
+    EXPECT_EQ(expected_find(ref_line, "in", 0), line.find(OOldMyString("in"), 0));
 }
 
 TEST(MyStringFind, MatchesStdStringForManyInputs) {
@@ -1254,24 +1254,24 @@ TEST(MyStringFind, MatchesStdStringForManyInputs) {
 // =====================================================================
 
 TEST(MyStringInheritedFind, CharArrayOverloadThroughBaseReference) {
-    const MyString string("hello world");
-    const MyString &base = string;
+    const OOldMyString string("hello world");
+    const OOldMyString &base = string;
 
     EXPECT_EQ(expected_find("hello world", "ll", 0), base.find("ll", 0));
     EXPECT_EQ(expected_find("hello world", "xyz", 0), base.find("xyz", 0));
 }
 
 TEST(MyStringInheritedFind, CharSequenceOverloadThroughBaseReference) {
-    const MyString string("hello world");
-    const MyString &base = string;
+    const OOldMyString string("hello world");
+    const OOldMyString &base = string;
 
-    EXPECT_EQ(expected_find("hello world", "world", 0), base.find(MyString("world"), 0));
-    EXPECT_EQ(expected_find("hello world", "xyz", 0), base.find(MyString("xyz"), 0));
+    EXPECT_EQ(expected_find("hello world", "world", 0), base.find(OOldMyString("world"), 0));
+    EXPECT_EQ(expected_find("hello world", "xyz", 0), base.find(OOldMyString("xyz"), 0));
 }
 
 TEST(MyStringInheritedFind, StartRulesThroughBaseReference) {
-    const MyString string("abcabc");
-    const MyString &base = string;
+    const OOldMyString string("abcabc");
+    const OOldMyString &base = string;
 
     EXPECT_EQ(expected_find("abcabc", "abc", -5), base.find("abc", -5));
     EXPECT_EQ(expected_find("abcabc", "abc", 1), base.find("abc", 1));
@@ -1283,11 +1283,11 @@ TEST(MyStringInheritedFind, BaseAndDerivedFindAgree) {
     const char *patterns[] = {"a", "abc", "ll", "o w", "345", "zzz"};
 
     for (const char *text: texts) {
-        const MyString string(text);
-        const MyString &base = string;
+        const OOldMyString string(text);
+        const OOldMyString &base = string;
         for (const char *pattern: patterns) {
             for (int start = -2; start <= 17; ++start) {
-                EXPECT_EQ(base.find(MyString(pattern), start), string.find(MyString(pattern), start))
+                EXPECT_EQ(base.find(OOldMyString(pattern), start), string.find(OOldMyString(pattern), start))
                     << "text: \"" << text << "\", pattern: \"" << pattern << "\", start: " << start;
             }
         }
@@ -1467,8 +1467,8 @@ TEST(MyStringStreamMixTest, GetlineThenIntegerExtraction) {
 TEST(MyStringStreamMixTest, MyStringAndStdStringCanShareStream) {
     std::istringstream input("mine yours\nrest of line\n");
     std::istringstream ref("mine yours\nrest of line\n");
-    MyString mine;
-    MyString line;
+    OOldMyString mine;
+    OOldMyString line;
     std::string yours;
     std::string ref_yours;
 
@@ -1490,8 +1490,8 @@ TEST(MyStringStreamMixTest, MyStringAndStdStringCanShareStream) {
 TEST(MyStringStreamMixTest, GetlineCanTakeResultOfExtraction) {
     std::istringstream input("word tail\n");
     std::istringstream ref("word tail\n");
-    MyString word;
-    MyString tail;
+    OOldMyString word;
+    OOldMyString tail;
     std::string ref_word;
 
     ::getline(input >> word, tail);
@@ -1505,8 +1505,8 @@ TEST(MyStringStreamMixTest, GetlineCanTakeResultOfExtraction) {
 TEST(MyStringStreamMixTest, ExtractionCanTakeResultOfGetline) {
     std::istringstream input("line one\nword\n");
     std::istringstream ref("line one\nword\n");
-    MyString line;
-    MyString word;
+    OOldMyString line;
+    OOldMyString word;
 
     ::getline(input, line) >> word;
     const std::string ref_line = read_line(ref);
@@ -1518,8 +1518,8 @@ TEST(MyStringStreamMixTest, ExtractionCanTakeResultOfGetline) {
 
 TEST(MyStringStreamMixTest, BothReturnTheSameStream) {
     std::istringstream input("a b\nc\n");
-    MyString a;
-    MyString b;
+    OOldMyString a;
+    OOldMyString b;
 
     std::istream &after_extraction = (input >> a);
     std::istream &after_getline = ::getline(input, b);
@@ -1532,7 +1532,7 @@ TEST(MyStringStreamMixTest, BothReturnTheSameStream) {
 
 TEST(MyStringStreamMixTest, SameVariableIsOverwrittenByEachRead) {
     StreamPair in("first\nsecond line\nthird\n");
-    MyString value;
+    OOldMyString value;
 
     in.word(value);
     in.word(value);
@@ -1542,7 +1542,7 @@ TEST(MyStringStreamMixTest, SameVariableIsOverwrittenByEachRead) {
 
 TEST(MyStringStreamMixTest, ReadsEmptyLineThenWordIntoPreviouslyFilledString) {
     StreamPair in("\nword\n");
-    MyString value("previous");
+    OOldMyString value("previous");
 
     in.line(value);
     in.word(value);
@@ -1578,8 +1578,8 @@ TEST(MyStringStreamMixTest, FirstWordThenRestOfEachLine) {
 
 TEST(MyStringStreamMixTest, ReadValuesCanBeConcatenated) {
     StreamPair in("hello\nworld\n");
-    MyString first;
-    MyString second;
+    OOldMyString first;
+    OOldMyString second;
 
     const std::string ref_first = in.word(first);
     in.get();
@@ -1590,8 +1590,8 @@ TEST(MyStringStreamMixTest, ReadValuesCanBeConcatenated) {
 
 TEST(MyStringStreamMixTest, ReadValuesCanBeCompared) {
     StreamPair in("same\nsame\n");
-    MyString from_extraction;
-    MyString from_getline;
+    OOldMyString from_extraction;
+    OOldMyString from_getline;
 
     const std::string ref_extraction = in.word(from_extraction);
     in.get();
@@ -1602,8 +1602,8 @@ TEST(MyStringStreamMixTest, ReadValuesCanBeCompared) {
 
 TEST(MyStringStreamMixTest, ReadValuesCanBePrinted) {
     StreamPair in("alpha beta gamma\n");
-    MyString word;
-    MyString rest;
+    OOldMyString word;
+    OOldMyString rest;
     std::ostringstream mine;
     std::ostringstream ref;
 
@@ -1617,8 +1617,8 @@ TEST(MyStringStreamMixTest, ReadValuesCanBePrinted) {
 
 TEST(MyStringStreamMixTest, ReadValuesCanBeSubstringed) {
     StreamPair in("key: value\n");
-    MyString key;
-    MyString rest;
+    OOldMyString key;
+    OOldMyString rest;
 
     in.word(key);
     const std::string ref_rest = in.line(rest);
@@ -1628,7 +1628,7 @@ TEST(MyStringStreamMixTest, ReadValuesCanBeSubstringed) {
 
 TEST(MyStringStreamMixTest, LHMsTest) {
     StreamPair in("  123 456\n789\n");
-    MyString str1, str2, str3, str4;
+    OOldMyString str1, str2, str3, str4;
 
     in.word(str1);
     in.word(str2);
@@ -1641,14 +1641,14 @@ TEST(MyStringStreamMixTest, LHMsTest) {
 
 TEST(MyStringInputEofTest, LastWordWithoutTrailingWhitespaceSucceeds) {
     std::istringstream in("abc");              // 끝에 공백/개행 없음
-    MyString a;
+    OOldMyString a;
     ASSERT_TRUE(static_cast<bool>(in >> a));   // 원래 코드: 여기서 실패
     expect_same(a, "abc");
 }
 
 TEST(MyStringInputEofTest, WhileLoopReadsEveryWord) {
     std::istringstream in("one two three");    // 마지막 단어 뒤 개행 없음
-    MyString w;
+    OOldMyString w;
     int count = 0;
     while (in >> w) ++count;
     EXPECT_EQ(count, 3);                       // 원래 코드: 2
@@ -1656,7 +1656,7 @@ TEST(MyStringInputEofTest, WhileLoopReadsEveryWord) {
 
 TEST(MyStringInputEofTest, TrailingNewlineDoesNotAddExtraRead) {
     std::istringstream in("one two\n");
-    MyString w;
+    OOldMyString w;
     int count = 0;
     while (in >> w) ++count;
     EXPECT_EQ(count, 2);
@@ -1664,7 +1664,7 @@ TEST(MyStringInputEofTest, TrailingNewlineDoesNotAddExtraRead) {
 
 TEST(MyStringInputEofTest, ReadAfterLastWordFails) {
     std::istringstream in("abc");
-    MyString a, b;
+    OOldMyString a, b;
     in >> a;
     EXPECT_FALSE(static_cast<bool>(in >> b));
     expect_same(b, "");                          // 실패해도 clear된 상태
@@ -1672,21 +1672,21 @@ TEST(MyStringInputEofTest, ReadAfterLastWordFails) {
 
 TEST(MyStringInputEofTest, EmptyStreamFails) {
     std::istringstream in("");
-    MyString a("old");
+    OOldMyString a("old");
     EXPECT_FALSE(static_cast<bool>(in >> a));
     expect_same(a, "");
 }
 
 TEST(MyStringInputEofTest, WhitespaceOnlyFails) {
     std::istringstream in("   \n\t  ");
-    MyString a;
+    OOldMyString a;
     EXPECT_FALSE(static_cast<bool>(in >> a));
 }
 
 TEST(MyStringInputEofTest, AlreadyFailedStreamStaysFailed) {
     std::istringstream in("abc");
     in.setstate(std::ios::failbit);
-    MyString a;
+    OOldMyString a;
     in >> a;
     EXPECT_TRUE(in.fail());
     // 원래 코드는 초기화 안 된 char를 putback함 (UB) -> sanitizer/valgrind에서만 잡힘
@@ -1694,7 +1694,7 @@ TEST(MyStringInputEofTest, AlreadyFailedStreamStaysFailed) {
 
 TEST(MyStringInputEofTest, NonAsciiBytesDoNotBreakIsspace) {
     std::istringstream in("안녕 world");        // UTF-8 바이트는 signed char에서 음수
-    MyString a, b;
+    OOldMyString a, b;
     in >> a >> b;                              // MSVC 디버그: isspace assertion
     expect_same(a, "안녕");
     expect_same(b, "world");
@@ -1704,14 +1704,14 @@ TEST(MyStringInputEofTest, NonAsciiBytesDoNotBreakIsspace) {
 
 TEST(MyStringGetlineEofTest, LastLineWithoutDelimiterSucceeds) {
     std::istringstream in("last line");
-    MyString s;
+    OOldMyString s;
     ASSERT_TRUE(static_cast<bool>(getline(in, s)));   // 원래 코드: 여기서 실패
     expect_same(s, "last line");
 }
 
 TEST(MyStringGetlineEofTest, WhileLoopReadsEveryLine) {
     std::istringstream in("line1\nline2");     // 마지막 줄 개행 없음
-    MyString s;
+    OOldMyString s;
     int count = 0;
     while (getline(in, s)) ++count;
     EXPECT_EQ(count, 2);                       // 원래 코드: 1
@@ -1719,7 +1719,7 @@ TEST(MyStringGetlineEofTest, WhileLoopReadsEveryLine) {
 
 TEST(MyStringGetlineEofTest, TrailingNewlineDoesNotAddExtraLine) {
     std::istringstream in("a\nb\n");
-    MyString s;
+    OOldMyString s;
     int count = 0;
     while (getline(in, s)) ++count;
     EXPECT_EQ(count, 2);                       // 3이 되면 안 됨
@@ -1727,14 +1727,14 @@ TEST(MyStringGetlineEofTest, TrailingNewlineDoesNotAddExtraLine) {
 
 TEST(MyStringGetlineEofTest, EmptyStreamFails) {
     std::istringstream in("");
-    MyString s("old");
+    OOldMyString s("old");
     EXPECT_FALSE(static_cast<bool>(getline(in, s)));
     expect_same(s, "");
 }
 
 TEST(MyStringGetlineEofTest, LoneDelimiterIsOneEmptyLine) {
     std::istringstream in("\n");
-    MyString s("old");
+    OOldMyString s("old");
     ASSERT_TRUE(static_cast<bool>(getline(in, s)));
     expect_same(s, "");
     EXPECT_FALSE(static_cast<bool>(getline(in, s)));
@@ -1742,7 +1742,7 @@ TEST(MyStringGetlineEofTest, LoneDelimiterIsOneEmptyLine) {
 
 TEST(MyStringGetlineEofTest, CustomDelimiterLastTokenWithoutDelimiter) {
     std::istringstream in("abc,def");
-    MyString s;
+    OOldMyString s;
     int count = 0;
     while (getline(in, s, ',')) ++count;
     EXPECT_EQ(count, 2);                       // 원래 코드: 1

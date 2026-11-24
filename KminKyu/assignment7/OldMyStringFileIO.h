@@ -1,21 +1,21 @@
 #pragma once
 
 #include <fstream>
-#include "MyString.h"
+#include "OOldMyString.h"
 
 using namespace std;
 
-class MyStringFileIO {
+class OldMyStringFileIO {
     const char *filePath = nullptr;
     ifstream in;
     ofstream out;
 
 public:
-    MyStringFileIO();
+    OldMyStringFileIO();
 
-    MyStringFileIO(const char *path);
+    OldMyStringFileIO(const char *path);
 
-    ~MyStringFileIO();
+    ~OldMyStringFileIO();
 
     bool openRead();
 
@@ -29,9 +29,9 @@ public:
 
     ofstream& getOut();
 
-    bool readLine(MyString &line);
+    bool readLine(OOldMyString &line);
 
-    void writeLine(const MyString &line);
+    void writeLine(const OOldMyString &line);
 
     bool isPath() const;
 };

@@ -8,8 +8,8 @@
 #include <utility>
 #include <vector>
 
-#include "MyString.h"
-#include "SinglyLinkedList.h"
+#include "OOldMyString.h"
+#include "OldSinglyLinkedList.h"
 #include "Student.h"
 
 // =====================================================================
@@ -30,10 +30,10 @@
 
 namespace {
     template<typename T>
-    std::vector<T> to_vector(SinglyLinkedList<T> &list) {
+    std::vector<T> to_vector(OldSinglyLinkedList<T> &list) {
         std::vector<T> result;
         int guard = 0;
-        for (SingleNode<T> *now = list.getHead(); now != nullptr; now = now->getNext()) {
+        for (OldSingleNode<T> *now = list.getHead(); now != nullptr; now = now->getNext()) {
             result.push_back(now->getItem());
             if (++guard > 100000) {
                 ADD_FAILURE() << "리스트가 끝나지 않는다 (순환?)";
@@ -44,14 +44,14 @@ namespace {
     }
 
     template<typename T>
-    void expect_list(SinglyLinkedList<T> &list, const std::vector<T> &expected) {
+    void expect_list(OldSinglyLinkedList<T> &list, const std::vector<T> &expected) {
         EXPECT_EQ(expected, to_vector(list));
         EXPECT_EQ(static_cast<int>(expected.size()), list.getSize());
         EXPECT_EQ(expected.empty(), list.getHead() == nullptr);
     }
 
-    SinglyLinkedList<int> make_list(const std::vector<int> &items) {
-        SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> make_list(const std::vector<int> &items) {
+        OldSinglyLinkedList<int> list;
         for (const int item: items) {
             list.add(item);
         }
@@ -59,14 +59,14 @@ namespace {
     }
 
     // 어떤 리스트에도 속하지 않은 정상 선형 단일 연결 체인을 생성한다.
-    SingleNode<int> *make_linear_chain(const std::vector<int> &items) {
+    OldSingleNode<int> *make_linear_chain(const std::vector<int> &items) {
         if (items.empty()) {
             return nullptr;
         }
-        auto *first = new SingleNode<int>(items.front());
-        SingleNode<int> *prev = first;
+        auto *first = new OldSingleNode<int>(items.front());
+        OldSingleNode<int> *prev = first;
         for (std::size_t i = 1; i < items.size(); ++i) {
-            auto *node = new SingleNode<int>(items[i]);
+            auto *node = new OldSingleNode<int>(items[i]);
             prev->setNext(node);
             prev = node;
         }
@@ -79,10 +79,10 @@ namespace {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListContract, NonCopyableButMovable) {
-    static_assert(!std::is_copy_constructible_v<SinglyLinkedList<int> >);
-    static_assert(!std::is_copy_assignable_v<SinglyLinkedList<int> >);
-    static_assert(std::is_move_constructible_v<SinglyLinkedList<int> >);
-    static_assert(std::is_move_assignable_v<SinglyLinkedList<int> >);
+    static_assert(!std::is_copy_constructible_v<OldSinglyLinkedList<int> >);
+    static_assert(!std::is_copy_assignable_v<OldSinglyLinkedList<int> >);
+    static_assert(std::is_move_constructible_v<OldSinglyLinkedList<int> >);
+    static_assert(std::is_move_assignable_v<OldSinglyLinkedList<int> >);
     SUCCEED();
 }
 
@@ -91,13 +91,13 @@ TEST(SinglyLinkedListContract, NonCopyableButMovable) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListEmpty, DefaultConstructed) {
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     EXPECT_EQ(0, list.getSize());
     EXPECT_EQ(nullptr, list.getHead());
 }
 
 TEST(SinglyLinkedListEmpty, FindRemoveClearOnEmptyListAreSafe) {
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     EXPECT_EQ(nullptr, list.find(1));
     EXPECT_FALSE(list.remove(1));
     list.clear();
@@ -109,21 +109,21 @@ TEST(SinglyLinkedListEmpty, FindRemoveClearOnEmptyListAreSafe) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListHeadConstructor, NullHeadCreatesEmptyList) {
-    SinglyLinkedList<int> list(static_cast<SingleNode<int> *>(nullptr));
+    OldSinglyLinkedList<int> list(static_cast<OldSingleNode<int> *>(nullptr));
     expect_list(list, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListHeadConstructor, SingleNode) {
-    SingleNode<int> *node = make_linear_chain({42});
-    SinglyLinkedList<int> list(node);
+    OldSingleNode<int> *node = make_linear_chain({42});
+    OldSinglyLinkedList<int> list(node);
     EXPECT_EQ(node, list.getHead());
     EXPECT_EQ(nullptr, list.getHead()->getNext());
     expect_list(list, std::vector<int>{42});
 }
 
 TEST(SinglyLinkedListHeadConstructor, LinearChainPreservesNodesAndSize) {
-    SingleNode<int> *chain = make_linear_chain({1, 2, 3});
-    SinglyLinkedList<int> list(chain);
+    OldSingleNode<int> *chain = make_linear_chain({1, 2, 3});
+    OldSinglyLinkedList<int> list(chain);
     EXPECT_EQ(chain, list.getHead());
     expect_list(list, std::vector<int>{1, 2, 3});
 }
@@ -133,8 +133,8 @@ TEST(SinglyLinkedListHeadConstructor, LinearChainPreservesNodesAndSize) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListAdd, SingleItem) {
-    SinglyLinkedList<int> list;
-    const SingleNode<int> *node = list.add(5);
+    OldSinglyLinkedList<int> list;
+    const OldSingleNode<int> *node = list.add(5);
     ASSERT_NE(nullptr, node);
     EXPECT_EQ(node, list.getHead());
     EXPECT_EQ(nullptr, node->getNext());
@@ -142,7 +142,7 @@ TEST(SinglyLinkedListAdd, SingleItem) {
 }
 
 TEST(SinglyLinkedListAdd, SizeIncreasesWithEveryAdd) {
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     for (int count = 1; count <= 10; ++count) {
         list.add(count * 3 % 7);
         EXPECT_EQ(count, list.getSize());
@@ -150,10 +150,10 @@ TEST(SinglyLinkedListAdd, SizeIncreasesWithEveryAdd) {
 }
 
 TEST(SinglyLinkedListAdd, ReturnsInsertedNode) {
-    SinglyLinkedList<int> list;
-    const SingleNode<int> *first = list.add(5);
-    const SingleNode<int> *second = list.add(3);
-    const SingleNode<int> *third = list.add(9);
+    OldSinglyLinkedList<int> list;
+    const OldSingleNode<int> *first = list.add(5);
+    const OldSingleNode<int> *second = list.add(3);
+    const OldSingleNode<int> *third = list.add(9);
     ASSERT_NE(nullptr, first);
     ASSERT_NE(nullptr, second);
     ASSERT_NE(nullptr, third);
@@ -164,18 +164,18 @@ TEST(SinglyLinkedListAdd, ReturnsInsertedNode) {
 }
 
 TEST(SinglyLinkedListAdd, KeepsAscendingOrderForAnyInsertOrder) {
-    SinglyLinkedList<int> ascending = make_list({1, 2, 3, 4, 5});
+    OldSinglyLinkedList<int> ascending = make_list({1, 2, 3, 4, 5});
     expect_list(ascending, std::vector<int>{1, 2, 3, 4, 5});
 
-    SinglyLinkedList<int> descending = make_list({5, 4, 3, 2, 1});
+    OldSinglyLinkedList<int> descending = make_list({5, 4, 3, 2, 1});
     expect_list(descending, std::vector<int>{1, 2, 3, 4, 5});
 
-    SinglyLinkedList<int> mixed = make_list({3, 1, 4, 1, 5, 9, 2, 6});
+    OldSinglyLinkedList<int> mixed = make_list({3, 1, 4, 1, 5, 9, 2, 6});
     expect_list(mixed, std::vector<int>{1, 1, 2, 3, 4, 5, 6, 9});
 }
 
 TEST(SinglyLinkedListAdd, InsertAtFrontMiddleAndEnd) {
-    SinglyLinkedList<int> list = make_list({10, 20, 30});
+    OldSinglyLinkedList<int> list = make_list({10, 20, 30});
     list.add(5);
     expect_list(list, std::vector<int>{5, 10, 20, 30});
     list.add(25);
@@ -185,7 +185,7 @@ TEST(SinglyLinkedListAdd, InsertAtFrontMiddleAndEnd) {
 }
 
 TEST(SinglyLinkedListAdd, DuplicatesAreKept) {
-    SinglyLinkedList<int> list = make_list({2, 2, 2});
+    OldSinglyLinkedList<int> list = make_list({2, 2, 2});
     expect_list(list, std::vector<int>{2, 2, 2});
     list.add(1);
     list.add(3);
@@ -193,10 +193,10 @@ TEST(SinglyLinkedListAdd, DuplicatesAreKept) {
 }
 
 TEST(SinglyLinkedListAdd, DuplicateIsInsertedAfterExistingEqualNodes) {
-    SinglyLinkedList<int> list;
-    const SingleNode<int> *first = list.add(2);
-    const SingleNode<int> *second = list.add(2);
-    const SingleNode<int> *third = list.add(2);
+    OldSinglyLinkedList<int> list;
+    const OldSingleNode<int> *first = list.add(2);
+    const OldSingleNode<int> *second = list.add(2);
+    const OldSingleNode<int> *third = list.add(2);
 
     EXPECT_EQ(first, list.getHead());
     EXPECT_EQ(second, first->getNext());
@@ -206,10 +206,10 @@ TEST(SinglyLinkedListAdd, DuplicateIsInsertedAfterExistingEqualNodes) {
 }
 
 TEST(SinglyLinkedListAdd, DuplicateAtHeadKeepsOriginalHead) {
-    SinglyLinkedList<int> list;
-    const SingleNode<int> *first = list.add(10);
+    OldSinglyLinkedList<int> list;
+    const OldSingleNode<int> *first = list.add(10);
     list.add(20);
-    const SingleNode<int> *second = list.add(10);
+    const OldSingleNode<int> *second = list.add(10);
 
     EXPECT_EQ(first, list.getHead());
     EXPECT_EQ(second, first->getNext());
@@ -217,10 +217,10 @@ TEST(SinglyLinkedListAdd, DuplicateAtHeadKeepsOriginalHead) {
 }
 
 TEST(SinglyLinkedListAdd, DuplicateAtTailAppendsToEnd) {
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     list.add(10);
-    const SingleNode<int> *first = list.add(20);
-    const SingleNode<int> *second = list.add(20);
+    const OldSingleNode<int> *first = list.add(20);
+    const OldSingleNode<int> *second = list.add(20);
 
     EXPECT_EQ(first, list.getHead()->getNext());
     EXPECT_EQ(second, first->getNext());
@@ -229,12 +229,12 @@ TEST(SinglyLinkedListAdd, DuplicateAtTailAppendsToEnd) {
 }
 
 TEST(SinglyLinkedListAdd, NegativeValues) {
-    SinglyLinkedList<int> list = make_list({0, -5, 5, -10});
+    OldSinglyLinkedList<int> list = make_list({0, -5, 5, -10});
     expect_list(list, std::vector<int>{-10, -5, 0, 5});
 }
 
 TEST(SinglyLinkedListAdd, ManyItems) {
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     std::vector<int> expected;
     for (int value = 999; value >= 0; --value) {
         list.add(value);
@@ -250,14 +250,14 @@ TEST(SinglyLinkedListAdd, ManyItems) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListAddNode, NullNodeReturnsNullptrAndChangesNothing) {
-    SinglyLinkedList<int> list = make_list({1, 2});
-    EXPECT_EQ(nullptr, list.add(static_cast<SingleNode<int> *>(nullptr)));
+    OldSinglyLinkedList<int> list = make_list({1, 2});
+    EXPECT_EQ(nullptr, list.add(static_cast<OldSingleNode<int> *>(nullptr)));
     expect_list(list, std::vector<int>{1, 2});
 }
 
 TEST(SinglyLinkedListAddNode, SingleNodeIntoEmptyList) {
-    SinglyLinkedList<int> list;
-    auto *node = new SingleNode<int>(10);
+    OldSinglyLinkedList<int> list;
+    auto *node = new OldSingleNode<int>(10);
     EXPECT_EQ(node, list.add(node));
     EXPECT_EQ(node, list.getHead());
     EXPECT_EQ(nullptr, node->getNext());
@@ -265,10 +265,10 @@ TEST(SinglyLinkedListAddNode, SingleNodeIntoEmptyList) {
 }
 
 TEST(SinglyLinkedListAddNode, SingleNodeInsertedAtHeadMiddleAndTail) {
-    SinglyLinkedList<int> list = make_list({10, 30});
-    auto *headNode = new SingleNode<int>(5);
-    auto *midNode = new SingleNode<int>(20);
-    auto *tailNode = new SingleNode<int>(40);
+    OldSinglyLinkedList<int> list = make_list({10, 30});
+    auto *headNode = new OldSingleNode<int>(5);
+    auto *midNode = new OldSingleNode<int>(20);
+    auto *tailNode = new OldSingleNode<int>(40);
 
     EXPECT_EQ(headNode, list.add(headNode));
     EXPECT_EQ(midNode, list.add(midNode));
@@ -277,24 +277,24 @@ TEST(SinglyLinkedListAddNode, SingleNodeInsertedAtHeadMiddleAndTail) {
 }
 
 TEST(SinglyLinkedListAddNode, UnsortedChainAddsAllNodesIntoEmptyList) {
-    SinglyLinkedList<int> list;
-    SingleNode<int> *chain = make_linear_chain({30, 10, 20});
+    OldSinglyLinkedList<int> list;
+    OldSingleNode<int> *chain = make_linear_chain({30, 10, 20});
 
     EXPECT_NE(nullptr, list.add(chain));
     expect_list(list, std::vector<int>{10, 20, 30});
 }
 
 TEST(SinglyLinkedListAddNode, UnsortedChainAddsAllNodesIntoNonEmptyListInOrder) {
-    SinglyLinkedList<int> list = make_list({10, 40});
-    SingleNode<int> *chain = make_linear_chain({30, 5, 20, 50});
+    OldSinglyLinkedList<int> list = make_list({10, 40});
+    OldSingleNode<int> *chain = make_linear_chain({30, 5, 20, 50});
 
     EXPECT_NE(nullptr, list.add(chain));
     expect_list(list, std::vector<int>{5, 10, 20, 30, 40, 50});
 }
 
 TEST(SinglyLinkedListAddNode, ChainWithDuplicatesPreservesAllNodes) {
-    SinglyLinkedList<int> list = make_list({10, 20});
-    SingleNode<int> *chain = make_linear_chain({20, 10, 20});
+    OldSinglyLinkedList<int> list = make_list({10, 20});
+    OldSingleNode<int> *chain = make_linear_chain({20, 10, 20});
 
     EXPECT_NE(nullptr, list.add(chain));
     expect_list(list, std::vector<int>{10, 10, 20, 20, 20});
@@ -305,53 +305,53 @@ TEST(SinglyLinkedListAddNode, ChainWithDuplicatesPreservesAllNodes) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListFind, SingleNode) {
-    SinglyLinkedList<int> list = make_list({7});
+    OldSinglyLinkedList<int> list = make_list({7});
     EXPECT_EQ(list.getHead(), list.find(7));
     EXPECT_EQ(nullptr, list.find(8));
 }
 
 TEST(SinglyLinkedListFind, FindsExistingItems) {
-    SinglyLinkedList<int> list = make_list({10, 20, 30, 40});
+    OldSinglyLinkedList<int> list = make_list({10, 20, 30, 40});
     for (const int value: {10, 20, 30, 40}) {
-        SingleNode<int> *node = list.find(value);
+        OldSingleNode<int> *node = list.find(value);
         ASSERT_NE(nullptr, node) << "value: " << value;
         EXPECT_EQ(value, node->getItem());
     }
 }
 
 TEST(SinglyLinkedListFind, ReturnsNodeInsideTheList) {
-    SinglyLinkedList<int> list = make_list({10, 20, 30});
+    OldSinglyLinkedList<int> list = make_list({10, 20, 30});
     EXPECT_EQ(list.getHead(), list.find(10));
     EXPECT_EQ(list.getHead()->getNext(), list.find(20));
     EXPECT_EQ(list.getHead()->getNext()->getNext(), list.find(30));
 }
 
 TEST(SinglyLinkedListFind, MissingItemsReturnNullptr) {
-    SinglyLinkedList<int> list = make_list({10, 20, 30});
+    OldSinglyLinkedList<int> list = make_list({10, 20, 30});
     EXPECT_EQ(nullptr, list.find(5)); // 맨 앞보다 작음
     EXPECT_EQ(nullptr, list.find(15)); // 사이
     EXPECT_EQ(nullptr, list.find(35)); // 맨 뒤보다 큼
 }
 
 TEST(SinglyLinkedListFind, FindDoesNotChangeList) {
-    SinglyLinkedList<int> list = make_list({10, 20, 30});
+    OldSinglyLinkedList<int> list = make_list({10, 20, 30});
     list.find(20);
     list.find(99);
     expect_list(list, std::vector<int>{10, 20, 30});
 }
 
 TEST(SinglyLinkedListFind, DuplicatesReturnFirstOne) {
-    SinglyLinkedList<int> list = make_list({1, 2, 2, 2, 3});
-    SingleNode<int> *node = list.find(2);
+    OldSinglyLinkedList<int> list = make_list({1, 2, 2, 2, 3});
+    OldSingleNode<int> *node = list.find(2);
     ASSERT_NE(nullptr, node);
     EXPECT_EQ(list.getHead()->getNext(), node);
 }
 
 TEST(SinglyLinkedListFind, DuplicatesAtHeadAndTailReturnFirstOne) {
-    SinglyLinkedList<int> list;
-    const SingleNode<int> *headFirst = list.add(1);
+    OldSinglyLinkedList<int> list;
+    const OldSingleNode<int> *headFirst = list.add(1);
     list.add(1);
-    const SingleNode<int> *tailFirst = list.add(3);
+    const OldSingleNode<int> *tailFirst = list.add(3);
     list.add(3);
 
     EXPECT_EQ(headFirst, list.find(1));
@@ -359,8 +359,8 @@ TEST(SinglyLinkedListFind, DuplicatesAtHeadAndTailReturnFirstOne) {
 }
 
 TEST(SinglyLinkedListFind, FindModifiedNodeIsVisibleInList) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
-    SingleNode<int> *node = list.find(2);
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSingleNode<int> *node = list.find(2);
     ASSERT_NE(nullptr, node);
     node->getItem() = 2; // 같은 값으로 갱신해도 리스트는 그대로여야 한다
     expect_list(list, std::vector<int>{1, 2, 3});
@@ -371,38 +371,38 @@ TEST(SinglyLinkedListFind, FindModifiedNodeIsVisibleInList) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListRemove, OnlyElement) {
-    SinglyLinkedList<int> list = make_list({7});
+    OldSinglyLinkedList<int> list = make_list({7});
     EXPECT_TRUE(list.remove(7));
     expect_list(list, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListRemove, OnlyElementNotMatching) {
-    SinglyLinkedList<int> list = make_list({7});
+    OldSinglyLinkedList<int> list = make_list({7});
     EXPECT_FALSE(list.remove(8));
     expect_list(list, std::vector<int>{7});
 }
 
 TEST(SinglyLinkedListRemove, Head) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     EXPECT_TRUE(list.remove(1));
     expect_list(list, std::vector<int>{2, 3});
     EXPECT_EQ(2, list.getHead()->getItem());
 }
 
 TEST(SinglyLinkedListRemove, Middle) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     EXPECT_TRUE(list.remove(2));
     expect_list(list, std::vector<int>{1, 3});
 }
 
 TEST(SinglyLinkedListRemove, Tail) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     EXPECT_TRUE(list.remove(3));
     expect_list(list, std::vector<int>{1, 2});
 }
 
 TEST(SinglyLinkedListRemove, TwoNodesRemoveHeadThenTail) {
-    SinglyLinkedList<int> list = make_list({1, 2});
+    OldSinglyLinkedList<int> list = make_list({1, 2});
     EXPECT_TRUE(list.remove(1));
     expect_list(list, std::vector<int>{2});
     EXPECT_EQ(nullptr, list.getHead()->getNext());
@@ -411,7 +411,7 @@ TEST(SinglyLinkedListRemove, TwoNodesRemoveHeadThenTail) {
 }
 
 TEST(SinglyLinkedListRemove, TwoNodesRemoveTailThenHead) {
-    SinglyLinkedList<int> list = make_list({1, 2});
+    OldSinglyLinkedList<int> list = make_list({1, 2});
     EXPECT_TRUE(list.remove(2));
     expect_list(list, std::vector<int>{1});
     EXPECT_EQ(nullptr, list.getHead()->getNext());
@@ -420,7 +420,7 @@ TEST(SinglyLinkedListRemove, TwoNodesRemoveTailThenHead) {
 }
 
 TEST(SinglyLinkedListRemove, MissingItemChangesNothing) {
-    SinglyLinkedList<int> list = make_list({10, 20, 30});
+    OldSinglyLinkedList<int> list = make_list({10, 20, 30});
     EXPECT_FALSE(list.remove(5));
     EXPECT_FALSE(list.remove(15));
     EXPECT_FALSE(list.remove(35));
@@ -428,7 +428,7 @@ TEST(SinglyLinkedListRemove, MissingItemChangesNothing) {
 }
 
 TEST(SinglyLinkedListRemove, DuplicateRemovesOnlyOne) {
-    SinglyLinkedList<int> list = make_list({1, 2, 2, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 2, 2, 3});
     EXPECT_TRUE(list.remove(2));
     expect_list(list, std::vector<int>{1, 2, 2, 3});
     EXPECT_TRUE(list.remove(2));
@@ -438,11 +438,11 @@ TEST(SinglyLinkedListRemove, DuplicateRemovesOnlyOne) {
 }
 
 TEST(SinglyLinkedListRemove, DuplicateRemovesFirstOne) {
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     list.add(1);
     list.add(2);
-    const SingleNode<int> *secondTwo = list.add(2);
-    const SingleNode<int> *thirdTwo = list.add(2);
+    const OldSingleNode<int> *secondTwo = list.add(2);
+    const OldSingleNode<int> *thirdTwo = list.add(2);
     list.add(3);
 
     EXPECT_TRUE(list.remove(2));
@@ -452,9 +452,9 @@ TEST(SinglyLinkedListRemove, DuplicateRemovesFirstOne) {
 }
 
 TEST(SinglyLinkedListRemove, DuplicateAtHeadMovesHeadToSecondDuplicate) {
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     list.add(1);
-    const SingleNode<int> *secondOne = list.add(1);
+    const OldSingleNode<int> *secondOne = list.add(1);
     list.add(2);
 
     EXPECT_TRUE(list.remove(1));
@@ -463,14 +463,14 @@ TEST(SinglyLinkedListRemove, DuplicateAtHeadMovesHeadToSecondDuplicate) {
 }
 
 TEST(SinglyLinkedListRemove, RemovingSameItemTwiceReturnsFalseSecondTime) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     EXPECT_TRUE(list.remove(2));
     EXPECT_FALSE(list.remove(2));
     expect_list(list, std::vector<int>{1, 3});
 }
 
 TEST(SinglyLinkedListRemove, RemoveEverythingOneByOne) {
-    SinglyLinkedList<int> list = make_list({4, 2, 5, 1, 3});
+    OldSinglyLinkedList<int> list = make_list({4, 2, 5, 1, 3});
     for (const int value: {3, 1, 5, 2, 4}) {
         EXPECT_TRUE(list.remove(value)) << "value: " << value;
     }
@@ -480,7 +480,7 @@ TEST(SinglyLinkedListRemove, RemoveEverythingOneByOne) {
 }
 
 TEST(SinglyLinkedListRemove, RemoveHeadRepeatedly) {
-    SinglyLinkedList<int> list = make_list({4, 2, 5, 1, 3});
+    OldSinglyLinkedList<int> list = make_list({4, 2, 5, 1, 3});
     for (const int value: {1, 2, 3, 4, 5}) {
         EXPECT_TRUE(list.remove(value)) << "value: " << value;
     }
@@ -488,7 +488,7 @@ TEST(SinglyLinkedListRemove, RemoveHeadRepeatedly) {
 }
 
 TEST(SinglyLinkedListRemove, RemoveTailRepeatedly) {
-    SinglyLinkedList<int> list = make_list({4, 2, 5, 1, 3});
+    OldSinglyLinkedList<int> list = make_list({4, 2, 5, 1, 3});
     for (const int value: {5, 4, 3, 2, 1}) {
         EXPECT_TRUE(list.remove(value)) << "value: " << value;
     }
@@ -496,7 +496,7 @@ TEST(SinglyLinkedListRemove, RemoveTailRepeatedly) {
 }
 
 TEST(SinglyLinkedListRemove, ListCanBeReusedAfterBecomingEmpty) {
-    SinglyLinkedList<int> list = make_list({1});
+    OldSinglyLinkedList<int> list = make_list({1});
     list.remove(1);
     list.add(9);
     list.add(3);
@@ -508,20 +508,20 @@ TEST(SinglyLinkedListRemove, ListCanBeReusedAfterBecomingEmpty) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListClear, EmptiesList) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     list.clear();
     expect_list(list, std::vector<int>{});
     EXPECT_EQ(nullptr, list.find(1));
 }
 
 TEST(SinglyLinkedListClear, SingleNode) {
-    SinglyLinkedList<int> list = make_list({1});
+    OldSinglyLinkedList<int> list = make_list({1});
     list.clear();
     expect_list(list, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListClear, ListCanBeReusedAfterClear) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     list.clear();
     list.add(5);
     list.add(4);
@@ -529,7 +529,7 @@ TEST(SinglyLinkedListClear, ListCanBeReusedAfterClear) {
 }
 
 TEST(SinglyLinkedListClear, ClearTwiceIsSafe) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     list.clear();
     list.clear();
     expect_list(list, std::vector<int>{});
@@ -537,13 +537,13 @@ TEST(SinglyLinkedListClear, ClearTwiceIsSafe) {
 
 TEST(SinglyLinkedListClear, DestructorAfterClearIsSafe) {
     // clear() 가 head 를 nullptr 로 만들지 않으면 소멸자에서 이중 해제가 일어난다 (ASan 으로 확인)
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
     list.clear();
 }
 
 TEST(SinglyLinkedListClear, DestructorOfNonEmptyListFreesAllNodes) {
     // 마지막 노드까지 누수 없이 해제하는지 (LSan 으로 확인)
-    SinglyLinkedList<int> list = make_list({1, 2, 3, 4, 5});
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3, 4, 5});
 }
 
 // ---------------------------------------------------------------------
@@ -551,53 +551,53 @@ TEST(SinglyLinkedListClear, DestructorOfNonEmptyListFreesAllNodes) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListMove, MoveConstructor) {
-    SinglyLinkedList<int> source = make_list({3, 1, 2});
-    SinglyLinkedList<int> target(std::move(source));
+    OldSinglyLinkedList<int> source = make_list({3, 1, 2});
+    OldSinglyLinkedList<int> target(std::move(source));
     expect_list(target, std::vector<int>{1, 2, 3});
     expect_list(source, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListMove, MoveConstructorFromEmptyList) {
-    SinglyLinkedList<int> source;
-    SinglyLinkedList<int> target(std::move(source));
+    OldSinglyLinkedList<int> source;
+    OldSinglyLinkedList<int> target(std::move(source));
     expect_list(target, std::vector<int>{});
     expect_list(source, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListMove, MoveAssignmentReplacesOldContent) {
-    SinglyLinkedList<int> source = make_list({3, 1, 2});
-    SinglyLinkedList<int> target = make_list({100, 200});
+    OldSinglyLinkedList<int> source = make_list({3, 1, 2});
+    OldSinglyLinkedList<int> target = make_list({100, 200});
     target = std::move(source);
     expect_list(target, std::vector<int>{1, 2, 3});
     expect_list(source, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListMove, MoveAssignmentFromEmptyClearsTarget) {
-    SinglyLinkedList<int> source;
-    SinglyLinkedList<int> target = make_list({1, 2});
+    OldSinglyLinkedList<int> source;
+    OldSinglyLinkedList<int> target = make_list({1, 2});
     target = std::move(source);
     expect_list(target, std::vector<int>{});
     expect_list(source, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListMove, MoveAssignmentIntoEmptyTarget) {
-    SinglyLinkedList<int> source = make_list({3, 1, 2});
-    SinglyLinkedList<int> target;
+    OldSinglyLinkedList<int> source = make_list({3, 1, 2});
+    OldSinglyLinkedList<int> target;
     target = std::move(source);
     expect_list(target, std::vector<int>{1, 2, 3});
     expect_list(source, std::vector<int>{});
 }
 
 TEST(SinglyLinkedListMove, SelfMoveAssignmentKeepsContent) {
-    SinglyLinkedList<int> list = make_list({1, 2, 3});
-    SinglyLinkedList<int> &alias = list;
+    OldSinglyLinkedList<int> list = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> &alias = list;
     list = std::move(alias);
     expect_list(list, std::vector<int>{1, 2, 3});
 }
 
 TEST(SinglyLinkedListMove, MovedFromListIsReusable) {
-    SinglyLinkedList<int> source = make_list({1, 2, 3});
-    SinglyLinkedList<int> target(std::move(source));
+    OldSinglyLinkedList<int> source = make_list({1, 2, 3});
+    OldSinglyLinkedList<int> target(std::move(source));
     source.add(7);
     expect_list(source, std::vector<int>{7});
     expect_list(target, std::vector<int>{1, 2, 3});
@@ -608,28 +608,28 @@ TEST(SinglyLinkedListMove, MovedFromListIsReusable) {
 // ---------------------------------------------------------------------
 
 TEST(SinglyLinkedListGeneric, MyStringItems) {
-    SinglyLinkedList<MyString> list;
-    list.add(MyString("banana"));
-    list.add(MyString("apple"));
-    list.add(MyString("cherry"));
-    list.add(MyString("apple"));
+    OldSinglyLinkedList<OOldMyString> list;
+    list.add(OOldMyString("banana"));
+    list.add(OOldMyString("apple"));
+    list.add(OOldMyString("cherry"));
+    list.add(OOldMyString("apple"));
 
     std::vector<std::string> actual;
-    for (SingleNode<MyString> *now = list.getHead(); now != nullptr; now = now->getNext()) {
+    for (OldSingleNode<OOldMyString> *now = list.getHead(); now != nullptr; now = now->getNext()) {
         std::ostringstream stream;
         stream << now->getItem();
         actual.push_back(stream.str());
     }
     EXPECT_EQ((std::vector<std::string>{"apple", "apple", "banana", "cherry"}), actual);
     EXPECT_EQ(4, list.getSize());
-    EXPECT_NE(nullptr, list.find(MyString("banana")));
-    EXPECT_EQ(nullptr, list.find(MyString("durian")));
-    EXPECT_TRUE(list.remove(MyString("apple")));
+    EXPECT_NE(nullptr, list.find(OOldMyString("banana")));
+    EXPECT_EQ(nullptr, list.find(OOldMyString("durian")));
+    EXPECT_TRUE(list.remove(OOldMyString("apple")));
     EXPECT_EQ(3, list.getSize());
 }
 
 TEST(SinglyLinkedListGeneric, DoubleItems) {
-    SinglyLinkedList<double> list;
+    OldSinglyLinkedList<double> list;
     list.add(2.5);
     list.add(-1.5);
     list.add(0.0);
@@ -642,7 +642,7 @@ TEST(SinglyLinkedListGeneric, DoubleItems) {
 
 TEST(SinglyLinkedListDifferential, RandomOperationsMatchMultiset) {
     std::mt19937 generator(20261119);
-    SinglyLinkedList<int> list;
+    OldSinglyLinkedList<int> list;
     std::multiset<int> expected;
 
     for (int round = 0; round < 6000; ++round) {
@@ -667,7 +667,7 @@ TEST(SinglyLinkedListDifferential, RandomOperationsMatchMultiset) {
                 break;
             }
             default: {
-                SingleNode<int> *node = list.find(value);
+                OldSingleNode<int> *node = list.find(value);
                 EXPECT_EQ(expected.count(value) > 0, node != nullptr);
                 if (node != nullptr) {
                     EXPECT_EQ(value, node->getItem());

@@ -2,23 +2,23 @@
 
 #include <iostream>
 
-#include "MyString.h"
+#include "OOldMyString.h"
 
 class Student {
     int studentId;
-    MyString studentGroup;
-    MyString studentName;
+    OOldMyString studentGroup;
+    OOldMyString studentName;
 
 
 public:
-    Student(int studentId, const MyString &studentGroup, const MyString &studentName)
+    Student(int studentId, const OOldMyString &studentGroup, const OOldMyString &studentName)
         : studentId(studentId),
         studentGroup(studentGroup),
         studentName(studentName) {
     }
 
 
-    Student(int studentId, const MyString &studentName)
+    Student(int studentId, const OOldMyString &studentName)
         : studentId(studentId),
         studentGroup("-"),
         studentName(studentName) {
@@ -48,13 +48,13 @@ public:
 
     int getStudentId() const;
 
-    const MyString& getStudentGroup() const;
+    const OOldMyString& getStudentGroup() const;
 
-    const MyString& getStudentName() const;
+    const OOldMyString& getStudentName() const;
 
     bool isGroupEmpty() const;
 
-    MyString toString() const;
+    OOldMyString toString() const;
 };
 
 std::ostream &operator<<(std::ostream& out, const Student& student);

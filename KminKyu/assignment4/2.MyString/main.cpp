@@ -3,7 +3,7 @@
 using namespace std;
 
 int main(){
-    MyString str1, str2, str3 = "test", str4 = MyString("tes1111111testdsfdsf"), str5, str6;
+    OOldMyString str1, str2, str3 = "test", str4 = OOldMyString("tes1111111testdsfdsf"), str5, str6;
     cin >> str1;
     cin >> str5;
     getline(cin, str6);
@@ -22,8 +22,8 @@ int main(){
     cout << str2 + "dgfg" << endl;
     cout << (str2 == str1) << endl;
 
-    MyString temp1 = "test";
-    MyString temp2 = "test";
+    OOldMyString temp1 = "test";
+    OOldMyString temp2 = "test";
     cout << (temp1 == temp2) << endl;
 
 }

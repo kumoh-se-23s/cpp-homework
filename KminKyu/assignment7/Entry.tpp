@@ -36,8 +36,8 @@ V *Entry<K, V>::getValue() const {
 }
 
 template<typename K, typename V>
-MyString Entry<K, V>::toString() const requires HasToString<V> {
-    MyString result = MyString();
+OOldMyString Entry<K, V>::toString() const requires HasToString<V> {
+    OOldMyString result = OOldMyString();
     if (value != nullptr) {
         result += value->toString();
     }

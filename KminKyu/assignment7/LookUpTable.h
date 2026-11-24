@@ -5,7 +5,7 @@
 #include <utility>
 
 #include "Entry.h"
-#include "MyString.h"
+#include "OOldMyString.h"
 
 template <typename K, typename V>
 class LookUpTable {
@@ -52,7 +52,7 @@ public:
 
     int getCapacity() const;
 
-    MyString toString() const;
+    OOldMyString toString() const;
 
     bool isEntry(const K& key);
 

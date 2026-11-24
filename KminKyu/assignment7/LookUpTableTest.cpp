@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "LookUpTable.h"
-#include "MyString.h"
+#include "OOldMyString.h"
 
 // =====================================================================
 // LookUpTable 테스트
@@ -24,14 +24,14 @@
 
 namespace {
     struct PrintableValue {
-        MyString text;
+        OOldMyString text;
 
-        MyString toString() const {
+        OOldMyString toString() const {
             return text;
         }
     };
 
-    std::string to_std_string(const MyString &sequence) {
+    std::string to_std_string(const OOldMyString &sequence) {
         std::ostringstream stream;
         stream << sequence;
         return stream.str();
@@ -398,26 +398,26 @@ TEST(LookUpTableMove, SelfMoveAssignmentKeepsEntries) {
 // ---------------------------------------------------------------------
 
 TEST(LookUpTableGeneric, MyStringKeys) {
-    LookUpTable<MyString, int> table;
-    table.insert(MyString("G3"), new int(3));
-    table.insert(MyString("G1"), new int(1));
-    table.insert(MyString("G2"), new int(2));
-    table.insert(MyString("G5"), new int(5));
-    table.insert(MyString("G4"), new int(4));
+    LookUpTable<OOldMyString, int> table;
+    table.insert(OOldMyString("G3"), new int(3));
+    table.insert(OOldMyString("G1"), new int(1));
+    table.insert(OOldMyString("G2"), new int(2));
+    table.insert(OOldMyString("G5"), new int(5));
+    table.insert(OOldMyString("G4"), new int(4));
 
-    expect_value(table, MyString("G1"), 1);
-    expect_value(table, MyString("G2"), 2);
-    expect_value(table, MyString("G3"), 3);
-    expect_value(table, MyString("G4"), 4);
-    expect_value(table, MyString("G5"), 5);
-    expect_missing(table, MyString("G9"));
+    expect_value(table, OOldMyString("G1"), 1);
+    expect_value(table, OOldMyString("G2"), 2);
+    expect_value(table, OOldMyString("G3"), 3);
+    expect_value(table, OOldMyString("G4"), 4);
+    expect_value(table, OOldMyString("G5"), 5);
+    expect_missing(table, OOldMyString("G9"));
 }
 
 TEST(LookUpTableGeneric, MyStringValues) {
-    LookUpTable<int, MyString> table;
-    table.insert(2022, new MyString("Harley"));
-    table.insert(1998, new MyString("Jenny"));
-    table.insert(2024, new MyString("Nora"));
+    LookUpTable<int, OOldMyString> table;
+    table.insert(2022, new OOldMyString("Harley"));
+    table.insert(1998, new OOldMyString("Jenny"));
+    table.insert(2024, new OOldMyString("Nora"));
 
     ASSERT_NE(nullptr, table.getValue(1998));
     ASSERT_NE(nullptr, table.getValue(2022));
@@ -429,13 +429,13 @@ TEST(LookUpTableGeneric, MyStringValues) {
 }
 
 TEST(LookUpTableGeneric, MyStringKeysBeyondInitialCapacity) {
-    LookUpTable<MyString, int> table;
+    LookUpTable<OOldMyString, int> table;
     for (int index = 0; index < 60; ++index) {
-        table.insert(MyString(("key" + std::to_string(index)).c_str()), new int(index));
+        table.insert(OOldMyString(("key" + std::to_string(index)).c_str()), new int(index));
     }
     EXPECT_EQ(60, table.getSize());
     for (int index = 0; index < 60; ++index) {
-        const MyString key(("key" + std::to_string(index)).c_str());
+        const OOldMyString key(("key" + std::to_string(index)).c_str());
         const int *actual = table.getValue(key);
         ASSERT_NE(nullptr, actual) << "index: " << index;
         EXPECT_EQ(index, *actual) << "index: " << index;
@@ -444,18 +444,18 @@ TEST(LookUpTableGeneric, MyStringKeysBeyondInitialCapacity) {
 
 TEST(LookUpTableGeneric, ToStringConcatenatesValuesInSortedKeyOrder) {
     LookUpTable<int, PrintableValue> table;
-    table.insert(30, new PrintableValue{MyString("C\n")});
-    table.insert(10, new PrintableValue{MyString("A\n")});
-    table.insert(20, new PrintableValue{MyString("B\n")});
+    table.insert(30, new PrintableValue{OOldMyString("C\n")});
+    table.insert(10, new PrintableValue{OOldMyString("A\n")});
+    table.insert(20, new PrintableValue{OOldMyString("B\n")});
 
     EXPECT_EQ("A\nB\nC\n", to_std_string(table.toString()));
 }
 
 TEST(LookUpTableGeneric, StreamOutputPrintsValuesInSortedKeyOrder) {
-    LookUpTable<int, MyString> table;
-    table.insert(3, new MyString("three "));
-    table.insert(1, new MyString("one "));
-    table.insert(2, new MyString("two "));
+    LookUpTable<int, OOldMyString> table;
+    table.insert(3, new OOldMyString("three "));
+    table.insert(1, new OOldMyString("one "));
+    table.insert(2, new OOldMyString("two "));
 
     std::ostringstream oss;
     oss << table;

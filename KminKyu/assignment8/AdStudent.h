@@ -4,7 +4,8 @@
 
 #ifndef CPP_HOMEWORK_GIT_ADSTUDENT_H
 #define CPP_HOMEWORK_GIT_ADSTUDENT_H
-#include <MyString.h>
+
+#include "MyString.h"
 
 
 class AdStudent {
@@ -18,8 +19,6 @@ public:
         studentName(studentName),
         course(course) {}
 
-    virtual ~AdStudent() = 0;
-
     AdStudent(const AdStudent &other)
         : studentPhoneNumber(other.studentPhoneNumber),
         studentName(other.studentName),
@@ -32,6 +31,8 @@ public:
         course(std::move(other.course)) {
     }
 
+    virtual ~AdStudent() = 0;
+
     AdStudent &operator=(const AdStudent &other);
 
     AdStudent &operator=(AdStudent &&other) noexcept;
@@ -40,6 +41,14 @@ public:
     const MyString &getStudentPhoneNumber() const;
 
     const MyString &getStudentName() const;
+
+    int compareTo(const AdStudent& other) const;
+    bool operator==(const AdStudent& other) const;
+    bool operator!=(const AdStudent& other)const;
+    bool operator>(const AdStudent& other) const;
+    bool operator<(const AdStudent& other) const;
+    bool operator<=(const AdStudent& other) const;
+    bool operator>=(const AdStudent& other) const;
 
     //파일로 내보낼때 사용하는 메소드
     virtual void toFile(std::ofstream& out) const = 0;

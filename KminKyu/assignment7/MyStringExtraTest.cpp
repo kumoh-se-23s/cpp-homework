@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include "MyString.h"
+#include "OOldMyString.h"
 
 // =====================================================================
 // MyStringTest.cpp 에서 다루지 않은 부분을 보충하는 테스트
@@ -28,13 +28,13 @@
 // =====================================================================
 
 namespace {
-    std::string to_std_string(const MyString &sequence) {
+    std::string to_std_string(const OOldMyString &sequence) {
         std::ostringstream stream;
         stream << sequence;
         return stream.str();
     }
 
-    void expect_same(const MyString &actual, const std::string &expected) {
+    void expect_same(const OOldMyString &actual, const std::string &expected) {
         EXPECT_EQ(expected, to_std_string(actual));
         EXPECT_EQ(static_cast<int>(expected.size()), actual.length());
         EXPECT_EQ(expected.empty(), actual.isEmpty());
@@ -70,21 +70,21 @@ namespace {
 
 TEST(MyStringIntegerToString, SingleDigit) {
     for (int value = 0; value <= 9; ++value) {
-        expect_same(MyString::integerToString(value), std::to_string(value));
+        expect_same(OOldMyString::integerToString(value), std::to_string(value));
     }
 }
 
 TEST(MyStringIntegerToString, MultipleDigits) {
     const int values[] = {10, 11, 19, 20, 99, 100, 101, 123, 999, 1000, 1024, 19980123, 20250907, 1234567890, INT_MAX};
     for (const int value : values) {
-        expect_same(MyString::integerToString(value), std::to_string(value));
+        expect_same(OOldMyString::integerToString(value), std::to_string(value));
     }
 }
 
 TEST(MyStringIntegerToString, PowersOfTen) {
     int value = 1;
     for (int count = 0; count < 10; ++count) {
-        expect_same(MyString::integerToString(value), std::to_string(value));
+        expect_same(OOldMyString::integerToString(value), std::to_string(value));
         if (count < 9) {
             value *= 10;
         }
@@ -108,7 +108,7 @@ TEST(MyStringTrim, RemovesLeadingAndTrailingSpaces) {
         {"a   b", "a   b"},
     };
     for (const auto &[input, expected] : cases) {
-        MyString string(input);
+        OOldMyString string(input);
         string.trim();
         expect_same(string, expected);
     }
@@ -117,20 +117,20 @@ TEST(MyStringTrim, RemovesLeadingAndTrailingSpaces) {
 TEST(MyStringTrim, EmptyAndOnlySpaces) {
     const char *cases[] = {"", " ", "   ", "        ", "                "};
     for (const char *input : cases) {
-        MyString string(input);
+        OOldMyString string(input);
         string.trim();
         expect_same(string, "");
     }
 }
 
 TEST(MyStringTrim, ReturnsReferenceToItself) {
-    MyString string("  abc  ");
+    OOldMyString string("  abc  ");
     EXPECT_EQ(&string, &string.trim());
 }
 
 TEST(MyStringTrim, LongString) {
     const std::string body = make_text(50);
-    MyString string(("     " + body + "      ").c_str());
+    OOldMyString string(("     " + body + "      ").c_str());
     string.trim();
     expect_same(string, body);
 }
@@ -145,7 +145,7 @@ TEST(MyStringEraseBoundary, EveryLengthEveryPositionEveryCount) {
         for (int pos = -1; pos <= length + 1; ++pos) {
             const int counts[] = {-1, 0, 1, 2, length - pos, length, length + 5};
             for (const int count : counts) {
-                MyString actual(base.c_str());
+                OOldMyString actual(base.c_str());
                 std::string expected = base;
                 expected.erase(static_cast<std::size_t>(clamp_pos(base, pos)), to_len(count));
                 actual.erase(pos, count);
@@ -162,14 +162,14 @@ TEST(MyStringEraseBoundary, WholeStringWhenSizeIsCapacityMinusOne) {
     const int lengths[] = {7, 15, 31, 63};
     for (const int length : lengths) {
         const std::string base = make_text(length);
-        MyString actual(base.c_str());
+        OOldMyString actual(base.c_str());
         actual.erase(0, length);
         expect_same(actual, "");
     }
 }
 
 TEST(MyStringEraseBoundary, EraseFromMiddleThenAppend) {
-    MyString string("abcdefghij");
+    OOldMyString string("abcdefghij");
     string.erase(2, 3);
     string.append("XYZ");
     expect_same(string, "abfghijXYZ");
@@ -183,8 +183,8 @@ TEST(MyStringCompareNonAscii, MatchesStdString) {
     const char *words[] = {"", "a", "a가", "가", "나", "가나다", "한글", "한글입니다", "abc", "abd", "é", "e", "z", "ñ"};
     for (const char *left : words) {
         for (const char *right : words) {
-            const MyString a(left);
-            const MyString b(right);
+            const OOldMyString a(left);
+            const OOldMyString b(right);
             const std::string sa = left;
             const std::string sb = right;
             const std::string trace = std::string("left: \"") + left + "\", right: \"" + right + "\"";
@@ -205,9 +205,9 @@ TEST(MyStringCompareNonAscii, MatchesStdString) {
 }
 
 TEST(MyStringCompareNonAscii, PrefixIsSmaller) {
-    EXPECT_TRUE(MyString("a") < MyString("a가"));
-    EXPECT_TRUE(MyString("한글") < MyString("한글입니다"));
-    EXPECT_FALSE(MyString("한글입니다") < MyString("한글"));
+    EXPECT_TRUE(OOldMyString("a") < OOldMyString("a가"));
+    EXPECT_TRUE(OOldMyString("한글") < OOldMyString("한글입니다"));
+    EXPECT_FALSE(OOldMyString("한글입니다") < OOldMyString("한글"));
 }
 
 // ---------------------------------------------------------------------
@@ -215,16 +215,16 @@ TEST(MyStringCompareNonAscii, PrefixIsSmaller) {
 // ---------------------------------------------------------------------
 
 TEST(MyStringMovedFrom, MoveConstructorTransfersValueAndEmptiesSource) {
-    MyString source("hello world, this is long enough to grow");
-    MyString target(std::move(source));
+    OOldMyString source("hello world, this is long enough to grow");
+    OOldMyString target(std::move(source));
     expect_same(target, "hello world, this is long enough to grow");
     EXPECT_EQ(0, source.length());
     EXPECT_TRUE(source.isEmpty());
 }
 
 TEST(MyStringMovedFrom, MoveAssignmentTransfersValueAndEmptiesSource) {
-    MyString source("hello");
-    MyString target("something else");
+    OOldMyString source("hello");
+    OOldMyString target("something else");
     target = std::move(source);
     expect_same(target, "hello");
     EXPECT_EQ(0, source.length());
@@ -232,43 +232,43 @@ TEST(MyStringMovedFrom, MoveAssignmentTransfersValueAndEmptiesSource) {
 }
 
 TEST(MyStringMovedFrom, CopyAssignToMovedFrom) {
-    MyString source("abc");
-    MyString moved(std::move(source));
+    OOldMyString source("abc");
+    OOldMyString moved(std::move(source));
     source = moved;
     expect_same(source, "abc");
 }
 
 TEST(MyStringMovedFrom, AssignCStringToMovedFrom) {
-    MyString source("abc");
-    MyString moved(std::move(source));
+    OOldMyString source("abc");
+    OOldMyString moved(std::move(source));
     source = "reassigned";
     expect_same(source, "reassigned");
 }
 
 TEST(MyStringMovedFrom, AppendAndModifyMovedFrom) {
     {
-        MyString source("abc");
-        MyString moved(std::move(source));
+        OOldMyString source("abc");
+        OOldMyString moved(std::move(source));
         source.append('x');
         source += "yz";
-        source.append(MyString("!"));
+        source.append(OOldMyString("!"));
         expect_same(source, "xyz!");
     }
     {
-        MyString source("abc");
-        MyString moved(std::move(source));
+        OOldMyString source("abc");
+        OOldMyString moved(std::move(source));
         source.insert(0, "ins");
         expect_same(source, "ins");
     }
     {
-        MyString source("abc");
-        MyString moved(std::move(source));
+        OOldMyString source("abc");
+        OOldMyString moved(std::move(source));
         source.replace(0, 1, "rep");
         expect_same(source, "rep");
     }
     {
-        MyString source("abc");
-        MyString moved(std::move(source));
+        OOldMyString source("abc");
+        OOldMyString moved(std::move(source));
         source.clear();
         EXPECT_EQ(0, source.length());
         EXPECT_TRUE(source.isEmpty());
@@ -276,17 +276,17 @@ TEST(MyStringMovedFrom, AppendAndModifyMovedFrom) {
 }
 
 TEST(MyStringMovedFrom, MovedTwice) {
-    MyString first("abc");
-    MyString second(std::move(first));
-    MyString third(std::move(first));
+    OOldMyString first("abc");
+    OOldMyString second(std::move(first));
+    OOldMyString third(std::move(first));
     EXPECT_EQ(0, first.length());
     EXPECT_EQ(0, third.length());
     expect_same(second, "abc");
 }
 
 TEST(MyStringMovedFrom, SelfMoveAssignmentKeepsValue) {
-    MyString string("abc");
-    MyString &alias = string;
+    OOldMyString string("abc");
+    OOldMyString &alias = string;
     string = std::move(alias);
     expect_same(string, "abc");
 }
@@ -297,7 +297,7 @@ TEST(MyStringMovedFrom, SelfMoveAssignmentKeepsValue) {
 
 TEST(MyStringNullptr, ModifyingWithNullptrChangesNothing) {
     const char *null = nullptr;
-    MyString string("abc");
+    OOldMyString string("abc");
     string.append(null);
     string += null;
     string.insert(1, null);
@@ -307,7 +307,7 @@ TEST(MyStringNullptr, ModifyingWithNullptrChangesNothing) {
 
 TEST(MyStringNullptr, FindAndCompareWithNullptr) {
     const char *null = nullptr;
-    const MyString string("abc");
+    const OOldMyString string("abc");
     EXPECT_EQ(-1, string.find(null));
     EXPECT_FALSE(string == null);
     EXPECT_TRUE(string != null);
@@ -322,7 +322,7 @@ TEST(MyStringNullptr, FindAndCompareWithNullptr) {
 // ---------------------------------------------------------------------
 
 TEST(MyStringRangeAccess, ConstOutOfRangeReadReturnsNullChar) {
-    const MyString string("abc");
+    const OOldMyString string("abc");
     EXPECT_EQ('\0', string[3]);
     EXPECT_EQ('\0', string[100]);
     EXPECT_EQ('\0', string[-1]);
@@ -331,7 +331,7 @@ TEST(MyStringRangeAccess, ConstOutOfRangeReadReturnsNullChar) {
 }
 
 TEST(MyStringRangeAccess, InRangeWriteWorks) {
-    MyString string("abc");
+    OOldMyString string("abc");
     string[1] = 'X';
     string.at(2) = 'Y';
     expect_same(string, "aXY");
@@ -345,7 +345,7 @@ TEST(MyStringSelfReference, InsertSelf) {
     for (int length = 0; length <= 20; ++length) {
         for (int pos = 0; pos <= length; ++pos) {
             const std::string base = make_text(length);
-            MyString actual(base.c_str());
+            OOldMyString actual(base.c_str());
             std::string expected = base;
             expected.insert(static_cast<std::size_t>(pos), std::string(base));
             actual.insert(pos, actual);
@@ -359,7 +359,7 @@ TEST(MyStringSelfReference, ReplaceSelf) {
         for (int pos = 0; pos <= length; ++pos) {
             for (int count = 0; count <= length; count += 3) {
                 const std::string base = make_text(length);
-                MyString actual(base.c_str());
+                OOldMyString actual(base.c_str());
                 std::string expected = base;
                 expected.replace(static_cast<std::size_t>(pos), static_cast<std::size_t>(count), std::string(base));
                 actual.replace(pos, count, actual);
@@ -373,12 +373,12 @@ TEST(MyStringSelfReference, AppendAndPlusEqualsSelf) {
     for (int length = 0; length <= 40; ++length) {
         const std::string base = make_text(length);
         {
-            MyString actual(base.c_str());
+            OOldMyString actual(base.c_str());
             actual.append(actual);
             expect_same(actual, base + base);
         }
         {
-            MyString actual(base.c_str());
+            OOldMyString actual(base.c_str());
             actual += actual;
             expect_same(actual, base + base);
         }
@@ -386,16 +386,16 @@ TEST(MyStringSelfReference, AppendAndPlusEqualsSelf) {
 }
 
 TEST(MyStringSelfReference, SelfCopyAssignment) {
-    MyString string("abc");
-    MyString &alias = string;
+    OOldMyString string("abc");
+    OOldMyString &alias = string;
     string = alias;
     expect_same(string, "abc");
 }
 
 TEST(MyStringSelfReference, PlusDoesNotModifyOperands) {
-    const MyString left("abc");
-    const MyString right("def");
-    const MyString result = left + right;
+    const OOldMyString left("abc");
+    const OOldMyString right("def");
+    const OOldMyString result = left + right;
     expect_same(result, "abcdef");
     expect_same(left, "abc");
     expect_same(right, "def");
@@ -406,49 +406,49 @@ TEST(MyStringSelfReference, PlusDoesNotModifyOperands) {
 // ---------------------------------------------------------------------
 
 TEST(MyStringStoi, DecimalDigits) {
-    EXPECT_EQ(123, stoi(MyString("123")));
-    EXPECT_EQ(0, stoi(MyString("0")));
-    EXPECT_EQ(12, stoi(MyString("0012")));
-    EXPECT_EQ(19980123, stoi(MyString("19980123")));
-    EXPECT_EQ(2147483647, stoi(MyString("2147483647")));
+    EXPECT_EQ(123, stoi(OOldMyString("123")));
+    EXPECT_EQ(0, stoi(OOldMyString("0")));
+    EXPECT_EQ(12, stoi(OOldMyString("0012")));
+    EXPECT_EQ(19980123, stoi(OOldMyString("19980123")));
+    EXPECT_EQ(2147483647, stoi(OOldMyString("2147483647")));
 }
 
 TEST(MyStringStoi, StopsAtFirstInvalidCharacter) {
-    EXPECT_EQ(12, stoi(MyString("12abc")));
-    EXPECT_EQ(12, stoi(MyString("12 34")));
-    EXPECT_EQ(0, stoi(MyString("abc")));
-    EXPECT_EQ(0, stoi(MyString("x12")));
-    EXPECT_EQ(0, stoi(MyString("")));
+    EXPECT_EQ(12, stoi(OOldMyString("12abc")));
+    EXPECT_EQ(12, stoi(OOldMyString("12 34")));
+    EXPECT_EQ(0, stoi(OOldMyString("abc")));
+    EXPECT_EQ(0, stoi(OOldMyString("x12")));
+    EXPECT_EQ(0, stoi(OOldMyString("")));
 }
 
 TEST(MyStringStoi, StartPosition) {
-    EXPECT_EQ(123, stoi(MyString("ab123"), 2));
-    EXPECT_EQ(23, stoi(MyString("123"), 1));
-    EXPECT_EQ(0, stoi(MyString("123"), 3));
-    EXPECT_EQ(0, stoi(MyString("123"), 10));
-    EXPECT_EQ(0, stoi(MyString("123"), 1000000));
-    EXPECT_EQ(123, stoi(MyString("123"), -5));
+    EXPECT_EQ(123, stoi(OOldMyString("ab123"), 2));
+    EXPECT_EQ(23, stoi(OOldMyString("123"), 1));
+    EXPECT_EQ(0, stoi(OOldMyString("123"), 3));
+    EXPECT_EQ(0, stoi(OOldMyString("123"), 10));
+    EXPECT_EQ(0, stoi(OOldMyString("123"), 1000000));
+    EXPECT_EQ(123, stoi(OOldMyString("123"), -5));
 }
 
 TEST(MyStringStoi, OtherBases) {
-    EXPECT_EQ(255, stoi(MyString("ff"), 0, 16));
-    EXPECT_EQ(255, stoi(MyString("FF"), 0, 16));
-    EXPECT_EQ(26, stoi(MyString("1a"), 0, 16));
-    EXPECT_EQ(11, stoi(MyString("1011"), 0, 2));
-    EXPECT_EQ(10, stoi(MyString("12"), 0, 8));
-    EXPECT_EQ(35, stoi(MyString("z"), 0, 36));
-    EXPECT_EQ(35, stoi(MyString("Z"), 0, 36));
+    EXPECT_EQ(255, stoi(OOldMyString("ff"), 0, 16));
+    EXPECT_EQ(255, stoi(OOldMyString("FF"), 0, 16));
+    EXPECT_EQ(26, stoi(OOldMyString("1a"), 0, 16));
+    EXPECT_EQ(11, stoi(OOldMyString("1011"), 0, 2));
+    EXPECT_EQ(10, stoi(OOldMyString("12"), 0, 8));
+    EXPECT_EQ(35, stoi(OOldMyString("z"), 0, 36));
+    EXPECT_EQ(35, stoi(OOldMyString("Z"), 0, 36));
 }
 
 TEST(MyStringStoi, DigitNotBelowBaseStopsParsing) {
-    EXPECT_EQ(10, stoi(MyString("129"), 0, 8));
-    EXPECT_EQ(1, stoi(MyString("12"), 0, 2));
+    EXPECT_EQ(10, stoi(OOldMyString("129"), 0, 8));
+    EXPECT_EQ(1, stoi(OOldMyString("12"), 0, 2));
 }
 
 TEST(MyStringStoi, BaseIsClamped) {
-    EXPECT_EQ(5, stoi(MyString("101"), 0, 1));
-    EXPECT_EQ(5, stoi(MyString("101"), 0, -7));
-    EXPECT_EQ(35, stoi(MyString("z"), 0, 100));
+    EXPECT_EQ(5, stoi(OOldMyString("101"), 0, 1));
+    EXPECT_EQ(5, stoi(OOldMyString("101"), 0, -7));
+    EXPECT_EQ(35, stoi(OOldMyString("z"), 0, 100));
 }
 
 TEST(MyStringStoi, ChangeAlphabetToInt) {
@@ -493,7 +493,7 @@ TEST(MyStringDifferential, RandomOperationsMatchStdString) {
               << "\", pos: " << pos << ", len: " << len;
         SCOPED_TRACE(trace.str());
 
-        MyString actual(original.c_str());
+        OOldMyString actual(original.c_str());
         std::string expected = original;
 
         switch (op) {
@@ -503,7 +503,7 @@ TEST(MyStringDifferential, RandomOperationsMatchStdString) {
                 break;
             case 1:
                 expected.insert(static_cast<std::size_t>(clamp_pos(original, pos)), sub);
-                actual.insert(pos, MyString(sub.c_str()));
+                actual.insert(pos, OOldMyString(sub.c_str()));
                 break;
             case 2:
                 expected.replace(static_cast<std::size_t>(clamp_pos(original, pos)), to_len(len), sub);
@@ -511,7 +511,7 @@ TEST(MyStringDifferential, RandomOperationsMatchStdString) {
                 break;
             case 3:
                 expected.replace(static_cast<std::size_t>(clamp_pos(original, pos)), to_len(len), sub);
-                actual.replace(pos, len, MyString(sub.c_str()));
+                actual.replace(pos, len, OOldMyString(sub.c_str()));
                 break;
             case 4:
                 expected.erase(static_cast<std::size_t>(clamp_pos(original, pos)), to_len(len));
@@ -529,7 +529,7 @@ TEST(MyStringDifferential, RandomOperationsMatchStdString) {
                 const std::size_t found = original.find(sub, static_cast<std::size_t>(clamp_pos(original, pos)));
                 const int expectedIndex = found == std::string::npos ? -1 : static_cast<int>(found);
                 EXPECT_EQ(expectedIndex, actual.find(sub.c_str(), pos));
-                EXPECT_EQ(expectedIndex, actual.find(MyString(sub.c_str()), pos));
+                EXPECT_EQ(expectedIndex, actual.find(OOldMyString(sub.c_str()), pos));
                 break;
             }
         }
@@ -541,7 +541,7 @@ TEST(MyStringDifferential, RandomOperationsMatchStdString) {
 }
 
 TEST(MyStringDifferential, RepeatedAppendGrowsCapacityCorrectly) {
-    MyString actual;
+    OOldMyString actual;
     std::string expected;
     for (int index = 0; index < 500; ++index) {
         const char ch = static_cast<char>('a' + index % 26);

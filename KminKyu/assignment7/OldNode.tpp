@@ -1,10 +1,10 @@
 #pragma once
 
 template<typename T>
-class Node;
+class OldNode;
 
 template<typename T>
-Node<T> &Node<T>::operator=(const Node &other) {
+OldNode<T> &OldNode<T>::operator=(const OldNode &other) {
     if (this != &other) {
         this->item = other.getItem();
     }
@@ -13,7 +13,7 @@ Node<T> &Node<T>::operator=(const Node &other) {
 }
 
 template<typename T>
-Node<T> & Node<T>::operator=(Node &&other) noexcept {
+OldNode<T> & OldNode<T>::operator=(OldNode &&other) noexcept {
     if (this != &other) {
         this->item = std::move(other.item);
     }
@@ -21,25 +21,25 @@ Node<T> & Node<T>::operator=(Node &&other) noexcept {
 }
 
 template<typename T>
-const T & Node<T>::getItem() const {
+const T & OldNode<T>::getItem() const {
     return item;
 }
 
 template<typename T>
-T & Node<T>::getItem() {
+T & OldNode<T>::getItem() {
     return item;
 }
 
 template<typename T>
-void Node<T>::setItem(const T &item) {
+void OldNode<T>::setItem(const T &item) {
     this->item = item;
 }
 template <typename T>
-    MyString Node<T>::toString() const requires HasToString<T> {
+    OOldMyString OldNode<T>::toString() const requires HasToString<T> {
     return item.toString();
 }
 template<typename T>
-std::ostream &operator<<(std::ostream &out, const Node<T> &node) {
+std::ostream &operator<<(std::ostream &out, const OldNode<T> &node) {
     out << node.getItem();
     return out;
 }

@@ -41,7 +41,7 @@ public:
 
     void clear();
 
-    MyString toString() const;
+    OOldMyString toString() const;
 
 private:
     //정렬되지 않은 여러개의 노드가 들어오는것을 가정

@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include "MyString.h"
-#include "StudentController.h"
+#include "OOldMyString.h"
+#include "OldStudentController.h"
 
 // =====================================================================
 // StudentController 통합 및 차분(differential) 테스트
@@ -120,30 +120,30 @@ namespace {
         std::map<int, StudentRecord> students_;
     };
 
-    std::string stream_output(const StudentController &controller) {
+    std::string stream_output(const OldStudentController &controller) {
         std::ostringstream os;
         os << controller;
         return os.str();
     }
 
-    std::string to_std_string(const MyString &sequence) {
+    std::string to_std_string(const OOldMyString &sequence) {
         std::ostringstream os;
         os << sequence;
         return os.str();
     }
 
-    void expect_same(const StudentController &actual, const ReferenceController &expected) {
+    void expect_same(const OldStudentController &actual, const ReferenceController &expected) {
         EXPECT_EQ(expected.expectedOutput(), stream_output(actual));
         EXPECT_EQ(expected.expectedToString(), to_std_string(actual.toString()));
     }
 
-    void insert_both(StudentController &actual, ReferenceController &expected,
+    void insert_both(OldStudentController &actual, ReferenceController &expected,
                      const int id, const std::string &group, const std::string &name) {
-        actual.insertStudent(id, MyString(group.c_str()), MyString(name.c_str()));
+        actual.insertStudent(id, OOldMyString(group.c_str()), OOldMyString(name.c_str()));
         expected.insertStudent(id, group, name);
     }
 
-    void delete_both(StudentController &actual, ReferenceController &expected, const int id) {
+    void delete_both(OldStudentController &actual, ReferenceController &expected, const int id) {
         actual.deleteStudent(id);
         expected.deleteStudent(id);
     }
@@ -154,12 +154,12 @@ namespace {
 // ---------------------------------------------------------------------
 
 TEST(StudentControllerBasic, EmptyControllerOutputsHeaderOnly) {
-    const StudentController controller;
+    const OldStudentController controller;
     const ReferenceController expected;
     expect_same(controller, expected);
 }
 TEST(StudentControllerBasic, InsertSingleStudent) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20220001, "G1", "Alice");
@@ -167,7 +167,7 @@ TEST(StudentControllerBasic, InsertSingleStudent) {
 }
 
 TEST(StudentControllerBasic, DuplicateStudentIdIsIgnored) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20220001, "G1", "Alice");
@@ -176,7 +176,7 @@ TEST(StudentControllerBasic, DuplicateStudentIdIsIgnored) {
 }
 
 TEST(StudentControllerBasic, StudentsOrderedByYearAndStudentId) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20240002, "G1", "Nora");
@@ -189,7 +189,7 @@ TEST(StudentControllerBasic, StudentsOrderedByYearAndStudentId) {
 }
 
 TEST(StudentControllerBasic, CustomCapacityConstructorWorks) {
-    StudentController controller(2020, 2025, 10, 4);
+    OldStudentController controller(2020, 2025, 10, 4);
     ReferenceController expected;
 
     insert_both(controller, expected, 20230001, "Alpha", "Kim");
@@ -204,7 +204,7 @@ TEST(StudentControllerBasic, CustomCapacityConstructorWorks) {
 // ---------------------------------------------------------------------
 
 TEST(StudentControllerGroup, SameGroupMembersAppearInCircularOrder) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20230001, "Alpha", "Kim");
@@ -217,7 +217,7 @@ TEST(StudentControllerGroup, SameGroupMembersAppearInCircularOrder) {
 }
 
 TEST(StudentControllerGroup, MultipleNoGroupStudentsDoNotLinkTogether) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20220001, "-", "Alice");
@@ -232,7 +232,7 @@ TEST(StudentControllerGroup, MultipleNoGroupStudentsDoNotLinkTogether) {
 // ---------------------------------------------------------------------
 
 TEST(StudentControllerDelete, DeleteOnEmptyOrMissingIdDoesNotCrash) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     delete_both(controller, expected, 20220001);
@@ -245,7 +245,7 @@ TEST(StudentControllerDelete, DeleteOnEmptyOrMissingIdDoesNotCrash) {
 }
 
 TEST(StudentControllerDelete, DeleteHeadMiddleTailAndLastFromGroup) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20230001, "Alpha", "Kim");
@@ -272,7 +272,7 @@ TEST(StudentControllerDelete, DeleteHeadMiddleTailAndLastFromGroup) {
 }
 
 TEST(StudentControllerDelete, DeleteNoGroupStudents) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20240001, "-", "Kim");
@@ -287,7 +287,7 @@ TEST(StudentControllerDelete, DeleteNoGroupStudents) {
 }
 
 TEST(StudentControllerDelete, DeleteAllStudentsAndReinsertSameGroupAndYear) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     insert_both(controller, expected, 20210001, "G1", "Alice");
@@ -309,7 +309,7 @@ TEST(StudentControllerDelete, DeleteAllStudentsAndReinsertSameGroupAndYear) {
 // ---------------------------------------------------------------------
 
 TEST(StudentControllerGrowth, InsertBeyondDefaultCapacityYearsAndGroups) {
-    StudentController controller;
+    OldStudentController controller;
     ReferenceController expected;
 
     // DEFAULT_CAPACITY(4) 를 넘도록 20개 연도 / 12개 그룹 삽입
@@ -336,7 +336,7 @@ TEST(StudentControllerDifferential, RandomInsertAndDeleteMatchReference) {
     std::mt19937 generator(20261120);
     const std::vector<std::string> groupPool = {"-", "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota"};
 
-    StudentController actual;
+    OldStudentController actual;
     ReferenceController expected;
     std::vector<int> activeIds;
 

@@ -5,13 +5,13 @@ class DoubleNode;
 
 template<typename T>
 DoubleNode<T>::DoubleNode(const T &item, DoubleNode *prevNode, DoubleNode *nextNode)
-    :Node<T>(item), prevNode(prevNode), nextNode(nextNode) {}
+    :OldNode<T>(item), prevNode(prevNode), nextNode(nextNode) {}
 
 template<typename T>
 DoubleNode<T>::DoubleNode(const T &item) : DoubleNode(item, nullptr, nullptr) {}
 
 template<typename T>
-DoubleNode<T>::DoubleNode(DoubleNode &&other) noexcept : Node<T>(std::move(other)) {
+DoubleNode<T>::DoubleNode(DoubleNode &&other) noexcept : OldNode<T>(std::move(other)) {
     this->nextNode = other.nextNode;
     this->prevNode = other.prevNode;
     other.nextNode = nullptr;

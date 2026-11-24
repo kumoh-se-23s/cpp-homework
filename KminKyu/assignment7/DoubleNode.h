@@ -3,10 +3,10 @@
 
 #include <utility>
 
-#include "Node.h"
+#include "OldNode.h"
 
 template <typename T>
-class DoubleNode : public Node<T> {
+class DoubleNode : public OldNode<T> {
 
     DoubleNode *prevNode = nullptr;
     DoubleNode *nextNode = nullptr;

@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "CircularDoublyLinkedList.h"
-#include "MyString.h"
+#include "OOldMyString.h"
 #include "Student.h"
 
 // =====================================================================
@@ -670,15 +670,15 @@ TEST(CircularListMove, MovedFromListIsReusable) {
 // ---------------------------------------------------------------------
 
 TEST(CircularListGeneric, MyStringItems) {
-    CircularDoublyLinkedList<MyString> list;
-    list.add(MyString("banana"));
-    list.add(MyString("apple"));
-    list.add(MyString("cherry"));
+    CircularDoublyLinkedList<OOldMyString> list;
+    list.add(OOldMyString("banana"));
+    list.add(OOldMyString("apple"));
+    list.add(OOldMyString("cherry"));
 
     std::vector<std::string> actual;
-    const DoubleNode<MyString> *head = list.getHead();
+    const DoubleNode<OOldMyString> *head = list.getHead();
     ASSERT_NE(nullptr, head);
-    const DoubleNode<MyString> *now = head;
+    const DoubleNode<OOldMyString> *now = head;
     do {
         std::ostringstream stream;
         stream << now->getItem();
@@ -687,9 +687,9 @@ TEST(CircularListGeneric, MyStringItems) {
     } while (now != head);
 
     EXPECT_EQ((std::vector<std::string>{"apple", "banana", "cherry"}), actual);
-    EXPECT_NE(nullptr, list.find(MyString("banana")));
-    EXPECT_EQ(nullptr, list.find(MyString("durian")));
-    EXPECT_TRUE(list.remove(MyString("apple")));
+    EXPECT_NE(nullptr, list.find(OOldMyString("banana")));
+    EXPECT_EQ(nullptr, list.find(OOldMyString("durian")));
+    EXPECT_TRUE(list.remove(OOldMyString("apple")));
     EXPECT_EQ(2, list.getSize());
 }
 

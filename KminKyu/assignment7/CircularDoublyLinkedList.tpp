@@ -239,8 +239,8 @@ void CircularDoublyLinkedList<T>::clear() {
 }
 
 template<typename T>
-MyString CircularDoublyLinkedList<T>::toString() const {
-    MyString result = MyString();
+OOldMyString CircularDoublyLinkedList<T>::toString() const {
+    OOldMyString result = OOldMyString();
     if (size == 0) {
         return result;
     }

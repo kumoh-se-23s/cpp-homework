@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-#include "MyString.h"
+#include "OOldMyString.h"
 #include "Student.h"
 
 // =====================================================================
@@ -16,7 +16,7 @@
 // =====================================================================
 
 namespace {
-    std::string to_std_string(const MyString &sequence) {
+    std::string to_std_string(const OOldMyString &sequence) {
         std::ostringstream stream;
         stream << sequence;
         return stream.str();
@@ -56,7 +56,7 @@ TEST(StudentConstruct, KoreanNameAndGroup) {
 TEST(StudentConstruct, LongStringsBeyondInitialCapacity) {
     const std::string group(100, 'g');
     const std::string name(100, 'n');
-    const Student student(7, MyString(group.c_str()), MyString(name.c_str()));
+    const Student student(7, OOldMyString(group.c_str()), OOldMyString(name.c_str()));
     expect_student(student, 7, group.c_str(), name.c_str());
 }
 
@@ -121,7 +121,7 @@ TEST(StudentCopy, AssignmentChain) {
 TEST(StudentCopy, VectorReallocationKeepsAllValues) {
     std::vector<Student> students;
     for (int index = 0; index < 200; ++index) {
-        students.emplace_back(index, MyString("G1"), MyString(std::to_string(index).c_str()));
+        students.emplace_back(index, OOldMyString("G1"), OOldMyString(std::to_string(index).c_str()));
     }
     for (int index = 0; index < 200; ++index) {
         EXPECT_EQ(index, students[index].getStudentId());

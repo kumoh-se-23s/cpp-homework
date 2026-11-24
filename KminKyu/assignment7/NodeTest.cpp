@@ -5,23 +5,23 @@
 #include <utility>
 
 #include "DoubleNode.h"
-#include "MyString.h"
+#include "OOldMyString.h"
 #include "NestedDoubleNode.h"
-#include "Node.h"
-#include "SingleNode.h"
+#include "OldNode.h"
+#include "OldSingleNode.h"
 #include "Student.h"
 
 namespace {
-    std::string to_std_string(const MyString &sequence) {
+    std::string to_std_string(const OOldMyString &sequence) {
         std::ostringstream stream;
         stream << sequence;
         return stream.str();
     }
 
     template <typename T>
-    class TestNode : public Node<T> {
+    class TestNode : public OldNode<T> {
     public:
-        explicit TestNode(const T &item) : Node<T>(item) {}
+        explicit TestNode(const T &item) : OldNode<T>(item) {}
         TestNode(const TestNode &other) = delete;
         TestNode &operator=(const TestNode &other) = delete;
         TestNode(TestNode &&other) noexcept = default;
@@ -30,9 +30,9 @@ namespace {
 
     struct PrintableItem {
         int value;
-        MyString label;
+        OOldMyString label;
 
-        MyString toString() const {
+        OOldMyString toString() const {
             return label;
         }
         bool operator==(const PrintableItem &other) const { return value == other.value; }
@@ -49,10 +49,10 @@ namespace {
 // ---------------------------------------------------------------------
 
 TEST(NodeBasic, CannotInstantiateDirectlyAndNotCopyable) {
-    EXPECT_FALSE((std::is_constructible_v<Node<int>, int>));
-    EXPECT_FALSE((std::is_default_constructible_v<Node<int>>));
-    EXPECT_FALSE((std::is_copy_constructible_v<Node<int>>));
-    EXPECT_FALSE((std::is_copy_assignable_v<Node<int>>));
+    EXPECT_FALSE((std::is_constructible_v<OldNode<int>, int>));
+    EXPECT_FALSE((std::is_default_constructible_v<OldNode<int>>));
+    EXPECT_FALSE((std::is_copy_constructible_v<OldNode<int>>));
+    EXPECT_FALSE((std::is_copy_assignable_v<OldNode<int>>));
 }
 
 TEST(NodeBasic, GetItemAndSetItem) {
@@ -68,29 +68,29 @@ TEST(NodeBasic, GetItemAndSetItem) {
 }
 
 TEST(NodeBasic, MoveConstructorAndMoveAssignment) {
-    TestNode<MyString> original("a string long enough to need a bigger buffer");
-    TestNode<MyString> moved(std::move(original));
+    TestNode<OOldMyString> original("a string long enough to need a bigger buffer");
+    TestNode<OOldMyString> moved(std::move(original));
     EXPECT_EQ("a string long enough to need a bigger buffer", to_std_string(moved.getItem()));
 
-    TestNode<MyString> target("initial");
+    TestNode<OOldMyString> target("initial");
     target = std::move(moved);
     EXPECT_EQ("a string long enough to need a bigger buffer", to_std_string(target.getItem()));
 
-    TestNode<MyString> &alias = target;
+    TestNode<OOldMyString> &alias = target;
     target = std::move(alias);
     EXPECT_EQ("a string long enough to need a bigger buffer", to_std_string(target.getItem()));
 }
 
 TEST(NodeBasic, DeleteThroughBasePointerIsSafe) {
-    Node<int> *single = new SingleNode<int>(1);
-    Node<int> *doubled = new DoubleNode<int>(2);
+    OldNode<int> *single = new OldSingleNode<int>(1);
+    OldNode<int> *doubled = new DoubleNode<int>(2);
     delete single;
     delete doubled;
 }
 
 TEST(NodeToString, DelegatesToItemToString) {
-    SingleNode<PrintableItem> single(PrintableItem{1, MyString("alpha")});
-    DoubleNode<PrintableItem> doubled(PrintableItem{2, MyString("beta")});
+    OldSingleNode<PrintableItem> single(PrintableItem{1, OOldMyString("alpha")});
+    DoubleNode<PrintableItem> doubled(PrintableItem{2, OOldMyString("beta")});
 
     EXPECT_EQ("alpha", to_std_string(single.toString()));
     EXPECT_EQ("beta", to_std_string(doubled.toString()));
@@ -101,13 +101,13 @@ TEST(NodeToString, DelegatesToItemToString) {
 // ---------------------------------------------------------------------
 
 TEST(SingleNodeBasic, IsNotCopyable) {
-    EXPECT_FALSE((std::is_copy_constructible_v<SingleNode<int>>));
-    EXPECT_FALSE((std::is_copy_assignable_v<SingleNode<int>>));
+    EXPECT_FALSE((std::is_copy_constructible_v<OldSingleNode<int>>));
+    EXPECT_FALSE((std::is_copy_assignable_v<OldSingleNode<int>>));
 }
 
 TEST(SingleNodeBasic, ConstructAndSetNext) {
-    SingleNode<int> second(2);
-    SingleNode<int> first(1, &second);
+    OldSingleNode<int> second(2);
+    OldSingleNode<int> first(1, &second);
     EXPECT_EQ(1, first.getItem());
     EXPECT_EQ(&second, first.getNext());
     EXPECT_EQ(nullptr, second.getNext());
@@ -117,25 +117,25 @@ TEST(SingleNodeBasic, ConstructAndSetNext) {
 }
 
 TEST(SingleNodeBasic, MoveConstructorAndMoveAssignment) {
-    SingleNode<MyString> next("next");
-    SingleNode<MyString> original("original value long enough to allocate", &next);
-    SingleNode<MyString> moved(std::move(original));
+    OldSingleNode<OOldMyString> next("next");
+    OldSingleNode<OOldMyString> original("original value long enough to allocate", &next);
+    OldSingleNode<OOldMyString> moved(std::move(original));
     EXPECT_EQ("original value long enough to allocate", to_std_string(moved.getItem()));
     EXPECT_EQ(&next, moved.getNext());
     EXPECT_EQ(nullptr, original.getNext());
 
-    SingleNode<MyString> target("target");
+    OldSingleNode<OOldMyString> target("target");
     target = std::move(moved);
     EXPECT_EQ("original value long enough to allocate", to_std_string(target.getItem()));
     EXPECT_EQ(&next, target.getNext());
 }
 
 TEST(SingleNodeBasic, ChainTraversal) {
-    SingleNode<int> third(3);
-    SingleNode<int> second(2, &third);
-    SingleNode<int> first(1, &second);
+    OldSingleNode<int> third(3);
+    OldSingleNode<int> second(2, &third);
+    OldSingleNode<int> first(1, &second);
     int expected = 1;
-    for (const SingleNode<int> *now = &first; now != nullptr; now = now->getNext()) {
+    for (const OldSingleNode<int> *now = &first; now != nullptr; now = now->getNext()) {
         EXPECT_EQ(expected++, now->getItem());
     }
     EXPECT_EQ(4, expected);
@@ -165,17 +165,17 @@ TEST(DoubleNodeBasic, ConstructAndSetPrevNext) {
 }
 
 TEST(DoubleNodeBasic, MoveConstructorAndMoveAssignment) {
-    DoubleNode<MyString> prev("prev");
-    DoubleNode<MyString> next("next");
-    DoubleNode<MyString> original("original value long enough to allocate", &prev, &next);
-    DoubleNode<MyString> moved(std::move(original));
+    DoubleNode<OOldMyString> prev("prev");
+    DoubleNode<OOldMyString> next("next");
+    DoubleNode<OOldMyString> original("original value long enough to allocate", &prev, &next);
+    DoubleNode<OOldMyString> moved(std::move(original));
     EXPECT_EQ("original value long enough to allocate", to_std_string(moved.getItem()));
     EXPECT_EQ(&prev, moved.getPrev());
     EXPECT_EQ(&next, moved.getNext());
     EXPECT_EQ(nullptr, original.getPrev());
     EXPECT_EQ(nullptr, original.getNext());
 
-    DoubleNode<MyString> target("target");
+    DoubleNode<OOldMyString> target("target");
     target = std::move(moved);
     EXPECT_EQ("original value long enough to allocate", to_std_string(target.getItem()));
     EXPECT_EQ(&prev, target.getPrev());
@@ -202,10 +202,10 @@ TEST(NestedDoubleNodeBasic, ReflectsChangesToPointedNode) {
 }
 
 TEST(NestedDoubleNodeBasic, CopyAndMoveShareSameTargetNode) {
-    DoubleNode<MyString> inner(MyString("shared node value"));
-    NestedDoubleNode<MyString> original(&inner);
-    NestedDoubleNode<MyString> copy(original);
-    NestedDoubleNode<MyString> moved(std::move(original));
+    DoubleNode<OOldMyString> inner(OOldMyString("shared node value"));
+    NestedDoubleNode<OOldMyString> original(&inner);
+    NestedDoubleNode<OOldMyString> copy(original);
+    NestedDoubleNode<OOldMyString> moved(std::move(original));
 
     EXPECT_EQ("shared node value", to_std_string(copy.getUnravelItem()));
     EXPECT_EQ("shared node value", to_std_string(moved.getUnravelItem()));
@@ -225,8 +225,8 @@ TEST(NestedDoubleNodeBasic, DestructorDoesNotDeletePointedNode) {
 TEST(NestedDoubleNodeBasic, WorksInsideSingleNode) {
     DoubleNode<int> inner1(10);
     DoubleNode<int> inner2(20);
-    SingleNode<NestedDoubleNode<int>> second{NestedDoubleNode<int>(&inner2)};
-    SingleNode<NestedDoubleNode<int>> first{NestedDoubleNode<int>(&inner1), &second};
+    OldSingleNode<NestedDoubleNode<int>> second{NestedDoubleNode<int>(&inner2)};
+    OldSingleNode<NestedDoubleNode<int>> first{NestedDoubleNode<int>(&inner1), &second};
 
     EXPECT_EQ(10, first.getItem().getUnravelItem());
     EXPECT_EQ(20, first.getNext()->getItem().getUnravelItem());
@@ -253,7 +253,7 @@ TEST(NestedDoubleNodeCompare, OrderingAndEquality) {
 }
 
 TEST(NestedDoubleNodeToString, SingleCircularNodeDelegatesToOwnItem) {
-    DoubleNode<PrintableItem> only(PrintableItem{1, MyString("solo")});
+    DoubleNode<PrintableItem> only(PrintableItem{1, OOldMyString("solo")});
     only.setNext(&only);
     only.setPrev(&only);
 
@@ -262,9 +262,9 @@ TEST(NestedDoubleNodeToString, SingleCircularNodeDelegatesToOwnItem) {
 }
 
 TEST(NestedDoubleNodeToString, CircularGroupDelegatesOnlyToPointedNode) {
-    DoubleNode<PrintableItem> a(PrintableItem{1, MyString("Alice")});
-    DoubleNode<PrintableItem> b(PrintableItem{2, MyString("Bob")});
-    DoubleNode<PrintableItem> c(PrintableItem{3, MyString("Charlie")});
+    DoubleNode<PrintableItem> a(PrintableItem{1, OOldMyString("Alice")});
+    DoubleNode<PrintableItem> b(PrintableItem{2, OOldMyString("Bob")});
+    DoubleNode<PrintableItem> c(PrintableItem{3, OOldMyString("Charlie")});
 
     a.setNext(&b); b.setPrev(&a);
     b.setNext(&c); c.setPrev(&b);
