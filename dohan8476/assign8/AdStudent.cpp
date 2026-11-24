@@ -3,21 +3,21 @@
 AdStudent::~AdStudent() = default;
 
 bool AdStudent::operator<(const AdStudent &other) const {
-    if (this->StudentID != other.StudentID) {
-        return this->StudentID < other.StudentID;
+    if (this->StudentName != other.StudentName) {
+        return this->StudentName < other.StudentName;
     }
     return this->phoneNumber < other.phoneNumber;
 }
 
 bool AdStudent::operator<=(const AdStudent &other) const {
-    if (this->StudentID != other.StudentID) {
-        return this->StudentID <= other.StudentID;
+    if (this->StudentName != other.StudentName) {
+        return this->StudentName <= other.StudentName;
     }
     return this->phoneNumber <= other.phoneNumber;
 }
 
 bool AdStudent::operator==(const AdStudent &other) const {
-    return this->StudentID == other.StudentID;
+    return this->StudentName == other.StudentName;
 }
 
 //virtual -> override
