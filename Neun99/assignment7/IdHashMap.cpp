@@ -186,7 +186,7 @@ void IdHashMap::append(int year, int diff) {
 
     //넣기
     for (int idx = newSize - 1; idx >= size; idx--, year--) {
-        arr[idx] = year;
+        arr[idx] = IdHashNode(year);
     }
 
     size = newSize;

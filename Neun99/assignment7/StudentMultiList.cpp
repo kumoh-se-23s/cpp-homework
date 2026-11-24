@@ -192,17 +192,13 @@ StudentNode *StudentMultiList::classmateRemove(int id) {
 }
 
 //맨 앞 연결 제거
-StudentNode *StudentMultiList::classmateRemoveFront(IdHashNode *idHash) {
-    StudentNode* temp = idHash->getHead();
-    idHash->setHead(temp->getNextClassmate());
-    return temp;
+void StudentMultiList::classmateRemoveFront(IdHashNode *idHash) {
+    idHash->setHead(idHash->getHead()->getNextClassmate());
 }
 
 //인자 뒤 연결 제거
-StudentNode *StudentMultiList::classmateRemoveAfter(StudentNode *preNode) {
-    StudentNode* temp = preNode->getNextClassmate();
+void StudentMultiList::classmateRemoveAfter(StudentNode *preNode) {
     preNode->setNextClassmate(preNode->getNextClassmate()->getNextClassmate());
-    return temp;
 }
 
 bool StudentMultiList::shouldRemoveHashNode(const IdHashNode *idHash) const {

@@ -28,8 +28,8 @@ private:
     static void classmateInsertAfter(StudentNode* newNode, StudentNode* preNode);
 
     StudentNode* classmateRemove(int id);
-    static StudentNode* classmateRemoveFront(IdHashNode* idHash);
-    static StudentNode* classmateRemoveAfter(StudentNode* preNode);
+    static void classmateRemoveFront(IdHashNode* idHash);
+    static void classmateRemoveAfter(StudentNode* preNode);
     bool shouldRemoveHashNode(const IdHashNode * idHash) const;
 
     //원형 더블 연결 처리
