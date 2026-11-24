@@ -17,7 +17,7 @@ bool AdStudent::operator<=(const AdStudent &other) const {
 }
 
 bool AdStudent::operator==(const AdStudent &other) const {
-    return (this->StudentID == other.StudentID) || (this->phoneNumber == other.phoneNumber);
+    return this->StudentID == other.StudentID;
 }
 
 //virtual -> override

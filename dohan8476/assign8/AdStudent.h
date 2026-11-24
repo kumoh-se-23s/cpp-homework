@@ -2,11 +2,6 @@
 #include "MyString.h"
 
 class AdStudent {
-    MyString StudentID; // key
-    MyString StudentName;
-    MyString course;
-    MyString phoneNumber;
-
     public:
         virtual ~AdStudent();
 
@@ -17,4 +12,10 @@ class AdStudent {
         virtual void input();
         virtual MyString toString() const;
         virtual MyString toFileFormatString() const;
+
+    protected:
+        MyString StudentID; // key
+        MyString StudentName;
+        MyString course;
+        MyString phoneNumber;
 };
