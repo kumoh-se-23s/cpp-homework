@@ -9,8 +9,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    App app(argv[1]);
-    app.run();
+    // App app(argv[1]);
+    // app.run();
 
     return 0;
 }
