@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "AdStudent.h"
+
 using namespace std;
 
 App::App() : controller(), fileIO(nullptr) {}
@@ -10,44 +12,44 @@ App::App(int argc, char* argv[]) : fileIO(argc > 1 ? argv[1] : nullptr) {
     if (!loadFromFile()) {
         fileIO.closeRead();
     }
+    cout << controller;
 }
 
 void App::start() {
-
-    int result = 1;
-    while (result != 0) {
-        MyString command;
-        if (!getline(cin, command)) {
-            break;
-        }
-        result = run(command.trim());
-        if (result == -1) {
-            cout << "Invalid Input\n";
+    char command = '\0';
+    MyString clear;
+    while (command != '6') {
+        if (!(cin >> command)) {
+            cin.clear();
+            getline(cin, clear);
+        } else {
+            run(command);
         }
     }
     saveToFile();
 }
 
-int App::run(MyString command) {
-    if (command.length() != 1) {
-        return -1;
-    }
-    switch (command.at(0)) {
-        case 'L':
-        case 'l':
+void App::run(char command) {
+    switch (command) {
+        case '1':
             cout << this->controller;
-            return 1;
-        case 'i':
-        case 'I':
-            return insert();
-        case 'd':
-        case 'D':
-            return remove();
-        case 'Q':
-        case 'q':
-            return 0;
+            break;
+        case '2':
+            search();
+            break;
+        case '3':
+            insert();
+            break;
+        case '4':
+            modify();
+            break;
+        case '5':
+            remove();
+            break;
+        case '6':
+            return;
         default:
-            return -1;
+            cout << "<ERROR> Invalid Input\n";
     }
 }
 
@@ -109,26 +111,25 @@ bool App::saveToFile() {
         return false;
     }
 
-    fileIO.getOut() << controller.toString();
+    fileIO.getOut() << controller;
     fileIO.closeWrite();
     return true;
 }
 
 
-int App::insert() {
-    int studentId;
+void App::insert() {
+    MyString studentType;
 
-    if (!(cin >> studentId)) {
+    if (!(cin >> studentType)) {
         if (!cin.eof()) {
             cin.clear();
             MyString skip;
             getline(cin, skip);
+            cout << "<ERROR> Invalid Input\n";
+        } else {
+            return;
         }
-        return -1;
     }
-
-    MyString studentGroup;
-    MyString studentName;
 
     cin >> studentGroup;
     getline(cin, studentName);

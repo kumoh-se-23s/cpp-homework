@@ -1,12 +1,6 @@
-//
-// Created by lhetl on 2026-11-22.
-//
-
-#ifndef CPP_HOMEWORK_GIT_ADSTUDENT_H
-#define CPP_HOMEWORK_GIT_ADSTUDENT_H
-
+#pragma once
+#include <iostream>
 #include "MyString.h"
-
 
 class AdStudent {
     MyString studentPhoneNumber;
@@ -42,13 +36,16 @@ public:
 
     const MyString &getStudentName() const;
 
-    int compareTo(const AdStudent& other) const;
+
     bool operator==(const AdStudent& other) const;
     bool operator!=(const AdStudent& other)const;
     bool operator>(const AdStudent& other) const;
     bool operator<(const AdStudent& other) const;
     bool operator<=(const AdStudent& other) const;
     bool operator>=(const AdStudent& other) const;
+
+    bool operator==(const MyString& course) const;
+    bool operator!=(const MyString& course)const;
 
     //파일로 내보낼때 사용하는 메소드
     virtual void toFile(std::ofstream& out) const = 0;
@@ -61,6 +58,8 @@ public:
 
     //수정할 값을 입력받는 메소드
     virtual bool update(std::istream& in) = 0;
+private:
+    int compareTo(const AdStudent& other) const;
 };
 //콘솔 출력시 사용하는 메소드
 std::ostream& operator<<(std::ostream& out, const AdStudent& student);
@@ -68,4 +67,3 @@ std::ostream& operator<<(std::ostream& out, const AdStudent& student);
 //콘솔, 파일 입력시 사용하는 메소드
 std::istream& operator>>(std::istream& in, AdStudent& student);
 std::ofstream& operator<<(std::ofstream& out, const AdStudent& student);
-#endif //CPP_HOMEWORK_GIT_ADSTUDENT_H

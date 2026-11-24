@@ -13,12 +13,14 @@ public:
     App(int argc, char* argv[]);
 
     void start();
-    int run(MyString command);
+    void run(char command);
 
 private:
     bool loadFromFile();
     bool saveToFile();
-    int insert();
-    int remove();;
+    void insert();
+    void search();
+    void remove();
+    void modify();
 };
 

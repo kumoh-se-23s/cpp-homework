@@ -1,8 +1,5 @@
-//
-// Created by lhetl on 2026-11-22.
-//
-
 #include "AdStudent.h"
+#include <iostream>
 
 AdStudent & AdStudent::operator=(const AdStudent &other) {
     if (this == &other)
@@ -29,8 +26,8 @@ const MyString &AdStudent::getStudentName() const {
 }
 
 int AdStudent::compareTo(const AdStudent &other) const {
-    int studentNameCompare = 0;
-    int studentPhoneNumberCompare = 0;
+    int studentNameCompare;
+    int studentPhoneNumberCompare;
     if (this->studentName == other.studentName) {
         studentNameCompare = 0;
     } else if (this->studentName > other.studentName) {
@@ -76,6 +73,14 @@ bool AdStudent::operator<=(const AdStudent &other) const {
 
 bool AdStudent::operator>=(const AdStudent &other) const {
     return compareTo(other) >= 0;
+}
+
+bool AdStudent::operator==(const MyString& otherCourse) const {
+    return this->course == otherCourse;
+}
+
+bool AdStudent::operator!=(const MyString& otherCourse) const {
+    return this->course != otherCourse;
 }
 
 std::ostream &operator<<(std::ostream &out, const AdStudent &student) {
