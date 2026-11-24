@@ -1,15 +1,20 @@
-// #pragma once
-// #include "StudentList.h"
-// #include "MyString.h"
-//
-// class App {
-//     StudentList studentList;
-//     MyString filename;
-//
-//     public:
-//         App(const char* file);
-//         void run();
-//
-//         void handleInsert();
-//         void handleDelete();
-// };
+#pragma once
+#include "SinglyLinkedList.hpp"
+#include "AdStudent.h"
+#include "MyString.h"
+
+class App {
+    SinglyLinkedList<AdStudent> studentList;
+    MyString filename;
+
+    void handleViewAll() const;
+    void handleSearch() const;
+    void handleInsert();
+    void handleModify();
+    void handleDelete();
+    void handleExit();
+
+public:
+    App(const char* file);
+    void run();
+};

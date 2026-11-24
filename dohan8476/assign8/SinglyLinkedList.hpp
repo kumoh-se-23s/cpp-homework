@@ -20,8 +20,11 @@ class SinglyLinkedList {
         int getSize() const;
         bool isEmpty() const;
         T* get(int index) const;
-        T* getHead() const;
+        SinglyNode<T>* getHead() const;
         void clear();
+        template <typename KeyType>
+        T* find(const KeyType& element) const;
+
         void moveFrom(SinglyLinkedList& other);
 
     private:
@@ -88,10 +91,7 @@ T* SinglyLinkedList<T>::get(int index) const {
 }
 
 template<typename T>
-T* SinglyLinkedList<T>::getHead() const {
-    if (isEmpty()) {
-        return nullptr;
-    }
+SinglyNode<T>* SinglyLinkedList<T>::getHead() const {
     return head;
 }
 
@@ -170,6 +170,19 @@ void SinglyLinkedList<T>::clear() {
     while (!isEmpty()) {
         delete removeFirst();
     }
+}
+
+template <typename T>
+template <typename KeyType>
+T* SinglyLinkedList<T>::find(const KeyType& element) const {
+    SinglyNode<T>* curr = head;
+    while (curr != nullptr) {
+        if (*(curr->getData()) == element) {
+            return curr->getData();
+        }
+        curr = curr->getNext();
+    }
+    return nullptr;
 }
 
 //혹시 모르니 남겨둠

@@ -1,8 +1,9 @@
-// #pragma once
-// #include "StudentList.h"
-//
-// class FileIO {
-//     public:
-//         static bool loadFile(const char* filename, StudentList& list);
-//         static bool saveFile(const char* filename, const StudentList& list);
-// };
+#pragma once
+#include "SinglyLinkedList.hpp"
+#include "AdStudent.h"
+
+class FileIO {
+public:
+    static bool loadFile(const char* filename, SinglyLinkedList<AdStudent>& list);
+    static bool saveFile(const char* filename, const SinglyLinkedList<AdStudent>& list);
+};

@@ -68,6 +68,8 @@ class MyString {
         MyString& trim();
         const char* getStr() const;
 
+        static MyString toString(int num);
+
     private:
         int size;
         int capacity;

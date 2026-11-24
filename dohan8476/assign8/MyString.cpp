@@ -578,3 +578,24 @@ int MyString::calcCapacity(int targetSize) const{
 const char *MyString::getStr() const {
     return str;
 }
+
+MyString MyString::toString(int num) {
+    if (num == 0) return MyString("0");
+
+    bool isNegative = num < 0;
+    unsigned int val = isNegative ? -num : num;
+
+    char temp[16];
+    int idx = 0;
+    while (val > 0) {
+        temp[idx++] = '0' + val % 10;
+        val /= 10;
+    }
+    if (isNegative) temp[idx++] = '-';
+
+    MyString res(idx);
+    for (int i = idx - 1; i >= 0; --i) {
+        res.append(temp[i]);
+    }
+    return res;
+}
