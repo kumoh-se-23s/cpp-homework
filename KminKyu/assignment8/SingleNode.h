@@ -23,7 +23,7 @@ public:
 
     SingleNode(SingleNode &&other) noexcept;
 
-    ~SingleNode() override = default;
+    ~SingleNode() override;
 
     SingleNode &operator=(const SingleNode &other) = delete;
 

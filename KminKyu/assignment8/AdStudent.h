@@ -44,8 +44,8 @@ public:
     bool operator<=(const AdStudent& other) const;
     bool operator>=(const AdStudent& other) const;
 
-    bool operator==(const MyString& course) const;
-    bool operator!=(const MyString& course)const;
+    virtual bool operator==(const MyString& studentKey) const;
+    virtual bool operator!=(const MyString& studentKey) const;
 
     //파일로 내보낼때 사용하는 메소드
     virtual void toFile(std::ofstream& out) const = 0;

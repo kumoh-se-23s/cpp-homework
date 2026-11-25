@@ -75,12 +75,12 @@ bool AdStudent::operator>=(const AdStudent &other) const {
     return compareTo(other) >= 0;
 }
 
-bool AdStudent::operator==(const MyString& otherCourse) const {
-    return this->course == otherCourse;
+bool AdStudent::operator==(const MyString& studentKey) const {
+    return this->studentPhoneNumber !=  studentKey;
 }
 
-bool AdStudent::operator!=(const MyString& otherCourse) const {
-    return this->course != otherCourse;
+bool AdStudent::operator!=(const MyString& studentKey) const {
+    return this->studentPhoneNumber != studentKey;
 }
 
 std::ostream &operator<<(std::ostream &out, const AdStudent &student) {
