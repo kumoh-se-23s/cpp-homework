@@ -5,7 +5,6 @@
 #ifndef CPP_HOMEWORK_SHORTTERMEDU_H
 #define CPP_HOMEWORK_SHORTTERMEDU_H
 #include "AdStudent.h"
-#include "MyString.h"
 
 class ShortTermEdu : public AdStudent<ShortTermEdu> {
     MyString m_uid;

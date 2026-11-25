@@ -5,7 +5,6 @@
 #ifndef CPP_HOMEWORK_LIFELONG_H
 #define CPP_HOMEWORK_LIFELONG_H
 #include "AdStudent.h"
-#include "MyString.h"
 
 class LifeLong : public AdStudent<LifeLong> {
     MyString m_uid;
