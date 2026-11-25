@@ -8,17 +8,6 @@ class AdStudent {
     MyString course;
 
 public:
-    AdStudent(const MyString& studentPhoneNumber, const MyString &studentName, const MyString& course)
-        : studentPhoneNumber(studentPhoneNumber),
-        studentName(studentName),
-        course(course) {}
-
-    AdStudent(const AdStudent &other)
-        : studentPhoneNumber(other.studentPhoneNumber),
-        studentName(other.studentName),
-        course(other.course) {
-    }
-
     AdStudent(AdStudent &&other) noexcept
         : studentPhoneNumber(std::move(other.studentPhoneNumber)),
         studentName(std::move(other.studentName)),
@@ -27,15 +16,11 @@ public:
 
     virtual ~AdStudent() = 0;
 
-    AdStudent &operator=(const AdStudent &other);
-
     AdStudent &operator=(AdStudent &&other) noexcept;
-
 
     const MyString &getStudentPhoneNumber() const;
 
     const MyString &getStudentName() const;
-
 
     bool operator==(const AdStudent& other) const;
     bool operator!=(const AdStudent& other)const;
@@ -45,6 +30,7 @@ public:
     bool operator>=(const AdStudent& other) const;
 
     virtual bool operator==(const MyString& studentKey) const;
+
     virtual bool operator!=(const MyString& studentKey) const;
 
     //파일로 내보낼때 사용하는 메소드
@@ -53,17 +39,11 @@ public:
     //콘솔 출력시 사용하는 메소드
     virtual void print(std::ostream& out) const = 0;
 
-    //파일, 콘솔 입력시 사용하는 메소드
-    virtual bool input(std::istream& in) = 0;
-
-    //수정할 값을 입력받는 메소드
-    virtual bool update(std::istream& in) = 0;
 private:
     int compareTo(const AdStudent& other) const;
 };
 //콘솔 출력시 사용하는 메소드
 std::ostream& operator<<(std::ostream& out, const AdStudent& student);
 
-//콘솔, 파일 입력시 사용하는 메소드
-std::istream& operator>>(std::istream& in, AdStudent& student);
+//파일 write시 사용하는 메소드
 std::ofstream& operator<<(std::ofstream& out, const AdStudent& student);

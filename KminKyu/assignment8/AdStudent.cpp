@@ -1,13 +1,6 @@
 #include "AdStudent.h"
 #include <iostream>
 
-AdStudent & AdStudent::operator=(const AdStudent &other) {
-    if (this == &other)
-        return *this;
-    studentPhoneNumber = other.studentPhoneNumber;
-    studentName = other.studentName;
-    return *this;
-}
 
 AdStudent & AdStudent::operator=(AdStudent &&other) noexcept {
     if (this == &other)
@@ -88,10 +81,6 @@ std::ostream &operator<<(std::ostream &out, const AdStudent &student) {
     return out;
 }
 
-std::istream &operator>>(std::istream &in, AdStudent &student) {
-    student.input(in);
-    return in;
-}
 
 std::ofstream &operator<<(std::ofstream &out, const AdStudent &student) {
     student.toFile(out);
