@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AdStudent.h"
 #include "MyStringFileIO.h"
 #include "StudentController.h"
 
@@ -22,5 +23,7 @@ private:
     void search();
     void remove();
     void modify();
+
+    AdStudent *getStudent(const MyString& type);
 };
 

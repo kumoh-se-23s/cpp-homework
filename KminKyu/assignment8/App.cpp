@@ -131,14 +131,9 @@ void App::insert() {
         }
     }
 
-    cin >> studentGroup;
-    getline(cin, studentName);
-
-    controller.insertStudent(studentId, studentGroup, studentName.trim());
-    return 1;
 }
 
-int App::remove() {
+void App::remove() {
     int studentId;
 
     if (!(cin >> studentId)) {
@@ -155,4 +150,8 @@ int App::remove() {
     controller.deleteStudent(studentId);
 
     return 1;
+}
+
+AdStudent *App::getStudent(const MyString &type) {
+    if (type == "")
 }
