@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+#include "MyArrayList.h"
+
 class MyString {
     constexpr static int DEFAULT_CAPACITY = 8;
 
@@ -102,6 +104,10 @@ public:
     static MyString integerToString(int integer);
 
     MyString& trim();
+
+    MyArrayList<MyString> split(int splitSize, char delim = ' ');
+
+    MyArrayList<MyString> split(char delim = ' ');
 
 private:
 

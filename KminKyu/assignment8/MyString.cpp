@@ -396,6 +396,25 @@ MyString & MyString::trim() {
     return *this;
 }
 
+MyArrayList<MyString> MyString::split(int splitSize, char delim) {
+    MyArrayList<MyString> result = MyArrayList<MyString>(splitSize);
+    MyString split = MyString();
+    for (char *nowChar = charArray; nowChar < charArray + size; ++nowChar) {
+        if (*nowChar == delim && split.size > 0) {
+            MyString copy = split;
+            result.append(copy);
+            split.clear();
+        } else {
+            split.append(*nowChar);
+        }
+    }
+    return result;
+}
+
+MyArrayList<MyString> MyString::split(char delim) {
+    for (int i = 0; i <)
+}
+
 void MyString::resize() {
     if (capacity == 0) {
         resize(DEFAULT_CAPACITY);
