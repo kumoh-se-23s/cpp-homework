@@ -53,7 +53,7 @@ bool FileIO::saveFile(const char* filename, const SinglyLinkedList<AdStudent>& l
 
     SinglyNode<AdStudent>* curr = list.getHead();
     while (curr != nullptr) {
-        fout << curr->getData()->toFileFormatString() << "\n";
+        fout << curr->getData()->toFileFormatString() << endl;
         curr = curr->getNext();
     }
 

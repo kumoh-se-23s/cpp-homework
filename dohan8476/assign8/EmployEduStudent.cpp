@@ -1,9 +1,9 @@
 #include "EmployEduStudent.h"
 #include <iostream>
 
-#include "../../cmake-build-debug/_deps/googletest-src/googletest/src/gtest-internal-inl.h"
-
 using namespace std;
+
+int EmployEduStudent::nextID = 1;
 
 EmployEduStudent::EmployEduStudent() = default;
 
@@ -13,6 +13,12 @@ EmployEduStudent::EmployEduStudent(const MyString &studentID, const MyString &st
     this->studentName = studentName;
     this->course = course;
     this->phoneNumber = phoneNumber;
+
+    //nextID 동기화
+    int num = stoi(studentID, 1);
+    if (num >= nextID) {
+        nextID = num + 1;
+    }
 }
 
 EmployEduStudent::~EmployEduStudent() = default;

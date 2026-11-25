@@ -3,18 +3,29 @@
 
 using namespace std;
 
+int ShortTermEduStudent::nextID = 1;
+
 ShortTermEduStudent::ShortTermEduStudent() = default;
 
 ShortTermEduStudent::ShortTermEduStudent(const MyString &studentID, const MyString &studentName,
-    const MyString &course, const MyString &offerDepartment, const MyString &phoneNumber) {
+    const MyString &course, const MyString &offerDepartment, const MyString &phoneNumber)
+        :studentID(studentID), offerDepartment(offerDepartment){
+    this->studentName = studentName;
+    this->course = course;
+    this->phoneNumber = phoneNumber;
 
+    //nextID 동기화
+    int num = stoi(studentID, 1);
+    if (num >= nextID) {
+        nextID = num + 1;
+    }
 }
 
 ShortTermEduStudent::~ShortTermEduStudent() = default;
 
 MyString ShortTermEduStudent::generateID() {
     MyString numStr = MyString::toString(nextID++);
-    MyString res("E");
+    MyString res("S"); 
     for (int i = numStr.length(); i < 5; ++i) {
         res.append('0');
     }

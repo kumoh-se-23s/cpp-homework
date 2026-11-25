@@ -12,7 +12,7 @@ class App {
     void handleInsert();
     void handleModify();
     void handleDelete();
-    void handleExit();
+    void handleExit() const;
 
 public:
     App(const char* file);

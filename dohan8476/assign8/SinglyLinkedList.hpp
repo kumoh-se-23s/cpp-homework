@@ -105,7 +105,6 @@ bool SinglyLinkedList<T>::isEmpty() const {
     return size == 0;
 }
 
-//이번엔 다 MyString이라 int면 index 호출
 template<typename T>
 T* SinglyLinkedList<T>::remove(const int index) {
     if (index < 0 || index >= size) return nullptr;
