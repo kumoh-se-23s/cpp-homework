@@ -10,12 +10,28 @@ AdStudent & AdStudent::operator=(AdStudent &&other) noexcept {
     return *this;
 }
 
-const MyString &AdStudent::getStudentPhoneNumber() const {
+const MyString& AdStudent::getStudentPhoneNumber() const {
     return studentPhoneNumber;
 }
 
-const MyString &AdStudent::getStudentName() const {
+const MyString& AdStudent::getStudentName() const {
     return studentName;
+}
+
+const MyString& AdStudent::getCourse() const {
+    return course;
+}
+
+void AdStudent::setStudentPhoneNumber(const MyString &phoneNumber) {
+    this->studentPhoneNumber = phoneNumber;
+}
+
+void AdStudent::setStudentName(const MyString &studentName) {
+    this->studentName = studentName;
+}
+
+void AdStudent::setCourse(const MyString &course) {
+    this->course = course;
 }
 
 int AdStudent::compareTo(const AdStudent &other) const {
@@ -77,12 +93,6 @@ bool AdStudent::operator!=(const MyString& studentKey) const {
 }
 
 std::ostream &operator<<(std::ostream &out, const AdStudent &student) {
-    student.print(out);
-    return out;
-}
-
-
-std::ofstream &operator<<(std::ofstream &out, const AdStudent &student) {
-    student.toFile(out);
+    out << student.toString();
     return out;
 }
