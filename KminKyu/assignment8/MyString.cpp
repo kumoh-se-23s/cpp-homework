@@ -412,7 +412,18 @@ MyArrayList<MyString> MyString::split(int splitSize, char delim) {
 }
 
 MyArrayList<MyString> MyString::split(char delim) {
-    for (int i = 0; i <)
+    MyArrayList<MyString> result = MyArrayList<MyString>();
+    MyString split = MyString();
+    for (char *nowChar = charArray; nowChar < charArray + size; ++nowChar) {
+        if (*nowChar == delim && split.size > 0) {
+            MyString copy = split;
+            result.append(copy);
+            split.clear();
+        } else {
+            split.append(*nowChar);
+        }
+    }
+    return result;
 }
 
 void MyString::resize() {
