@@ -181,6 +181,16 @@ bool DoublyLinkedList<E>::contains(const E &object) const {
 }
 
 template<typename E>
+void DoublyLinkedList<E>::for_each(const std::function<void(const E &element)> &visit) const {
+    DoubleConnectNode<E> *current_node = this->m_head;
+
+    for (int visited_count = 0; visited_count < this->m_size; ++visited_count) {
+        visit(current_node->get());
+        current_node = current_node->next();
+    }
+}
+
+template<typename E>
 DoublyLinkedList<E>& DoublyLinkedList<E>::operator=(const DoublyLinkedList &other) {
     if (this == &other) {
         return *this;

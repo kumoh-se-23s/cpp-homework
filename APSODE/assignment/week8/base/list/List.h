@@ -4,6 +4,7 @@
 
 #ifndef CPP_HOMEWORK_LIST_H
 #define CPP_HOMEWORK_LIST_H
+#include <functional>
 
 template<typename E>
 class List {
@@ -19,6 +20,8 @@ class List {
 
         virtual void add_last(const E &element) = 0;
 
+        virtual void insert(int index, const E &element) = 0;
+
         virtual const E& peek(int index) const = 0;
 
         virtual E get(int index) const = 0;
@@ -32,6 +35,8 @@ class List {
         [[nodiscard]] virtual bool empty() const = 0;
 
         virtual bool contains(const E &object) const = 0;
+
+        virtual void for_each(const std::function<void(const E &element)> &visit) const = 0;
 
 
         virtual E& operator[](int index) const = 0;

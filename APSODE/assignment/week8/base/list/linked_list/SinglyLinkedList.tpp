@@ -182,6 +182,15 @@ bool SinglyLinkedList<E>::contains(const E &object) const {
 }
 
 template<typename E>
+void SinglyLinkedList<E>::for_each(const std::function<void(const E &element)> &visit) const {
+    for (SingleConnectNode<E> *current_node = this->m_head;
+         current_node != nullptr;
+         current_node = current_node->next()) {
+        visit(current_node->get());
+    }
+}
+
+template<typename E>
 SinglyLinkedList<E>& SinglyLinkedList<E>::operator=(const SinglyLinkedList &other) {
     if (this == &other) {
         return *this;

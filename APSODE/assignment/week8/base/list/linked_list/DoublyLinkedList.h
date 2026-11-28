@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 #include "../List.h"
-#include "../../util/RequireGuard.h"
+#include "../../RequireGuard.h"
 #include "./node/DoubleConnectNode.h"
 
 template<typename E>
@@ -34,7 +34,7 @@ class DoublyLinkedList final : public List<E> {
 
         void add_last(const E &element) override;
 
-        void insert(int index, const E &element);
+        void insert(int index, const E &element) override;
 
         const E& peek(int index) const override;
 
@@ -51,6 +51,8 @@ class DoublyLinkedList final : public List<E> {
         [[nodiscard]] bool empty() const override;
 
         bool contains(const E &object) const override;
+
+        void for_each(const std::function<void(const E &element)> &visit) const override;
 
 
         DoublyLinkedList& operator=(const DoublyLinkedList &other);
