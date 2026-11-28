@@ -10,16 +10,18 @@ class AdStudent {
         virtual ~AdStudent();
 
 
-        [[nodiscard]] virtual const MyString& uid() const = 0;
-
         virtual void accept(StudentVisitor &visitor) const = 0;
 
+        // TODO 정녕 민규가 옳았단 말인가. tlqkf 어떻게 해결 못하나
         virtual void read_details(std::istream &input) = 0;
 
+        // TODO 정녕 민규가 옳았단 말인가. tlqkf 어떻게 해결 못하나
         virtual void write(std::ostream &output) const = 0;
 
-        virtual void release_uid() const;
 
+        [[nodiscard]] virtual const MyString& uid() const = 0;
+
+        virtual void release_uid() const;
 
         [[nodiscard]] const MyString& name() const;
 
