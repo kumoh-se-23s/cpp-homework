@@ -1,12 +1,11 @@
 #ifndef STUDENTFILE_H
 #define STUDENTFILE_H
 #include <functional>
-#include "../factory/StudentFactory.h"
+#include "../AdStudent.h"
 #include "../../../base/list/List.h"
 
 class StudentFile {
     const char *m_path;
-    StudentFactory m_factory;
 
     public:
         explicit StudentFile(const char *path);

@@ -9,7 +9,7 @@ class Visitable : public AdStudent {
         void accept(StudentVisitor &visitor) const override;
 
     protected:
-        explicit Visitable(const MyString &name);
+        Visitable(const MyString &name, const MyString &course, const MyString &phone_number);
 };
 
 #include "Visitable.tpp"

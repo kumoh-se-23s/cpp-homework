@@ -1,13 +1,14 @@
 #include "ShortTermEdu.h"
 
-ShortTermEdu::ShortTermEdu(const MyString &name, std::istream &input)
-    : ShortTermEdu(ShortTermEdu::issue(), name, input) {
+ShortTermEdu::ShortTermEdu(const MyString &uid,
+                           const MyString &name, const MyString &course, const MyString &phone_number,
+                           const MyString &host_depart)
+    : Visitable(name, course, phone_number), m_uid(uid), m_host_depart(host_depart) {
+    ShortTermEdu::observe(this->m_uid);
 }
 
-ShortTermEdu::ShortTermEdu(const MyString &uid, const MyString &name, std::istream &input)
-    : Visitable(name), m_uid(uid) {
-    ShortTermEdu::observe(this->m_uid);
-    this->read_details(input);
+MyString ShortTermEdu::issue_uid() {
+    return ShortTermEdu::issue();
 }
 
 const MyString& ShortTermEdu::uid() const {
@@ -16,15 +17,6 @@ const MyString& ShortTermEdu::uid() const {
 
 const MyString& ShortTermEdu::host_depart() const {
     return this->m_host_depart;
-}
-
-void ShortTermEdu::read_details(std::istream &input) {
-    input >> this->m_course >> this->m_host_depart >> this->m_phone_number;
-}
-
-void ShortTermEdu::write(std::ostream &output) const {
-    output << "ShortTermEdu " << this->m_uid << ' ' << this->m_name << ' ' << this->m_course << ' '
-           << this->m_host_depart << ' ' << this->m_phone_number;
 }
 
 void ShortTermEdu::release_uid() const {

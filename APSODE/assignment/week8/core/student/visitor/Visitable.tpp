@@ -2,8 +2,8 @@
 #include "Visitable.h"
 
 template<typename Derived>
-Visitable<Derived>::Visitable(const MyString &name)
-    : AdStudent(name) {
+Visitable<Derived>::Visitable(const MyString &name, const MyString &course, const MyString &phone_number)
+    : AdStudent(name, course, phone_number) {
 }
 
 template<typename Derived>

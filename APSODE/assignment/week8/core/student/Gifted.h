@@ -9,7 +9,9 @@ class Gifted final : public Visitable<Gifted> {
     MyString m_parent_phone_number;
 
     public:
-        Gifted(const MyString &uid, const MyString &name, std::istream &input);
+        Gifted(const MyString &uid,
+               const MyString &name, const MyString &course, const MyString &phone_number,
+               const MyString &middle_school, const MyString &parent_name, const MyString &parent_phone_number);
 
 
         const MyString& uid() const override;
@@ -19,11 +21,6 @@ class Gifted final : public Visitable<Gifted> {
         const MyString& parent_name() const;
 
         const MyString& parent_phone_number() const;
-
-
-        void read_details(std::istream &input) override;
-
-        void write(std::ostream &output) const override;
 };
 
 #endif //GIFTED_H

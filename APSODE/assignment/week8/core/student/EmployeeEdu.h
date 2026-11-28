@@ -9,9 +9,12 @@ class EmployeeEdu final : public Visitable<EmployeeEdu>, AutoUID<EmployeeEdu, 'E
     MyString m_position;
 
     public:
-        EmployeeEdu(const MyString &name, std::istream &input);
+        EmployeeEdu(const MyString &uid,
+                    const MyString &name, const MyString &course, const MyString &phone_number,
+                    const MyString &company, const MyString &position);
 
-        EmployeeEdu(const MyString &uid, const MyString &name, std::istream &input);
+
+        static MyString issue_uid();
 
 
         const MyString& uid() const override;
@@ -20,10 +23,6 @@ class EmployeeEdu final : public Visitable<EmployeeEdu>, AutoUID<EmployeeEdu, 'E
 
         const MyString& position() const;
 
-
-        void read_details(std::istream &input) override;
-
-        void write(std::ostream &output) const override;
 
         void release_uid() const override;
 };

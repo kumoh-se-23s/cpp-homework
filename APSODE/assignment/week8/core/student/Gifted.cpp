@@ -1,8 +1,10 @@
 #include "Gifted.h"
 
-Gifted::Gifted(const MyString &uid, const MyString &name, std::istream &input)
-    : Visitable(name), m_uid(uid) {
-    this->read_details(input);
+Gifted::Gifted(const MyString &uid,
+               const MyString &name, const MyString &course, const MyString &phone_number,
+               const MyString &middle_school, const MyString &parent_name, const MyString &parent_phone_number)
+    : Visitable(name, course, phone_number), m_uid(uid), m_middle_school(middle_school),
+      m_parent_name(parent_name), m_parent_phone_number(parent_phone_number) {
 }
 
 const MyString& Gifted::uid() const {
@@ -19,15 +21,4 @@ const MyString& Gifted::parent_name() const {
 
 const MyString& Gifted::parent_phone_number() const {
     return this->m_parent_phone_number;
-}
-
-void Gifted::read_details(std::istream &input) {
-    input >> this->m_middle_school >> this->m_course >> this->m_phone_number
-          >> this->m_parent_name >> this->m_parent_phone_number;
-}
-
-void Gifted::write(std::ostream &output) const {
-    output << "Gifted " << this->m_uid << ' ' << this->m_name << ' ' << this->m_middle_school << ' '
-           << this->m_course << ' ' << this->m_phone_number << ' '
-           << this->m_parent_name << ' ' << this->m_parent_phone_number;
 }

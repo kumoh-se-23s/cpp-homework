@@ -7,17 +7,14 @@ class LifeLong final : public Visitable<LifeLong> {
     int m_tuition;
 
     public:
-        LifeLong(const MyString &uid, const MyString &name, std::istream &input);
+        LifeLong(const MyString &uid,
+                 const MyString &name, const MyString &course, const MyString &phone_number,
+                 int tuition);
 
 
         const MyString& uid() const override;
 
         int tuition() const;
-
-
-        void read_details(std::istream &input) override;
-
-        void write(std::ostream &output) const override;
 };
 
 #endif //LIFELONG_H

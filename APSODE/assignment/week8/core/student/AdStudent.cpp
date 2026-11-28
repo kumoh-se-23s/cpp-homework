@@ -1,7 +1,7 @@
 #include "AdStudent.h"
 
-AdStudent::AdStudent(const MyString &name)
-    : m_name(name) {
+AdStudent::AdStudent(const MyString &name, const MyString &course, const MyString &phone_number)
+    : m_name(name), m_course(course), m_phone_number(phone_number) {
 }
 
 AdStudent::~AdStudent() = default;

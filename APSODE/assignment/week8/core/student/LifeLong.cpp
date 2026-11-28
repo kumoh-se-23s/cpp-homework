@@ -1,8 +1,9 @@
 #include "LifeLong.h"
 
-LifeLong::LifeLong(const MyString &uid, const MyString &name, std::istream &input)
-    : Visitable(name), m_uid(uid), m_tuition(0) {
-    this->read_details(input);
+LifeLong::LifeLong(const MyString &uid,
+                   const MyString &name, const MyString &course, const MyString &phone_number,
+                   int tuition)
+    : Visitable(name, course, phone_number), m_uid(uid), m_tuition(tuition) {
 }
 
 const MyString& LifeLong::uid() const {
@@ -11,13 +12,4 @@ const MyString& LifeLong::uid() const {
 
 int LifeLong::tuition() const {
     return this->m_tuition;
-}
-
-void LifeLong::read_details(std::istream &input) {
-    input >> this->m_course >> this->m_tuition >> this->m_phone_number;
-}
-
-void LifeLong::write(std::ostream &output) const {
-    output << "LifeLong " << this->m_uid << ' ' << this->m_name << ' ' << this->m_course << ' '
-           << this->m_tuition << ' ' << this->m_phone_number;
 }

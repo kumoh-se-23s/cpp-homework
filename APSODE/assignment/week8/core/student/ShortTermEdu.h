@@ -8,19 +8,18 @@ class ShortTermEdu final : public Visitable<ShortTermEdu>, AutoUID<ShortTermEdu,
     MyString m_host_depart;
 
     public:
-        ShortTermEdu(const MyString &name, std::istream &input);
+        ShortTermEdu(const MyString &uid,
+                     const MyString &name, const MyString &course, const MyString &phone_number,
+                     const MyString &host_depart);
 
-        ShortTermEdu(const MyString &uid, const MyString &name, std::istream &input);
+
+        static MyString issue_uid();
 
 
         const MyString& uid() const override;
 
         const MyString& host_depart() const;
 
-
-        void read_details(std::istream &input) override;
-
-        void write(std::ostream &output) const override;
 
         void release_uid() const override;
 };

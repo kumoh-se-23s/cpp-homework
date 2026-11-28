@@ -1,13 +1,14 @@
 #include "EmployeeEdu.h"
 
-EmployeeEdu::EmployeeEdu(const MyString &name, std::istream &input)
-    : EmployeeEdu(EmployeeEdu::issue(), name, input) {
+EmployeeEdu::EmployeeEdu(const MyString &uid,
+                         const MyString &name, const MyString &course, const MyString &phone_number,
+                         const MyString &company, const MyString &position)
+    : Visitable(name, course, phone_number), m_uid(uid), m_company(company), m_position(position) {
+    EmployeeEdu::observe(this->m_uid);
 }
 
-EmployeeEdu::EmployeeEdu(const MyString &uid, const MyString &name, std::istream &input)
-    : Visitable(name), m_uid(uid) {
-    EmployeeEdu::observe(this->m_uid);
-    this->read_details(input);
+MyString EmployeeEdu::issue_uid() {
+    return EmployeeEdu::issue();
 }
 
 const MyString& EmployeeEdu::uid() const {
@@ -20,15 +21,6 @@ const MyString& EmployeeEdu::company() const {
 
 const MyString& EmployeeEdu::position() const {
     return this->m_position;
-}
-
-void EmployeeEdu::read_details(std::istream &input) {
-    input >> this->m_company >> this->m_position >> this->m_course >> this->m_phone_number;
-}
-
-void EmployeeEdu::write(std::ostream &output) const {
-    output << "EmployeeEdu " << this->m_uid << ' ' << this->m_name << ' ' << this->m_company << ' '
-           << this->m_position << ' ' << this->m_course << ' ' << this->m_phone_number;
 }
 
 void EmployeeEdu::release_uid() const {

@@ -1,7 +1,5 @@
 #ifndef ADSTUDENT_H
 #define ADSTUDENT_H
-#include <istream>
-#include <ostream>
 #include "../../base/string/MyString.h"
 #include "visitor/StudentVisitor.h"
 
@@ -11,12 +9,6 @@ class AdStudent {
 
 
         virtual void accept(StudentVisitor &visitor) const = 0;
-
-        // TODO 정녕 민규가 옳았단 말인가. tlqkf 어떻게 해결 못하나
-        virtual void read_details(std::istream &input) = 0;
-
-        // TODO 정녕 민규가 옳았단 말인가. tlqkf 어떻게 해결 못하나
-        virtual void write(std::ostream &output) const = 0;
 
 
         [[nodiscard]] virtual const MyString& uid() const = 0;
@@ -49,7 +41,7 @@ class AdStudent {
         MyString m_course;
         MyString m_phone_number;
 
-        explicit AdStudent(const MyString &name);
+        AdStudent(const MyString &name, const MyString &course, const MyString &phone_number);
 };
 
 #endif //ADSTUDENT_H
