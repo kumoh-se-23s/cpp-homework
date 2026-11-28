@@ -2,6 +2,7 @@
 #define AUTOUID_H
 #include "../../../base/string/MyString.h"
 
+// Mixin을 한번 구현해보고 싶었습니다..
 template<typename Derived, char Prefix>
 class AutoUID {
     static constexpr int DIGITS = 5;
